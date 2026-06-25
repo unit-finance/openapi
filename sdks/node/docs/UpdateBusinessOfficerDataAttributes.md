@@ -1,0 +1,24 @@
+# UpdateBusinessOfficerDataAttributes
+
+
+## Properties
+
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**officer_occupation** | [**Occupation**](Occupation.md) | Optional. Occupation of the officer. | [optional] [default to undefined]
+**officer_annualIncome** | [**AnnualIncome**](AnnualIncome.md) | Optional. Annual income of the officer. | [optional] [default to undefined]
+**officer_sourceOfIncome** | [**SourceOfIncome**](SourceOfIncome.md) | Optional. Source of income of the officer. | [optional] [default to undefined]
+
+## Example
+
+```typescript
+import { UpdateBusinessOfficerDataAttributes } from '@unit-finance/unit-node-sdk';
+
+const instance: UpdateBusinessOfficerDataAttributes = {
+    officer_occupation,
+    officer_annualIncome,
+    officer_sourceOfIncome,
+};
+```
+
+[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

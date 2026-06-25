@@ -1,0 +1,2654 @@
+openapi: 3.0.3
+info:
+  description: JSON:API-compliant banking API.
+  license:
+    name: Proprietary
+    url: https://www.unit.co/terms-of-service
+  title: Unit API
+  version: 0.1.0
+servers:
+- url: https://api.s.unit.sh
+security:
+- bearerAuth: []
+tags:
+- description: End-customer onboarding applications.
+  name: Applications
+paths:
+  /applications:
+    get:
+      description: List application resources. Paging can be applied.
+      operationId: list
+      parameters:
+      - description: Optional. Maximum number of resources that will be returned.
+          Maximum is 1000 resources. See Pagination. Sent as a numeric string (query
+          parameters are strings in HTTP).
+        explode: true
+        in: query
+        name: "page[limit]"
+        required: false
+        schema:
+          default: "100"
+          pattern: "^[0-9]+$"
+          type: string
+        style: form
+      - description: Optional. Number of resources to skip. See Pagination. Sent as
+          a numeric string (query parameters are strings in HTTP).
+        explode: true
+        in: query
+        name: "page[offset]"
+        required: false
+        schema:
+          default: "0"
+          pattern: "^[0-9]+$"
+          type: string
+        style: form
+      - description: Optional. Search term according to the Full-Text Search Rules.
+        explode: true
+        in: query
+        name: "filter[query]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: "Optional. Filter applications by Application Status. Usage example:\
+          \ *filter[status][0]=Pending&filter[status][1]=Approved*"
+        explode: true
+        in: query
+        name: "filter[status][]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filter applications by email address (case sensitive).
+        explode: true
+        in: query
+        name: "filter[email]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filter Applications by Tags.
+        explode: true
+        in: query
+        name: "filter[tags]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. sort=createdAt for ascending order or sort=-createdAt
+          (leading minus sign) for descending order.
+        explode: true
+        in: query
+        name: sort
+        required: false
+        schema:
+          default: -createdAt
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/list_200_response"
+          description: "A page of application resources, optionally filtered and sorted."
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - applications
+      summary: List applications
+      tags:
+      - Applications
+      x-accepts:
+      - application/vnd.api+json
+    post:
+      description: |-
+        Create an application. Variants:
+        - **CreateBusinessApplication**
+        - **CreateIndividualApplication**
+        - **CreateSoleProprietorApplication**
+      operationId: createApplication
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/createApplication_request"
+        required: true
+      responses:
+        "201":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/createApplication_201_response"
+          description: "The created application resource - a business or individual\
+            \ application, indicated by the `type` field."
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - applications-write
+      summary: Create an application
+      tags:
+      - Applications
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /applications/{id}:
+    get:
+      description: Get an application resource by id.
+      operationId: getById
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/createApplication_201_response"
+          description: The requested application resource.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - applications
+      summary: Get an application
+      tags:
+      - Applications
+      x-accepts:
+      - application/vnd.api+json
+    patch:
+      description: |-
+        Update an application. Variants:
+        - **UpdateBusiness**
+        - **UpdateBusinessOfficer**
+        - **UpdateIndividual**
+        - **UpdateSoleProprietor**
+      operationId: updateApplication
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/updateApplication_request"
+        required: true
+      responses:
+        "201":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/createApplication_201_response"
+          description: "Returns the updated application resource, which is a business\
+            \ or individual application as indicated by the `type` field. Note: this\
+            \ endpoint responds with HTTP 201 (not 200) for a successful update; this\
+            \ reflects the live Unit API behavior (verified against the sandbox at\
+            \ https://api.s.unit.sh)."
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - applications-write
+      summary: Update an application
+      tags:
+      - Applications
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /applications/{id}/cancel:
+    post:
+      description: Cancel an Application under `PendingReview` or `AwaitingDocuments`
+        status. The application.canceled webhook event will be fired.
+      operationId: cancelApplication
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/cancelApplication_request"
+        required: true
+      responses:
+        "201":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/cancelApplication_201_response"
+          description: The canceled application resource.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth: []
+      summary: Cancel an application
+      tags:
+      - Applications
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /applications/check-registered-agent-address:
+    post:
+      description: Checks if an address is a registered agent address.
+      operationId: checkRegisteredAgentAddress
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/checkRegisteredAgentAddress_request"
+        required: true
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/checkRegisteredAgentAddress_200_response"
+          description: Whether the supplied address is a registered agent address.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth: []
+      summary: Check a registered agent address
+      tags:
+      - Applications
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /beneficial-owner/{id}:
+    patch:
+      description: Update a business application's beneficial owner. The application
+        id associated with the beneficial owner must be passed as a relationship in
+        the request body.
+      operationId: updateBusinessBeneficialOwner
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/updateBusinessBeneficialOwner_request"
+        required: true
+      responses:
+        "201":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/updateBusinessBeneficialOwner_201_response"
+          description: The updated beneficial owner resource.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - applications-write
+      summary: Update a business beneficial owner
+      tags:
+      - Applications
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+components:
+  responses:
+    BadRequest:
+      content:
+        application/vnd.api+json:
+          schema:
+            $ref: "#/components/schemas/ErrorDocument"
+      description: "Bad request. The request body or query parameters failed validation;\
+        \ `errors[].source.pointer` identifies the offending field."
+    Unauthorized:
+      content:
+        application/vnd.api+json:
+          schema:
+            $ref: "#/components/schemas/ErrorDocument"
+      description: "Unauthorized. The bearer token is missing, invalid or expired."
+    NotFound:
+      content:
+        application/vnd.api+json:
+          schema:
+            $ref: "#/components/schemas/ErrorDocument"
+      description: Not found. No resource matches the supplied identifier.
+  schemas:
+    ResourceIdentifier:
+      properties:
+        type:
+          type: string
+        id:
+          type: string
+      required:
+      - id
+      - type
+      type: object
+    Relationship:
+      properties:
+        data:
+          $ref: "#/components/schemas/Relationship_data"
+      type: object
+    ToManyRelationship:
+      properties:
+        data:
+          items:
+            $ref: "#/components/schemas/ResourceIdentifier"
+          type: array
+      type: object
+    Meta:
+      additionalProperties: true
+      properties:
+        pagination:
+          $ref: "#/components/schemas/Meta_pagination"
+      type: object
+    ErrorDocument:
+      properties:
+        errors:
+          items:
+            $ref: "#/components/schemas/ErrorDocument_errors_inner"
+          type: array
+      required:
+      - errors
+      type: object
+    CreateBusinessApplicationData:
+      properties:
+        type:
+          enum:
+          - businessApplication
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CreateBusinessApplicationData_attributes"
+      required:
+      - attributes
+      - type
+      type: object
+    CreateIndividualApplicationData:
+      properties:
+        type:
+          enum:
+          - individualApplication
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CreateIndividualApplicationData_attributes"
+      required:
+      - attributes
+      - type
+      type: object
+    CreateSoleProprietorApplicationData:
+      properties:
+        type:
+          enum:
+          - individualApplication
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CreateSoleProprietorApplicationData_attributes"
+      required:
+      - attributes
+      - type
+      type: object
+    CreateBusinessApplicationRequest:
+      properties:
+        data:
+          $ref: "#/components/schemas/CreateBusinessApplicationData"
+      required:
+      - data
+      type: object
+    CreateIndividualApplicationRequest:
+      properties:
+        data:
+          $ref: "#/components/schemas/CreateIndividualApplicationData"
+      required:
+      - data
+      type: object
+    CreateSoleProprietorApplicationRequest:
+      properties:
+        data:
+          $ref: "#/components/schemas/CreateSoleProprietorApplicationData"
+      required:
+      - data
+      type: object
+    Address:
+      example:
+        street: 20 Ingram St
+        city: Forest Hills
+        state: NY
+        postalCode: "11375"
+        country: US
+      properties:
+        street:
+          description: First line of an address.
+          type: string
+        street2:
+          description: Optional. Second line of an address.
+          type: string
+        city:
+          description: City.
+          type: string
+        state:
+          description: "State. For US and CA addresses, two letters representing the\
+            \ state (US) or province (CA)."
+          type: string
+        postalCode:
+          description: Postal code.
+          type: string
+        country:
+          description: Two letters representing the country.
+          maxLength: 2
+          minLength: 2
+          type: string
+      required:
+      - city
+      - country
+      - postalCode
+      - state
+      - street
+      type: object
+    Phone:
+      example:
+        countryCode: "1"
+        number: "1555555555"
+      properties:
+        countryCode:
+          description: "Country code of the phone number, e.g. \"1\" for US."
+          type: string
+        number:
+          description: "The phone number without the country code, e.g. \"4151193497\"\
+            . For US phone numbers, 10 digits are required."
+          type: string
+      required:
+      - countryCode
+      - number
+      type: object
+    Industry:
+      description: "The business industry. One of: `Retail`, `Wholesale`, `Restaurants`,\
+        \ `Hospitals`, `Construction`, `Insurance`, `Unions`, `RealEstate`, `FreelanceProfessional`,\
+        \ `OtherProfessionalServices`, `OnlineRetailer`, `OtherEducationServices`."
+      enum:
+      - Retail
+      - Wholesale
+      - Restaurants
+      - Hospitals
+      - Construction
+      - Insurance
+      - Unions
+      - RealEstate
+      - FreelanceProfessional
+      - OtherProfessionalServices
+      - OnlineRetailer
+      - OtherEducationServices
+      type: string
+    BusinessContact:
+      example:
+        fullName:
+          first: Richard
+          last: Hendricks
+        email: richard@piedpiper.com
+        phone:
+          countryCode: "1"
+          number: "5555555555"
+      properties:
+        fullName:
+          allOf:
+          - $ref: "#/components/schemas/FullName"
+          description: Full name of the contact.
+        email:
+          description: The contact's email address.
+          type: string
+        phone:
+          allOf:
+          - $ref: "#/components/schemas/Phone"
+          description: The contact's phone number.
+        jwtSubject:
+          description: Optional. See this section for more information.
+          type: string
+      required:
+      - email
+      - fullName
+      - phone
+      type: object
+    Officer:
+      example:
+        status: Approved
+        title: CEO
+        fullName:
+          first: Richard
+          last: Hendricks
+        dateOfBirth: 2001-08-15
+        ssn: "721074426"
+        email: richard@piedpiper.com
+        phone:
+          countryCode: "1"
+          number: "5555555555"
+        address:
+          street: 5230 Newell Rd
+          city: Palo Alto
+          state: CA
+          postalCode: "94303"
+          country: US
+        occupation: ArchitectOrEngineer
+        annualIncome: Between50kAnd100k
+        sourceOfIncome: EmploymentOrPayrollIncome
+      properties:
+        status:
+          description: "One of Approved, Denied or PendingReview."
+          type: string
+        fullName:
+          allOf:
+          - $ref: "#/components/schemas/FullName"
+          description: Full name of the officer.
+        title:
+          description: "One of CEO, COO, CFO, President, BenefitsAdministrationOfficer,\
+            \ CIO, VP, AVP, Treasurer, Secretary, Controller, Manager, Partner or\
+            \ Member."
+          type: string
+        ssn:
+          description: SSN of the officer (numbers only). One of ssn or passport is
+            required.
+          type: string
+        passport:
+          description: Passport of the officer. One of ssn or passport is required.
+          type: string
+        nationality:
+          description: Always when Passport is populated and optional when SSN is
+            populated. Two letters representing the officer's nationality.
+          maxLength: 2
+          minLength: 2
+          type: string
+        dateOfBirth:
+          description: Date only (e.g. "2001-08-15").
+          format: date
+          type: string
+        address:
+          allOf:
+          - $ref: "#/components/schemas/Address"
+          description: The officer's address.
+        phone:
+          allOf:
+          - $ref: "#/components/schemas/Phone"
+          description: The officer's phone number.
+        email:
+          description: The officer's email address.
+          type: string
+        idTheftScore:
+          description: "Optional. Score (0-1000) for ID theft verification, >900 is\
+            \ auto rejected as default (threshold is configurable)."
+          type: number
+        occupation:
+          allOf:
+          - $ref: "#/components/schemas/Occupation"
+          description: Optional. Occupation of the officer.
+        annualIncome:
+          allOf:
+          - $ref: "#/components/schemas/AnnualIncome"
+          description: Optional. Annual income of the officer.
+        sourceOfIncome:
+          allOf:
+          - $ref: "#/components/schemas/SourceOfIncome"
+          description: Optional. Source of income of the officer.
+      required:
+      - address
+      - dateOfBirth
+      - email
+      - fullName
+      - phone
+      - status
+      - title
+      type: object
+    FullName:
+      example:
+        first: Peter
+        last: Parker
+      properties:
+        first:
+          description: Individual first name.
+          type: string
+        last:
+          description: Individual last name.
+          type: string
+      required:
+      - first
+      - last
+      type: object
+    Occupation:
+      description: "The occupation of an individual. One of: `ArchitectOrEngineer`,\
+        \ `BusinessAnalystAccountantOrFinancialAdvisor`, `CommunityAndSocialServicesWorker`,\
+        \ `ConstructionMechanicOrMaintenanceWorker`, `Doctor`, `Educator`, `EntertainmentSportsArtsOrMedia`,\
+        \ `ExecutiveOrManager`, `FarmerFishermanForester`, `FoodServiceWorker`, `GigWorker`,\
+        \ `HospitalityOfficeOrAdministrativeSupportWorker`, `HouseholdManager`, `JanitorHousekeeperLandscaper`,\
+        \ `Lawyer`, `ManufacturingOrProductionWorker`, `MilitaryOrPublicSafety`, `NurseHealthcareTechnicianOrHealthcareSupport`,\
+        \ `PersonalCareOrServiceWorker`, `PilotDriverOperator`, `SalesRepresentativeBrokerAgent`,\
+        \ `ScientistOrTechnologist`, `Student`"
+      enum:
+      - ArchitectOrEngineer
+      - BusinessAnalystAccountantOrFinancialAdvisor
+      - CommunityAndSocialServicesWorker
+      - ConstructionMechanicOrMaintenanceWorker
+      - Doctor
+      - Educator
+      - EntertainmentSportsArtsOrMedia
+      - ExecutiveOrManager
+      - FarmerFishermanForester
+      - FoodServiceWorker
+      - GigWorker
+      - HospitalityOfficeOrAdministrativeSupportWorker
+      - HouseholdManager
+      - JanitorHousekeeperLandscaper
+      - Lawyer
+      - ManufacturingOrProductionWorker
+      - MilitaryOrPublicSafety
+      - NurseHealthcareTechnicianOrHealthcareSupport
+      - PersonalCareOrServiceWorker
+      - PilotDriverOperator
+      - SalesRepresentativeBrokerAgent
+      - ScientistOrTechnologist
+      - Student
+      type: string
+    AnnualIncome:
+      description: The annual income of an individual.
+      enum:
+      - UpTo10k
+      - Between10kAnd25k
+      - Between25kAnd50k
+      - Between50kAnd100k
+      - Between100kAnd250k
+      - Over250k
+      type: string
+    SourceOfIncome:
+      description: "The source of income of an individual. One of: `EmploymentOrPayrollIncome`,\
+        \ `PartTimeOrContractorIncome`, `InheritancesAndGifts`, `PersonalInvestments`,\
+        \ `BusinessOwnershipInterests`, `GovernmentBenefits`."
+      enum:
+      - EmploymentOrPayrollIncome
+      - PartTimeOrContractorIncome
+      - InheritancesAndGifts
+      - PersonalInvestments
+      - BusinessOwnershipInterests
+      - GovernmentBenefits
+      type: string
+    BeneficialOwner:
+      description: "`BeneficialOwner` is a JSON:API resource, top-level fields:"
+      example:
+        type: beneficialOwner
+        id: "5"
+        attributes:
+          address:
+            street: 20 Ingram St
+            street2: "Apt #10"
+            city: Forest Hills
+            state: NY
+            postalCode: "11375"
+            country: US
+          dateOfBirth: 1990-04-05
+          email: erlich@piedpiper.com
+          fullName:
+            first: Erlich
+            last: Bachman
+          phone:
+            countryCode: "1"
+            number: "5555555555"
+          ssn: "721074426"
+          status: Approved
+          occupation: ArchitectOrEngineer
+          annualIncome: Between50kAnd100k
+          sourceOfIncome: EmploymentOrPayrollIncome
+      properties:
+        type:
+          enum:
+          - beneficialOwner
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/BeneficialOwner_attributes"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    AnnualRevenue:
+      description: The annual revenue of a sole proprietor or a business. Union of
+        the business and sole-proprietor value sets; use BusinessAnnualRevenue or
+        SoleProprietorAnnualRevenue for the per-entity subset.
+      enum:
+      - UpTo250k
+      - Between250kAnd500k
+      - Between500kAnd1m
+      - Between1mAnd5m
+      - Over5m
+      - UpTo50k
+      - Between50kAnd100k
+      - Between100kAnd200k
+      - Between200kAnd500k
+      - Over500k
+      type: string
+    BusinessAnnualRevenue:
+      description: The annual revenue of a business.
+      enum:
+      - UpTo250k
+      - Between250kAnd500k
+      - Between500kAnd1m
+      - Between1mAnd5m
+      - Over5m
+      type: string
+    SoleProprietorAnnualRevenue:
+      description: The annual revenue of a sole proprietor.
+      enum:
+      - UpTo50k
+      - Between50kAnd100k
+      - Between100kAnd200k
+      - Between200kAnd500k
+      - Over500k
+      type: string
+    NumberOfEmployees:
+      description: The number of employees of a sole proprietor or a business. Union
+        of the business and sole-proprietor value sets; use BusinessNumberOfEmployees
+        or SoleProprietorNumberOfEmployees for the per-entity subset.
+      enum:
+      - UpTo10
+      - Between10And50
+      - Between50And100
+      - Between100And500
+      - Over500
+      - One
+      - Between2And5
+      - Between5And10
+      - Over10
+      type: string
+    BusinessNumberOfEmployees:
+      description: The number of employees of a business.
+      enum:
+      - UpTo10
+      - Between10And50
+      - Between50And100
+      - Between100And500
+      - Over500
+      type: string
+    SoleProprietorNumberOfEmployees:
+      description: The number of employees of a sole proprietor.
+      enum:
+      - One
+      - Between2And5
+      - Between5And10
+      - Over10
+      type: string
+    CashFlow:
+      description: The cash flow of a business.
+      enum:
+      - Unpredictable
+      - Predictable
+      type: string
+    BusinessVertical:
+      description: The business vertical/industry of a sole proprietor or a business.
+      enum:
+      - AdultEntertainmentDatingOrEscortServices
+      - AdvertisingOrMarketing
+      - AgricultureForestryFishingOrHunting
+      - ArtsEntertainmentAndRecreation
+      - BusinessSupportOrBuildingServices
+      - Cannabis
+      - Construction
+      - DirectMarketingOrTelemarketing
+      - EducationalServices
+      - FinancialServicesCryptocurrency
+      - FinancialServicesDebitCollectionOrConsolidation
+      - FinancialServicesMoneyServicesBusinessOrCurrencyExchange
+      - FinancialServicesOther
+      - FinancialServicesPaydayLending
+      - GamingOrGambling
+      - HealthCareAndSocialAssistance
+      - HospitalityAccommodationOrFoodServices
+      - LegalAccountingConsultingOrComputerProgramming
+      - Manufacturing
+      - Mining
+      - Nutraceuticals
+      - PersonalCareServices
+      - PublicAdministration
+      - RealEstate
+      - ReligiousCivicAndSocialOrganizations
+      - RepairAndMaintenance
+      - RetailTrade
+      - TechnologyMediaOrTelecom
+      - TransportationOrWarehousing
+      - Utilities
+      - WholesaleTrade
+      type: string
+    DeviceFingerprint:
+      description: A device fingerprint used for fraud and risk prevention. See Device
+        Fingerprints.
+      example:
+        value: abc123
+        provider: iovation
+      properties:
+        value:
+          description: The device fingerprint value produced by the provider's SDK.
+          type: string
+        provider:
+          description: The device fingerprint provider (e.g. "iovation").
+          type: string
+      required:
+      - provider
+      - value
+      type: object
+    RequestedProduct:
+      description: A product that can be applied for. Allowed values verified against
+        the Unit sandbox.
+      enum:
+      - Banking
+      - BillPay
+      - Capital
+      - MerchantCashAdvance
+      - CrossBorder
+      type: string
+    BusinessApplication:
+      description: "`BusinessApplication` is a JSON:API resource, top-level fields:"
+      example:
+        type: businessApplication
+        id: "50"
+        attributes:
+          createdAt: 2020-01-13T16:01:19.346Z
+          name: Pied Piper
+          address:
+            street: 5230 Newell Rd
+            city: Palo Alto
+            state: CA
+            postalCode: "94303"
+            country: US
+          phone:
+            countryCode: "1"
+            number: "1555555578"
+          stateOfIncorporation: DE
+          ein: "123456789"
+          entityType: Corporation
+          contact:
+            fullName:
+              first: Richard
+              last: Hendricks
+            email: richard@piedpiper.com
+            phone:
+              countryCode: "1"
+              number: "1555555578"
+          officer:
+            title: CEO
+            fullName:
+              first: Richard
+              last: Hendricks
+            ssn: "123456789"
+            address:
+              street: 5230 Newell Rd
+              city: Palo Alto
+              state: CA
+              postalCode: "94303"
+              country: US
+            dateOfBirth: 2001-08-10
+            email: richard@piedpiper.com
+            phone:
+              countryCode: "1"
+              number: "1555555589"
+            occupation: ArchitectOrEngineer
+            annualIncome: Between10kAnd25k
+            sourceOfIncome: EmploymentOrPayrollIncome
+            status: Approved
+          beneficialOwners:
+          - fullName:
+              first: Richard
+              last: Hendricks
+            ssn: "123456789"
+            address:
+              street: 5230 Newell Rd
+              city: Palo Alto
+              state: CA
+              postalCode: "94303"
+              country: US
+            dateOfBirth: 2001-08-10
+            phone:
+              countryCode: "1"
+              number: "1555555589"
+            email: richard@piedpiper.com
+            occupation: ArchitectOrEngineer
+            annualIncome: Between10kAnd25k
+            sourceOfIncome: EmploymentOrPayrollIncome
+            status: Approved
+          tags:
+            userId: 106a75e9-de77-4e25-9561-faffe59d7814
+          archived: false
+          status: AwaitingDocuments
+          message: Waiting for you to upload the required documents.
+          businessVertical: TechnologyMediaOrTelecom
+          yearOfIncorporation: "2020"
+        relationships:
+          org:
+            data:
+              type: org
+              id: "1"
+          documents:
+            data:
+            - type: document
+              id: "1"
+            - type: document
+              id: "2"
+            - type: document
+              id: "3"
+          applicationForm:
+            data:
+              type: applicationForm
+              id: "3"
+      properties:
+        type:
+          enum:
+          - businessApplication
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/BusinessApplication_attributes"
+        relationships:
+          $ref: "#/components/schemas/BusinessApplication_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    ApplicationDocument:
+      description: "`ApplicationDocument` is a JSON:API resource, top-level fields:"
+      example:
+        type: document
+        id: "3"
+        attributes:
+          documentType: IdDocument
+          status: Approved
+          description: Please provide a copy of your unexpired government issued photo
+            ID which would include Drivers License or State ID.
+          name: Richard Hendricks
+          dateOfBirth: 2001-08-15
+          archived: false
+      properties:
+        type:
+          enum:
+          - document
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/ApplicationDocument_attributes"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    IndividualApplication:
+      description: "`IndividualApplication` is a JSON:API resource, top-level fields:"
+      example:
+        type: individualApplication
+        id: "53"
+        attributes:
+          createdAt: 2020-01-14T14:05:04.718Z
+          fullName:
+            first: Peter
+            last: Parker
+          ssn: "721074426"
+          address:
+            street: 20 Ingram St
+            city: Forest Hills
+            state: NY
+            postalCode: "11375"
+            country: US
+          dateOfBirth: 2001-08-10
+          email: peter@oscorp.com
+          phone:
+            countryCode: "1"
+            number: "1555555578"
+          status: AwaitingDocuments
+          message: Waiting for you to upload the required documents.
+          archived: false
+          tags:
+            userId: 106a75e9-de77-4e25-9561-faffe59d7814
+        relationships:
+          org:
+            data:
+              type: org
+              id: "1"
+          documents:
+            data:
+            - type: document
+              id: "1"
+            - type: document
+              id: "2"
+          applicationForm:
+            data:
+              type: applicationForm
+              id: "3"
+      properties:
+        type:
+          enum:
+          - individualApplication
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/IndividualApplication_attributes"
+        relationships:
+          $ref: "#/components/schemas/IndividualApplication_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    UpdateBusinessApplicationData:
+      properties:
+        type:
+          enum:
+          - businessApplication
+          type: string
+        attributes:
+          $ref: "#/components/schemas/UpdateBusinessApplicationData_attributes"
+      required:
+      - attributes
+      - type
+      type: object
+    UpdateBusinessOfficerData:
+      properties:
+        type:
+          enum:
+          - businessApplication
+          type: string
+        attributes:
+          $ref: "#/components/schemas/UpdateBusinessOfficerData_attributes"
+      required:
+      - attributes
+      - type
+      type: object
+    UpdateIndividualApplicationData:
+      properties:
+        type:
+          enum:
+          - individualApplication
+          type: string
+        attributes:
+          $ref: "#/components/schemas/UpdateIndividualApplicationData_attributes"
+      required:
+      - attributes
+      - type
+      type: object
+    UpdateSoleProprietorApplicationData:
+      properties:
+        type:
+          enum:
+          - individualApplication
+          type: string
+        attributes:
+          $ref: "#/components/schemas/UpdateSoleProprietorApplicationData_attributes"
+      required:
+      - attributes
+      - type
+      type: object
+    UpdateBusinessApplicationRequest:
+      properties:
+        data:
+          $ref: "#/components/schemas/UpdateBusinessApplicationData"
+      required:
+      - data
+      type: object
+    UpdateBusinessOfficerRequest:
+      properties:
+        data:
+          $ref: "#/components/schemas/UpdateBusinessOfficerData"
+      required:
+      - data
+      type: object
+    UpdateIndividualApplicationRequest:
+      properties:
+        data:
+          $ref: "#/components/schemas/UpdateIndividualApplicationData"
+      required:
+      - data
+      type: object
+    UpdateSoleProprietorApplicationRequest:
+      properties:
+        data:
+          $ref: "#/components/schemas/UpdateSoleProprietorApplicationData"
+      required:
+      - data
+      type: object
+    CancelApplicationData:
+      properties:
+        type:
+          enum:
+          - applicationCancel
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CancelApplicationData_attributes"
+      required:
+      - attributes
+      - type
+      type: object
+    CheckRegisteredAgentAddressData:
+      properties:
+        type:
+          enum:
+          - checkRegisteredAgentAddress
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CheckRegisteredAgentAddressData_attributes"
+      required:
+      - attributes
+      - type
+      type: object
+    CheckRegisteredAgentAddress:
+      description: Represents whether the provided address is a Registered Agent address.
+      example:
+        isRegisteredAgentAddress: true
+      properties:
+        isRegisteredAgentAddress:
+          description: Returns whether the provided address is a Registered Agent
+            address.
+          type: boolean
+      required:
+      - isRegisteredAgentAddress
+      type: object
+    UpdateBusinessBeneficialOwnerData:
+      properties:
+        type:
+          enum:
+          - beneficialOwner
+          type: string
+        attributes:
+          $ref: "#/components/schemas/UpdateBusinessBeneficialOwnerData_attributes"
+        relationships:
+          $ref: "#/components/schemas/UpdateBusinessBeneficialOwnerData_relationships"
+      required:
+      - attributes
+      - type
+      type: object
+    BeneficialOwner-2:
+      example:
+        status: Approved
+        fullName:
+          first: Erlich
+          last: Bachman
+        ssn: "721074426"
+        dateOfBirth: 1990-04-05
+        email: erlich@piedpiper.com
+        phone:
+          countryCode: "1"
+          number: "5555555555"
+        address:
+          street: 20 Ingram St
+          city: Forest Hills
+          state: NY
+          postalCode: "11375"
+          country: US
+        percentage: 60
+      properties:
+        status:
+          description: "One of Approved, Denied or PendingReview."
+          type: string
+        fullName:
+          allOf:
+          - $ref: "#/components/schemas/FullName"
+          description: Full name of the beneficial owner.
+        ssn:
+          description: SSN of the beneficial owner (numbers only). One of ssn or passport
+            is required.
+          type: string
+        passport:
+          description: Passport of the beneficial owner. One of ssn or passport is
+            required.
+          type: string
+        nationality:
+          description: Always when Passport is populated and optional when SSN is
+            populated. Two letters representing the beneficial owner's nationality.
+          maxLength: 2
+          minLength: 2
+          type: string
+        dateOfBirth:
+          description: Date only (e.g. "2001-08-15").
+          format: date
+          type: string
+        address:
+          allOf:
+          - $ref: "#/components/schemas/Address"
+          description: The beneficial owner's address.
+        phone:
+          allOf:
+          - $ref: "#/components/schemas/Phone"
+          description: The beneficial owner's phone number.
+        email:
+          description: The beneficial owner's email address.
+          type: string
+        percentage:
+          description: The percentage of ownership of the beneficial owner.
+          type: integer
+        occupation:
+          allOf:
+          - $ref: "#/components/schemas/Occupation"
+          description: Optional. Occupation of the beneficial owner.
+        annualIncome:
+          allOf:
+          - $ref: "#/components/schemas/AnnualIncome"
+          description: Optional. Annual income of the beneficial owner.
+        sourceOfIncome:
+          allOf:
+          - $ref: "#/components/schemas/SourceOfIncome"
+          description: Optional. Source of income of the beneficial owner.
+      required:
+      - address
+      - dateOfBirth
+      - email
+      - fullName
+      - phone
+      - status
+      type: object
+    OfficerRequest:
+      example:
+        fullName:
+          first: Richard
+          last: Hendricks
+        dateOfBirth: 2001-08-10
+        title: CEO
+        ssn: "721074426"
+        email: richard@piedpiper.com
+        phone:
+          countryCode: "1"
+          number: "5555555555"
+        address:
+          street: 5230 Newell Rd
+          city: Palo Alto
+          state: CA
+          postalCode: "94303"
+          country: US
+      properties:
+        fullName:
+          allOf:
+          - $ref: "#/components/schemas/FullName"
+          description: Full name of the officer.
+        title:
+          description: "One of CEO, COO, CFO, President, BenefitsAdministrationOfficer,\
+            \ CIO, VP, AVP, Treasurer, Secretary, Controller, Manager, Partner or\
+            \ Member."
+          type: string
+        ssn:
+          description: SSN of the officer (numbers only). One of ssn or passport is
+            required.
+          type: string
+        passport:
+          description: Passport of the officer. One of ssn or passport is required.
+          type: string
+        nationality:
+          description: Required when passport is populated. Two letters representing
+            the officer's nationality.
+          maxLength: 2
+          minLength: 2
+          type: string
+        dateOfBirth:
+          description: Date only (e.g. "2001-08-15").
+          type: string
+        address:
+          allOf:
+          - $ref: "#/components/schemas/Address"
+          description: The officer's address.
+        phone:
+          allOf:
+          - $ref: "#/components/schemas/Phone"
+          description: The officer's phone number.
+        email:
+          description: The officer's email address.
+          type: string
+        occupation:
+          description: Optional. Occupation of the officer.
+          type: string
+        annualIncome:
+          description: Optional. Annual income of the officer.
+          type: string
+        sourceOfIncome:
+          description: Optional. Source of income of the officer.
+          type: string
+      required:
+      - address
+      - dateOfBirth
+      - email
+      - fullName
+      - phone
+      - title
+      type: object
+    BeneficialOwnerRequest:
+      example:
+        fullName:
+          first: Richard
+          last: Hendricks
+        dateOfBirth: 2001-08-10
+        ssn: "123456789"
+        email: richard@piedpiper.com
+        percentage: 75
+        phone:
+          countryCode: "1"
+          number: "5555555555"
+        address:
+          street: 5230 Newell Rd
+          city: Palo Alto
+          state: CA
+          postalCode: "94303"
+          country: US
+      properties:
+        fullName:
+          allOf:
+          - $ref: "#/components/schemas/FullName"
+          description: Full name of the beneficial owner.
+        ssn:
+          description: SSN of the beneficial owner (numbers only). One of ssn or passport
+            is required.
+          type: string
+        passport:
+          description: Passport of the beneficial owner. One of ssn or passport is
+            required.
+          type: string
+        nationality:
+          description: Required when passport is populated. Two letters representing
+            the beneficial owner's nationality.
+          maxLength: 2
+          minLength: 2
+          type: string
+        dateOfBirth:
+          description: Date only (e.g. "2001-08-15").
+          type: string
+        address:
+          allOf:
+          - $ref: "#/components/schemas/Address"
+          description: The beneficial owner's address.
+        phone:
+          allOf:
+          - $ref: "#/components/schemas/Phone"
+          description: The beneficial owner's phone number.
+        email:
+          description: The beneficial owner's email address.
+          type: string
+        percentage:
+          description: The percentage of ownership of the beneficial owner (between
+            25 and 100).
+          type: integer
+        occupation:
+          description: Optional. Occupation of the beneficial owner.
+          type: string
+        annualIncome:
+          description: Optional. Annual income of the beneficial owner.
+          type: string
+        sourceOfIncome:
+          description: Optional. Source of income of the beneficial owner.
+          type: string
+      required:
+      - address
+      - dateOfBirth
+      - email
+      - fullName
+      - phone
+      type: object
+    list_200_response_data_inner:
+      discriminator:
+        mapping:
+          individualApplication: "#/components/schemas/IndividualApplication"
+          businessApplication: "#/components/schemas/BusinessApplication"
+        propertyName: type
+      oneOf:
+      - $ref: "#/components/schemas/IndividualApplication"
+      - $ref: "#/components/schemas/BusinessApplication"
+    list_200_response:
+      properties:
+        data:
+          items:
+            $ref: "#/components/schemas/list_200_response_data_inner"
+          type: array
+        meta:
+          $ref: "#/components/schemas/Meta"
+      required:
+      - data
+      type: object
+    createApplication_request:
+      oneOf:
+      - $ref: "#/components/schemas/CreateBusinessApplicationRequest"
+      - $ref: "#/components/schemas/CreateIndividualApplicationRequest"
+      - $ref: "#/components/schemas/CreateSoleProprietorApplicationRequest"
+    createApplication_201_response_included_inner:
+      discriminator:
+        mapping:
+          document: "#/components/schemas/ApplicationDocument"
+          beneficialOwner: "#/components/schemas/BeneficialOwner"
+        propertyName: type
+      oneOf:
+      - $ref: "#/components/schemas/ApplicationDocument"
+      - $ref: "#/components/schemas/BeneficialOwner"
+    createApplication_201_response:
+      properties:
+        data:
+          $ref: "#/components/schemas/list_200_response_data_inner"
+        included:
+          items:
+            $ref: "#/components/schemas/createApplication_201_response_included_inner"
+          type: array
+      required:
+      - data
+      type: object
+    updateApplication_request:
+      oneOf:
+      - $ref: "#/components/schemas/UpdateBusinessApplicationRequest"
+      - $ref: "#/components/schemas/UpdateBusinessOfficerRequest"
+      - $ref: "#/components/schemas/UpdateIndividualApplicationRequest"
+      - $ref: "#/components/schemas/UpdateSoleProprietorApplicationRequest"
+    cancelApplication_request:
+      properties:
+        data:
+          $ref: "#/components/schemas/CancelApplicationData"
+      required:
+      - data
+      type: object
+    cancelApplication_201_response:
+      properties:
+        data:
+          $ref: "#/components/schemas/list_200_response_data_inner"
+        included:
+          items:
+            $ref: "#/components/schemas/ApplicationDocument"
+          type: array
+      required:
+      - data
+      type: object
+    checkRegisteredAgentAddress_request:
+      properties:
+        data:
+          $ref: "#/components/schemas/CheckRegisteredAgentAddressData"
+      required:
+      - data
+      type: object
+    checkRegisteredAgentAddress_200_response_data_attributes:
+      properties:
+        isRegisteredAgentAddress:
+          description: Returns whether the provided address is a Registered Agent
+            address.
+          type: boolean
+      required:
+      - isRegisteredAgentAddress
+      type: object
+    checkRegisteredAgentAddress_200_response_data:
+      properties:
+        type:
+          enum:
+          - checkRegisteredAgentAddress
+          type: string
+        attributes:
+          $ref: "#/components/schemas/checkRegisteredAgentAddress_200_response_data_attributes"
+      required:
+      - attributes
+      - type
+      type: object
+    checkRegisteredAgentAddress_200_response:
+      properties:
+        data:
+          $ref: "#/components/schemas/checkRegisteredAgentAddress_200_response_data"
+      required:
+      - data
+      type: object
+    updateBusinessBeneficialOwner_request:
+      properties:
+        data:
+          $ref: "#/components/schemas/UpdateBusinessBeneficialOwnerData"
+      required:
+      - data
+      type: object
+    updateBusinessBeneficialOwner_201_response:
+      properties:
+        data:
+          $ref: "#/components/schemas/BeneficialOwner"
+      required:
+      - data
+      type: object
+    Relationship_data:
+      nullable: true
+      oneOf:
+      - $ref: "#/components/schemas/ResourceIdentifier"
+      - items:
+          $ref: "#/components/schemas/ResourceIdentifier"
+        type: array
+      type: object
+    Meta_pagination:
+      properties:
+        total:
+          type: integer
+        limit:
+          type: integer
+        offset:
+          type: integer
+      type: object
+    ErrorDocument_errors_inner_source:
+      additionalProperties: true
+      properties:
+        pointer:
+          description: JSON Pointer to the request field that caused the error (e.g.
+            "/data/attributes/name").
+          type: string
+      type: object
+    ErrorDocument_errors_inner:
+      properties:
+        status:
+          type: string
+        title:
+          type: string
+        detail:
+          type: string
+        details:
+          description: Alias of `detail` returned by the Unit API for some errors.
+          type: string
+        code:
+          type: string
+        source:
+          $ref: "#/components/schemas/ErrorDocument_errors_inner_source"
+      type: object
+    CreateBusinessApplicationData_attributes:
+      properties:
+        name:
+          description: Name of the business.
+          example: Pied Piper
+          type: string
+        dba:
+          description: Optional. "Doing business as".
+          type: string
+        address:
+          allOf:
+          - $ref: "#/components/schemas/Address"
+          description: Address of the business. Must be a US address
+        phone:
+          allOf:
+          - $ref: "#/components/schemas/Phone"
+          description: Phone number of the business.
+        stateOfIncorporation:
+          description: Two letters representing a US state.
+          example: DE
+          type: string
+        ein:
+          description: Business EIN (numbers only).
+          example: "123456789"
+          type: string
+        entityType:
+          description: "The business entity type. Documented values are LLC, Partnership,\
+            \ PubliclyTradedCorporation, PrivatelyHeldCorporation and NotForProfitOrganization,\
+            \ but the sandbox also accepts Corporation, so the documented list is\
+            \ not exhaustive. Kept as a free-form string (not a strict enum) to avoid\
+            \ rejecting values the live API accepts."
+          example: Corporation
+          type: string
+        website:
+          description: A Valid website Url. Providing a null value is indicative of
+            the business customer attesting that they do not have a website.
+          example: https://www.piedpiper.com
+          nullable: true
+          type: string
+        contact:
+          allOf:
+          - $ref: "#/components/schemas/BusinessContact"
+          description: Primary contact of the business. This person is the one that
+            will have access to the account.
+        officer:
+          allOf:
+          - $ref: "#/components/schemas/OfficerRequest"
+          description: "Officer representing the business (must be the CEO, COO, CFO,\
+            \ President, BenefitsAdministrationOfficer, CIO, VP, AVP, Treasurer, Secretary,\
+            \ Controller, Manager, Partner or Member). To onboard a business successfully,\
+            \ you must provide the officer's personal details."
+        beneficialOwners:
+          description: "Array of beneficial owners in the business. Beneficial owners\
+            \ are all people that, directly or indirectly, own 25% or more of the\
+            \ business. To onboard a business successfully, you must provide each\
+            \ beneficial owner's personal details. If the business has no beneficial\
+            \ owners, the array should be empty."
+          items:
+            $ref: "#/components/schemas/BeneficialOwnerRequest"
+          type: array
+        annualRevenue:
+          allOf:
+          - $ref: "#/components/schemas/BusinessAnnualRevenue"
+          description: Required if any of the officer / BeneficialOwner of the business
+            have a non US nationality. Annual revenue of the business.
+        numberOfEmployees:
+          allOf:
+          - $ref: "#/components/schemas/BusinessNumberOfEmployees"
+          description: Required if any of the officer / BeneficialOwner of the business
+            have a non US nationality. Number of employees of the business.
+        cashFlow:
+          allOf:
+          - $ref: "#/components/schemas/CashFlow"
+          description: Required if any of the officer / BeneficialOwner of the business
+            have a non US nationality. Cash flow of the business.
+          example: Predictable
+        yearOfIncorporation:
+          description: "Required. Year of incorporation of the business as a 4-digit\
+            \ year string (e.g., \"2014\")."
+          example: "2014"
+          type: string
+        countriesOfOperation:
+          description: Required if any of the officer / BeneficialOwner of the business
+            have a non US nationality. An array of two letter codes representing the
+            countries of operation of the business.
+          example:
+          - US
+          - CA
+          items:
+            type: string
+          type: array
+        stockSymbol:
+          description: Optional. The stock symbol (ticker) of the business.
+          example: PPI
+          type: string
+        businessVertical:
+          allOf:
+          - $ref: "#/components/schemas/BusinessVertical"
+          description: The business vertical of the business.
+          example: TechnologyMediaOrTelecom
+        ip:
+          description: "Optional. IP address of the end-customer creating the application.\
+            \ Both IPv4 and IPv6 formats are supported. Highly recommended as a fraud\
+            \ prevention measure, if the information is available when submitting\
+            \ the application."
+          example: 127.0.0.2
+          type: string
+        tags:
+          additionalProperties: true
+          description: Optional. See Tags. Tags that will be copied to the customer
+            that this application creates (see Tag Inheritance).
+          example:
+            userId: 2ab1f266-04b9-41fb-b728-cd1962bca52c
+          type: object
+        idempotencyKey:
+          description: Optional. See Idempotency.
+          example: 3a1a33be-4e12-4603-9ed0-820922389fb8
+          type: string
+        deviceFingerprints:
+          description: Optional. A list of device fingerprints for fraud and risk
+            prevention (See Device Fingerprints).
+          items:
+            $ref: "#/components/schemas/DeviceFingerprint"
+          type: array
+        banks:
+          description: "Optional. The name of the bank or banks that should be associated\
+            \ with this application. If not specified, the application will be associated\
+            \ with the Org's default bank (visible via Org Settings in the Dashboard)."
+          items:
+            type: string
+          type: array
+        requestedProducts:
+          description: Optional. The product being applied for. Contact Unit to enable
+            BillPay and Capital products.
+          items:
+            $ref: "#/components/schemas/RequestedProduct"
+          type: array
+      required:
+      - address
+      - annualRevenue
+      - beneficialOwners
+      - businessVertical
+      - cashFlow
+      - contact
+      - countriesOfOperation
+      - ein
+      - entityType
+      - name
+      - numberOfEmployees
+      - officer
+      - phone
+      - stateOfIncorporation
+      - website
+      - yearOfIncorporation
+      type: object
+    CreateIndividualApplicationData_attributes:
+      properties:
+        ssn:
+          description: SSN (or ITIN) of the individual (numbers only). Either an ssn
+            or passport is required. It is optional to provide only last 4 SSN digits.
+          example: "721074426"
+          type: string
+        passport:
+          description: Passport number of the individual. Valid only for non-US persons.
+            Either an ssn or passport number is required.
+          type: string
+        nationality:
+          description: Required if a passport is used as the main ID. Two letters
+            representing the individual nationality. (e.g. "US").
+          type: string
+        fullName:
+          allOf:
+          - $ref: "#/components/schemas/FullName"
+          description: Full name of the individual.
+        dateOfBirth:
+          description: Date only (e.g. "2001-08-15").
+          example: 2001-08-10
+          type: string
+        address:
+          allOf:
+          - $ref: "#/components/schemas/Address"
+          description: Address of the individual. Must be a US address.
+        phone:
+          allOf:
+          - $ref: "#/components/schemas/Phone"
+          description: Phone number of the individual.
+        email:
+          description: Email address of the individual.
+          example: peter@oscorp.com
+          type: string
+        evaluationParams:
+          description: Optional. Evaluation Params for this entity.
+          type: string
+        occupation:
+          allOf:
+          - $ref: "#/components/schemas/Occupation"
+          description: Occupation of the individual.
+          example: ArchitectOrEngineer
+        annualIncome:
+          allOf:
+          - $ref: "#/components/schemas/AnnualIncome"
+          description: Required if nationality is not US. Annual income of the individual.
+          example: Between50kAnd100k
+        sourceOfIncome:
+          allOf:
+          - $ref: "#/components/schemas/SourceOfIncome"
+          description: Required if nationality is not US. Source of income of the
+            individual.
+          example: EmploymentOrPayrollIncome
+        ip:
+          description: "Optional. IP address of the end-customer creating the application.\
+            \ Both IPv4 and IPv6 formats are supported. Highly recommended as a fraud\
+            \ prevention measure, if the information is available when submitting\
+            \ the application."
+          example: 127.0.0.2
+          type: string
+        tags:
+          additionalProperties: true
+          description: Optional. See Tags. Tags that will be copied to the customer
+            that this application creates (see Tag Inheritance).
+          example:
+            userId: 106a75e9-de77-4e25-9561-faffe59d7814
+          type: object
+        idempotencyKey:
+          description: Optional. See Idempotency.
+          example: 3a1a33be-4e12-4603-9ed0-820922389fb8
+          type: string
+        deviceFingerprints:
+          description: Optional. A list of device fingerprints for fraud and risk
+            prevention (See Device Fingerprints).
+          items:
+            $ref: "#/components/schemas/DeviceFingerprint"
+          type: array
+        jwtSubject:
+          description: Optional. See this section for more information.
+          type: string
+        banks:
+          description: "Optional. The name of the bank or banks that should be associated\
+            \ with this application. If not specified, the application will be associated\
+            \ with the Org's default bank (visible via Org Settings in the Dashboard)."
+          items:
+            type: string
+          type: array
+      required:
+      - address
+      - annualIncome
+      - dateOfBirth
+      - email
+      - fullName
+      - occupation
+      - phone
+      - sourceOfIncome
+      type: object
+    CreateSoleProprietorApplicationData_attributes:
+      properties:
+        ssn:
+          description: SSN (or ITIN) of the individual (numbers only). Either an ssn
+            or passport is required.
+          example: "721074426"
+          type: string
+        passport:
+          description: Passport number of the individual. Valid only for non-US persons.
+            Either an ssn or passport number is required.
+          type: string
+        nationality:
+          description: Required if a passport is used as the main ID. Two letters
+            representing the individual nationality. (e.g. "US").
+          type: string
+        fullName:
+          allOf:
+          - $ref: "#/components/schemas/FullName"
+          description: Full name of the individual.
+        dateOfBirth:
+          description: Date only (e.g. "2001-08-15").
+          example: 2001-08-10
+          type: string
+        address:
+          allOf:
+          - $ref: "#/components/schemas/Address"
+          description: Address of the individual. Must be a US address.
+        phone:
+          allOf:
+          - $ref: "#/components/schemas/Phone"
+          description: Phone number of the individual.
+        email:
+          description: Email address of the individual.
+          example: peter@oscorp.com
+          type: string
+        soleProprietorship:
+          description: Set this to true in order to indicate that the individual is
+            a sole proprietor.
+          example: true
+          type: boolean
+        ein:
+          description: "Optional. If the individual is a sole proprietor who has an\
+            \ Employer Identification Number, specify it here. Not all sole proprietors\
+            \ have an EIN, so this attribute is optional, even when soleProprietorship\
+            \ is set to true."
+          example: "123456789"
+          type: string
+        dba:
+          description: "Optional. If the individual is a sole proprietor who is doing\
+            \ business under a different name, specify it here. This attribute is\
+            \ optional, even when soleProprietorship is set to true."
+          example: Piedpiper Inc
+          type: string
+        evaluationParams:
+          description: Optional. Evaluation Params for this entity.
+          type: string
+        annualRevenue:
+          allOf:
+          - $ref: "#/components/schemas/SoleProprietorAnnualRevenue"
+          description: "Required if nationality is not US. For sole proprietors, specify\
+            \ the annual revenue here."
+        numberOfEmployees:
+          allOf:
+          - $ref: "#/components/schemas/SoleProprietorNumberOfEmployees"
+          description: "Required if nationality is not US. For sole proprietors, specify\
+            \ the number of employees here."
+        businessVertical:
+          allOf:
+          - $ref: "#/components/schemas/BusinessVertical"
+          description: "For sole proprietors, specify the business vertical here."
+          example: TechnologyMediaOrTelecom
+        website:
+          description: A Valid website Url. Providing a null value is indicative of
+            the business customer attesting that they do not have a website.
+          example: https://www.piedpiper.com
+          nullable: true
+          type: string
+        ip:
+          description: "Optional. IP address of the end-customer creating the application.\
+            \ Both IPv4 and IPv6 formats are supported. Highly recommended as a fraud\
+            \ prevention measure, if the information is available when submitting\
+            \ the application."
+          example: 127.0.0.2
+          type: string
+        tags:
+          additionalProperties: true
+          description: Optional. See Tags. Tags that will be copied to the customer
+            that this application creates (see Tag Inheritance).
+          example:
+            userId: 106a75e9-de77-4e25-9561-faffe59d7814
+          type: object
+        idempotencyKey:
+          description: Optional. See Idempotency.
+          example: 3a1a33be-4e12-4603-9ed0-820922389fb8
+          type: string
+        deviceFingerprints:
+          description: Optional. A list of device fingerprints for fraud and risk
+            prevention (See Device Fingerprints).
+          items:
+            $ref: "#/components/schemas/DeviceFingerprint"
+          type: array
+        jwtSubject:
+          description: Optional. See this section for more information.
+          type: string
+        banks:
+          description: "Optional. The name of the bank or banks that should be associated\
+            \ with this application. If not specified, the application will be associated\
+            \ with the Org's default bank (visible via Org Settings in the Dashboard)."
+          items:
+            type: string
+          type: array
+        requestedProducts:
+          description: Optional. The product being applied for. Contact Unit to enable
+            BillPay and Capital products.
+          items:
+            $ref: "#/components/schemas/RequestedProduct"
+          type: array
+      required:
+      - address
+      - annualRevenue
+      - businessVertical
+      - dateOfBirth
+      - email
+      - fullName
+      - numberOfEmployees
+      - phone
+      - soleProprietorship
+      - website
+      type: object
+    BeneficialOwner_attributes:
+      properties:
+        status:
+          description: "One of Approved, Denied or PendingReview."
+          type: string
+        fullName:
+          allOf:
+          - $ref: "#/components/schemas/FullName"
+          description: Full name of the beneficial owner.
+        ssn:
+          description: SSN of the beneficial owner (numbers only). One of ssn or passport
+            is required.
+          type: string
+        passport:
+          description: Passport of the beneficial owner. One of ssn or passport is
+            required.
+          type: string
+        nationality:
+          description: Always when Passport is populated and optional when SSN is
+            populated. Two letters representing the beneficial owner's nationality.
+          maxLength: 2
+          minLength: 2
+          type: string
+        dateOfBirth:
+          description: Date only (e.g. "2001-08-15").
+          format: date
+          type: string
+        address:
+          allOf:
+          - $ref: "#/components/schemas/Address"
+          description: The beneficial owner's address.
+        phone:
+          allOf:
+          - $ref: "#/components/schemas/Phone"
+          description: The beneficial owner's phone number.
+        email:
+          description: The beneficial owner's email address.
+          type: string
+        occupation:
+          allOf:
+          - $ref: "#/components/schemas/Occupation"
+          description: Optional. Occupation of the beneficial owner.
+        annualIncome:
+          allOf:
+          - $ref: "#/components/schemas/AnnualIncome"
+          description: Optional. Annual income of the beneficial owner.
+        sourceOfIncome:
+          allOf:
+          - $ref: "#/components/schemas/SourceOfIncome"
+          description: Optional. Source of income of the beneficial owner.
+      required:
+      - address
+      - dateOfBirth
+      - email
+      - fullName
+      - phone
+      - status
+      type: object
+    BusinessApplication_attributes:
+      properties:
+        status:
+          description: "One of AwaitingDocuments, PendingReview, Approved, Denied\
+            \ or Pending, see Application Statuses."
+          type: string
+        message:
+          description: A message describing the BusinessApplication status.
+          type: string
+        createdAt:
+          description: The date the resource was created.
+          format: date-time
+          type: string
+        updatedAt:
+          description: Optional. The date the resource was updated.
+          format: date-time
+          type: string
+        name:
+          description: Name of the business.
+          type: string
+        dba:
+          description: Optional. "Doing business as".
+          type: string
+        address:
+          allOf:
+          - $ref: "#/components/schemas/Address"
+          description: Address of the business.
+        operatingAddress:
+          allOf:
+          - $ref: "#/components/schemas/Address"
+          description: Optional. The operating address of the business. Required when
+            the address is of a registered agent or if any beneficial owner or officer
+            is non-US.
+        phone:
+          allOf:
+          - $ref: "#/components/schemas/Phone"
+          description: Phone of the business.
+        stateOfIncorporation:
+          description: Two letters representing a US state.
+          type: string
+        ein:
+          description: Business EIN (numbers only).
+          type: string
+        industry:
+          allOf:
+          - $ref: "#/components/schemas/Industry"
+          description: "Optional. Business industry, if specified."
+        entityType:
+          description: "The business entity type. Documented values are LLC, Partnership,\
+            \ PubliclyTradedCorporation, PrivatelyHeldCorporation and NotForProfitOrganization,\
+            \ but the live API also returns Corporation, so the documented list is\
+            \ not exhaustive. Kept as a free-form string (not a strict enum) to avoid\
+            \ breaking strict client deserialization on undocumented values."
+          type: string
+        website:
+          description: Optional. Business's website.
+          type: string
+        contact:
+          allOf:
+          - $ref: "#/components/schemas/BusinessContact"
+          description: Primary contact of the business.
+        officer:
+          allOf:
+          - $ref: "#/components/schemas/Officer"
+          description: "Officer representing the business, must be the CEO, COO, CFO,\
+            \ President, BenefitsAdministrationOfficer, CIO, VP, AVP, Treasurer, Secretary,\
+            \ Controller, Manager, Partner or Member. The officer would need to go\
+            \ over KYC process and provide documents."
+        beneficialOwners:
+          items:
+            allOf:
+            - $ref: "#/components/schemas/BeneficialOwner-2"
+            description: Array of beneficial owners of the business. Beneficial Owner
+              is anyone with more than 25% ownership. Beneficial Owners would need
+              to go over KYC process and provide documents.
+          type: array
+        annualRevenue:
+          allOf:
+          - $ref: "#/components/schemas/AnnualRevenue"
+          description: Optional. Annual revenue of the business.
+        numberOfEmployees:
+          allOf:
+          - $ref: "#/components/schemas/NumberOfEmployees"
+          description: Optional. Number of employees of the business.
+        cashFlow:
+          allOf:
+          - $ref: "#/components/schemas/CashFlow"
+          description: Optional. Cash flow of the business.
+        yearOfIncorporation:
+          description: Year of incorporation of the business.
+          pattern: "^\\d{4}$"
+          type: string
+        countriesOfOperation:
+          description: Optional. An array of two letter codes representing the countries
+            of operation of the business.
+          items:
+            description: ISO31661-Alpha2 strings
+            type: string
+          type: array
+        stockSymbol:
+          description: Optional. The stock symbol (ticker) of the business.
+          type: string
+        businessVertical:
+          allOf:
+          - $ref: "#/components/schemas/BusinessVertical"
+          description: The business vertical of the business.
+        ip:
+          description: "Optional. IP address of the end-customer creating the application.\
+            \ Both IPv4 and IPv6 formats are supported. Highly recommended as a fraud\
+            \ prevention measure, if the information is available when submitting\
+            \ the application."
+          type: string
+        archived:
+          description: Indicates whether the application has been archived. Archived
+            applications are read-only and no changes can be made to them. An application
+            becomes archived once the corresponding customer is archived.
+          type: boolean
+        tags:
+          additionalProperties: true
+          description: See Tags.
+          type: object
+      required:
+      - address
+      - archived
+      - beneficialOwners
+      - businessVertical
+      - contact
+      - createdAt
+      - ein
+      - entityType
+      - message
+      - name
+      - officer
+      - phone
+      - stateOfIncorporation
+      - status
+      - tags
+      - yearOfIncorporation
+      type: object
+    BusinessApplication_relationships:
+      properties:
+        org:
+          $ref: "#/components/schemas/Relationship"
+        customer:
+          $ref: "#/components/schemas/Relationship"
+        officer:
+          $ref: "#/components/schemas/Relationship"
+        beneficialOwners:
+          $ref: "#/components/schemas/ToManyRelationship"
+        documents:
+          $ref: "#/components/schemas/ToManyRelationship"
+        applicationForm:
+          $ref: "#/components/schemas/Relationship"
+      type: object
+    ApplicationDocument_attributes:
+      properties:
+        status:
+          description: "One of Required, ReceivedBack, ReceivedFront, Invalid, Approved\
+            \ or PendingReview, see Application Document Status."
+          type: string
+        documentType:
+          description: "One of IdDocument, Passport, AddressVerification, CertificateOfIncorporation,\
+            \ EmployerIdentificationNumberConfirmation, SocialSecurityCard, ClientRequested\
+            \ or SelfieVerification."
+          type: string
+        description:
+          description: The document requirements description.
+          type: string
+        name:
+          description: Name of business or individual.
+          type: string
+        address:
+          allOf:
+          - $ref: "#/components/schemas/Address"
+          description: "Individual address, present only for the AddressVerification\
+            \ document type."
+        dateOfBirth:
+          description: Date only (e.g. "2001-08-15"). Present only for Passport and
+            IdDocument document types.
+          format: date
+          type: string
+        passport:
+          description: Individual passport number. Present only for the Passport document
+            type.
+          type: string
+        ein:
+          description: Business EIN. Present only for the EmployerIdentificationNumberConfirmation
+            document type.
+          type: string
+        reasonCode:
+          description: "Application Document rejection reason code. Present only when\
+            \ document status is Invalid. One of PoorQuality, NameMismatch, SSNMismatch,\
+            \ AddressMismatch, DOBMismatch, ExpiredId, EINMismatch, StateMismatch,\
+            \ Other."
+          type: string
+        reason:
+          description: Application Document rejection reason. Present only when document
+            status is Invalid.
+          type: string
+        archived:
+          description: "When true , uploading a document is disabled."
+          type: boolean
+      required:
+      - archived
+      - description
+      - documentType
+      - name
+      - status
+      type: object
+    IndividualApplication_attributes:
+      properties:
+        status:
+          description: "One of AwaitingDocuments, PendingReview, Approved, Denied\
+            \ or Pending, see Application Statuses."
+          type: string
+        message:
+          description: A message describing the IndividualApplication status.
+          type: string
+        createdAt:
+          description: The date the resource was created.
+          format: date-time
+          type: string
+        updatedAt:
+          description: Optional. The date the resource was updated.
+          format: date-time
+          type: string
+        ssn:
+          description: SSN of the individual (numbers only). Either ssn or passport
+            will be populated.
+          type: string
+        passport:
+          description: Individual passport number. Either ssn or passport will be
+            populated.
+          type: string
+        nationality:
+          description: Always when Passport is populated and optional when SSN is
+            populated. Two letters representing the individual nationality (e.g. "US").
+          maxLength: 2
+          minLength: 2
+          type: string
+        fullName:
+          allOf:
+          - $ref: "#/components/schemas/FullName"
+          description: Full name of the individual.
+        dateOfBirth:
+          description: Date only (e.g. "2001-08-15").
+          format: date
+          type: string
+        address:
+          allOf:
+          - $ref: "#/components/schemas/Address"
+          description: Address of the individual.
+        phone:
+          allOf:
+          - $ref: "#/components/schemas/Phone"
+          description: Phone of the individual.
+        email:
+          description: Email address of the individual.
+          type: string
+        ip:
+          description: "IP address of the end-customer creating the application, if\
+            \ specified."
+          type: string
+        soleProprietorship:
+          description: "Optional. Indicates whether the individual is a sole proprietor,\
+            \ if specified."
+          type: boolean
+        ein:
+          description: "Optional. Indicates if the individual is a sole proprietor\
+            \ who has an Employer Identification Number, if specified."
+          type: string
+        industry:
+          allOf:
+          - $ref: "#/components/schemas/Industry"
+          description: "Optional. Indicates if the individual is a sole proprietor\
+            \ who has a business industry, if specified."
+        dba:
+          description: "Optional. Indicates if the individual is a sole proprietor\
+            \ who is doing business under a different name, if specified."
+          type: string
+        archived:
+          description: "Indicates whether the application has been archived. Archived\
+            \ applications are read-only and no changes can be made to them. Once\
+            \ an application has been archived, a new application with the same SSN\
+            \ (or Passport) may be submitted. An application becomes archived once\
+            \ the corresponding customer is archived."
+          type: boolean
+        idTheftScore:
+          description: "Optional. Score (0-1000) for ID theft verification, >900 is\
+            \ auto rejected as default (threshold is configurable)."
+          type: number
+        tags:
+          additionalProperties: true
+          description: See Tags.
+          type: object
+      required:
+      - address
+      - archived
+      - createdAt
+      - dateOfBirth
+      - email
+      - fullName
+      - message
+      - phone
+      - status
+      - tags
+      type: object
+    IndividualApplication_relationships:
+      properties:
+        org:
+          $ref: "#/components/schemas/Relationship"
+        customer:
+          $ref: "#/components/schemas/Relationship"
+        documents:
+          $ref: "#/components/schemas/ToManyRelationship"
+        applicationForm:
+          $ref: "#/components/schemas/Relationship"
+      type: object
+    UpdateBusinessApplicationData_attributes:
+      properties:
+        tags:
+          additionalProperties: true
+          description: See Updating Tags.
+          example:
+            by: Richard Hendricks
+            id: 23033b64-38f8-4dbc-91a1-313ff0156d02
+          type: object
+        annualRevenue:
+          allOf:
+          - $ref: "#/components/schemas/BusinessAnnualRevenue"
+          description: Optional. Annual revenue of the business.
+        numberOfEmployees:
+          allOf:
+          - $ref: "#/components/schemas/BusinessNumberOfEmployees"
+          description: Optional. Number of employees of the business.
+        cashFlow:
+          allOf:
+          - $ref: "#/components/schemas/CashFlow"
+          description: Optional. Cash flow of the business.
+          example: Predictable
+        yearOfIncorporation:
+          description: Optional. Year of incorporation of the business.
+          example: "2014"
+          type: string
+        countriesOfOperation:
+          description: Optional. An array of two letter codes representing the countries
+            of operation of the business.
+          example:
+          - US
+          - CA
+          items:
+            type: string
+          type: array
+        stockSymbol:
+          description: Optional. The stock symbol (ticker) of the business.
+          example: PPI
+          type: string
+        website:
+          description: Optional. A Valid website Url.
+          type: string
+        businessVertical:
+          allOf:
+          - $ref: "#/components/schemas/BusinessVertical"
+          description: Optional. The business vertical of the business.
+          example: TechnologyMediaOrTelecom
+      required:
+      - tags
+      type: object
+    UpdateBusinessOfficerData_attributes:
+      properties:
+        officer.occupation:
+          allOf:
+          - $ref: "#/components/schemas/Occupation"
+          description: Optional. Occupation of the officer.
+          example: ArchitectOrEngineer
+        officer.annualIncome:
+          allOf:
+          - $ref: "#/components/schemas/AnnualIncome"
+          description: Optional. Annual income of the officer.
+          example: Between10kAnd25k
+        officer.sourceOfIncome:
+          allOf:
+          - $ref: "#/components/schemas/SourceOfIncome"
+          description: Optional. Source of income of the officer.
+          example: EmploymentOrPayrollIncome
+      type: object
+    UpdateIndividualApplicationData_attributes:
+      properties:
+        tags:
+          additionalProperties: true
+          description: See Updating Tags.
+          example:
+            by: Richard Hendricks
+            id: 23033b64-38f8-4dbc-91a1-313ff0156d02
+          type: object
+        occupation:
+          allOf:
+          - $ref: "#/components/schemas/Occupation"
+          description: Optional. Occupation of the individual.
+          example: ArchitectOrEngineer
+        annualIncome:
+          allOf:
+          - $ref: "#/components/schemas/AnnualIncome"
+          description: Optional. Annual income of the individual.
+          example: Between10kAnd25k
+        sourceOfIncome:
+          allOf:
+          - $ref: "#/components/schemas/SourceOfIncome"
+          description: Optional. Source of income of the individual.
+          example: EmploymentOrPayrollIncome
+      required:
+      - tags
+      type: object
+    UpdateSoleProprietorApplicationData_attributes:
+      properties:
+        tags:
+          additionalProperties: true
+          description: See Updating Tags.
+          example:
+            by: Richard Hendricks
+            id: 23033b64-38f8-4dbc-91a1-313ff0156d02
+          type: object
+        annualRevenue:
+          allOf:
+          - $ref: "#/components/schemas/SoleProprietorAnnualRevenue"
+          description: Optional. Specify the annual revenue here.
+        numberOfEmployees:
+          allOf:
+          - $ref: "#/components/schemas/SoleProprietorNumberOfEmployees"
+          description: Optional. Specify the number of employees here.
+        businessVertical:
+          allOf:
+          - $ref: "#/components/schemas/BusinessVertical"
+          description: Optional. Specify the business vertical here.
+          example: BusinessSupportOrBuildingServices
+        website:
+          description: Optional. Specify the business website here.
+          example: https://unit.co
+          type: string
+      required:
+      - tags
+      type: object
+    CancelApplicationData_attributes:
+      properties:
+        reason:
+          example: By Org
+          type: string
+      required:
+      - reason
+      type: object
+    CheckRegisteredAgentAddressData_attributes:
+      properties:
+        address:
+          allOf:
+          - $ref: "#/components/schemas/Address"
+          description: The address to check. Must be a US address
+      required:
+      - address
+      type: object
+    UpdateBusinessBeneficialOwnerData_attributes:
+      properties:
+        occupation:
+          allOf:
+          - $ref: "#/components/schemas/Occupation"
+          description: Optional. Occupation of the beneficial owner.
+          example: ArchitectOrEngineer
+        annualIncome:
+          allOf:
+          - $ref: "#/components/schemas/AnnualIncome"
+          description: Optional. Annual income of the beneficial owner.
+          example: Between10kAnd25k
+        sourceOfIncome:
+          allOf:
+          - $ref: "#/components/schemas/SourceOfIncome"
+          description: Optional. Source of income of the beneficial owner.
+          example: EmploymentOrPayrollIncome
+        percentage:
+          description: Optional. The beneficial owner percentage of ownership at the
+            business (between 25 and 100).
+          type: string
+      type: object
+    UpdateBusinessBeneficialOwnerData_relationships:
+      properties:
+        application:
+          $ref: "#/components/schemas/Relationship"
+      required:
+      - application
+      type: object
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http
+

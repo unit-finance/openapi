@@ -1,0 +1,8 @@
+{
+  "gemName": "unit_finance_sdk",
+  "moduleName": "UnitFinanceSdk",
+  "gemVersion": "0.1.0",
+  "library": "typhoeus",
+  "hideGenerationTimestamp": true,
+  "disallowAdditionalPropertiesIfNotPresent": false
+}

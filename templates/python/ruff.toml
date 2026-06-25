@@ -1,0 +1,19 @@
+# Ruff config for the human-authored Python SDK integration tests.
+#
+# Scope: only the test sources under this directory. The generated SDK
+# (sdks/python/) is OpenAPI-Generator output, wiped and
+# regenerated on every build, so it is intentionally not linted here.
+#
+# target-version is pinned to py38 to match the SDK's requires-python
+# (">=3.8"): on 3.8 the modern typing forms (list[str], X | None) are not
+# valid runtime annotations, so the pre-PEP-585 spellings (Dict, Optional)
+# are correct and must not be "upgraded".
+
+target-version = "py38"
+line-length = 100
+
+[lint]
+select = ["E", "F", "W", "I", "N", "UP", "B", "C4", "SIM", "RET", "PTH", "PIE", "PERF", "RUF"]
+
+[lint.isort]
+known-first-party = ["helpers"]

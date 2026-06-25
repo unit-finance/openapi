@@ -1,0 +1,44 @@
+---
+description: Conventions and guardrails for the SDK integration test suites
+globs: templates/node/tests/**,templates/python/tests/**,templates/ruby/spec/**,templates/java/tests/**
+alwaysApply: false
+---
+
+# SDK integration test conventions
+
+These trees under `templates/<lang>/` are the source of truth for the Unit SDK
+integration tests. They are mirrored into `sdks/<lang>/` by `npm run generate-sdks`.
+
+## Guardrails
+
+- Only create or edit tests under `templates/<lang>/` (`templates/node/tests`,
+  `templates/python/tests`, `templates/ruby/spec`, `templates/java/tests`).
+- NEVER edit anything under `sdks/` directly — it is generated and wiped, and a
+  CI drift gate fails on manual edits. Run `npm run generate-sdks` to re-mirror.
+- Do not modify the spec, generator config, or the publish/CI workflows.
+
+## Structure
+
+- One test file per spec operation, named to match the existing files in the tree
+  (e.g. node `applications/create.test.ts`, python `test_create.py`,
+  ruby `create_spec.rb`, java `CreateApplicationIT.java`).
+- Reuse the shared `helpers/` (API construction, fixtures, shared application).
+- Group by spec tag (a subdirectory per tag where the language uses them).
+
+## Sandbox token gating (required)
+
+Every suite must self-skip when `UNIT_SANDBOX_TOKEN` is unset, so the run still
+exits 0 without credentials:
+
+- node: wrap in `describeIfToken(...)` from `helpers/api`.
+- python: decorate with `@requires_token` from `helpers.api`.
+- java: call `ApiSupport.assumeToken()` first.
+- ruby: tag the example/group `:sandbox`.
+
+## Assertions
+
+- Assert structural correctness only: HTTP status, JSON:API envelope shape,
+  `data.type`, `data.id`, expected attribute keys.
+- Do NOT assert specific approval/decision states (they depend on sandbox magic
+  SSNs we don't control).
+- Tag any resources created in the sandbox with `tags.testRun` for traceability.

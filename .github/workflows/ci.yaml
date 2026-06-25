@@ -1,0 +1,107 @@
+name: CI
+on:
+  pull_request:
+    branches:
+      - '**'
+  push:
+    branches:
+      - main
+
+jobs:
+  drift:
+    name: Regenerate SDKs and verify no drift
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18.x
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Install
+        run: npm ci
+      - name: Regenerate SDKs (fetches pinned spec via spec-version.json)
+        run: npm run generate-sdks
+      - name: Verify committed SDKs are up to date
+        run: |
+          if ! git diff --quiet -- sdks; then
+            echo "::error::Committed SDKs under sdks/ are out of date relative to the pinned spec (spec-version.json). Run \`npm run generate-sdks\` locally and commit the result."
+            git --no-pager diff --stat -- sdks
+            exit 1
+          fi
+
+  test-node:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18.x
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - run: npm ci
+      - run: npm run generate-sdks
+      - run: npm run test:sdk:node
+        env:
+          UNIT_SANDBOX_TOKEN: ${{ secrets.UNIT_SANDBOX_TOKEN }}
+
+  test-java:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18.x
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - run: npm ci
+      - run: npm run generate-sdks
+      - run: npm run test:sdk:java
+        env:
+          UNIT_SANDBOX_TOKEN: ${{ secrets.UNIT_SANDBOX_TOKEN }}
+
+  test-python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18.x
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: npm ci
+      - run: npm run generate-sdks
+      - run: npm run test:sdk:python
+        env:
+          UNIT_SANDBOX_TOKEN: ${{ secrets.UNIT_SANDBOX_TOKEN }}
+
+  test-ruby:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18.x
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+      - run: npm ci
+      - run: npm run generate-sdks
+      - run: npm run test:sdk:ruby
+        env:
+          UNIT_SANDBOX_TOKEN: ${{ secrets.UNIT_SANDBOX_TOKEN }}

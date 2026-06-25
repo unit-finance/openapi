@@ -1,0 +1,28 @@
+node_modules/
+
+# Derived spec artifact (reproducible from spec-version.json via `npm run fetch-spec`)
+spec/openapi.bundled.json
+
+# Derived coverage report (reproducible via `npm run test-coverage`)
+test-coverage-report.json
+
+# Placed integration tests (mirrored from templates/<lang> on every generation)
+sdks/node/tests/
+sdks/java/src/test/
+sdks/python/tests/
+sdks/ruby/spec/
+
+# Per-language build/test scaffolding
+**/.ruff_cache/
+templates/node/tests/node_modules/
+sdks/node/node_modules/
+sdks/node/dist/
+sdks/java/target/
+sdks/.maven/
+sdks/.python-venv/
+sdks/.ruby-bundle/
+
+# Local credentials
+.env
+**/.env
+!**/.env.example

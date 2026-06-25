@@ -1,0 +1,129 @@
+name: Publish SDKs
+# TEMPORARILY DISABLED: automatic tag-triggered publishing is turned off for now.
+# Re-enable by uncommenting the `push:` tags trigger below. Until then this
+# workflow only runs via manual `workflow_dispatch` (intentional escape hatch).
+on:
+  # push:
+  #   tags:
+  #     - 'node-v*'
+  #     - 'java-v*'
+  #     - 'python-v*'
+  #     - 'ruby-v*'
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'Which SDK to publish'
+        required: true
+        type: choice
+        options: [node, java, python, ruby]
+
+# Each job runs only for its matching tag prefix (or the manual target).
+# Versions are taken from the curated manifests under templates/<lang>; bump
+# those alongside spec-version.json, then push a `<lang>-vX.Y.Z` tag.
+jobs:
+  publish-node:
+    if: startsWith(github.ref, 'refs/tags/node-v') || github.event.inputs.target == 'node'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18.x
+          registry-url: https://registry.npmjs.org
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - run: npm ci
+      - run: npm run generate-sdks
+      - name: Build and publish to npm
+        working-directory: sdks/node
+        run: |
+          npm install --no-audit --no-fund
+          npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  publish-java:
+    if: startsWith(github.ref, 'refs/tags/java-v') || github.event.inputs.target == 'java'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18.x
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          server-id: central
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
+          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE
+      - run: npm ci
+      - run: npm run generate-sdks
+      - name: Deploy to Maven Central
+        working-directory: sdks/java
+        run: tsx ../../scripts/openapi/run-mvn.ts -B -DskipTests deploy
+        env:
+          MAVEN_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+
+  publish-python:
+    if: startsWith(github.ref, 'refs/tags/python-v') || github.event.inputs.target == 'python'
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write  # PyPI trusted publishing
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18.x
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: npm ci
+      - run: npm run generate-sdks
+      - name: Build distribution
+        working-directory: sdks/python
+        run: |
+          python -m pip install --upgrade build
+          python -m build
+      - name: Publish to PyPI (trusted publishing)
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: sdks/python/dist
+
+  publish-ruby:
+    if: startsWith(github.ref, 'refs/tags/ruby-v') || github.event.inputs.target == 'ruby'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18.x
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+      - run: npm ci
+      - run: npm run generate-sdks
+      - name: Build and push gem to RubyGems
+        working-directory: sdks/ruby
+        run: |
+          mkdir -p $HOME/.gem
+          printf -- "---\n:rubygems_api_key: %s\n" "$RUBYGEMS_API_KEY" > $HOME/.gem/credentials
+          chmod 600 $HOME/.gem/credentials
+          gem build unit_finance_sdk.gemspec
+          gem push unit_finance_sdk-*.gem
+        env:
+          RUBYGEMS_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
