@@ -17,8 +17,10 @@ jobs:
     runs-on: ubuntu-latest
     # Job-level so the agent step's `if` can test for the key (step-level env is
     # not visible to that step's own `if`, and secrets can't be used in `if`).
+    # SPEC_REPO_TOKEN lets `fetch-spec` read the (private) unit-openapi release.
     env:
       CURSOR_API_KEY: ${{ secrets.CURSOR_API_KEY }}
+      SPEC_REPO_TOKEN: ${{ secrets.SPEC_REPO_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

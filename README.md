@@ -25,8 +25,12 @@ The spec is **not** authored here. `spec-version.json` pins which
 ```
 
 `npm run fetch-spec` downloads the matching `openapi.bundled.json` release asset
-into `spec/openapi.bundled.json` (git-ignored, derived). Overrides for local /
-CI use: `SPEC_BUNDLE_PATH` (local file) or `SPEC_BUNDLE_URL`.
+into `spec/openapi.bundled.json` (git-ignored, derived). Because `unit-openapi`
+is private, set `SPEC_REPO_TOKEN` (a PAT/App token with Contents: read on that
+repo) so `fetch-spec` can resolve and download the release asset via the GitHub
+API; without a token it falls back to the anonymous download URL (public repos
+only). Other overrides for local / CI use: `SPEC_BUNDLE_PATH` (local file) or
+`SPEC_BUNDLE_URL`.
 
 ## Commands
 
@@ -75,6 +79,7 @@ drift gate and sandbox suites on the resulting PR, which stays human-reviewed.
 | Secret | Used by | Purpose |
 |--------|---------|---------|
 | `SDK_BOT_TOKEN` | `regenerate-on-spec-release.yaml` | PAT used to open the regeneration PR (a PAT triggers CI on the PR, unlike `GITHUB_TOKEN`). Use a fine-grained PAT scoped to this repo with Contents + Pull requests: read & write |
+| `SPEC_REPO_TOKEN` | `ci.yaml`, `regenerate-on-spec-release.yaml`, `publish.yaml` | read the private `unit-openapi` releases in `fetch-spec`. PAT/App token with Contents: read on `unit-openapi` |
 | `CURSOR_API_KEY` | `regenerate-on-spec-release.yaml` | run the test-authoring Cursor agent on coverage gaps (optional; step skips when unset) |
 | `UNIT_SANDBOX_TOKEN` | `ci.yaml`, `regenerate-on-spec-release.yaml` | run sandbox integration tests (optional) |
 | `NPM_TOKEN` | `publish.yaml` | npm publish |

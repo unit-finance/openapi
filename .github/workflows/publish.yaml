@@ -20,6 +20,11 @@ on:
 # Each job runs only for its matching tag prefix (or the manual target).
 # Versions are taken from the curated manifests under templates/<lang>; bump
 # those alongside spec-version.json, then push a `<lang>-vX.Y.Z` tag.
+
+# Token for fetching the (private) unit-openapi spec release in `fetch-spec`.
+env:
+  SPEC_REPO_TOKEN: ${{ secrets.SPEC_REPO_TOKEN }}
+
 jobs:
   publish-node:
     if: startsWith(github.ref, 'refs/tags/node-v') || github.event.inputs.target == 'node'

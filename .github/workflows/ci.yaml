@@ -10,6 +10,12 @@ on:
   # regeneration branch without pushing a new commit).
   workflow_dispatch:
 
+# Token for fetching the (private) unit-openapi spec release in `fetch-spec`.
+# The default GITHUB_TOKEN can't read another repo, so this is a separate
+# PAT/App token with Contents: read on unit-openapi.
+env:
+  SPEC_REPO_TOKEN: ${{ secrets.SPEC_REPO_TOKEN }}
+
 jobs:
   drift:
     name: Regenerate SDKs and verify no drift
