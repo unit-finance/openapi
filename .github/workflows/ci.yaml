@@ -6,6 +6,9 @@ on:
   push:
     branches:
       - main
+  # Manual trigger: run CI on demand against any branch (e.g. to re-run a
+  # regeneration branch without pushing a new commit).
+  workflow_dispatch:
 
 jobs:
   drift:

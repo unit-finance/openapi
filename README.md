@@ -74,7 +74,7 @@ drift gate and sandbox suites on the resulting PR, which stays human-reviewed.
 
 | Secret | Used by | Purpose |
 |--------|---------|---------|
-| `SDK_BOT_TOKEN` | `regenerate-on-spec-release.yaml` | open the regeneration PR |
+| `SDK_BOT_APP_ID` / `SDK_BOT_PRIVATE_KEY` | `regenerate-on-spec-release.yaml` | GitHub App credentials used to mint a token that opens the regeneration PR (App token triggers CI on the PR, unlike `GITHUB_TOKEN`). App needs Contents + Pull requests: read & write, installed on this repo |
 | `CURSOR_API_KEY` | `regenerate-on-spec-release.yaml` | run the test-authoring Cursor agent on coverage gaps (optional; step skips when unset) |
 | `UNIT_SANDBOX_TOKEN` | `ci.yaml`, `regenerate-on-spec-release.yaml` | run sandbox integration tests (optional) |
 | `NPM_TOKEN` | `publish.yaml` | npm publish |
