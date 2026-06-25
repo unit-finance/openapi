@@ -43,10 +43,29 @@ function readLock(): SpecLock {
 	return lock;
 }
 
-function download(url: string): Promise<Buffer> {
+type Headers = Record<string, string>;
+
+const BASE_HEADERS: Headers = { "User-Agent": "unit-sdks-fetch-spec" };
+
+interface HttpResponse {
+	statusCode: number;
+	body: Buffer;
+}
+
+/**
+ * Token used to read the (possibly private) spec repo's releases. The default
+ * Actions `GITHUB_TOKEN` only grants access to the *current* repo, so a private
+ * `unit-openapi` needs a separate token (PAT/App) with Contents: read, supplied
+ * as `SPEC_REPO_TOKEN`.
+ */
+function specRepoToken(): string | undefined {
+	return process.env.SPEC_REPO_TOKEN || process.env.GH_TOKEN || undefined;
+}
+
+function httpGet(url: string, headers: Headers = {}): Promise<HttpResponse> {
 	return new Promise((resolve, reject) => {
 		https
-			.get(url, { headers: { "User-Agent": "unit-sdks-fetch-spec" } }, (res) => {
+			.get(url, { headers: { ...BASE_HEADERS, ...headers } }, (res) => {
 				if (
 					res.statusCode &&
 					res.statusCode >= 300 &&
@@ -54,17 +73,19 @@ function download(url: string): Promise<Buffer> {
 					res.headers.location
 				) {
 					res.resume();
-					resolve(download(new URL(res.headers.location, url).toString()));
-					return;
-				}
-				if (res.statusCode !== 200) {
-					res.resume();
-					reject(new Error(`GET ${url} -> HTTP ${res.statusCode}`));
+					// Drop Authorization when following a redirect: release-asset
+					// downloads redirect to a signed object-store URL that rejects a
+					// forwarded GitHub token (and we must not leak it to third parties).
+					const next: Headers = { ...headers };
+					delete next.Authorization;
+					resolve(httpGet(new URL(res.headers.location, url).toString(), next));
 					return;
 				}
 				const chunks: Buffer[] = [];
 				res.on("data", (c) => chunks.push(c));
-				res.on("end", () => resolve(Buffer.concat(chunks)));
+				res.on("end", () =>
+					resolve({ statusCode: res.statusCode ?? 0, body: Buffer.concat(chunks) }),
+				);
 			})
 			.on("error", reject);
 	});
@@ -87,7 +108,66 @@ function writeOut(buf: Buffer, source: string): void {
 
 async function fromUrl(url: string): Promise<void> {
 	console.log(`[fetch-spec] Downloading spec from ${url}`);
-	writeOut(await download(url), url);
+	const token = specRepoToken();
+	const headers: Headers = token ? { Authorization: `Bearer ${token}` } : {};
+	const res = await httpGet(url, headers);
+	if (res.statusCode !== 200) {
+		throw new Error(`GET ${url} -> HTTP ${res.statusCode}`);
+	}
+	writeOut(res.body, url);
+}
+
+/**
+ * Fetch the pinned release asset. For a public repo the anonymous browser
+ * download URL is enough; for a private repo that URL 404s, so we resolve the
+ * asset via the authenticated API and download it through its asset endpoint.
+ */
+async function fromRelease(lock: SpecLock): Promise<void> {
+	const tag = `v${lock.version}`;
+	const token = specRepoToken();
+
+	if (!token) {
+		await fromUrl(
+			`https://github.com/${lock.repo}/releases/download/${tag}/${lock.assetName}`,
+		);
+		return;
+	}
+
+	const apiBase = process.env.GITHUB_API_URL || "https://api.github.com";
+	const relUrl = `${apiBase}/repos/${lock.repo}/releases/tags/${tag}`;
+	const relRes = await httpGet(relUrl, {
+		Authorization: `Bearer ${token}`,
+		Accept: "application/vnd.github+json",
+		"X-GitHub-Api-Version": "2022-11-28",
+	});
+	if (relRes.statusCode !== 200) {
+		throw new Error(
+			`Could not read release ${tag} of ${lock.repo} (HTTP ${relRes.statusCode}). ` +
+				"Verify the release exists and SPEC_REPO_TOKEN has Contents: read on that repo.",
+		);
+	}
+
+	const release = JSON.parse(relRes.body.toString("utf8")) as {
+		assets?: Array<{ name: string; url: string }>;
+	};
+	const asset = (release.assets ?? []).find((a) => a.name === lock.assetName);
+	if (!asset) {
+		throw new Error(
+			`Release ${tag} of ${lock.repo} has no asset named "${lock.assetName}".`,
+		);
+	}
+
+	console.log(
+		`[fetch-spec] Downloading ${lock.assetName} from ${lock.repo}@${tag} (private API)`,
+	);
+	const dl = await httpGet(asset.url, {
+		Authorization: `Bearer ${token}`,
+		Accept: "application/octet-stream",
+	});
+	if (dl.statusCode !== 200) {
+		throw new Error(`GET ${asset.url} -> HTTP ${dl.statusCode}`);
+	}
+	writeOut(dl.body, `${lock.repo}@${tag}:${lock.assetName}`);
 }
 
 async function main(): Promise<void> {
@@ -107,9 +187,7 @@ async function main(): Promise<void> {
 		return;
 	}
 
-	const lock = readLock();
-	const url = `https://github.com/${lock.repo}/releases/download/v${lock.version}/${lock.assetName}`;
-	await fromUrl(url);
+	await fromRelease(readLock());
 }
 
 main().catch((err) => {
