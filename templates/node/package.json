@@ -1,0 +1,29 @@
+{
+  "name": "@unit-finance/unit-node-sdk",
+  "version": "0.1.0",
+  "description": "Node.js SDK for the Unit banking API. Auto-generated from the unit-openapi spec.",
+  "license": "MPL-2.0",
+  "main": "./dist/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/index.d.ts",
+  "typings": "./dist/index.d.ts",
+  "sideEffects": false,
+  "files": [
+    "dist/",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc && tsc -p tsconfig.esm.json",
+    "prepare": "npm run build"
+  },
+  "dependencies": {
+    "axios": "^1.15.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "typescript": "^5.6.3"
+  },
+  "engines": {
+    "node": ">=18.0"
+  }
+}

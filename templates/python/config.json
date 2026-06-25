@@ -1,0 +1,7 @@
+{
+  "packageName": "unit_finance_sdk",
+  "projectName": "unit-python-sdk",
+  "packageVersion": "0.1.0",
+  "library": "urllib3",
+  "disallowAdditionalPropertiesIfNotPresent": false
+}

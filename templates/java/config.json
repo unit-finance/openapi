@@ -1,0 +1,14 @@
+{
+  "groupId": "com.unit.finance",
+  "artifactId": "unit-java-sdk",
+  "artifactVersion": "0.1.0",
+  "invokerPackage": "com.unit.finance.sdk",
+  "apiPackage": "com.unit.finance.sdk.api",
+  "modelPackage": "com.unit.finance.sdk.model",
+  "library": "okhttp-gson",
+  "licenseName": "MPL-2.0",
+  "licenseUrl": "https://www.mozilla.org/en-US/MPL/2.0/",
+  "hideGenerationTimestamp": true,
+  "disallowAdditionalPropertiesIfNotPresent": false,
+  "containerDefaultToNull": true
+}

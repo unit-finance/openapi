@@ -1,0 +1,18 @@
+{
+  "name": "@unit-finance/unit-node-sdk-tests",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Integration tests for the generated Node SDK at ../",
+  "scripts": {
+    "test": "jest --runInBand"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^20.14.0",
+    "axios": "^1.15.2",
+    "dotenv": "^17.4.2",
+    "jest": "^30.0.0",
+    "ts-jest": "^29.4.11",
+    "typescript": "^5.6.3"
+  }
+}

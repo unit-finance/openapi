@@ -1,0 +1,102 @@
+name: Regenerate SDKs on spec release
+on:
+  repository_dispatch:
+    types: [spec-released]
+  workflow_dispatch:
+    inputs:
+      spec_version:
+        description: 'unit-openapi spec version to pin (e.g. 0.2.0)'
+        required: true
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  regenerate:
+    runs-on: ubuntu-latest
+    # Job-level so the agent step's `if` can test for the key (step-level env is
+    # not visible to that step's own `if`, and secrets can't be used in `if`).
+    env:
+      CURSOR_API_KEY: ${{ secrets.CURSOR_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18.x
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+
+      - name: Resolve target spec version
+        id: ver
+        run: |
+          VERSION="${{ github.event.client_payload.spec_version || github.event.inputs.spec_version }}"
+          if [ -z "$VERSION" ]; then
+            echo "::error::No spec version supplied in dispatch payload or workflow input"; exit 1
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Bump spec-version.json
+        run: |
+          node -e "const f='spec-version.json';const j=require('./'+f);j.version='${{ steps.ver.outputs.version }}';require('fs').writeFileSync(f, JSON.stringify(j,null,2)+'\n');"
+          cat spec-version.json
+
+      - name: Install
+        run: npm ci
+
+      - name: Regenerate SDKs
+        run: npm run generate-sdks
+
+      # Compare spec operations against the committed integration suites and
+      # expose has_gaps/gap_count. Always exits 0 (report, not a gate).
+      - name: Detect test coverage gaps
+        id: coverage
+        run: npm run test-coverage
+
+      # Fail loudly if the Cursor SDK local-runtime platform package (an optional
+      # dependency, auto-selected by os/cpu) did not install, instead of surfacing
+      # later as an opaque agent startup error.
+      - name: Verify Cursor SDK local runtime is available
+        if: steps.coverage.outputs.has_gaps == 'true' && env.CURSOR_API_KEY != ''
+        run: node -e "require.resolve('@cursor/sdk-linux-x64/package.json')"
+
+      # When new/changed operations lack coverage, let a Cursor agent author or
+      # repair the tests under templates/<lang>/. Skipped automatically when
+      # there are no gaps or CURSOR_API_KEY is unset. The agent's template edits
+      # (and the re-mirrored sdks/) are picked up by the PR step below.
+      - name: Author missing tests with Cursor agent
+        if: steps.coverage.outputs.has_gaps == 'true' && env.CURSOR_API_KEY != ''
+        env:
+          UNIT_SANDBOX_TOKEN: ${{ secrets.UNIT_SANDBOX_TOKEN }}
+        run: npm run author-tests
+
+      - name: Open regeneration PR
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.SDK_BOT_TOKEN }}
+          branch: spec/regenerate-${{ steps.ver.outputs.version }}
+          title: "Regenerate SDKs for spec ${{ steps.ver.outputs.version }}"
+          commit-message: "chore: regenerate SDKs for unit-openapi ${{ steps.ver.outputs.version }}"
+          body: |
+            Automated regeneration triggered by a new `unit-openapi` spec release.
+
+            - Spec version: `${{ steps.ver.outputs.version }}`
+            - Updates `spec-version.json` and all committed SDKs under `sdks/`.
+            - Coverage gaps detected at regeneration: `${{ steps.coverage.outputs.gap_count }}`.
+              When non-zero (and `CURSOR_API_KEY` is configured), a Cursor agent
+              authored/updated the integration tests under `templates/<lang>/`;
+              review those changes with extra care.
+
+            Merging this PR is step 3 of the pipeline; merging to `main` (and tagging)
+            triggers the publish workflows (step 4).
+          labels: |
+            sdk-regeneration
+            automated

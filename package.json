@@ -1,0 +1,38 @@
+{
+  "name": "unit-sdks",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Generation harness and committed SDK output (Node, Java, Python, Ruby) for the Unit API, generated from the unit-openapi spec.",
+  "scripts": {
+    "fetch-spec": "tsx scripts/openapi/fetch-spec.ts",
+    "test-coverage": "tsx scripts/openapi/test-coverage-report.ts",
+    "author-tests": "tsx scripts/agents/author-tests.ts",
+    "generate-sdk:node": "rm -rf sdks/node && openapi-generator-cli generate -i spec/openapi.bundled.json -g typescript-axios -o sdks/node -c templates/node/config.json",
+    "generate-sdk:java": "rm -rf sdks/java && openapi-generator-cli generate -i spec/openapi.bundled.json -g java -o sdks/java -c templates/java/config.json --openapi-generator-ignore-list \"build.gradle,build.sbt,settings.gradle,gradle.properties,gradlew,gradlew.bat,gradle/wrapper/gradle-wrapper.jar,gradle/wrapper/gradle-wrapper.properties,git_push.sh,.travis.yml,.github/workflows/maven.yml,src/main/AndroidManifest.xml,src/test/**\"",
+    "generate-sdk:python": "rm -rf sdks/python && openapi-generator-cli generate -i spec/openapi.bundled.json -g python -o sdks/python -c templates/python/config.json --openapi-generator-ignore-list \"setup.py,setup.cfg,requirements.txt,test-requirements.txt,tox.ini,git_push.sh,.travis.yml,.gitlab-ci.yml,.github/workflows/python.yml,test/**\"",
+    "generate-sdk:ruby": "rm -rf sdks/ruby && openapi-generator-cli generate -i spec/openapi.bundled.json -g ruby -o sdks/ruby -c templates/ruby/config.json --openapi-generator-ignore-list \"git_push.sh,.travis.yml,.gitlab-ci.yml,spec/**\"",
+    "prepare-node-sdk": "tsx scripts/openapi/prepare-node-sdk.ts",
+    "prepare-java-sdk": "tsx scripts/openapi/prepare-java-sdk.ts",
+    "prepare-python-sdk": "tsx scripts/openapi/prepare-python-sdk.ts",
+    "prepare-ruby-sdk": "tsx scripts/openapi/prepare-ruby-sdk.ts",
+    "place-node-tests": "tsx scripts/openapi/place-node-tests.ts",
+    "place-java-tests": "tsx scripts/openapi/place-java-tests.ts",
+    "place-python-tests": "tsx scripts/openapi/place-python-tests.ts",
+    "place-ruby-tests": "tsx scripts/openapi/place-ruby-tests.ts",
+    "generate-sdks": "npm run fetch-spec && npm run generate-sdk:node && npm run prepare-node-sdk && npm run place-node-tests && npm run generate-sdk:java && npm run prepare-java-sdk && npm run place-java-tests && npm run generate-sdk:python && npm run prepare-python-sdk && npm run place-python-tests && npm run generate-sdk:ruby && npm run prepare-ruby-sdk && npm run place-ruby-tests",
+    "test:sdk:node": "npm install --prefix sdks/node --no-package-lock --no-audit --no-fund && npm install --prefix sdks/node/tests --no-audit --no-fund && npm test --prefix sdks/node/tests",
+    "test:sdk:java": "npm run place-java-tests && npm run prepare-java-sdk && tsx scripts/openapi/run-mvn.ts -q -f sdks/java/pom.xml '-Dtest=*IT' clean test",
+    "lint:sdk:python": "tsx scripts/openapi/run-ruff.ts",
+    "test:sdk:python": "npm run lint:sdk:python && npm run place-python-tests && tsx scripts/openapi/run-pytest.ts",
+    "test:sdk:ruby": "npm run place-ruby-tests && tsx scripts/openapi/run-rspec.ts"
+  },
+  "devDependencies": {
+    "@cursor/sdk": "^1.0.21",
+    "@openapitools/openapi-generator-cli": "^2.34.0",
+    "tsx": "^4.19.4",
+    "typescript": "~5.6.3"
+  },
+  "engines": {
+    "node": ">=18.0"
+  }
+}
