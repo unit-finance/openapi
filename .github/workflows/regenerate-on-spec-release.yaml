@@ -78,22 +78,14 @@ jobs:
           UNIT_SANDBOX_TOKEN: ${{ secrets.UNIT_SANDBOX_TOKEN }}
         run: npm run author-tests
 
-      # Mint a short-lived GitHub App installation token. Unlike GITHUB_TOKEN,
-      # a PR opened with an App token DOES trigger the CI workflow, so the
-      # regeneration PR gets validated automatically. Requires the App's
-      # SDK_BOT_APP_ID + SDK_BOT_PRIVATE_KEY secrets (App needs Contents and
-      # Pull requests: read & write, installed on this repo).
-      - name: Generate app token
-        id: app-token
-        uses: actions/create-github-app-token@v1
-        with:
-          app-id: ${{ secrets.SDK_BOT_APP_ID }}
-          private-key: ${{ secrets.SDK_BOT_PRIVATE_KEY }}
-
       - name: Open regeneration PR
         uses: peter-evans/create-pull-request@v6
         with:
-          token: ${{ steps.app-token.outputs.token }}
+          # PAT (SDK_BOT_TOKEN) rather than the built-in GITHUB_TOKEN: a PR
+          # opened with a PAT triggers the CI workflow, so the regeneration PR
+          # gets validated automatically. Use a fine-grained PAT scoped to this
+          # repo with Contents + Pull requests: read & write.
+          token: ${{ secrets.SDK_BOT_TOKEN }}
           branch: spec/regenerate-${{ steps.ver.outputs.version }}
           title: "Regenerate SDKs for spec ${{ steps.ver.outputs.version }}"
           commit-message: "chore: regenerate SDKs for unit-openapi ${{ steps.ver.outputs.version }}"
