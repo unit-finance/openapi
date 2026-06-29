@@ -58,6 +58,8 @@ Class | Method | HTTP request | Description
 *ApplicationsApi* | [**list**](docs/ApplicationsApi.md#list) | **GET** /applications | List applications
 *ApplicationsApi* | [**updateApplication**](docs/ApplicationsApi.md#updateapplication) | **PATCH** /applications/{id} | Update an application
 *ApplicationsApi* | [**updateBusinessBeneficialOwner**](docs/ApplicationsApi.md#updatebusinessbeneficialowner) | **PATCH** /beneficial-owner/{id} | Update a business beneficial owner
+*FeesApi* | [**createFee**](docs/FeesApi.md#createfee) | **POST** /fees | Create a fee
+*FeesApi* | [**reverseFee**](docs/FeesApi.md#reversefee) | **POST** /fees/reverse | Reverse a fee
 
 
 ### Documentation For Models
@@ -96,6 +98,11 @@ Class | Method | HTTP request | Description
  - [CreateBusinessApplicationData](docs/CreateBusinessApplicationData.md)
  - [CreateBusinessApplicationDataAttributes](docs/CreateBusinessApplicationDataAttributes.md)
  - [CreateBusinessApplicationRequest](docs/CreateBusinessApplicationRequest.md)
+ - [CreateFee201Response](docs/CreateFee201Response.md)
+ - [CreateFeeData](docs/CreateFeeData.md)
+ - [CreateFeeDataAttributes](docs/CreateFeeDataAttributes.md)
+ - [CreateFeeDataRelationships](docs/CreateFeeDataRelationships.md)
+ - [CreateFeeRequest](docs/CreateFeeRequest.md)
  - [CreateIndividualApplicationData](docs/CreateIndividualApplicationData.md)
  - [CreateIndividualApplicationDataAttributes](docs/CreateIndividualApplicationDataAttributes.md)
  - [CreateIndividualApplicationRequest](docs/CreateIndividualApplicationRequest.md)
@@ -106,6 +113,12 @@ Class | Method | HTTP request | Description
  - [ErrorDocument](docs/ErrorDocument.md)
  - [ErrorDocumentErrorsInner](docs/ErrorDocumentErrorsInner.md)
  - [ErrorDocumentErrorsInnerSource](docs/ErrorDocumentErrorsInnerSource.md)
+ - [Fee](docs/Fee.md)
+ - [FeeAttributes](docs/FeeAttributes.md)
+ - [FeeRelationships](docs/FeeRelationships.md)
+ - [FeeReversal](docs/FeeReversal.md)
+ - [FeeReversalAttributes](docs/FeeReversalAttributes.md)
+ - [FeeReversalRelationships](docs/FeeReversalRelationships.md)
  - [FullName](docs/FullName.md)
  - [IndividualApplication](docs/IndividualApplication.md)
  - [IndividualApplicationAttributes](docs/IndividualApplicationAttributes.md)
@@ -124,6 +137,11 @@ Class | Method | HTTP request | Description
  - [RelationshipData](docs/RelationshipData.md)
  - [RequestedProduct](docs/RequestedProduct.md)
  - [ResourceIdentifier](docs/ResourceIdentifier.md)
+ - [ReverseFee201Response](docs/ReverseFee201Response.md)
+ - [ReverseFeeData](docs/ReverseFeeData.md)
+ - [ReverseFeeDataAttributes](docs/ReverseFeeDataAttributes.md)
+ - [ReverseFeeDataRelationships](docs/ReverseFeeDataRelationships.md)
+ - [ReverseFeeRequest](docs/ReverseFeeRequest.md)
  - [SoleProprietorAnnualRevenue](docs/SoleProprietorAnnualRevenue.md)
  - [SoleProprietorNumberOfEmployees](docs/SoleProprietorNumberOfEmployees.md)
  - [SourceOfIncome](docs/SourceOfIncome.md)

@@ -41,6 +41,11 @@ docs/CreateApplicationRequest.md
 docs/CreateBusinessApplicationData.md
 docs/CreateBusinessApplicationDataAttributes.md
 docs/CreateBusinessApplicationRequest.md
+docs/CreateFee201Response.md
+docs/CreateFeeData.md
+docs/CreateFeeDataAttributes.md
+docs/CreateFeeDataRelationships.md
+docs/CreateFeeRequest.md
 docs/CreateIndividualApplicationData.md
 docs/CreateIndividualApplicationDataAttributes.md
 docs/CreateIndividualApplicationRequest.md
@@ -51,6 +56,13 @@ docs/DeviceFingerprint.md
 docs/ErrorDocument.md
 docs/ErrorDocumentErrorsInner.md
 docs/ErrorDocumentErrorsInnerSource.md
+docs/Fee.md
+docs/FeeAttributes.md
+docs/FeeRelationships.md
+docs/FeeReversal.md
+docs/FeeReversalAttributes.md
+docs/FeeReversalRelationships.md
+docs/FeesApi.md
 docs/FullName.md
 docs/IndividualApplication.md
 docs/IndividualApplicationAttributes.md
@@ -69,6 +81,11 @@ docs/Relationship.md
 docs/RelationshipData.md
 docs/RequestedProduct.md
 docs/ResourceIdentifier.md
+docs/ReverseFee201Response.md
+docs/ReverseFeeData.md
+docs/ReverseFeeDataAttributes.md
+docs/ReverseFeeDataRelationships.md
+docs/ReverseFeeRequest.md
 docs/SoleProprietorAnnualRevenue.md
 docs/SoleProprietorNumberOfEmployees.md
 docs/SourceOfIncome.md
