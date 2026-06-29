@@ -29,9 +29,8 @@
  */
 
 import fs from "node:fs";
-import os from "node:os";
 import path from "node:path";
-import { Agent, CursorAgentError, JsonlLocalAgentStore } from "@cursor/sdk";
+import { Agent, CursorAgentError } from "@cursor/sdk";
 
 const REPO_ROOT = process.cwd();
 
@@ -186,19 +185,13 @@ async function main(): Promise<void> {
 		`[author-tests] ${report.gaps.length} operation(s) with gaps; launching agent (model=${model}).`,
 	);
 
-	// The default local agent store relies on the built-in `node:sqlite` module
-	// (Node >= 22.13). CI runners on older Node lack it, so back the local store
-	// with the portable JSONL implementation under a throwaway state dir.
-	const storeDir = fs.mkdtempSync(path.join(os.tmpdir(), "cursor-author-tests-"));
-	const store = new JsonlLocalAgentStore(storeDir);
-
 	try {
 		const result = await Agent.prompt(prompt, {
 			apiKey,
 			model: { id: model },
 			// Local runtime against this checkout; inline config only (no ambient
 			// project/user/team settings) per SDK best practice for unattended runs.
-			local: { cwd: REPO_ROOT, settingSources: [], store },
+			local: { cwd: REPO_ROOT, settingSources: [] },
 		});
 
 		console.error(`[author-tests] run ${result.id} finished with status: ${result.status}`);
