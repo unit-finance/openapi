@@ -5,7 +5,7 @@ info:
     name: Proprietary
     url: https://www.unit.co/terms-of-service
   title: Unit API
-  version: 0.1.0
+  version: 0.2.2
 servers:
 - url: https://api.s.unit.sh
 security:
@@ -13,6 +13,8 @@ security:
 tags:
 - description: End-customer onboarding applications.
   name: Applications
+- description: Fees charged to and reversed on accounts.
+  name: Fees
 paths:
   /applications:
     get:
@@ -466,6 +468,108 @@ paths:
       summary: Update a business beneficial owner
       tags:
       - Applications
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /fees:
+    post:
+      description: Creates a fee for an `Account`.
+      operationId: createFee
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/createFee_request"
+        required: true
+      responses:
+        "201":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/createFee_201_response"
+          description: The created fee resource.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - accounts-write
+      summary: Create a fee
+      tags:
+      - Fees
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /fees/reverse:
+    post:
+      description: Reverse a fee for an `Account`.
+      operationId: reverseFee
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/reverseFee_request"
+        required: true
+      responses:
+        "201":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/reverseFee_201_response"
+          description: The created fee reversal resource.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - accounts-write
+      summary: Reverse a fee
+      tags:
+      - Fees
       x-content-type: application/vnd.api+json
       x-accepts:
       - application/vnd.api+json
@@ -1337,6 +1441,97 @@ components:
       - attributes
       - type
       type: object
+    CreateFeeData:
+      properties:
+        type:
+          enum:
+          - fee
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CreateFeeData_attributes"
+        relationships:
+          $ref: "#/components/schemas/CreateFeeData_relationships"
+      required:
+      - attributes
+      - relationships
+      - type
+      type: object
+    ReverseFeeData:
+      properties:
+        type:
+          enum:
+          - feeReversal
+          type: string
+        attributes:
+          $ref: "#/components/schemas/ReverseFeeData_attributes"
+        relationships:
+          $ref: "#/components/schemas/ReverseFeeData_relationships"
+      required:
+      - attributes
+      - relationships
+      - type
+      type: object
+    Fee:
+      description: "`Fee` is a JSON:API resource, top-level fields:"
+      example:
+        type: fee
+        id: "1234"
+        attributes:
+          amount: 1000
+          description: Monthly Subscription
+        relationships:
+          account:
+            data:
+              type: depositAccount
+              id: "10097"
+      properties:
+        type:
+          enum:
+          - fee
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/Fee_attributes"
+        relationships:
+          $ref: "#/components/schemas/Fee_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    FeeReversal:
+      description: "`FeeReversal` is a JSON:API resource, top-level fields:"
+      example:
+        type: feeReversal
+        id: "1235"
+        attributes:
+          description: Monthly Subscription - reverse
+        relationships:
+          account:
+            data:
+              type: depositAccount
+              id: "10097"
+          transaction:
+            data:
+              type: transaction
+              id: "1"
+      properties:
+        type:
+          enum:
+          - feeReversal
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/FeeReversal_attributes"
+        relationships:
+          $ref: "#/components/schemas/FeeReversal_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
     BeneficialOwner-2:
       example:
         status: Approved
@@ -1674,6 +1869,34 @@ components:
       properties:
         data:
           $ref: "#/components/schemas/BeneficialOwner"
+      required:
+      - data
+      type: object
+    createFee_request:
+      properties:
+        data:
+          $ref: "#/components/schemas/CreateFeeData"
+      required:
+      - data
+      type: object
+    createFee_201_response:
+      properties:
+        data:
+          $ref: "#/components/schemas/Fee"
+      required:
+      - data
+      type: object
+    reverseFee_request:
+      properties:
+        data:
+          $ref: "#/components/schemas/ReverseFeeData"
+      required:
+      - data
+      type: object
+    reverseFee_201_response:
+      properties:
+        data:
+          $ref: "#/components/schemas/FeeReversal"
       required:
       - data
       type: object
@@ -2645,6 +2868,100 @@ components:
           $ref: "#/components/schemas/Relationship"
       required:
       - application
+      type: object
+    CreateFeeData_attributes:
+      properties:
+        amount:
+          description: The amount (in cents) to charge the account.
+          example: 1000
+          type: integer
+        description:
+          description: Description of the fee (maximum of 50 characters).
+          example: Monthly Subscription
+          type: string
+        tags:
+          additionalProperties: true
+          description: Optional. See Tags.
+          type: object
+        idempotencyKey:
+          description: "Optional, but **strongly recommended**. See Idempotency."
+          type: string
+      required:
+      - amount
+      - description
+      type: object
+    CreateFeeData_relationships:
+      properties:
+        account:
+          $ref: "#/components/schemas/Relationship"
+      required:
+      - account
+      type: object
+    ReverseFeeData_attributes:
+      properties:
+        description:
+          description: Description of the fee (maximum of 50 characters).
+          example: Monthly Subscription - reverse
+          type: string
+        tags:
+          additionalProperties: true
+          description: Optional. See Tags.
+          type: object
+        idempotencyKey:
+          description: "Optional, but **strongly recommended**. See Idempotency."
+          type: string
+      required:
+      - description
+      type: object
+    ReverseFeeData_relationships:
+      properties:
+        account:
+          $ref: "#/components/schemas/Relationship"
+        transaction:
+          $ref: "#/components/schemas/Relationship"
+      required:
+      - account
+      - transaction
+      type: object
+    Fee_attributes:
+      properties:
+        amount:
+          description: The amount (in cents) of the fee.
+          type: integer
+        description:
+          description: Description of the fee.
+          type: string
+        tags:
+          additionalProperties: true
+          description: See Tags.
+          type: object
+      required:
+      - amount
+      - description
+      type: object
+    Fee_relationships:
+      properties:
+        account:
+          $ref: "#/components/schemas/Relationship"
+      type: object
+    FeeReversal_attributes:
+      properties:
+        description:
+          description: Description of the fee.
+          type: string
+        tags:
+          additionalProperties: true
+          description: See Tags.
+          type: object
+      required:
+      - description
+      type: object
+    FeeReversal_relationships:
+      properties:
+        account:
+          $ref: "#/components/schemas/Relationship"
+        transaction:
+          $ref: "#/components/schemas/Relationship"
       type: object
   securitySchemes:
     bearerAuth:
