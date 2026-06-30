@@ -7,6 +7,10 @@ on:
       spec_version:
         description: 'unit-openapi spec version to pin (e.g. 0.2.0)'
         required: true
+      model:
+        description: 'Cursor model for the test-authoring agent (e.g. composer-2.5, auto)'
+        required: false
+        default: composer-2.5
 
 permissions:
   contents: write
@@ -78,7 +82,15 @@ jobs:
         if: steps.coverage.outputs.has_gaps == 'true' && env.CURSOR_API_KEY != ''
         env:
           UNIT_SANDBOX_TOKEN: ${{ secrets.UNIT_SANDBOX_TOKEN }}
-        run: npm run author-tests
+          # Model resolution order: repository_dispatch payload, workflow_dispatch
+          # input, then the script's own default (composer-2.5).
+          AGENT_MODEL: ${{ github.event.client_payload.model || github.event.inputs.model }}
+        run: |
+          if [ -n "$AGENT_MODEL" ]; then
+            npm run author-tests -- --model "$AGENT_MODEL"
+          else
+            npm run author-tests
+          fi
 
       - name: Open regeneration PR
         uses: peter-evans/create-pull-request@v7
