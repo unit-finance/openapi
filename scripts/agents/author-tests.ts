@@ -30,7 +30,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
-import { Agent, CursorAgentError, type SDKMessage } from "@cursor/sdk";
+import { Agent, Cursor, CursorAgentError, type SDKMessage } from "@cursor/sdk";
 
 const REPO_ROOT = process.cwd();
 
@@ -165,6 +165,41 @@ function buildPrompt(report: CoverageReport): string {
 	].join("\n");
 }
 
+/**
+ * Verify the API key authenticates and the requested model is actually
+ * available to it before launching. A local run started with a model the key
+ * can't use fails instantly with an opaque `status: ERROR` and an empty
+ * conversation -- exactly the symptom we want to turn into a clear message.
+ */
+async function preflight(apiKey: string, model: string): Promise<void> {
+	try {
+		const me = await Cursor.me({ apiKey });
+		console.error(`[author-tests] authenticated as "${me.apiKeyName}".`);
+
+		const models = await Cursor.models.list({ apiKey });
+		const available = models.some(
+			(m) => m.id === model || (m.aliases?.includes(model) ?? false),
+		);
+		if (!available) {
+			console.error(
+				`[author-tests] model "${model}" is not available to this API key. ` +
+					`Available: ${models.map((m) => m.id).join(", ") || "(none)"}. ` +
+					"Pick one with --model, or grant the key access to this model.",
+			);
+			process.exit(1);
+		}
+		console.error(`[author-tests] model "${model}" is available.`);
+	} catch (err) {
+		if (err instanceof CursorAgentError) {
+			console.error(
+				`[author-tests] preflight failed (auth/network): ${err.message} (retryable=${err.isRetryable})`,
+			);
+			process.exit(1);
+		}
+		throw err;
+	}
+}
+
 /** Surface streamed agent activity to stderr so CI logs show progress + errors. */
 function logEvent(event: SDKMessage): void {
 	switch (event.type) {
@@ -179,7 +214,9 @@ function logEvent(event: SDKMessage): void {
 			console.error(`[agent] tool_call: ${JSON.stringify(event)}`);
 			break;
 		case "status":
-			console.error(`[agent] status: ${JSON.stringify(event)}`);
+			console.error(
+				`[agent] status: ${event.status}${event.message ? ` - ${event.message}` : ""}`,
+			);
 			break;
 		default:
 			break;
@@ -200,6 +237,8 @@ async function main(): Promise<void> {
 		console.error("[author-tests] CURSOR_API_KEY is not set; cannot start the agent.");
 		process.exit(1);
 	}
+
+	await preflight(apiKey, model);
 
 	const prompt = buildPrompt(report);
 	console.error(
@@ -226,7 +265,11 @@ async function main(): Promise<void> {
 		}
 
 		const result = await run.wait();
-		console.error(`[author-tests] run ${result.id} finished with status: ${result.status}`);
+		console.error(
+			`[author-tests] run ${result.id} finished with status: ${result.status}` +
+				`${result.requestId ? ` (requestId=${result.requestId})` : ""}` +
+				`${result.durationMs != null ? ` durationMs=${result.durationMs}` : ""}`,
+		);
 		if (result.result) console.error(result.result);
 
 		if (result.status === "error") {
