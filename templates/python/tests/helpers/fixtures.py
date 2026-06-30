@@ -32,7 +32,9 @@ from typing import Any, Dict, List
 from unit_finance_sdk import (
     CreateApplicationRequest,
     CreateBusinessApplicationRequest,
+    CreateFeeRequest,
     CreateIndividualApplicationRequest,
+    ReverseFeeRequest,
     UpdateApplicationRequest,
     UpdateBusinessApplicationRequest,
     UpdateBusinessBeneficialOwnerRequest,
@@ -240,3 +242,43 @@ def build_check_registered_agent_address_request() -> Dict[str, Any]:
             "attributes": {"address": _us_address()},
         },
     }
+
+
+def build_create_fee_request(account_id: str) -> CreateFeeRequest:
+    body = {
+        "data": {
+            "type": "fee",
+            "attributes": {
+                "amount": 100,
+                "description": "SDK integration test fee",
+                "tags": _base_tags(),
+            },
+            "relationships": {
+                "account": {
+                    "data": {"type": "depositAccount", "id": account_id},
+                },
+            },
+        },
+    }
+    return CreateFeeRequest.from_dict(body)
+
+
+def build_reverse_fee_request(account_id: str, transaction_id: str) -> ReverseFeeRequest:
+    body = {
+        "data": {
+            "type": "feeReversal",
+            "attributes": {
+                "description": "SDK integration test fee reversal",
+                "tags": _base_tags(),
+            },
+            "relationships": {
+                "account": {
+                    "data": {"type": "depositAccount", "id": account_id},
+                },
+                "transaction": {
+                    "data": {"type": "transaction", "id": transaction_id},
+                },
+            },
+        },
+    }
+    return ReverseFeeRequest.from_dict(body)

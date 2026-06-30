@@ -6,9 +6,9 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **tags** | **Dict[str, object]** | See Updating Tags. | 
-**occupation** | [**Occupation**](Occupation.md) | Optional. Occupation of the individual. | [optional] 
-**annual_income** | [**AnnualIncome**](AnnualIncome.md) | Optional. Annual income of the individual. | [optional] 
-**source_of_income** | [**SourceOfIncome**](SourceOfIncome.md) | Optional. Source of income of the individual. | [optional] 
+**occupation** | [**OccupationType**](OccupationType.md) | Optional. Occupation of the individual. | [optional] 
+**annual_income** | [**AnnualIncomeType**](AnnualIncomeType.md) | Optional. Annual income of the individual. | [optional] 
+**source_of_income** | [**SourceOfIncomeType**](SourceOfIncomeType.md) | Optional. Source of income of the individual. | [optional] 
 
 ## Example
 

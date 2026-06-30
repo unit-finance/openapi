@@ -5,7 +5,7 @@ info:
     name: Proprietary
     url: https://www.unit.co/terms-of-service
   title: Unit API
-  version: 0.1.0
+  version: 0.2.3
 servers:
 - url: https://api.s.unit.sh
 security:
@@ -13,6 +13,8 @@ security:
 tags:
 - description: End-customer onboarding applications.
   name: Applications
+- description: Fees charged to and reversed on accounts.
+  name: Fees
 paths:
   /applications:
     get:
@@ -469,6 +471,108 @@ paths:
       x-content-type: application/vnd.api+json
       x-accepts:
       - application/vnd.api+json
+  /fees:
+    post:
+      description: Creates a fee for an `Account`.
+      operationId: createFee
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/createFee_request"
+        required: true
+      responses:
+        "201":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/createFee_201_response"
+          description: The created fee resource.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - accounts-write
+      summary: Create a fee
+      tags:
+      - Fees
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /fees/reverse:
+    post:
+      description: Reverse a fee for an `Account`.
+      operationId: reverseFee
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/reverseFee_request"
+        required: true
+      responses:
+        "201":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/reverseFee_201_response"
+          description: The created fee reversal resource.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - accounts-write
+      summary: Reverse a fee
+      tags:
+      - Fees
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
 components:
   responses:
     BadRequest:
@@ -585,7 +689,7 @@ components:
       required:
       - data
       type: object
-    Address:
+    AddressType:
       example:
         street: 20 Ingram St
         city: Forest Hills
@@ -621,7 +725,7 @@ components:
       - state
       - street
       type: object
-    Phone:
+    PhoneType:
       example:
         countryCode: "1"
         number: "1555555555"
@@ -637,7 +741,7 @@ components:
       - countryCode
       - number
       type: object
-    Industry:
+    IndustryType:
       description: "The business industry. One of: `Retail`, `Wholesale`, `Restaurants`,\
         \ `Hospitals`, `Construction`, `Insurance`, `Unions`, `RealEstate`, `FreelanceProfessional`,\
         \ `OtherProfessionalServices`, `OnlineRetailer`, `OtherEducationServices`."
@@ -655,7 +759,7 @@ components:
       - OnlineRetailer
       - OtherEducationServices
       type: string
-    BusinessContact:
+    BusinessContactType:
       example:
         fullName:
           first: Richard
@@ -667,14 +771,14 @@ components:
       properties:
         fullName:
           allOf:
-          - $ref: "#/components/schemas/FullName"
+          - $ref: "#/components/schemas/FullNameType"
           description: Full name of the contact.
         email:
           description: The contact's email address.
           type: string
         phone:
           allOf:
-          - $ref: "#/components/schemas/Phone"
+          - $ref: "#/components/schemas/PhoneType"
           description: The contact's phone number.
         jwtSubject:
           description: Optional. See this section for more information.
@@ -684,7 +788,7 @@ components:
       - fullName
       - phone
       type: object
-    Officer:
+    OfficerType:
       example:
         status: Approved
         title: CEO
@@ -712,7 +816,7 @@ components:
           type: string
         fullName:
           allOf:
-          - $ref: "#/components/schemas/FullName"
+          - $ref: "#/components/schemas/FullNameType"
           description: Full name of the officer.
         title:
           description: "One of CEO, COO, CFO, President, BenefitsAdministrationOfficer,\
@@ -738,11 +842,11 @@ components:
           type: string
         address:
           allOf:
-          - $ref: "#/components/schemas/Address"
+          - $ref: "#/components/schemas/AddressType"
           description: The officer's address.
         phone:
           allOf:
-          - $ref: "#/components/schemas/Phone"
+          - $ref: "#/components/schemas/PhoneType"
           description: The officer's phone number.
         email:
           description: The officer's email address.
@@ -753,15 +857,15 @@ components:
           type: number
         occupation:
           allOf:
-          - $ref: "#/components/schemas/Occupation"
+          - $ref: "#/components/schemas/OccupationType"
           description: Optional. Occupation of the officer.
         annualIncome:
           allOf:
-          - $ref: "#/components/schemas/AnnualIncome"
+          - $ref: "#/components/schemas/AnnualIncomeType"
           description: Optional. Annual income of the officer.
         sourceOfIncome:
           allOf:
-          - $ref: "#/components/schemas/SourceOfIncome"
+          - $ref: "#/components/schemas/SourceOfIncomeType"
           description: Optional. Source of income of the officer.
       required:
       - address
@@ -772,7 +876,7 @@ components:
       - status
       - title
       type: object
-    FullName:
+    FullNameType:
       example:
         first: Peter
         last: Parker
@@ -787,7 +891,7 @@ components:
       - first
       - last
       type: object
-    Occupation:
+    OccupationType:
       description: "The occupation of an individual. One of: `ArchitectOrEngineer`,\
         \ `BusinessAnalystAccountantOrFinancialAdvisor`, `CommunityAndSocialServicesWorker`,\
         \ `ConstructionMechanicOrMaintenanceWorker`, `Doctor`, `Educator`, `EntertainmentSportsArtsOrMedia`,\
@@ -821,7 +925,7 @@ components:
       - ScientistOrTechnologist
       - Student
       type: string
-    AnnualIncome:
+    AnnualIncomeType:
       description: The annual income of an individual.
       enum:
       - UpTo10k
@@ -831,7 +935,7 @@ components:
       - Between100kAnd250k
       - Over250k
       type: string
-    SourceOfIncome:
+    SourceOfIncomeType:
       description: "The source of income of an individual. One of: `EmploymentOrPayrollIncome`,\
         \ `PartTimeOrContractorIncome`, `InheritancesAndGifts`, `PersonalInvestments`,\
         \ `BusinessOwnershipInterests`, `GovernmentBenefits`."
@@ -883,7 +987,7 @@ components:
       - id
       - type
       type: object
-    AnnualRevenue:
+    AnnualRevenueType:
       description: The annual revenue of a sole proprietor or a business. Union of
         the business and sole-proprietor value sets; use BusinessAnnualRevenue or
         SoleProprietorAnnualRevenue for the per-entity subset.
@@ -899,7 +1003,7 @@ components:
       - Between200kAnd500k
       - Over500k
       type: string
-    BusinessAnnualRevenue:
+    BusinessAnnualRevenueType:
       description: The annual revenue of a business.
       enum:
       - UpTo250k
@@ -908,7 +1012,7 @@ components:
       - Between1mAnd5m
       - Over5m
       type: string
-    SoleProprietorAnnualRevenue:
+    SoleProprietorAnnualRevenueType:
       description: The annual revenue of a sole proprietor.
       enum:
       - UpTo50k
@@ -917,7 +1021,7 @@ components:
       - Between200kAnd500k
       - Over500k
       type: string
-    NumberOfEmployees:
+    NumberOfEmployeesType:
       description: The number of employees of a sole proprietor or a business. Union
         of the business and sole-proprietor value sets; use BusinessNumberOfEmployees
         or SoleProprietorNumberOfEmployees for the per-entity subset.
@@ -932,7 +1036,7 @@ components:
       - Between5And10
       - Over10
       type: string
-    BusinessNumberOfEmployees:
+    BusinessNumberOfEmployeesType:
       description: The number of employees of a business.
       enum:
       - UpTo10
@@ -941,7 +1045,7 @@ components:
       - Between100And500
       - Over500
       type: string
-    SoleProprietorNumberOfEmployees:
+    SoleProprietorNumberOfEmployeesType:
       description: The number of employees of a sole proprietor.
       enum:
       - One
@@ -949,13 +1053,13 @@ components:
       - Between5And10
       - Over10
       type: string
-    CashFlow:
+    CashFlowType:
       description: The cash flow of a business.
       enum:
       - Unpredictable
       - Predictable
       type: string
-    BusinessVertical:
+    BusinessVerticalType:
       description: The business vertical/industry of a sole proprietor or a business.
       enum:
       - AdultEntertainmentDatingOrEscortServices
@@ -990,7 +1094,7 @@ components:
       - Utilities
       - WholesaleTrade
       type: string
-    DeviceFingerprint:
+    DeviceFingerprintType:
       description: A device fingerprint used for fraud and risk prevention. See Device
         Fingerprints.
       example:
@@ -1007,7 +1111,7 @@ components:
       - provider
       - value
       type: object
-    RequestedProduct:
+    RequestedProductType:
       description: A product that can be applied for. Allowed values verified against
         the Unit sandbox.
       enum:
@@ -1311,7 +1415,7 @@ components:
       - attributes
       - type
       type: object
-    CheckRegisteredAgentAddress:
+    CheckRegisteredAgentAddressType:
       description: Represents whether the provided address is a Registered Agent address.
       example:
         isRegisteredAgentAddress: true
@@ -1337,7 +1441,98 @@ components:
       - attributes
       - type
       type: object
-    BeneficialOwner-2:
+    CreateFeeData:
+      properties:
+        type:
+          enum:
+          - fee
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CreateFeeData_attributes"
+        relationships:
+          $ref: "#/components/schemas/CreateFeeData_relationships"
+      required:
+      - attributes
+      - relationships
+      - type
+      type: object
+    ReverseFeeData:
+      properties:
+        type:
+          enum:
+          - feeReversal
+          type: string
+        attributes:
+          $ref: "#/components/schemas/ReverseFeeData_attributes"
+        relationships:
+          $ref: "#/components/schemas/ReverseFeeData_relationships"
+      required:
+      - attributes
+      - relationships
+      - type
+      type: object
+    Fee:
+      description: "`Fee` is a JSON:API resource, top-level fields:"
+      example:
+        type: fee
+        id: "1234"
+        attributes:
+          amount: 1000
+          description: Monthly Subscription
+        relationships:
+          account:
+            data:
+              type: depositAccount
+              id: "10097"
+      properties:
+        type:
+          enum:
+          - fee
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/Fee_attributes"
+        relationships:
+          $ref: "#/components/schemas/Fee_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    FeeReversal:
+      description: "`FeeReversal` is a JSON:API resource, top-level fields:"
+      example:
+        type: feeReversal
+        id: "1235"
+        attributes:
+          description: Monthly Subscription - reverse
+        relationships:
+          account:
+            data:
+              type: depositAccount
+              id: "10097"
+          transaction:
+            data:
+              type: transaction
+              id: "1"
+      properties:
+        type:
+          enum:
+          - feeReversal
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/FeeReversal_attributes"
+        relationships:
+          $ref: "#/components/schemas/FeeReversal_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    BeneficialOwnerType:
       example:
         status: Approved
         fullName:
@@ -1362,7 +1557,7 @@ components:
           type: string
         fullName:
           allOf:
-          - $ref: "#/components/schemas/FullName"
+          - $ref: "#/components/schemas/FullNameType"
           description: Full name of the beneficial owner.
         ssn:
           description: SSN of the beneficial owner (numbers only). One of ssn or passport
@@ -1384,11 +1579,11 @@ components:
           type: string
         address:
           allOf:
-          - $ref: "#/components/schemas/Address"
+          - $ref: "#/components/schemas/AddressType"
           description: The beneficial owner's address.
         phone:
           allOf:
-          - $ref: "#/components/schemas/Phone"
+          - $ref: "#/components/schemas/PhoneType"
           description: The beneficial owner's phone number.
         email:
           description: The beneficial owner's email address.
@@ -1398,15 +1593,15 @@ components:
           type: integer
         occupation:
           allOf:
-          - $ref: "#/components/schemas/Occupation"
+          - $ref: "#/components/schemas/OccupationType"
           description: Optional. Occupation of the beneficial owner.
         annualIncome:
           allOf:
-          - $ref: "#/components/schemas/AnnualIncome"
+          - $ref: "#/components/schemas/AnnualIncomeType"
           description: Optional. Annual income of the beneficial owner.
         sourceOfIncome:
           allOf:
-          - $ref: "#/components/schemas/SourceOfIncome"
+          - $ref: "#/components/schemas/SourceOfIncomeType"
           description: Optional. Source of income of the beneficial owner.
       required:
       - address
@@ -1416,7 +1611,7 @@ components:
       - phone
       - status
       type: object
-    OfficerRequest:
+    OfficerRequestType:
       example:
         fullName:
           first: Richard
@@ -1437,7 +1632,7 @@ components:
       properties:
         fullName:
           allOf:
-          - $ref: "#/components/schemas/FullName"
+          - $ref: "#/components/schemas/FullNameType"
           description: Full name of the officer.
         title:
           description: "One of CEO, COO, CFO, President, BenefitsAdministrationOfficer,\
@@ -1462,11 +1657,11 @@ components:
           type: string
         address:
           allOf:
-          - $ref: "#/components/schemas/Address"
+          - $ref: "#/components/schemas/AddressType"
           description: The officer's address.
         phone:
           allOf:
-          - $ref: "#/components/schemas/Phone"
+          - $ref: "#/components/schemas/PhoneType"
           description: The officer's phone number.
         email:
           description: The officer's email address.
@@ -1488,7 +1683,7 @@ components:
       - phone
       - title
       type: object
-    BeneficialOwnerRequest:
+    BeneficialOwnerRequestType:
       example:
         fullName:
           first: Richard
@@ -1509,7 +1704,7 @@ components:
       properties:
         fullName:
           allOf:
-          - $ref: "#/components/schemas/FullName"
+          - $ref: "#/components/schemas/FullNameType"
           description: Full name of the beneficial owner.
         ssn:
           description: SSN of the beneficial owner (numbers only). One of ssn or passport
@@ -1530,11 +1725,11 @@ components:
           type: string
         address:
           allOf:
-          - $ref: "#/components/schemas/Address"
+          - $ref: "#/components/schemas/AddressType"
           description: The beneficial owner's address.
         phone:
           allOf:
-          - $ref: "#/components/schemas/Phone"
+          - $ref: "#/components/schemas/PhoneType"
           description: The beneficial owner's phone number.
         email:
           description: The beneficial owner's email address.
@@ -1677,6 +1872,34 @@ components:
       required:
       - data
       type: object
+    createFee_request:
+      properties:
+        data:
+          $ref: "#/components/schemas/CreateFeeData"
+      required:
+      - data
+      type: object
+    createFee_201_response:
+      properties:
+        data:
+          $ref: "#/components/schemas/Fee"
+      required:
+      - data
+      type: object
+    reverseFee_request:
+      properties:
+        data:
+          $ref: "#/components/schemas/ReverseFeeData"
+      required:
+      - data
+      type: object
+    reverseFee_201_response:
+      properties:
+        data:
+          $ref: "#/components/schemas/FeeReversal"
+      required:
+      - data
+      type: object
     Relationship_data:
       nullable: true
       oneOf:
@@ -1729,11 +1952,11 @@ components:
           type: string
         address:
           allOf:
-          - $ref: "#/components/schemas/Address"
+          - $ref: "#/components/schemas/AddressType"
           description: Address of the business. Must be a US address
         phone:
           allOf:
-          - $ref: "#/components/schemas/Phone"
+          - $ref: "#/components/schemas/PhoneType"
           description: Phone number of the business.
         stateOfIncorporation:
           description: Two letters representing a US state.
@@ -1759,12 +1982,12 @@ components:
           type: string
         contact:
           allOf:
-          - $ref: "#/components/schemas/BusinessContact"
+          - $ref: "#/components/schemas/BusinessContactType"
           description: Primary contact of the business. This person is the one that
             will have access to the account.
         officer:
           allOf:
-          - $ref: "#/components/schemas/OfficerRequest"
+          - $ref: "#/components/schemas/OfficerRequestType"
           description: "Officer representing the business (must be the CEO, COO, CFO,\
             \ President, BenefitsAdministrationOfficer, CIO, VP, AVP, Treasurer, Secretary,\
             \ Controller, Manager, Partner or Member). To onboard a business successfully,\
@@ -1776,21 +1999,21 @@ components:
             \ beneficial owner's personal details. If the business has no beneficial\
             \ owners, the array should be empty."
           items:
-            $ref: "#/components/schemas/BeneficialOwnerRequest"
+            $ref: "#/components/schemas/BeneficialOwnerRequestType"
           type: array
         annualRevenue:
           allOf:
-          - $ref: "#/components/schemas/BusinessAnnualRevenue"
+          - $ref: "#/components/schemas/BusinessAnnualRevenueType"
           description: Required if any of the officer / BeneficialOwner of the business
             have a non US nationality. Annual revenue of the business.
         numberOfEmployees:
           allOf:
-          - $ref: "#/components/schemas/BusinessNumberOfEmployees"
+          - $ref: "#/components/schemas/BusinessNumberOfEmployeesType"
           description: Required if any of the officer / BeneficialOwner of the business
             have a non US nationality. Number of employees of the business.
         cashFlow:
           allOf:
-          - $ref: "#/components/schemas/CashFlow"
+          - $ref: "#/components/schemas/CashFlowType"
           description: Required if any of the officer / BeneficialOwner of the business
             have a non US nationality. Cash flow of the business.
           example: Predictable
@@ -1815,7 +2038,7 @@ components:
           type: string
         businessVertical:
           allOf:
-          - $ref: "#/components/schemas/BusinessVertical"
+          - $ref: "#/components/schemas/BusinessVerticalType"
           description: The business vertical of the business.
           example: TechnologyMediaOrTelecom
         ip:
@@ -1840,7 +2063,7 @@ components:
           description: Optional. A list of device fingerprints for fraud and risk
             prevention (See Device Fingerprints).
           items:
-            $ref: "#/components/schemas/DeviceFingerprint"
+            $ref: "#/components/schemas/DeviceFingerprintType"
           type: array
         banks:
           description: "Optional. The name of the bank or banks that should be associated\
@@ -1853,7 +2076,7 @@ components:
           description: Optional. The product being applied for. Contact Unit to enable
             BillPay and Capital products.
           items:
-            $ref: "#/components/schemas/RequestedProduct"
+            $ref: "#/components/schemas/RequestedProductType"
           type: array
       required:
       - address
@@ -1890,7 +2113,7 @@ components:
           type: string
         fullName:
           allOf:
-          - $ref: "#/components/schemas/FullName"
+          - $ref: "#/components/schemas/FullNameType"
           description: Full name of the individual.
         dateOfBirth:
           description: Date only (e.g. "2001-08-15").
@@ -1898,11 +2121,11 @@ components:
           type: string
         address:
           allOf:
-          - $ref: "#/components/schemas/Address"
+          - $ref: "#/components/schemas/AddressType"
           description: Address of the individual. Must be a US address.
         phone:
           allOf:
-          - $ref: "#/components/schemas/Phone"
+          - $ref: "#/components/schemas/PhoneType"
           description: Phone number of the individual.
         email:
           description: Email address of the individual.
@@ -1913,17 +2136,17 @@ components:
           type: string
         occupation:
           allOf:
-          - $ref: "#/components/schemas/Occupation"
+          - $ref: "#/components/schemas/OccupationType"
           description: Occupation of the individual.
           example: ArchitectOrEngineer
         annualIncome:
           allOf:
-          - $ref: "#/components/schemas/AnnualIncome"
+          - $ref: "#/components/schemas/AnnualIncomeType"
           description: Required if nationality is not US. Annual income of the individual.
           example: Between50kAnd100k
         sourceOfIncome:
           allOf:
-          - $ref: "#/components/schemas/SourceOfIncome"
+          - $ref: "#/components/schemas/SourceOfIncomeType"
           description: Required if nationality is not US. Source of income of the
             individual.
           example: EmploymentOrPayrollIncome
@@ -1949,7 +2172,7 @@ components:
           description: Optional. A list of device fingerprints for fraud and risk
             prevention (See Device Fingerprints).
           items:
-            $ref: "#/components/schemas/DeviceFingerprint"
+            $ref: "#/components/schemas/DeviceFingerprintType"
           type: array
         jwtSubject:
           description: Optional. See this section for more information.
@@ -1988,7 +2211,7 @@ components:
           type: string
         fullName:
           allOf:
-          - $ref: "#/components/schemas/FullName"
+          - $ref: "#/components/schemas/FullNameType"
           description: Full name of the individual.
         dateOfBirth:
           description: Date only (e.g. "2001-08-15").
@@ -1996,11 +2219,11 @@ components:
           type: string
         address:
           allOf:
-          - $ref: "#/components/schemas/Address"
+          - $ref: "#/components/schemas/AddressType"
           description: Address of the individual. Must be a US address.
         phone:
           allOf:
-          - $ref: "#/components/schemas/Phone"
+          - $ref: "#/components/schemas/PhoneType"
           description: Phone number of the individual.
         email:
           description: Email address of the individual.
@@ -2029,17 +2252,17 @@ components:
           type: string
         annualRevenue:
           allOf:
-          - $ref: "#/components/schemas/SoleProprietorAnnualRevenue"
+          - $ref: "#/components/schemas/SoleProprietorAnnualRevenueType"
           description: "Required if nationality is not US. For sole proprietors, specify\
             \ the annual revenue here."
         numberOfEmployees:
           allOf:
-          - $ref: "#/components/schemas/SoleProprietorNumberOfEmployees"
+          - $ref: "#/components/schemas/SoleProprietorNumberOfEmployeesType"
           description: "Required if nationality is not US. For sole proprietors, specify\
             \ the number of employees here."
         businessVertical:
           allOf:
-          - $ref: "#/components/schemas/BusinessVertical"
+          - $ref: "#/components/schemas/BusinessVerticalType"
           description: "For sole proprietors, specify the business vertical here."
           example: TechnologyMediaOrTelecom
         website:
@@ -2070,7 +2293,7 @@ components:
           description: Optional. A list of device fingerprints for fraud and risk
             prevention (See Device Fingerprints).
           items:
-            $ref: "#/components/schemas/DeviceFingerprint"
+            $ref: "#/components/schemas/DeviceFingerprintType"
           type: array
         jwtSubject:
           description: Optional. See this section for more information.
@@ -2086,7 +2309,7 @@ components:
           description: Optional. The product being applied for. Contact Unit to enable
             BillPay and Capital products.
           items:
-            $ref: "#/components/schemas/RequestedProduct"
+            $ref: "#/components/schemas/RequestedProductType"
           type: array
       required:
       - address
@@ -2107,7 +2330,7 @@ components:
           type: string
         fullName:
           allOf:
-          - $ref: "#/components/schemas/FullName"
+          - $ref: "#/components/schemas/FullNameType"
           description: Full name of the beneficial owner.
         ssn:
           description: SSN of the beneficial owner (numbers only). One of ssn or passport
@@ -2129,26 +2352,26 @@ components:
           type: string
         address:
           allOf:
-          - $ref: "#/components/schemas/Address"
+          - $ref: "#/components/schemas/AddressType"
           description: The beneficial owner's address.
         phone:
           allOf:
-          - $ref: "#/components/schemas/Phone"
+          - $ref: "#/components/schemas/PhoneType"
           description: The beneficial owner's phone number.
         email:
           description: The beneficial owner's email address.
           type: string
         occupation:
           allOf:
-          - $ref: "#/components/schemas/Occupation"
+          - $ref: "#/components/schemas/OccupationType"
           description: Optional. Occupation of the beneficial owner.
         annualIncome:
           allOf:
-          - $ref: "#/components/schemas/AnnualIncome"
+          - $ref: "#/components/schemas/AnnualIncomeType"
           description: Optional. Annual income of the beneficial owner.
         sourceOfIncome:
           allOf:
-          - $ref: "#/components/schemas/SourceOfIncome"
+          - $ref: "#/components/schemas/SourceOfIncomeType"
           description: Optional. Source of income of the beneficial owner.
       required:
       - address
@@ -2183,17 +2406,17 @@ components:
           type: string
         address:
           allOf:
-          - $ref: "#/components/schemas/Address"
+          - $ref: "#/components/schemas/AddressType"
           description: Address of the business.
         operatingAddress:
           allOf:
-          - $ref: "#/components/schemas/Address"
+          - $ref: "#/components/schemas/AddressType"
           description: Optional. The operating address of the business. Required when
             the address is of a registered agent or if any beneficial owner or officer
             is non-US.
         phone:
           allOf:
-          - $ref: "#/components/schemas/Phone"
+          - $ref: "#/components/schemas/PhoneType"
           description: Phone of the business.
         stateOfIncorporation:
           description: Two letters representing a US state.
@@ -2203,7 +2426,7 @@ components:
           type: string
         industry:
           allOf:
-          - $ref: "#/components/schemas/Industry"
+          - $ref: "#/components/schemas/IndustryType"
           description: "Optional. Business industry, if specified."
         entityType:
           description: "The business entity type. Documented values are LLC, Partnership,\
@@ -2217,11 +2440,11 @@ components:
           type: string
         contact:
           allOf:
-          - $ref: "#/components/schemas/BusinessContact"
+          - $ref: "#/components/schemas/BusinessContactType"
           description: Primary contact of the business.
         officer:
           allOf:
-          - $ref: "#/components/schemas/Officer"
+          - $ref: "#/components/schemas/OfficerType"
           description: "Officer representing the business, must be the CEO, COO, CFO,\
             \ President, BenefitsAdministrationOfficer, CIO, VP, AVP, Treasurer, Secretary,\
             \ Controller, Manager, Partner or Member. The officer would need to go\
@@ -2229,22 +2452,22 @@ components:
         beneficialOwners:
           items:
             allOf:
-            - $ref: "#/components/schemas/BeneficialOwner-2"
+            - $ref: "#/components/schemas/BeneficialOwnerType"
             description: Array of beneficial owners of the business. Beneficial Owner
               is anyone with more than 25% ownership. Beneficial Owners would need
               to go over KYC process and provide documents.
           type: array
         annualRevenue:
           allOf:
-          - $ref: "#/components/schemas/AnnualRevenue"
+          - $ref: "#/components/schemas/AnnualRevenueType"
           description: Optional. Annual revenue of the business.
         numberOfEmployees:
           allOf:
-          - $ref: "#/components/schemas/NumberOfEmployees"
+          - $ref: "#/components/schemas/NumberOfEmployeesType"
           description: Optional. Number of employees of the business.
         cashFlow:
           allOf:
-          - $ref: "#/components/schemas/CashFlow"
+          - $ref: "#/components/schemas/CashFlowType"
           description: Optional. Cash flow of the business.
         yearOfIncorporation:
           description: Year of incorporation of the business.
@@ -2262,7 +2485,7 @@ components:
           type: string
         businessVertical:
           allOf:
-          - $ref: "#/components/schemas/BusinessVertical"
+          - $ref: "#/components/schemas/BusinessVerticalType"
           description: The business vertical of the business.
         ip:
           description: "Optional. IP address of the end-customer creating the application.\
@@ -2331,7 +2554,7 @@ components:
           type: string
         address:
           allOf:
-          - $ref: "#/components/schemas/Address"
+          - $ref: "#/components/schemas/AddressType"
           description: "Individual address, present only for the AddressVerification\
             \ document type."
         dateOfBirth:
@@ -2400,7 +2623,7 @@ components:
           type: string
         fullName:
           allOf:
-          - $ref: "#/components/schemas/FullName"
+          - $ref: "#/components/schemas/FullNameType"
           description: Full name of the individual.
         dateOfBirth:
           description: Date only (e.g. "2001-08-15").
@@ -2408,11 +2631,11 @@ components:
           type: string
         address:
           allOf:
-          - $ref: "#/components/schemas/Address"
+          - $ref: "#/components/schemas/AddressType"
           description: Address of the individual.
         phone:
           allOf:
-          - $ref: "#/components/schemas/Phone"
+          - $ref: "#/components/schemas/PhoneType"
           description: Phone of the individual.
         email:
           description: Email address of the individual.
@@ -2431,7 +2654,7 @@ components:
           type: string
         industry:
           allOf:
-          - $ref: "#/components/schemas/Industry"
+          - $ref: "#/components/schemas/IndustryType"
           description: "Optional. Indicates if the individual is a sole proprietor\
             \ who has a business industry, if specified."
         dba:
@@ -2487,15 +2710,15 @@ components:
           type: object
         annualRevenue:
           allOf:
-          - $ref: "#/components/schemas/BusinessAnnualRevenue"
+          - $ref: "#/components/schemas/BusinessAnnualRevenueType"
           description: Optional. Annual revenue of the business.
         numberOfEmployees:
           allOf:
-          - $ref: "#/components/schemas/BusinessNumberOfEmployees"
+          - $ref: "#/components/schemas/BusinessNumberOfEmployeesType"
           description: Optional. Number of employees of the business.
         cashFlow:
           allOf:
-          - $ref: "#/components/schemas/CashFlow"
+          - $ref: "#/components/schemas/CashFlowType"
           description: Optional. Cash flow of the business.
           example: Predictable
         yearOfIncorporation:
@@ -2520,7 +2743,7 @@ components:
           type: string
         businessVertical:
           allOf:
-          - $ref: "#/components/schemas/BusinessVertical"
+          - $ref: "#/components/schemas/BusinessVerticalType"
           description: Optional. The business vertical of the business.
           example: TechnologyMediaOrTelecom
       required:
@@ -2530,17 +2753,17 @@ components:
       properties:
         officer.occupation:
           allOf:
-          - $ref: "#/components/schemas/Occupation"
+          - $ref: "#/components/schemas/OccupationType"
           description: Optional. Occupation of the officer.
           example: ArchitectOrEngineer
         officer.annualIncome:
           allOf:
-          - $ref: "#/components/schemas/AnnualIncome"
+          - $ref: "#/components/schemas/AnnualIncomeType"
           description: Optional. Annual income of the officer.
           example: Between10kAnd25k
         officer.sourceOfIncome:
           allOf:
-          - $ref: "#/components/schemas/SourceOfIncome"
+          - $ref: "#/components/schemas/SourceOfIncomeType"
           description: Optional. Source of income of the officer.
           example: EmploymentOrPayrollIncome
       type: object
@@ -2555,17 +2778,17 @@ components:
           type: object
         occupation:
           allOf:
-          - $ref: "#/components/schemas/Occupation"
+          - $ref: "#/components/schemas/OccupationType"
           description: Optional. Occupation of the individual.
           example: ArchitectOrEngineer
         annualIncome:
           allOf:
-          - $ref: "#/components/schemas/AnnualIncome"
+          - $ref: "#/components/schemas/AnnualIncomeType"
           description: Optional. Annual income of the individual.
           example: Between10kAnd25k
         sourceOfIncome:
           allOf:
-          - $ref: "#/components/schemas/SourceOfIncome"
+          - $ref: "#/components/schemas/SourceOfIncomeType"
           description: Optional. Source of income of the individual.
           example: EmploymentOrPayrollIncome
       required:
@@ -2582,15 +2805,15 @@ components:
           type: object
         annualRevenue:
           allOf:
-          - $ref: "#/components/schemas/SoleProprietorAnnualRevenue"
+          - $ref: "#/components/schemas/SoleProprietorAnnualRevenueType"
           description: Optional. Specify the annual revenue here.
         numberOfEmployees:
           allOf:
-          - $ref: "#/components/schemas/SoleProprietorNumberOfEmployees"
+          - $ref: "#/components/schemas/SoleProprietorNumberOfEmployeesType"
           description: Optional. Specify the number of employees here.
         businessVertical:
           allOf:
-          - $ref: "#/components/schemas/BusinessVertical"
+          - $ref: "#/components/schemas/BusinessVerticalType"
           description: Optional. Specify the business vertical here.
           example: BusinessSupportOrBuildingServices
         website:
@@ -2612,7 +2835,7 @@ components:
       properties:
         address:
           allOf:
-          - $ref: "#/components/schemas/Address"
+          - $ref: "#/components/schemas/AddressType"
           description: The address to check. Must be a US address
       required:
       - address
@@ -2621,17 +2844,17 @@ components:
       properties:
         occupation:
           allOf:
-          - $ref: "#/components/schemas/Occupation"
+          - $ref: "#/components/schemas/OccupationType"
           description: Optional. Occupation of the beneficial owner.
           example: ArchitectOrEngineer
         annualIncome:
           allOf:
-          - $ref: "#/components/schemas/AnnualIncome"
+          - $ref: "#/components/schemas/AnnualIncomeType"
           description: Optional. Annual income of the beneficial owner.
           example: Between10kAnd25k
         sourceOfIncome:
           allOf:
-          - $ref: "#/components/schemas/SourceOfIncome"
+          - $ref: "#/components/schemas/SourceOfIncomeType"
           description: Optional. Source of income of the beneficial owner.
           example: EmploymentOrPayrollIncome
         percentage:
@@ -2645,6 +2868,100 @@ components:
           $ref: "#/components/schemas/Relationship"
       required:
       - application
+      type: object
+    CreateFeeData_attributes:
+      properties:
+        amount:
+          description: The amount (in cents) to charge the account.
+          example: 1000
+          type: integer
+        description:
+          description: Description of the fee (maximum of 50 characters).
+          example: Monthly Subscription
+          type: string
+        tags:
+          additionalProperties: true
+          description: Optional. See Tags.
+          type: object
+        idempotencyKey:
+          description: "Optional, but **strongly recommended**. See Idempotency."
+          type: string
+      required:
+      - amount
+      - description
+      type: object
+    CreateFeeData_relationships:
+      properties:
+        account:
+          $ref: "#/components/schemas/Relationship"
+      required:
+      - account
+      type: object
+    ReverseFeeData_attributes:
+      properties:
+        description:
+          description: Description of the fee (maximum of 50 characters).
+          example: Monthly Subscription - reverse
+          type: string
+        tags:
+          additionalProperties: true
+          description: Optional. See Tags.
+          type: object
+        idempotencyKey:
+          description: "Optional, but **strongly recommended**. See Idempotency."
+          type: string
+      required:
+      - description
+      type: object
+    ReverseFeeData_relationships:
+      properties:
+        account:
+          $ref: "#/components/schemas/Relationship"
+        transaction:
+          $ref: "#/components/schemas/Relationship"
+      required:
+      - account
+      - transaction
+      type: object
+    Fee_attributes:
+      properties:
+        amount:
+          description: The amount (in cents) of the fee.
+          type: integer
+        description:
+          description: Description of the fee.
+          type: string
+        tags:
+          additionalProperties: true
+          description: See Tags.
+          type: object
+      required:
+      - amount
+      - description
+      type: object
+    Fee_relationships:
+      properties:
+        account:
+          $ref: "#/components/schemas/Relationship"
+      type: object
+    FeeReversal_attributes:
+      properties:
+        description:
+          description: Description of the fee.
+          type: string
+        tags:
+          additionalProperties: true
+          description: See Tags.
+          type: object
+      required:
+      - description
+      type: object
+    FeeReversal_relationships:
+      properties:
+        account:
+          $ref: "#/components/schemas/Relationship"
+        transaction:
+          $ref: "#/components/schemas/Relationship"
       type: object
   securitySchemes:
     bearerAuth:

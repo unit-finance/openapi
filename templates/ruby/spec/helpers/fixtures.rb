@@ -186,5 +186,43 @@ module Helpers
         }
       }
     end
+
+    def create_fee_request(account_id)
+      {
+        'data' => {
+          'type' => 'fee',
+          'attributes' => {
+            'amount' => 100,
+            'description' => 'SDK integration test fee',
+            'tags' => base_tags
+          },
+          'relationships' => {
+            'account' => {
+              'data' => { 'type' => 'depositAccount', 'id' => account_id }
+            }
+          }
+        }
+      }
+    end
+
+    def reverse_fee_request(account_id, transaction_id)
+      {
+        'data' => {
+          'type' => 'feeReversal',
+          'attributes' => {
+            'description' => 'SDK integration test fee reversal',
+            'tags' => base_tags
+          },
+          'relationships' => {
+            'account' => {
+              'data' => { 'type' => 'depositAccount', 'id' => account_id }
+            },
+            'transaction' => {
+              'data' => { 'type' => 'transaction', 'id' => transaction_id }
+            }
+          }
+        }
+      }
+    end
   end
 end

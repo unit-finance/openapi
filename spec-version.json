@@ -1,6 +1,6 @@
 {
   "$comment": "Pins the unit-openapi spec version the committed SDKs were generated from. The dispatch-driven regeneration PR bumps `version`; `fetch-spec` downloads the matching bundled spec. Keep this in sync with the spec/openapi.json `info.version` in the unit-openapi repo.",
   "repo": "unit-finance/unit-openapi",
-  "version": "0.1.0",
+  "version": "0.2.3",
   "assetName": "openapi.bundled.json"
 }

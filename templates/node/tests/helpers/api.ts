@@ -1,4 +1,5 @@
-import { ApplicationsApi, Configuration } from "../..";
+import axios from "axios";
+import { ApplicationsApi, Configuration, FeesApi } from "../..";
 
 export const TOKEN = process.env.UNIT_SANDBOX_TOKEN;
 export const BASE_PATH =
@@ -11,15 +12,47 @@ export const BASE_PATH =
  * `describe` on `describeIfToken` so we never reach this branch when the
  * token is unset.
  */
-export function buildApi(): ApplicationsApi {
+function sandboxConfiguration(): Configuration {
 	if (!TOKEN) {
 		throw new Error(
 			"UNIT_SANDBOX_TOKEN is required to talk to the sandbox; set it in .env or the shell.",
 		);
 	}
-	return new ApplicationsApi(
-		new Configuration({ accessToken: TOKEN, basePath: BASE_PATH }),
-	);
+	return new Configuration({ accessToken: TOKEN, basePath: BASE_PATH });
+}
+
+export function buildApi(): ApplicationsApi {
+	return new ApplicationsApi(sandboxConfiguration());
+}
+
+export function buildFeesApi(): FeesApi {
+	return new FeesApi(sandboxConfiguration());
+}
+
+let cachedDepositAccountId: Promise<string> | null = null;
+
+/**
+ * Returns a deposit account id from the sandbox. The Fees API is not paired
+ * with an accounts list operation in this spec slice, so setup uses a direct
+ * GET /accounts call with the same bearer token.
+ */
+export function getSandboxDepositAccountId(): Promise<string> {
+	if (cachedDepositAccountId) return cachedDepositAccountId;
+	cachedDepositAccountId = (async () => {
+		const response = await axios.get<{ data: Array<{ id: string }> }>(
+			`${BASE_PATH}/accounts`,
+			{
+				params: { "page[limit]": 1 },
+				headers: { Authorization: `Bearer ${TOKEN}` },
+			},
+		);
+		const accountId = response.data.data?.[0]?.id;
+		if (!accountId) {
+			throw new Error("No deposit account found in sandbox.");
+		}
+		return accountId;
+	})();
+	return cachedDepositAccountId;
 }
 
 /**
