@@ -1,16 +1,18 @@
 import type {
 	CheckRegisteredAgentAddressRequest,
 	CreateBusinessApplicationRequest,
+	CreateFeeRequest,
 	CreateIndividualApplicationRequest,
 	CreateSoleProprietorApplicationRequest,
+	ReverseFeeRequest,
 	UpdateBusinessApplicationRequest,
 	UpdateBusinessBeneficialOwnerRequest,
 } from "../..";
 import {
-	BusinessAnnualRevenue,
-	BusinessNumberOfEmployees,
-	SoleProprietorAnnualRevenue,
-	SoleProprietorNumberOfEmployees,
+	BusinessAnnualRevenueType,
+	BusinessNumberOfEmployeesType,
+	SoleProprietorAnnualRevenueType,
+	SoleProprietorNumberOfEmployeesType,
 } from "../..";
 import { TEST_RUN_ID } from "./api";
 
@@ -78,8 +80,8 @@ export function buildBusinessApplicationRequest(): CreateBusinessApplicationRequ
 				contact: businessContact(),
 				officer: officer(),
 				beneficialOwners: beneficialOwners(),
-				annualRevenue: BusinessAnnualRevenue.Between500kAnd1m,
-				numberOfEmployees: BusinessNumberOfEmployees.Between50And100,
+				annualRevenue: BusinessAnnualRevenueType.Between500kAnd1m,
+				numberOfEmployees: BusinessNumberOfEmployeesType.Between50And100,
 				cashFlow: "Predictable",
 				tags: baseTags(),
 			},
@@ -150,8 +152,8 @@ export function buildSoleProprietorApplicationRequest(): CreateSoleProprietorApp
 				ein: "123456789",
 				dba: `Pied Piper SP ${TEST_RUN_ID}`,
 				businessVertical: "TechnologyMediaOrTelecom",
-				annualRevenue: SoleProprietorAnnualRevenue.Between100kAnd200k,
-				numberOfEmployees: SoleProprietorNumberOfEmployees.Between2And5,
+				annualRevenue: SoleProprietorAnnualRevenueType.Between100kAnd200k,
+				numberOfEmployees: SoleProprietorNumberOfEmployeesType.Between2And5,
 				website: "https://www.piedpiper.com",
 				tags: baseTags(),
 			},
@@ -191,6 +193,47 @@ export function buildCheckRegisteredAgentAddressRequest(): CheckRegisteredAgentA
 		data: {
 			type: "checkRegisteredAgentAddress",
 			attributes: { address: usAddress() },
+		},
+	};
+}
+
+export function buildCreateFeeRequest(accountId: string): CreateFeeRequest {
+	return {
+		data: {
+			type: "fee",
+			attributes: {
+				amount: 100,
+				description: "SDK integration test fee",
+				tags: baseTags(),
+			},
+			relationships: {
+				account: {
+					data: { type: "depositAccount", id: accountId },
+				},
+			},
+		},
+	};
+}
+
+export function buildReverseFeeRequest(
+	accountId: string,
+	transactionId: string,
+): ReverseFeeRequest {
+	return {
+		data: {
+			type: "feeReversal",
+			attributes: {
+				description: "SDK integration test fee reversal",
+				tags: baseTags(),
+			},
+			relationships: {
+				account: {
+					data: { type: "depositAccount", id: accountId },
+				},
+				transaction: {
+					data: { type: "transaction", id: transactionId },
+				},
+			},
 		},
 	};
 }

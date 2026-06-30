@@ -4,11 +4,19 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import com.unit.finance.sdk.ApiClient;
 import com.unit.finance.sdk.api.ApplicationsApi;
+import com.unit.finance.sdk.api.FeesApi;
 import com.unit.finance.sdk.model.BusinessApplication;
 import com.unit.finance.sdk.model.IndividualApplication;
 import com.unit.finance.sdk.model.List200ResponseDataInner;
 import io.github.cdimascio.dotenv.Dotenv;
 import java.io.File;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonParser;
 
 /**
  * Shared helpers for the sandbox integration suite, mirroring the Node
@@ -86,6 +94,15 @@ final class ApiSupport {
 
   /** Construct an {@code ApplicationsApi} bound to the sandbox. */
   static ApplicationsApi buildApi() {
+    return new ApplicationsApi(sandboxClient());
+  }
+
+  /** Construct a {@code FeesApi} bound to the sandbox. */
+  static FeesApi buildFeesApi() {
+    return new FeesApi(sandboxClient());
+  }
+
+  private static ApiClient sandboxClient() {
     if (!hasToken()) {
       throw new IllegalStateException(
           "UNIT_SANDBOX_TOKEN is required to talk to the sandbox; set it in the shell.");
@@ -99,7 +116,41 @@ final class ApiSupport {
     client.setConnectTimeout(30_000);
     client.setReadTimeout(60_000);
     client.setWriteTimeout(60_000);
-    return new ApplicationsApi(client);
+    return client;
+  }
+
+  private static String cachedDepositAccountId;
+
+  /**
+   * Returns a deposit account id from the sandbox. The Fees API is not paired
+   * with an accounts list operation in this spec slice, so setup uses a direct
+   * GET /accounts call with the same bearer token.
+   */
+  static String getSandboxDepositAccountId() throws Exception {
+    if (cachedDepositAccountId != null) {
+      return cachedDepositAccountId;
+    }
+    HttpRequest request =
+        HttpRequest.newBuilder()
+            .uri(URI.create(BASE_PATH + "/accounts?page%5Blimit%5D=1"))
+            .header("Authorization", "Bearer " + TOKEN)
+            .header("Content-Type", "application/vnd.api+json")
+            .timeout(Duration.ofSeconds(60))
+            .GET()
+            .build();
+    HttpResponse<String> response =
+        HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+    if (response.statusCode() != 200) {
+      throw new IllegalStateException(
+          "Failed to list sandbox accounts: HTTP " + response.statusCode());
+    }
+    JsonArray data =
+        JsonParser.parseString(response.body()).getAsJsonObject().getAsJsonArray("data");
+    if (data == null || data.isEmpty()) {
+      throw new IllegalStateException("No deposit account found in sandbox.");
+    }
+    cachedDepositAccountId = data.get(0).getAsJsonObject().get("id").getAsString();
+    return cachedDepositAccountId;
   }
 
   /**

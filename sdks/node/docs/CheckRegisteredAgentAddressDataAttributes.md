@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**address** | [**Address**](Address.md) | The address to check. Must be a US address | [default to undefined]
+**address** | [**AddressType**](AddressType.md) | The address to check. Must be a US address | [default to undefined]
 
 ## Example
 
