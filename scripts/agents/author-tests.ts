@@ -30,7 +30,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
-import { Agent, CursorAgentError } from "@cursor/sdk";
+import { Agent, CursorAgentError, type SDKMessage } from "@cursor/sdk";
 
 const REPO_ROOT = process.cwd();
 
@@ -165,6 +165,27 @@ function buildPrompt(report: CoverageReport): string {
 	].join("\n");
 }
 
+/** Surface streamed agent activity to stderr so CI logs show progress + errors. */
+function logEvent(event: SDKMessage): void {
+	switch (event.type) {
+		case "assistant":
+			for (const block of event.message.content) {
+				if (block.type === "text" && block.text.trim()) {
+					console.error(`[agent] ${block.text}`);
+				}
+			}
+			break;
+		case "tool_call":
+			console.error(`[agent] tool_call: ${JSON.stringify(event)}`);
+			break;
+		case "status":
+			console.error(`[agent] status: ${JSON.stringify(event)}`);
+			break;
+		default:
+			break;
+	}
+}
+
 async function main(): Promise<void> {
 	const reportPath = path.resolve(arg("--report") ?? "test-coverage-report.json");
 	const model = arg("--model") ?? "composer-2.5";
@@ -186,7 +207,10 @@ async function main(): Promise<void> {
 	);
 
 	try {
-		const result = await Agent.prompt(prompt, {
+		// Use create + send (rather than the one-shot Agent.prompt) so we can
+		// stream the agent's progress and, on failure, surface the transcript --
+		// a bare `status: error` from Agent.prompt is undebuggable in CI.
+		await using agent = await Agent.create({
 			apiKey,
 			model: { id: model },
 			// Local runtime against this checkout; inline config only (no ambient
@@ -194,11 +218,30 @@ async function main(): Promise<void> {
 			local: { cwd: REPO_ROOT, settingSources: [] },
 		});
 
+		const run = await agent.send(prompt);
+		console.error(`[author-tests] run ${run.id} started (agent ${agent.agentId}); streaming...`);
+
+		for await (const event of run.stream()) {
+			logEvent(event);
+		}
+
+		const result = await run.wait();
 		console.error(`[author-tests] run ${result.id} finished with status: ${result.status}`);
 		if (result.result) console.error(result.result);
 
 		if (result.status === "error") {
-			// Run executed but failed mid-flight.
+			// Run executed but failed mid-flight. Dump the conversation so the
+			// failure (failed tool call, compile error, etc.) is visible in logs.
+			console.error("[author-tests] run ended in error; dumping conversation transcript:");
+			if (run.supports("conversation")) {
+				try {
+					console.error(JSON.stringify(await run.conversation(), null, 2));
+				} catch (convErr) {
+					console.error(
+						`[author-tests] could not fetch conversation: ${convErr instanceof Error ? convErr.message : String(convErr)}`,
+					);
+				}
+			}
 			process.exit(2);
 		}
 	} catch (err) {
