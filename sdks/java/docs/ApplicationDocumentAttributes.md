@@ -11,7 +11,7 @@
 |**documentType** | **String** | One of IdDocument, Passport, AddressVerification, CertificateOfIncorporation, EmployerIdentificationNumberConfirmation, SocialSecurityCard, ClientRequested or SelfieVerification. |  |
 |**description** | **String** | The document requirements description. |  |
 |**name** | **String** | Name of business or individual. |  |
-|**address** | [**Address**](Address.md) | Individual address, present only for the AddressVerification document type. |  [optional] |
+|**address** | [**AddressType**](AddressType.md) | Individual address, present only for the AddressVerification document type. |  [optional] |
 |**dateOfBirth** | **LocalDate** | Date only (e.g. \&quot;2001-08-15\&quot;). Present only for Passport and IdDocument document types. |  [optional] |
 |**passport** | **String** | Individual passport number. Present only for the Passport document type. |  [optional] |
 |**ein** | **String** | Business EIN. Present only for the EmployerIdentificationNumberConfirmation document type. |  [optional] |

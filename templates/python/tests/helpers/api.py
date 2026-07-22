@@ -6,7 +6,13 @@ import time
 from typing import Any
 
 import pytest
-from unit_finance_sdk import ApiClient, ApplicationsApi, Configuration
+from unit_finance_sdk import (
+    AccountsApi,
+    ApiClient,
+    ApplicationsApi,
+    Configuration,
+    FeesApi,
+)
 
 TOKEN = os.environ.get("UNIT_SANDBOX_TOKEN")
 BASE_PATH = os.environ.get("UNIT_SANDBOX_BASE_URL", "https://api.s.unit.sh")
@@ -29,11 +35,35 @@ def build_api() -> ApplicationsApi:
     Raises if the bearer token is missing — but every test gates on
     ``requires_token`` so this branch is never reached when it is unset.
     """
+    return build_applications_api()
+
+
+def build_applications_api() -> ApplicationsApi:
     if not TOKEN:
         raise RuntimeError(
             "UNIT_SANDBOX_TOKEN is required to talk to the sandbox; set it in .env or the shell.",
         )
     return ApplicationsApi(
+        ApiClient(Configuration(access_token=TOKEN, host=BASE_PATH)),
+    )
+
+
+def build_accounts_api() -> AccountsApi:
+    if not TOKEN:
+        raise RuntimeError(
+            "UNIT_SANDBOX_TOKEN is required to talk to the sandbox; set it in .env or the shell.",
+        )
+    return AccountsApi(
+        ApiClient(Configuration(access_token=TOKEN, host=BASE_PATH)),
+    )
+
+
+def build_fees_api() -> FeesApi:
+    if not TOKEN:
+        raise RuntimeError(
+            "UNIT_SANDBOX_TOKEN is required to talk to the sandbox; set it in .env or the shell.",
+        )
+    return FeesApi(
         ApiClient(Configuration(access_token=TOKEN, host=BASE_PATH)),
     )
 
