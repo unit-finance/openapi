@@ -8,9 +8,9 @@ on:
         description: 'unit-openapi spec version to pin (e.g. 0.2.0)'
         required: true
       model:
-        description: 'Cursor model for the test-authoring agent (e.g. composer-2.5, auto)'
+        description: 'Cursor model for the test-authoring agent (e.g. auto, composer-2.5)'
         required: false
-        default: composer-2.5
+        default: auto
 
 permissions:
   contents: write
@@ -80,10 +80,16 @@ jobs:
       # (and the re-mirrored sdks/) are picked up by the PR step below.
       - name: Author missing tests with Cursor agent
         if: steps.coverage.outputs.has_gaps == 'true' && env.CURSOR_API_KEY != ''
+        # Backstop on top of the script's own AGENT_TIMEOUT_MINUTES (default 20):
+        # if the run wedges and never returns, the step still fails fast instead
+        # of burning the job's 6h default.
+        timeout-minutes: 30
+        # UNIT_SANDBOX_TOKEN is intentionally NOT passed here: the authoring loop
+        # should self-skip the live sandbox suites (compile/lint/load only) to
+        # stay fast. The opened PR's own CI runs the suites live for real.
         env:
-          UNIT_SANDBOX_TOKEN: ${{ secrets.UNIT_SANDBOX_TOKEN }}
           # Model resolution order: repository_dispatch payload, workflow_dispatch
-          # input, then the script's own default (composer-2.5).
+          # input, then the script's own default (auto).
           AGENT_MODEL: ${{ github.event.client_payload.model || github.event.inputs.model }}
         run: |
           if [ -n "$AGENT_MODEL" ]; then
