@@ -34,6 +34,21 @@ import { Agent, Cursor, CursorAgentError, type SDKMessage } from "@cursor/sdk";
 
 const REPO_ROOT = process.cwd();
 
+// The SDK's local executor streams and traces on async paths; an error thrown
+// there escapes main()'s try/catch and crashes Node, which prints the minified
+// bundle source (index.js:1) but truncates the real stack in CI logs. Catch it
+// at the process level so the underlying error is always surfaced in full.
+process.on("uncaughtException", (err: unknown) => {
+	console.error("[author-tests] uncaughtException:");
+	console.error(err instanceof Error ? (err.stack ?? err.message) : String(err));
+	process.exit(2);
+});
+process.on("unhandledRejection", (reason: unknown) => {
+	console.error("[author-tests] unhandledRejection:");
+	console.error(reason instanceof Error ? (reason.stack ?? reason.message) : String(reason));
+	process.exit(2);
+});
+
 type Lang = "node" | "java" | "python" | "ruby";
 
 interface OperationCoverage {
@@ -152,12 +167,21 @@ function buildPrompt(report: CoverageReport): string {
 		"  - Tag any resources you create in the sandbox with tags.testRun so they are traceable.",
 		"",
 		"VALIDATION (do this before finishing):",
-		"  1. Run `npm run generate-sdks` to mirror templates into sdks/.",
-		"  2. Run each affected language's runner (cited below) and make it pass. If UNIT_SANDBOX_TOKEN",
-		"     is unset the live suites skip -- that is expected; still ensure the suites compile/lint",
-		"     and load cleanly.",
-		"  3. Iterate until green. If you genuinely cannot satisfy an operation, leave a clear note in",
-		"     your final summary explaining why rather than committing a broken or fabricated test.",
+		"  UNIT_SANDBOX_TOKEN is intentionally UNSET in this run, so the live sandbox suites will",
+		"  self-skip. Do NOT try to run tests against the live API. Your bar is: the suites compile,",
+		"  lint, and load cleanly (skipped == success here). The opened PR's own CI runs them live.",
+		"",
+		"  While iterating, keep the loop CHEAP -- do NOT run the full `npm run generate-sdks` (it",
+		"  rebuilds all four SDKs from scratch and is very slow). Instead, for each language you touched:",
+		"    1. Re-mirror only that language, e.g. `npm run generate-sdk:<lang>` then",
+		"       `npm run place-<lang>-tests` (node|java|python|ruby).",
+		"    2. Run only that language's runner (cited below) and make it compile/lint/load cleanly",
+		"       (live cases skip). Fix and repeat for that language only.",
+		"  Once every affected language is clean, run `npm run generate-sdks` ONCE at the very end to",
+		"  re-mirror everything consistently.",
+		"",
+		"  If you genuinely cannot satisfy an operation, leave a clear note in your final summary",
+		"  explaining why rather than committing a broken or fabricated test.",
 		"",
 		"OPERATIONS NEEDING COVERAGE, BY LANGUAGE:",
 		"",
@@ -225,8 +249,14 @@ function logEvent(event: SDKMessage): void {
 
 async function main(): Promise<void> {
 	const reportPath = path.resolve(arg("--report") ?? "test-coverage-report.json");
-	const model = arg("--model") ?? "composer-2.5";
+	const model = arg("--model") ?? "auto";
 	const apiKey = process.env.CURSOR_API_KEY;
+
+	// Hard cap on the run so a wedged loop fails fast instead of burning the CI
+	// budget. Backstopped by the workflow step's own `timeout-minutes`.
+	const timeoutMinutes = Number(process.env.AGENT_TIMEOUT_MINUTES ?? "20");
+	const timeoutMs =
+		Number.isFinite(timeoutMinutes) && timeoutMinutes > 0 ? timeoutMinutes * 60_000 : 0;
 
 	const report = readReport(reportPath);
 	if (!report.hasGaps) {
@@ -260,8 +290,39 @@ async function main(): Promise<void> {
 		const run = await agent.send(prompt);
 		console.error(`[author-tests] run ${run.id} started (agent ${agent.agentId}); streaming...`);
 
-		for await (const event of run.stream()) {
-			logEvent(event);
+		// Bound the run: on timeout, cancel it (best effort) so `wait()` returns
+		// promptly, and remember we timed out so we can exit non-zero below.
+		let timedOut = false;
+		let timer: ReturnType<typeof setTimeout> | undefined;
+		if (timeoutMs > 0) {
+			timer = setTimeout(() => {
+				timedOut = true;
+				console.error(
+					`[author-tests] run exceeded AGENT_TIMEOUT_MINUTES=${timeoutMinutes}; cancelling.`,
+				);
+				if (run.supports("cancel")) {
+					run.cancel().catch((cancelErr) => {
+						console.error(
+							`[author-tests] cancel failed: ${cancelErr instanceof Error ? cancelErr.message : String(cancelErr)}`,
+						);
+					});
+				}
+			}, timeoutMs);
+		}
+
+		try {
+			for await (const event of run.stream()) {
+				logEvent(event);
+			}
+		} finally {
+			if (timer) clearTimeout(timer);
+		}
+
+		if (timedOut) {
+			console.error(
+				`[author-tests] run timed out after ${timeoutMinutes} minute(s); treating as failure.`,
+			);
+			process.exit(2);
 		}
 
 		const result = await run.wait();
@@ -273,9 +334,12 @@ async function main(): Promise<void> {
 		if (result.result) console.error(result.result);
 
 		if (result.status === "error") {
-			// Run executed but failed mid-flight. Dump the conversation so the
-			// failure (failed tool call, compile error, etc.) is visible in logs.
-			console.error("[author-tests] run ended in error; dumping conversation transcript:");
+			// Run executed but failed mid-flight. Dump the full result first: on a
+			// fast, empty-transcript failure (local executor crash on startup) the
+			// real error lives in the result payload, not the conversation.
+			console.error("[author-tests] run ended in error; full result object:");
+			console.error(JSON.stringify(result, null, 2));
+			console.error("[author-tests] dumping conversation transcript:");
 			if (run.supports("conversation")) {
 				try {
 					console.error(JSON.stringify(await run.conversation(), null, 2));
