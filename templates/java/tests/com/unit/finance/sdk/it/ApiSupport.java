@@ -3,10 +3,17 @@ package com.unit.finance.sdk.it;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import com.unit.finance.sdk.ApiClient;
+import com.unit.finance.sdk.api.AccountsApi;
 import com.unit.finance.sdk.api.ApplicationsApi;
+import com.unit.finance.sdk.api.FeesApi;
 import com.unit.finance.sdk.model.BusinessApplication;
+import com.unit.finance.sdk.model.DepositAccount;
 import com.unit.finance.sdk.model.IndividualApplication;
 import com.unit.finance.sdk.model.List200ResponseDataInner;
+import com.unit.finance.sdk.model.ListAccounts200ResponseDataInner;
+import com.unit.finance.sdk.model.Relationship;
+import com.unit.finance.sdk.model.ResourceIdentifier;
+import java.util.List;
 import io.github.cdimascio.dotenv.Dotenv;
 import java.io.File;
 
@@ -86,6 +93,25 @@ final class ApiSupport {
 
   /** Construct an {@code ApplicationsApi} bound to the sandbox. */
   static ApplicationsApi buildApi() {
+    return buildApplicationsApi();
+  }
+
+  /** Construct an {@code ApplicationsApi} bound to the sandbox. */
+  static ApplicationsApi buildApplicationsApi() {
+    return new ApplicationsApi(apiClient());
+  }
+
+  /** Construct an {@code AccountsApi} bound to the sandbox. */
+  static AccountsApi buildAccountsApi() {
+    return new AccountsApi(apiClient());
+  }
+
+  /** Construct a {@code FeesApi} bound to the sandbox. */
+  static FeesApi buildFeesApi() {
+    return new FeesApi(apiClient());
+  }
+
+  private static ApiClient apiClient() {
     if (!hasToken()) {
       throw new IllegalStateException(
           "UNIT_SANDBOX_TOKEN is required to talk to the sandbox; set it in the shell.");
@@ -99,7 +125,7 @@ final class ApiSupport {
     client.setConnectTimeout(30_000);
     client.setReadTimeout(60_000);
     client.setWriteTimeout(60_000);
-    return new ApplicationsApi(client);
+    return client;
   }
 
   /**
@@ -126,6 +152,60 @@ final class ApiSupport {
     }
     if (actual instanceof IndividualApplication) {
       return ((IndividualApplication) actual).getId();
+    }
+    return null;
+  }
+
+  /** Resolve the JSON:API {@code type} of an account list/get response wrapper. */
+  static String accountResourceType(ListAccounts200ResponseDataInner data) {
+    Object actual = data.getActualInstance();
+    if (actual instanceof DepositAccount) {
+      return ((DepositAccount) actual).getType().getValue();
+    }
+    return null;
+  }
+
+  /** Resolve the {@code id} of a {@link ListAccounts200ResponseDataInner} wrapper. */
+  static String accountResourceId(ListAccounts200ResponseDataInner data) {
+    Object actual = data.getActualInstance();
+    if (actual instanceof DepositAccount) {
+      return ((DepositAccount) actual).getId();
+    }
+    return null;
+  }
+
+  /** Resolve a deposit account from a {@link ListAccounts200ResponseDataInner} wrapper. */
+  static DepositAccount depositAccount(ListAccounts200ResponseDataInner data) {
+    Object actual = data.getActualInstance();
+    if (actual instanceof DepositAccount) {
+      return (DepositAccount) actual;
+    }
+    return null;
+  }
+
+  static String customerIdFromBusinessApplication(BusinessApplication app) {
+    return customerIdFromRelationship(
+        app.getRelationships() != null ? app.getRelationships().getCustomer() : null);
+  }
+
+  static String customerIdFromIndividualApplication(IndividualApplication app) {
+    return customerIdFromRelationship(
+        app.getRelationships() != null ? app.getRelationships().getCustomer() : null);
+  }
+
+  private static String customerIdFromRelationship(Relationship relationship) {
+    if (relationship == null || relationship.getData() == null) {
+      return null;
+    }
+    Object actual = relationship.getData().getActualInstance();
+    if (actual instanceof ResourceIdentifier) {
+      return ((ResourceIdentifier) actual).getId();
+    }
+    if (actual instanceof List) {
+      List<?> items = (List<?>) actual;
+      if (!items.isEmpty() && items.get(0) instanceof ResourceIdentifier) {
+        return ((ResourceIdentifier) items.get(0)).getId();
+      }
     }
     return null;
   }

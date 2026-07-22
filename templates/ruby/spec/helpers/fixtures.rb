@@ -186,5 +186,132 @@ module Helpers
         }
       }
     end
+
+    def create_deposit_account_request(customer_id)
+      {
+        'data' => {
+          'type' => 'depositAccount',
+          'attributes' => {
+            'depositProduct' => 'checking',
+            'tags' => base_tags
+          },
+          'relationships' => {
+            'customer' => { 'data' => { 'type' => 'customer', 'id' => customer_id } }
+          }
+        }
+      }
+    end
+
+    def update_deposit_account_request
+      {
+        'data' => {
+          'type' => 'depositAccount',
+          'attributes' => { 'tags' => base_tags.merge('updated' => 'true') }
+        }
+      }
+    end
+
+    def verify_account_request(routing_number, account_number)
+      {
+        'data' => {
+            'type' => 'accountVerify',
+          'attributes' => {
+            'routingNumber' => routing_number,
+            'accountNumber' => account_number
+          }
+        }
+      }
+    end
+
+    def close_deposit_account_request
+      {
+        'data' => {
+          'type' => 'depositAccountClose',
+          'attributes' => { 'reason' => 'ByCustomer' }
+        }
+      }
+    end
+
+    def freeze_deposit_account_request
+      {
+        'data' => {
+          'type' => 'accountFreeze',
+          'attributes' => {
+            'reason' => 'Other',
+            'reasonText' => 'SDK integration test freeze'
+          }
+        }
+      }
+    end
+
+    def create_fee_request(account_id)
+      {
+        'data' => {
+          'type' => 'fee',
+          'attributes' => {
+            'amount' => 100,
+            'description' => 'SDK integration test fee',
+            'tags' => base_tags
+          },
+          'relationships' => {
+            'account' => { 'data' => { 'type' => 'depositAccount', 'id' => account_id } }
+          }
+        }
+      }
+    end
+
+    def reverse_fee_request(account_id, transaction_id)
+      {
+        'data' => {
+          'type' => 'feeReversal',
+          'attributes' => {
+            'description' => 'SDK integration test fee reversal',
+            'tags' => base_tags
+          },
+          'relationships' => {
+            'account' => { 'data' => { 'type' => 'depositAccount', 'id' => account_id } },
+            'transaction' => { 'data' => { 'type' => 'transaction', 'id' => transaction_id } }
+          }
+        }
+      }
+    end
+
+    def create_account_hold_request(account_id)
+      {
+        'data' => {
+          'type' => 'createAccountHoldJson',
+          'attributes' => {
+            'amount' => 100,
+            'description' => 'SDK integration test hold'
+          },
+          'relationships' => {
+            'account' => { 'data' => { 'type' => 'depositAccount', 'id' => account_id } }
+          }
+        }
+      }
+    end
+
+    def release_account_hold_request
+      {
+        'data' => {
+          'type' => 'accountHold',
+          'attributes' => { 'amount' => 100 }
+        }
+      }
+    end
+
+    def add_account_owners_request(customer_id)
+      {
+        'data' => {
+          'attributes' => {
+            'data' => [{ 'type' => 'customer', 'id' => customer_id }]
+          }
+        }
+      }
+    end
+
+    def remove_account_owners_request(customer_id)
+      add_account_owners_request(customer_id)
+    end
   end
 end

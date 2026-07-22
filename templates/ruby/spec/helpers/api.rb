@@ -20,16 +20,43 @@ module Helpers
     # metadata skip (see spec_helper.rb), so this branch is never reached when
     # it is unset.
     def build_api
+      build_applications_api
+    end
+
+    def build_applications_api
       if TOKEN.nil? || TOKEN.empty?
         raise 'UNIT_SANDBOX_TOKEN is required to talk to the sandbox; set it in .env or the shell.'
       end
 
+      config = client_config
+      UnitFinanceSdk::ApplicationsApi.new(UnitFinanceSdk::ApiClient.new(config))
+    end
+
+    def build_accounts_api
+      if TOKEN.nil? || TOKEN.empty?
+        raise 'UNIT_SANDBOX_TOKEN is required to talk to the sandbox; set it in .env or the shell.'
+      end
+
+      config = client_config
+      UnitFinanceSdk::AccountsApi.new(UnitFinanceSdk::ApiClient.new(config))
+    end
+
+    def build_fees_api
+      if TOKEN.nil? || TOKEN.empty?
+        raise 'UNIT_SANDBOX_TOKEN is required to talk to the sandbox; set it in .env or the shell.'
+      end
+
+      config = client_config
+      UnitFinanceSdk::FeesApi.new(UnitFinanceSdk::ApiClient.new(config))
+    end
+
+    def client_config
       config = UnitFinanceSdk::Configuration.new
       config.access_token = TOKEN
       # `host=` strips the scheme and any path, so passing the full base URL is
       # safe; the scheme stays the configuration default (https).
       config.host = BASE_URL
-      UnitFinanceSdk::ApplicationsApi.new(UnitFinanceSdk::ApiClient.new(config))
+      config
     end
 
     # Polymorphic JSON:API `data`/`included` members deserialize into the
