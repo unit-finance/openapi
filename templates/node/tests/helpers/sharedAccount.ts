@@ -1,10 +1,11 @@
+import axios from "axios";
 import type {
 	BusinessApplication,
 	DepositAccount,
 	IndividualApplication,
 	ResourceIdentifier,
 } from "../..";
-import { buildAccountsApi, buildApplicationsApi } from "./api";
+import { BASE_PATH, TOKEN, buildAccountsApi, buildApplicationsApi } from "./api";
 import {
 	buildBusinessApplicationRequest,
 	buildCreateDepositAccountRequest,
@@ -71,8 +72,45 @@ async function customerIdFromIndividualApplication(
 }
 
 /**
+ * Seed a positive balance on a freshly created deposit account.
+ *
+ * TODO: Replace this raw sandbox call once the spec exposes a first-class
+ * credit/funding operation (e.g. a received-ACH or book-credit endpoint). The
+ * `/sandbox/payments` (achPayment, direction "Credit") simulation is NOT part
+ * of the curated 0.3.0 spec, so it can't go through the generated SDK yet — we
+ * hit it directly with axios purely as test setup. When a funding endpoint is
+ * added to the spec, swap this for the generated SDK method and delete the raw
+ * request below.
+ */
+async function fundDepositAccount(accountId: string): Promise<void> {
+	await axios.post(
+		`${BASE_PATH}/sandbox/payments`,
+		{
+			data: {
+				type: "achPayment",
+				attributes: {
+					amount: 50000,
+					direction: "Credit",
+					description: "SDK integration test funding",
+				},
+				relationships: {
+					account: { data: { type: "depositAccount", id: accountId } },
+				},
+			},
+		},
+		{
+			headers: {
+				Authorization: `Bearer ${TOKEN}`,
+				"Content-Type": "application/vnd.api+json",
+			},
+		},
+	);
+}
+
+/**
  * Lazily creates one deposit account (backed by an auto-approved business
- * application) that downstream account/fee tests reuse.
+ * application) that downstream account/fee tests reuse. The account is seeded
+ * with a positive balance so fee/debit flows have funds to draw on.
  */
 export function getOrCreateSharedDepositAccount(): Promise<SharedAccount> {
 	if (cachedAccount) return cachedAccount;
@@ -102,6 +140,7 @@ export function getOrCreateSharedDepositAccount(): Promise<SharedAccount> {
 		}
 
 		const account = accountRes.data.data as DepositAccount;
+		await fundDepositAccount(account.id);
 		return {
 			id: account.id,
 			type: "depositAccount",

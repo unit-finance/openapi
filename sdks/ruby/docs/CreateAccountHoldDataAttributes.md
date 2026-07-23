@@ -16,7 +16,7 @@ require 'unit_finance_sdk'
 
 instance = UnitFinanceSdk::CreateAccountHoldDataAttributes.new(
   amount: 6000,
-  expired_at: Tue Oct 29 00:00:00 UTC 2024,
+  expired_at: Tue Oct 29 00:00:00 GMT 2024,
   description: Hold reason,
   idempotency_key: null
 )
