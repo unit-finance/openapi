@@ -13,7 +13,7 @@ RSpec.describe 'get_available_deposit_products', :sandbox do
     data.data.each do |item|
       product = Helpers::Api.unwrap(item)
       expect(product.type).to be_a(String)
-      expect(product.id).to be_a(String)
+      expect(product.attributes).not_to be_nil
     end
   end
 end

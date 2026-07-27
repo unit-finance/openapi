@@ -14,4 +14,4 @@ def test_get_available_deposit_products_returns_products_for_an_account():
     for item in res.data.data:
         product = unwrap(item)
         assert isinstance(product.type, str)
-        assert isinstance(product.id, str)
+        assert product.attributes is not None

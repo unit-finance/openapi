@@ -17,7 +17,9 @@ def test_create_account_creates_a_deposit_account_for_an_approved_business_custo
 
     app_id = unwrap(created.data.data).id
     app = unwrap(apps_api.get_by_id(app_id).data)
-    customer_id = app.relationships.customer.data.id
+    # customer.data is a polymorphic RelationshipData oneOf wrapper; unwrap it
+    # before reading the id.
+    customer_id = unwrap(app.relationships.customer.data).id
     assert customer_id is not None
 
     res = accounts_api.create_account_with_http_info(

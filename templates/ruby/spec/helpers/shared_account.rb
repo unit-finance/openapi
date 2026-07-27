@@ -1,6 +1,10 @@
 # Shared deposit account, the Ruby analogue of Node's `sharedAccount.ts` and
 # Python's `shared_account.py`.
 
+require 'json'
+require 'net/http'
+require 'uri'
+
 require_relative 'api'
 require_relative 'fixtures'
 
@@ -19,7 +23,60 @@ module Helpers
       customer_id
     end
 
-    def create_deposit_account
+    # Seed a positive balance on a freshly created deposit account.
+    #
+    # TODO: Replace this raw sandbox call once the spec exposes a first-class
+    # credit/funding operation (e.g. a received-ACH or book-credit endpoint).
+    # The `/sandbox/payments` (achPayment, direction "Credit") simulation is NOT
+    # part of the curated 0.3.0 spec, so it can't go through the generated SDK
+    # yet -- we hit it directly with Net::HTTP purely as test setup. When a
+    # funding endpoint is added to the spec, swap this for the generated SDK
+    # method and delete the raw request below.
+    def fund_deposit_account(account_id)
+      uri = URI("#{Helpers::Api::BASE_URL}/sandbox/payments")
+      body = {
+        'data' => {
+          'type' => 'achPayment',
+          'attributes' => {
+            'amount' => 50_000,
+            'direction' => 'Credit',
+            'description' => 'SDK integration test funding'
+          },
+          'relationships' => {
+            'account' => { 'data' => { 'type' => 'depositAccount', 'id' => account_id } }
+          }
+        }
+      }
+      request = Net::HTTP::Post.new(uri)
+      request['Authorization'] = "Bearer #{Helpers::Api::TOKEN}"
+      request['Content-Type'] = 'application/vnd.api+json'
+      request.body = JSON.generate(body)
+      response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == 'https') do |http|
+        http.request(request)
+      end
+      return if response.is_a?(Net::HTTPSuccess)
+
+      raise "Failed to fund deposit account #{account_id}: expected 2xx, got " \
+            "#{response.code} body=#{response.body}"
+    end
+
+    # Poll `get_account` until the seeded credit reflects in the account's
+    # available balance. The sandbox ACH credit above does not always settle
+    # synchronously, so without this fee/debit suites can race the credit and
+    # fail with `InsufficientFunds`.
+    def wait_for_available_balance(accounts_api, account_id)
+      20.times do
+        resp, = accounts_api.get_account_with_http_info(account_id)
+        account = Helpers::Api.unwrap(resp.data)
+        available = account.attributes.available
+        return if !available.nil? && available.positive?
+
+        sleep 0.5
+      end
+      raise "Deposit account #{account_id} never reflected the seeded credit balance."
+    end
+
+    def create_deposit_account(fund: false)
       apps_api = Helpers::Api.build_applications_api
       accounts_api = Helpers::Api.build_accounts_api
 
@@ -38,6 +95,10 @@ module Helpers
       raise "Expected 201 creating deposit account, got #{account_status}" unless account_status == 201
 
       account = Helpers::Api.unwrap(account_res.data)
+      if fund
+        fund_deposit_account(account.id)
+        wait_for_available_balance(accounts_api, account.id)
+      end
       {
         id: account.id,
         type: account.type,
@@ -50,7 +111,7 @@ module Helpers
     def get_or_create
       return @cached if @cached
 
-      @cached = create_deposit_account
+      @cached = create_deposit_account(fund: true)
     end
 
     def create_dedicated

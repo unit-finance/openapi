@@ -14,6 +14,6 @@ RSpec.describe 'verify_account', :sandbox do
     )
 
     expect(status_code).to eq(200)
-    expect(data.data.exists).to be_in([true, false])
+    expect([true, false]).to include(data.data.exists)
   end
 end
