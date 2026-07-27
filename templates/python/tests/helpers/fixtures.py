@@ -34,7 +34,11 @@ from unit_finance_sdk import (
     CreateApplicationRequest,
     CreateBusinessApplicationRequest,
     CreateDepositAccountRequest,
+    CreateFeeRequest,
     CreateIndividualApplicationRequest,
+    FreezeAccountRequest,
+    FreezeDepositAccountRequest,
+    ReverseFeeRequest,
     UpdateAccountRequest,
     UpdateApplicationRequest,
     UpdateBusinessApplicationRequest,
@@ -297,8 +301,8 @@ def build_close_deposit_account_request() -> Dict[str, Any]:
     }
 
 
-def build_freeze_deposit_account_request() -> Dict[str, Any]:
-    return {
+def build_freeze_deposit_account_request() -> FreezeAccountRequest:
+    body = {
         "data": {
             "type": "accountFreeze",
             "attributes": {
@@ -307,10 +311,18 @@ def build_freeze_deposit_account_request() -> Dict[str, Any]:
             },
         },
     }
+    # FreezeAccountRequest is a oneOf union (deposit/credit/wallet). A raw dict
+    # handed to the @validate_call-decorated method coerces into the union but
+    # leaves actual_instance unpopulated, so the body serializes empty and the
+    # API rejects it ("should have required property 'data'"). Build the concrete
+    # variant via from_dict and wrap it as the union's actual_instance.
+    return FreezeAccountRequest(
+        actual_instance=FreezeDepositAccountRequest.from_dict(body)
+    )
 
 
-def build_create_fee_request(account_id: str) -> Dict[str, Any]:
-    return {
+def build_create_fee_request(account_id: str) -> CreateFeeRequest:
+    body = {
         "data": {
             "type": "fee",
             "attributes": {
@@ -323,10 +335,15 @@ def build_create_fee_request(account_id: str) -> Dict[str, Any]:
             },
         },
     }
+    # Build via from_dict (not a plain dict): data.relationships.account.data is
+    # the RelationshipData oneOf, which @validate_call coercion would leave
+    # unpopulated (serialized as data: null -> API "should be object"). from_dict
+    # recurses through RelationshipData.from_dict and constructs the union member.
+    return CreateFeeRequest.from_dict(body)
 
 
-def build_reverse_fee_request(account_id: str, transaction_id: str) -> Dict[str, Any]:
-    return {
+def build_reverse_fee_request(account_id: str, transaction_id: str) -> ReverseFeeRequest:
+    body = {
         "data": {
             "type": "feeReversal",
             "attributes": {
@@ -339,6 +356,9 @@ def build_reverse_fee_request(account_id: str, transaction_id: str) -> Dict[str,
             },
         },
     }
+    # See build_create_fee_request: the account/transaction RelationshipData
+    # oneOf members must be constructed via from_dict.
+    return ReverseFeeRequest.from_dict(body)
 
 
 def build_create_account_hold_request(account_id: str) -> Dict[str, Any]:
