@@ -10,7 +10,7 @@ on:
       model:
         description: 'Cursor model for the test-authoring agent (e.g. auto, composer-2.5)'
         required: false
-        default: auto
+        default: composer-2.5
 
 permissions:
   contents: write
