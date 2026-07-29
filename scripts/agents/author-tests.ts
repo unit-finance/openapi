@@ -249,7 +249,7 @@ function logEvent(event: SDKMessage): void {
 
 async function main(): Promise<void> {
 	const reportPath = path.resolve(arg("--report") ?? "test-coverage-report.json");
-	const model = arg("--model") ?? "auto";
+	const model = arg("--model") ?? "composer-2.5";
 	const apiKey = process.env.CURSOR_API_KEY;
 
 	// Hard cap on the run so a wedged loop fails fast instead of burning the CI

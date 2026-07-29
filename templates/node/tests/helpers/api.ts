@@ -1,8 +1,22 @@
-import { ApplicationsApi, Configuration } from "../..";
+import {
+	AccountsApi,
+	ApplicationsApi,
+	Configuration,
+	FeesApi,
+} from "../..";
 
 export const TOKEN = process.env.UNIT_SANDBOX_TOKEN;
 export const BASE_PATH =
 	process.env.UNIT_SANDBOX_BASE_URL ?? "https://api.s.unit.sh";
+
+function buildConfiguration(): Configuration {
+	if (!TOKEN) {
+		throw new Error(
+			"UNIT_SANDBOX_TOKEN is required to talk to the sandbox; set it in .env or the shell.",
+		);
+	}
+	return new Configuration({ accessToken: TOKEN, basePath: BASE_PATH });
+}
 
 /**
  * Construct an `ApplicationsApi` bound to the sandbox.
@@ -12,14 +26,19 @@ export const BASE_PATH =
  * token is unset.
  */
 export function buildApi(): ApplicationsApi {
-	if (!TOKEN) {
-		throw new Error(
-			"UNIT_SANDBOX_TOKEN is required to talk to the sandbox; set it in .env or the shell.",
-		);
-	}
-	return new ApplicationsApi(
-		new Configuration({ accessToken: TOKEN, basePath: BASE_PATH }),
-	);
+	return buildApplicationsApi();
+}
+
+export function buildApplicationsApi(): ApplicationsApi {
+	return new ApplicationsApi(buildConfiguration());
+}
+
+export function buildAccountsApi(): AccountsApi {
+	return new AccountsApi(buildConfiguration());
+}
+
+export function buildFeesApi(): FeesApi {
+	return new FeesApi(buildConfiguration());
 }
 
 /**

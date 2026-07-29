@@ -30,12 +30,20 @@ How they are then handed to the API depends on the endpoint's request type:
 from typing import Any, Dict, List
 
 from unit_finance_sdk import (
+    CreateAccountRequest,
     CreateApplicationRequest,
     CreateBusinessApplicationRequest,
+    CreateDepositAccountRequest,
+    CreateFeeRequest,
     CreateIndividualApplicationRequest,
+    FreezeAccountRequest,
+    FreezeDepositAccountRequest,
+    ReverseFeeRequest,
+    UpdateAccountRequest,
     UpdateApplicationRequest,
     UpdateBusinessApplicationRequest,
     UpdateBusinessBeneficialOwnerRequest,
+    UpdateDepositAccountRequest,
 )
 
 from .api import TEST_RUN_ID
@@ -240,3 +248,152 @@ def build_check_registered_agent_address_request() -> Dict[str, Any]:
             "attributes": {"address": _us_address()},
         },
     }
+
+
+def build_create_deposit_account_request(customer_id: str) -> CreateAccountRequest:
+    body = {
+        "data": {
+            "type": "depositAccount",
+            "attributes": {
+                "depositProduct": "checking",
+                "tags": _base_tags(),
+            },
+            "relationships": {
+                "customer": {"data": {"type": "customer", "id": customer_id}},
+            },
+        },
+    }
+    return CreateAccountRequest(
+        actual_instance=CreateDepositAccountRequest.from_dict(body)
+    )
+
+
+def build_update_deposit_account_request() -> UpdateAccountRequest:
+    body = {
+        "data": {
+            "type": "depositAccount",
+            "attributes": {"tags": {**_base_tags(), "updated": "true"}},
+        },
+    }
+    return UpdateAccountRequest(
+        actual_instance=UpdateDepositAccountRequest.from_dict(body)
+    )
+
+
+def build_verify_account_request(routing_number: str, account_number: str) -> Dict[str, Any]:
+    return {
+        "data": {
+            "type": "accountVerify",
+            "attributes": {
+                "routingNumber": routing_number,
+                "accountNumber": account_number,
+            },
+        },
+    }
+
+
+def build_close_deposit_account_request() -> Dict[str, Any]:
+    return {
+        "data": {
+            "type": "depositAccountClose",
+            "attributes": {"reason": "ByCustomer"},
+        },
+    }
+
+
+def build_freeze_deposit_account_request() -> FreezeAccountRequest:
+    body = {
+        "data": {
+            "type": "accountFreeze",
+            "attributes": {
+                "reason": "Other",
+                "reasonText": "SDK integration test freeze",
+            },
+        },
+    }
+    # FreezeAccountRequest is a oneOf union (deposit/credit/wallet). A raw dict
+    # handed to the @validate_call-decorated method coerces into the union but
+    # leaves actual_instance unpopulated, so the body serializes empty and the
+    # API rejects it ("should have required property 'data'"). Build the concrete
+    # variant via from_dict and wrap it as the union's actual_instance.
+    return FreezeAccountRequest(
+        actual_instance=FreezeDepositAccountRequest.from_dict(body)
+    )
+
+
+def build_create_fee_request(account_id: str) -> CreateFeeRequest:
+    body = {
+        "data": {
+            "type": "fee",
+            "attributes": {
+                "amount": 100,
+                "description": "SDK integration test fee",
+                "tags": _base_tags(),
+            },
+            "relationships": {
+                "account": {"data": {"type": "depositAccount", "id": account_id}},
+            },
+        },
+    }
+    # Build via from_dict (not a plain dict): data.relationships.account.data is
+    # the RelationshipData oneOf, which @validate_call coercion would leave
+    # unpopulated (serialized as data: null -> API "should be object"). from_dict
+    # recurses through RelationshipData.from_dict and constructs the union member.
+    return CreateFeeRequest.from_dict(body)
+
+
+def build_reverse_fee_request(account_id: str, transaction_id: str) -> ReverseFeeRequest:
+    body = {
+        "data": {
+            "type": "feeReversal",
+            "attributes": {
+                "description": "SDK integration test fee reversal",
+                "tags": _base_tags(),
+            },
+            "relationships": {
+                "account": {"data": {"type": "depositAccount", "id": account_id}},
+                "transaction": {"data": {"type": "transaction", "id": transaction_id}},
+            },
+        },
+    }
+    # See build_create_fee_request: the account/transaction RelationshipData
+    # oneOf members must be constructed via from_dict.
+    return ReverseFeeRequest.from_dict(body)
+
+
+def build_create_account_hold_request(account_id: str) -> Dict[str, Any]:
+    return {
+        "data": {
+            "type": "createAccountHoldJson",
+            "attributes": {
+                "amount": 100,
+                "description": "SDK integration test hold",
+            },
+            "relationships": {
+                "account": {"data": {"type": "depositAccount", "id": account_id}},
+            },
+        },
+    }
+
+
+def build_release_account_hold_request() -> Dict[str, Any]:
+    return {
+        "data": {
+            "type": "accountHold",
+            "attributes": {"amount": 100},
+        },
+    }
+
+
+def build_add_account_owners_request(customer_id: str) -> Dict[str, Any]:
+    return {
+        "data": {
+            "attributes": {
+                "data": [{"type": "customer", "id": customer_id}],
+            },
+        },
+    }
+
+
+def build_remove_account_owners_request(customer_id: str) -> Dict[str, Any]:
+    return build_add_account_owners_request(customer_id)
