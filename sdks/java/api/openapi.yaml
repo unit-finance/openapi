@@ -5,7 +5,7 @@ info:
     name: Proprietary
     url: https://www.unit.co/terms-of-service
   title: Unit API
-  version: 0.1.0
+  version: 0.3.0
 servers:
 - url: https://api.s.unit.sh
 security:
@@ -13,6 +13,11 @@ security:
 tags:
 - description: End-customer onboarding applications.
   name: Applications
+- description: Fees charged to and reversed on accounts.
+  name: Fees
+- description: "Deposit accounts, credit accounts, and wallets, plus their holds and\
+    \ end-of-day balances."
+  name: Accounts
 paths:
   /applications:
     get:
@@ -469,6 +474,1249 @@ paths:
       x-content-type: application/vnd.api+json
       x-accepts:
       - application/vnd.api+json
+  /fees:
+    post:
+      description: Creates a fee for an `Account`.
+      operationId: createFee
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/createFee_request"
+        required: true
+      responses:
+        "201":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/createFee_201_response"
+          description: The created fee resource.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - accounts-write
+      summary: Create a fee
+      tags:
+      - Fees
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /fees/reverse:
+    post:
+      description: Reverse a fee for an `Account`.
+      operationId: reverseFee
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/reverseFee_request"
+        required: true
+      responses:
+        "201":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/reverseFee_201_response"
+          description: The created fee reversal resource.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - accounts-write
+      summary: Reverse a fee
+      tags:
+      - Fees
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /accounts:
+    get:
+      description: "List account resources (deposit accounts, credit accounts, and\
+        \ wallets). Paging can be applied."
+      operationId: listAccounts
+      parameters:
+      - description: Optional. Maximum number of resources that will be returned.
+          Maximum is 10000 resources. See Pagination.
+        explode: true
+        in: query
+        name: "page[limit]"
+        required: false
+        schema:
+          default: "100"
+          type: string
+        style: form
+      - description: Optional. Number of resources to skip. See Pagination.
+        explode: true
+        in: query
+        name: "page[offset]"
+        required: false
+        schema:
+          default: "0"
+          type: string
+        style: form
+      - description: Optional. Filters the results by the specified customer id.
+        explode: true
+        in: query
+        name: "filter[customerId]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filters the results by the specified deposit product
+          id.
+        explode: true
+        in: query
+        name: "filter[depositProductId]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filter Accounts by Tags.
+        explode: true
+        in: query
+        name: "filter[tags]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: "Optional. Filter Account by its status (Open, Frozen, or Closed).\
+          \ Usage example: filter[status][0]=Closed"
+        explode: true
+        in: query
+        name: "filter[status]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filters Accounts that have balance higher or equal
+          to the specified amount (in cents). e.g. 5000
+        explode: true
+        in: query
+        name: "filter[fromBalance]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filters Accounts that have balance lower or equal to
+          the specified amount (in cents). e.g. 7000
+        explode: true
+        in: query
+        name: "filter[toBalance]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: "Optional. Related resource available to include: customer. See\
+          \ Getting Related Resources"
+        explode: true
+        in: query
+        name: include
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/listAccounts_200_response"
+          description: Array of account resources.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - accounts
+      summary: List accounts
+      tags:
+      - Accounts
+      x-accepts:
+      - application/vnd.api+json
+    post:
+      description: "Creates an account. The request body is one of CreateDepositAccountRequest,\
+        \ CreateCreditAccountRequest, or CreateWalletRequest, discriminated by data.type\
+        \ (depositAccount, creditAccount, walletAccount)."
+      operationId: createAccount
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/createAccount_request"
+        required: true
+      responses:
+        "201":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/createAccount_201_response"
+          description: The created account resource.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - accounts-write
+      summary: Create an account
+      tags:
+      - Accounts
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /accounts/{accountId}:
+    get:
+      description: "Get an account resource (deposit account, credit account, or wallet)\
+        \ by id."
+      operationId: getAccount
+      parameters:
+      - explode: false
+        in: path
+        name: accountId
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: "Optional. Related resource available to include: customer. See\
+          \ Getting Related Resources"
+        explode: true
+        in: query
+        name: include
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: "Optional. Use extraFields[account]=interestTerms to include\
+          \ the interestTerms object in the account's attributes section of the response."
+        explode: true
+        in: query
+        name: "extraFields[account]"
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/createAccount_201_response"
+          description: The requested account resource.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - accounts
+      summary: Get an account by id
+      tags:
+      - Accounts
+      x-accepts:
+      - application/vnd.api+json
+    patch:
+      description: "Update an account. The request body is one of UpdateDepositAccountRequest,\
+        \ UpdateCreditAccountRequest, or UpdateWalletRequest, discriminated by data.type\
+        \ (depositAccount, creditAccount, walletAccount)."
+      operationId: updateAccount
+      parameters:
+      - explode: false
+        in: path
+        name: accountId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/updateAccount_request"
+        required: true
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/createAccount_201_response"
+          description: The updated account resource.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - accounts-write
+      summary: Update an account
+      tags:
+      - Accounts
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /accounts/verify:
+    post:
+      description: "Verify whether a routing number and account number pair belongs\
+        \ to an account in your organization. A common use case is checking whether\
+        \ a counterparty is an internal Unit account before originating an ACH payment\
+        \ — if a match is found, you can originate a book payment instead."
+      operationId: verifyAccount
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/verifyAccount_request"
+        required: true
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/verifyAccount_200_response"
+          description: Verification result.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - accounts-read
+      summary: Verify an account
+      tags:
+      - Accounts
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /accounts/{accountId}/close:
+    post:
+      description: "Closes an account. Closing an account is irreversible and can\
+        \ only be done by an Org user. An account.closed event is raised when the\
+        \ call was successful. The request body is one of CloseDepositAccountRequest,\
+        \ CloseCreditAccountRequest, or CloseWalletRequest."
+      operationId: closeAccount
+      parameters:
+      - explode: false
+        in: path
+        name: accountId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/closeAccount_request"
+        required: true
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/createAccount_201_response"
+          description: The closed account resource.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - accounts-write
+      summary: Close an account
+      tags:
+      - Accounts
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /accounts/{accountId}/freeze:
+    post:
+      description: "Freezes an account. An account.frozen event is raised when the\
+        \ call was successful. A frozen account behaves like a closed account, with\
+        \ the primary difference being that a frozen state should be temporary. The\
+        \ request body is one of FreezeDepositAccountRequest, FreezeCreditAccountRequest,\
+        \ or FreezeWalletRequest."
+      operationId: freezeAccount
+      parameters:
+      - explode: false
+        in: path
+        name: accountId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/freezeAccount_request"
+        required: true
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/createAccount_201_response"
+          description: The frozen account resource.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - accounts-write
+      summary: Freeze an account
+      tags:
+      - Accounts
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /accounts/{accountId}/unfreeze:
+    post:
+      description: Unfreezes an account.
+      operationId: unfreezeAccount
+      parameters:
+      - explode: false
+        in: path
+        name: accountId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/createAccount_201_response"
+          description: The unfrozen account resource.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - accounts-write
+      summary: Unfreeze an account
+      tags:
+      - Accounts
+      x-accepts:
+      - application/vnd.api+json
+  /accounts/{accountId}/reopen:
+    post:
+      description: Reopens a closed account. Applies to deposit accounts and wallets.
+      operationId: reopenAccount
+      parameters:
+      - explode: false
+        in: path
+        name: accountId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/reopenAccount_200_response"
+          description: The reopened account resource.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - accounts-write
+      summary: Reopen an account
+      tags:
+      - Accounts
+      x-accepts:
+      - application/vnd.api+json
+  /accounts/{accountId}/limits:
+    get:
+      description: "Get the limits of an account (deposit account, credit account,\
+        \ or wallet)."
+      operationId: getAccountLimits
+      parameters:
+      - explode: false
+        in: path
+        name: accountId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/getAccountLimits_200_response"
+          description: The account limits resource.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      summary: Get account limits
+      tags:
+      - Accounts
+      x-accepts:
+      - application/vnd.api+json
+  /accounts/{accountId}/deposit-products:
+    get:
+      description: Get the deposit products available for an account.
+      operationId: getAvailableDepositProducts
+      parameters:
+      - explode: false
+        in: path
+        name: accountId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/getAvailableDepositProducts_200_response"
+          description: Array of available deposit products.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      summary: Get available deposit products
+      tags:
+      - Accounts
+      x-accepts:
+      - application/vnd.api+json
+  /accounts/{accountId}/relationships/customers:
+    delete:
+      description: Remove owner or owners from an existing joint deposit account.
+      operationId: removeAccountOwners
+      parameters:
+      - explode: false
+        in: path
+        name: accountId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/removeAccountOwners_request"
+        required: true
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/addAccountOwners_200_response"
+          description: The updated deposit account resource.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - accounts-write
+      summary: Remove account owners
+      tags:
+      - Accounts
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+    post:
+      description: Add owner or owners to an existing deposit account.
+      operationId: addAccountOwners
+      parameters:
+      - explode: false
+        in: path
+        name: accountId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/addAccountOwners_request"
+        required: true
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/addAccountOwners_200_response"
+          description: The updated deposit account resource.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - accounts-write
+      summary: Add account owners
+      tags:
+      - Accounts
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /account-end-of-day:
+    get:
+      description: List account end-of-day balances history (filtering and paging
+        can be applied).
+      operationId: getAccountBalanceHistory
+      parameters:
+      - description: Optional. Maximum number of resources that will be returned.
+          Maximum is 1000 resources.
+        explode: true
+        in: query
+        name: "page[limit]"
+        required: false
+        schema:
+          default: "100"
+          type: string
+        style: form
+      - description: Optional. Number of resources to skip.
+        explode: true
+        in: query
+        name: "page[offset]"
+        required: false
+        schema:
+          default: "0"
+          type: string
+        style: form
+      - description: Optional. Filters the results by the specified account id. At
+          least one of accountId and customerId is required.
+        explode: true
+        in: query
+        name: "filter[accountId]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filters the results by the specified customer id. At
+          least one of accountId and customerId is required.
+        explode: true
+        in: query
+        name: "filter[customerId]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filters the account end-of-day balances on or after
+          the specified date. e.g. 2021-06-01
+        explode: true
+        in: query
+        name: "filter[since]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filters the account end-of-day balances on or before
+          the specified date. e.g. 2021-07-01
+        explode: true
+        in: query
+        name: "filter[until]"
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/getAccountBalanceHistory_200_response"
+          description: Array of account end-of-day resources.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - account-end-of-day
+      summary: List account end-of-day balances
+      tags:
+      - Accounts
+      x-accepts:
+      - application/vnd.api+json
+  /account-holds:
+    get:
+      description: List account hold resources. Paging can be applied.
+      operationId: listAccountHolds
+      parameters:
+      - description: Optional. Maximum number of resources that will be returned.
+          Maximum is 10000 resources. See Pagination.
+        explode: true
+        in: query
+        name: "page[limit]"
+        required: false
+        schema:
+          default: "100"
+          type: string
+        style: form
+      - description: Optional. Number of resources to skip. See Pagination.
+        explode: true
+        in: query
+        name: "page[offset]"
+        required: false
+        schema:
+          default: "0"
+          type: string
+        style: form
+      - description: "Optional. Filter by status. Can be one of the following values:\
+          \ Active, Released, PartiallyReleased."
+        explode: true
+        in: query
+        name: "filter[status][]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Date only (e.g. "2001-08-15"). the date the account
+          hold will be automatically released at.
+        explode: true
+        in: query
+        name: "filter[expiredAt]"
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/listAccountHolds_200_response"
+          description: Array of account hold resources.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      summary: List account holds
+      tags:
+      - Accounts
+      x-accepts:
+      - application/vnd.api+json
+    post:
+      description: Create an account hold resource.
+      operationId: createAccountHold
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/createAccountHold_request"
+        required: true
+      responses:
+        "201":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/createAccountHold_201_response"
+          description: The created AccountHold resource.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      summary: Create an account hold
+      tags:
+      - Accounts
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /account-holds/{id}:
+    get:
+      description: Get an account hold resource by id.
+      operationId: getAccountHoldById
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/createAccountHold_201_response"
+          description: The AccountHold resource.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      summary: Get an account hold by id
+      tags:
+      - Accounts
+      x-accepts:
+      - application/vnd.api+json
+  /account-holds/{id}/release:
+    post:
+      description: You can release an account hold fully (entire amount) or partially
+        (a specified amount).
+      operationId: releaseAccountHold
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/releaseAccountHold_request"
+        required: true
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/createAccountHold_201_response"
+          description: The released AccountHold resource.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      summary: Release an account hold
+      tags:
+      - Accounts
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
 components:
   responses:
     BadRequest:
@@ -585,7 +1833,7 @@ components:
       required:
       - data
       type: object
-    Address:
+    AddressType:
       example:
         street: 20 Ingram St
         city: Forest Hills
@@ -621,7 +1869,7 @@ components:
       - state
       - street
       type: object
-    Phone:
+    PhoneType:
       example:
         countryCode: "1"
         number: "1555555555"
@@ -637,7 +1885,7 @@ components:
       - countryCode
       - number
       type: object
-    Industry:
+    IndustryType:
       description: "The business industry. One of: `Retail`, `Wholesale`, `Restaurants`,\
         \ `Hospitals`, `Construction`, `Insurance`, `Unions`, `RealEstate`, `FreelanceProfessional`,\
         \ `OtherProfessionalServices`, `OnlineRetailer`, `OtherEducationServices`."
@@ -655,7 +1903,7 @@ components:
       - OnlineRetailer
       - OtherEducationServices
       type: string
-    BusinessContact:
+    BusinessContactType:
       example:
         fullName:
           first: Richard
@@ -667,14 +1915,14 @@ components:
       properties:
         fullName:
           allOf:
-          - $ref: "#/components/schemas/FullName"
+          - $ref: "#/components/schemas/FullNameType"
           description: Full name of the contact.
         email:
           description: The contact's email address.
           type: string
         phone:
           allOf:
-          - $ref: "#/components/schemas/Phone"
+          - $ref: "#/components/schemas/PhoneType"
           description: The contact's phone number.
         jwtSubject:
           description: Optional. See this section for more information.
@@ -684,7 +1932,7 @@ components:
       - fullName
       - phone
       type: object
-    Officer:
+    OfficerType:
       example:
         status: Approved
         title: CEO
@@ -712,7 +1960,7 @@ components:
           type: string
         fullName:
           allOf:
-          - $ref: "#/components/schemas/FullName"
+          - $ref: "#/components/schemas/FullNameType"
           description: Full name of the officer.
         title:
           description: "One of CEO, COO, CFO, President, BenefitsAdministrationOfficer,\
@@ -738,11 +1986,11 @@ components:
           type: string
         address:
           allOf:
-          - $ref: "#/components/schemas/Address"
+          - $ref: "#/components/schemas/AddressType"
           description: The officer's address.
         phone:
           allOf:
-          - $ref: "#/components/schemas/Phone"
+          - $ref: "#/components/schemas/PhoneType"
           description: The officer's phone number.
         email:
           description: The officer's email address.
@@ -753,15 +2001,15 @@ components:
           type: number
         occupation:
           allOf:
-          - $ref: "#/components/schemas/Occupation"
+          - $ref: "#/components/schemas/OccupationType"
           description: Optional. Occupation of the officer.
         annualIncome:
           allOf:
-          - $ref: "#/components/schemas/AnnualIncome"
+          - $ref: "#/components/schemas/AnnualIncomeType"
           description: Optional. Annual income of the officer.
         sourceOfIncome:
           allOf:
-          - $ref: "#/components/schemas/SourceOfIncome"
+          - $ref: "#/components/schemas/SourceOfIncomeType"
           description: Optional. Source of income of the officer.
       required:
       - address
@@ -772,7 +2020,7 @@ components:
       - status
       - title
       type: object
-    FullName:
+    FullNameType:
       example:
         first: Peter
         last: Parker
@@ -787,7 +2035,7 @@ components:
       - first
       - last
       type: object
-    Occupation:
+    OccupationType:
       description: "The occupation of an individual. One of: `ArchitectOrEngineer`,\
         \ `BusinessAnalystAccountantOrFinancialAdvisor`, `CommunityAndSocialServicesWorker`,\
         \ `ConstructionMechanicOrMaintenanceWorker`, `Doctor`, `Educator`, `EntertainmentSportsArtsOrMedia`,\
@@ -821,7 +2069,7 @@ components:
       - ScientistOrTechnologist
       - Student
       type: string
-    AnnualIncome:
+    AnnualIncomeType:
       description: The annual income of an individual.
       enum:
       - UpTo10k
@@ -831,7 +2079,7 @@ components:
       - Between100kAnd250k
       - Over250k
       type: string
-    SourceOfIncome:
+    SourceOfIncomeType:
       description: "The source of income of an individual. One of: `EmploymentOrPayrollIncome`,\
         \ `PartTimeOrContractorIncome`, `InheritancesAndGifts`, `PersonalInvestments`,\
         \ `BusinessOwnershipInterests`, `GovernmentBenefits`."
@@ -883,7 +2131,7 @@ components:
       - id
       - type
       type: object
-    AnnualRevenue:
+    AnnualRevenueType:
       description: The annual revenue of a sole proprietor or a business. Union of
         the business and sole-proprietor value sets; use BusinessAnnualRevenue or
         SoleProprietorAnnualRevenue for the per-entity subset.
@@ -899,7 +2147,7 @@ components:
       - Between200kAnd500k
       - Over500k
       type: string
-    BusinessAnnualRevenue:
+    BusinessAnnualRevenueType:
       description: The annual revenue of a business.
       enum:
       - UpTo250k
@@ -908,7 +2156,7 @@ components:
       - Between1mAnd5m
       - Over5m
       type: string
-    SoleProprietorAnnualRevenue:
+    SoleProprietorAnnualRevenueType:
       description: The annual revenue of a sole proprietor.
       enum:
       - UpTo50k
@@ -917,7 +2165,7 @@ components:
       - Between200kAnd500k
       - Over500k
       type: string
-    NumberOfEmployees:
+    NumberOfEmployeesType:
       description: The number of employees of a sole proprietor or a business. Union
         of the business and sole-proprietor value sets; use BusinessNumberOfEmployees
         or SoleProprietorNumberOfEmployees for the per-entity subset.
@@ -932,7 +2180,7 @@ components:
       - Between5And10
       - Over10
       type: string
-    BusinessNumberOfEmployees:
+    BusinessNumberOfEmployeesType:
       description: The number of employees of a business.
       enum:
       - UpTo10
@@ -941,7 +2189,7 @@ components:
       - Between100And500
       - Over500
       type: string
-    SoleProprietorNumberOfEmployees:
+    SoleProprietorNumberOfEmployeesType:
       description: The number of employees of a sole proprietor.
       enum:
       - One
@@ -949,13 +2197,13 @@ components:
       - Between5And10
       - Over10
       type: string
-    CashFlow:
+    CashFlowType:
       description: The cash flow of a business.
       enum:
       - Unpredictable
       - Predictable
       type: string
-    BusinessVertical:
+    BusinessVerticalType:
       description: The business vertical/industry of a sole proprietor or a business.
       enum:
       - AdultEntertainmentDatingOrEscortServices
@@ -990,7 +2238,7 @@ components:
       - Utilities
       - WholesaleTrade
       type: string
-    DeviceFingerprint:
+    DeviceFingerprintType:
       description: A device fingerprint used for fraud and risk prevention. See Device
         Fingerprints.
       example:
@@ -1007,7 +2255,7 @@ components:
       - provider
       - value
       type: object
-    RequestedProduct:
+    RequestedProductType:
       description: A product that can be applied for. Allowed values verified against
         the Unit sandbox.
       enum:
@@ -1311,7 +2559,7 @@ components:
       - attributes
       - type
       type: object
-    CheckRegisteredAgentAddress:
+    CheckRegisteredAgentAddressType:
       description: Represents whether the provided address is a Registered Agent address.
       example:
         isRegisteredAgentAddress: true
@@ -1337,7 +2585,569 @@ components:
       - attributes
       - type
       type: object
-    BeneficialOwner-2:
+    CreateFeeData:
+      properties:
+        type:
+          enum:
+          - fee
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CreateFeeData_attributes"
+        relationships:
+          $ref: "#/components/schemas/CreateFeeData_relationships"
+      required:
+      - attributes
+      - relationships
+      - type
+      type: object
+    ReverseFeeData:
+      properties:
+        type:
+          enum:
+          - feeReversal
+          type: string
+        attributes:
+          $ref: "#/components/schemas/ReverseFeeData_attributes"
+        relationships:
+          $ref: "#/components/schemas/ReverseFeeData_relationships"
+      required:
+      - attributes
+      - relationships
+      - type
+      type: object
+    Fee:
+      description: "`Fee` is a JSON:API resource, top-level fields:"
+      example:
+        type: fee
+        id: "1234"
+        attributes:
+          amount: 1000
+          description: Monthly Subscription
+        relationships:
+          account:
+            data:
+              type: depositAccount
+              id: "10097"
+      properties:
+        type:
+          enum:
+          - fee
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/Fee_attributes"
+        relationships:
+          $ref: "#/components/schemas/Fee_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    FeeReversal:
+      description: "`FeeReversal` is a JSON:API resource, top-level fields:"
+      example:
+        type: feeReversal
+        id: "1235"
+        attributes:
+          description: Monthly Subscription - reverse
+        relationships:
+          account:
+            data:
+              type: depositAccount
+              id: "10097"
+          transaction:
+            data:
+              type: transaction
+              id: "1"
+      properties:
+        type:
+          enum:
+          - feeReversal
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/FeeReversal_attributes"
+        relationships:
+          $ref: "#/components/schemas/FeeReversal_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    DepositAccount:
+      description: "`DepositAccount` is a JSON:API resource, top-level fields:"
+      example:
+        type: depositAccount
+        id: "1"
+        attributes:
+          createdAt: 2000-05-11T10:19:30.409Z
+          name: Peter Parker
+          status: Open
+          depositProduct: checking
+          routingNumber: "812345678"
+          accountNumber: "1000000002"
+          currency: USD
+          balance: 10000
+          hold: 0
+          available: 10000
+          tags:
+            purpose: checking
+        relationships:
+          customer:
+            data:
+              type: customer
+              id: "45555"
+      properties:
+        type:
+          enum:
+          - depositAccount
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/DepositAccount_attributes"
+        relationships:
+          $ref: "#/components/schemas/DepositAccount_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    CreditAccount:
+      description: "`CreditAccount` is a JSON:API resource, top-level fields:"
+      example:
+        type: creditAccount
+        id: "42"
+        attributes:
+          createdAt: 2000-05-11T10:19:30.409Z
+          name: Peter Parker
+          status: Open
+          creditTerms: credit_terms_1
+          currency: USD
+          balance: 10000
+          hold: 0
+          available: 10000
+          tags:
+            purpose: some_purpose
+          creditLimit: 200000
+        relationships:
+          customer:
+            data:
+              type: customer
+              id: "45555"
+      properties:
+        type:
+          enum:
+          - creditAccount
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CreditAccount_attributes"
+        relationships:
+          $ref: "#/components/schemas/CreditAccount_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    WalletAccount:
+      description: "`WalletAccount` is a JSON:API resource, top-level fields:"
+      example:
+        type: walletAccount
+        id: "42"
+        attributes:
+          createdAt: 2000-05-11T10:19:30.409Z
+          name: Peter Parker
+          status: Open
+          walletTerms: walletDefault
+          routingNumber: "812345678"
+          accountNumber: "1000000002"
+          currency: USD
+          balance: 10000
+          hold: 0
+          available: 10000
+          tags:
+            purpose: Healthcare
+        relationships:
+          customer:
+            data:
+              type: customer
+              id: "45555"
+      properties:
+        type:
+          enum:
+          - walletAccount
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/WalletAccount_attributes"
+        relationships:
+          $ref: "#/components/schemas/CreditAccount_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    AccountHold:
+      description: "`AccountHold` is a JSON:API resource, top-level fields:"
+      example:
+        type: accountHold
+        id: "7345432"
+        attributes:
+          createdAt: 2024-10-02T12:39:25.107Z
+          expiredAt: 2024-10-10
+          status: Active
+          amount: 4433
+          description: Account Hold Reason 1
+        relationships:
+          account:
+            data:
+              type: account
+              id: "158853345"
+      properties:
+        type:
+          enum:
+          - accountHold
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/AccountHold_attributes"
+        relationships:
+          $ref: "#/components/schemas/Fee_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    AccountEndOfDay:
+      description: "`Account End-Of-Day` is a JSON:API resource, top-level fields:"
+      example:
+        type: accountEndOfDay
+        id: "4925158"
+        attributes:
+          date: 2021-07-10
+          balance: 1000
+          available: 500
+          hold: 500
+        relationships:
+          customer:
+            data:
+              type: customer
+              id: "10000"
+          account:
+            data:
+              type: account
+              id: "30317"
+      properties:
+        type:
+          enum:
+          - accountEndOfDay
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/AccountEndOfDay_attributes"
+        relationships:
+          $ref: "#/components/schemas/AccountEndOfDay_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    TotalAccruedInterestType:
+      description: Represents a sum of customer accrued interest for a given period
+        of time.
+      example:
+        amount: 1108647
+      properties:
+        amount:
+          description: The total amount of customer accrued interest (in cents).
+          type: integer
+      required:
+      - amount
+      type: object
+    CreateDepositAccountData:
+      properties:
+        type:
+          enum:
+          - depositAccount
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CreateDepositAccountData_attributes"
+        relationships:
+          $ref: "#/components/schemas/CreateDepositAccountData_relationships"
+      required:
+      - attributes
+      - relationships
+      - type
+      type: object
+    CreateDepositAccountRequest:
+      properties:
+        data:
+          $ref: "#/components/schemas/CreateDepositAccountData"
+      required:
+      - data
+      type: object
+    CreateCreditAccountData:
+      properties:
+        type:
+          enum:
+          - creditAccount
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CreateCreditAccountData_attributes"
+        relationships:
+          $ref: "#/components/schemas/CreateDepositAccountData_relationships"
+      required:
+      - attributes
+      - relationships
+      - type
+      type: object
+    CreateCreditAccountRequest:
+      properties:
+        data:
+          $ref: "#/components/schemas/CreateCreditAccountData"
+      required:
+      - data
+      type: object
+    CreateWalletData:
+      properties:
+        type:
+          enum:
+          - walletAccount
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CreateWalletData_attributes"
+        relationships:
+          $ref: "#/components/schemas/CreateDepositAccountData_relationships"
+      required:
+      - attributes
+      - relationships
+      - type
+      type: object
+    CreateWalletRequest:
+      properties:
+        data:
+          $ref: "#/components/schemas/CreateWalletData"
+      required:
+      - data
+      type: object
+    UpdateDepositAccountData:
+      properties:
+        type:
+          enum:
+          - depositAccount
+          type: string
+        attributes:
+          $ref: "#/components/schemas/UpdateDepositAccountData_attributes"
+      required:
+      - attributes
+      - type
+      type: object
+    UpdateDepositAccountRequest:
+      properties:
+        data:
+          $ref: "#/components/schemas/UpdateDepositAccountData"
+      required:
+      - data
+      type: object
+    UpdateCreditAccountData:
+      properties:
+        type:
+          enum:
+          - creditAccount
+          type: string
+        attributes:
+          $ref: "#/components/schemas/UpdateCreditAccountData_attributes"
+      required:
+      - attributes
+      - type
+      type: object
+    UpdateCreditAccountRequest:
+      properties:
+        data:
+          $ref: "#/components/schemas/UpdateCreditAccountData"
+      required:
+      - data
+      type: object
+    UpdateWalletData:
+      properties:
+        type:
+          enum:
+          - walletAccount
+          type: string
+        attributes:
+          $ref: "#/components/schemas/UpdateWalletData_attributes"
+      required:
+      - attributes
+      - type
+      type: object
+    UpdateWalletRequest:
+      properties:
+        data:
+          $ref: "#/components/schemas/UpdateWalletData"
+      required:
+      - data
+      type: object
+    CloseDepositAccountData:
+      properties:
+        type:
+          enum:
+          - depositAccountClose
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CloseDepositAccountData_attributes"
+      required:
+      - attributes
+      - type
+      type: object
+    CloseDepositAccountRequest:
+      properties:
+        data:
+          $ref: "#/components/schemas/CloseDepositAccountData"
+      required:
+      - data
+      type: object
+    CloseCreditAccountData:
+      properties:
+        type:
+          enum:
+          - creditAccountClose
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CloseCreditAccountData_attributes"
+      required:
+      - attributes
+      - type
+      type: object
+    CloseCreditAccountRequest:
+      properties:
+        data:
+          $ref: "#/components/schemas/CloseCreditAccountData"
+      required:
+      - data
+      type: object
+    CloseWalletData:
+      properties:
+        type:
+          enum:
+          - walletAccountClose
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CloseWalletData_attributes"
+      required:
+      - attributes
+      - type
+      type: object
+    CloseWalletRequest:
+      properties:
+        data:
+          $ref: "#/components/schemas/CloseWalletData"
+      required:
+      - data
+      type: object
+    FreezeDepositAccountData:
+      properties:
+        type:
+          enum:
+          - accountFreeze
+          type: string
+        attributes:
+          $ref: "#/components/schemas/FreezeDepositAccountData_attributes"
+      required:
+      - attributes
+      - type
+      type: object
+    FreezeDepositAccountRequest:
+      properties:
+        data:
+          $ref: "#/components/schemas/FreezeDepositAccountData"
+      required:
+      - data
+      type: object
+    FreezeCreditAccountData:
+      properties:
+        type:
+          enum:
+          - creditAccountFreeze
+          type: string
+        attributes:
+          $ref: "#/components/schemas/FreezeDepositAccountData_attributes"
+      required:
+      - attributes
+      - type
+      type: object
+    FreezeCreditAccountRequest:
+      properties:
+        data:
+          $ref: "#/components/schemas/FreezeCreditAccountData"
+      required:
+      - data
+      type: object
+    FreezeWalletData:
+      properties:
+        type:
+          enum:
+          - walletAccountFreeze
+          type: string
+        attributes:
+          $ref: "#/components/schemas/FreezeWalletData_attributes"
+      required:
+      - attributes
+      - type
+      type: object
+    FreezeWalletRequest:
+      properties:
+        data:
+          $ref: "#/components/schemas/FreezeWalletData"
+      required:
+      - data
+      type: object
+    CreateAccountHoldData:
+      properties:
+        type:
+          enum:
+          - createAccountHoldJson
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CreateAccountHoldData_attributes"
+        relationships:
+          $ref: "#/components/schemas/CreateFeeData_relationships"
+      required:
+      - attributes
+      - relationships
+      - type
+      type: object
+    ReleaseAccountHoldData:
+      properties:
+        type:
+          enum:
+          - accountHold
+          type: string
+        attributes:
+          $ref: "#/components/schemas/ReleaseAccountHoldData_attributes"
+      required:
+      - attributes
+      - type
+      type: object
+    VerifyAccountData:
+      properties:
+        type:
+          enum:
+          - accountVerify
+          type: string
+        attributes:
+          $ref: "#/components/schemas/VerifyAccountData_attributes"
+      required:
+      - attributes
+      - type
+      type: object
+    BeneficialOwnerType:
       example:
         status: Approved
         fullName:
@@ -1362,7 +3172,7 @@ components:
           type: string
         fullName:
           allOf:
-          - $ref: "#/components/schemas/FullName"
+          - $ref: "#/components/schemas/FullNameType"
           description: Full name of the beneficial owner.
         ssn:
           description: SSN of the beneficial owner (numbers only). One of ssn or passport
@@ -1384,11 +3194,11 @@ components:
           type: string
         address:
           allOf:
-          - $ref: "#/components/schemas/Address"
+          - $ref: "#/components/schemas/AddressType"
           description: The beneficial owner's address.
         phone:
           allOf:
-          - $ref: "#/components/schemas/Phone"
+          - $ref: "#/components/schemas/PhoneType"
           description: The beneficial owner's phone number.
         email:
           description: The beneficial owner's email address.
@@ -1398,15 +3208,15 @@ components:
           type: integer
         occupation:
           allOf:
-          - $ref: "#/components/schemas/Occupation"
+          - $ref: "#/components/schemas/OccupationType"
           description: Optional. Occupation of the beneficial owner.
         annualIncome:
           allOf:
-          - $ref: "#/components/schemas/AnnualIncome"
+          - $ref: "#/components/schemas/AnnualIncomeType"
           description: Optional. Annual income of the beneficial owner.
         sourceOfIncome:
           allOf:
-          - $ref: "#/components/schemas/SourceOfIncome"
+          - $ref: "#/components/schemas/SourceOfIncomeType"
           description: Optional. Source of income of the beneficial owner.
       required:
       - address
@@ -1416,7 +3226,7 @@ components:
       - phone
       - status
       type: object
-    OfficerRequest:
+    OfficerRequestType:
       example:
         fullName:
           first: Richard
@@ -1437,7 +3247,7 @@ components:
       properties:
         fullName:
           allOf:
-          - $ref: "#/components/schemas/FullName"
+          - $ref: "#/components/schemas/FullNameType"
           description: Full name of the officer.
         title:
           description: "One of CEO, COO, CFO, President, BenefitsAdministrationOfficer,\
@@ -1462,11 +3272,11 @@ components:
           type: string
         address:
           allOf:
-          - $ref: "#/components/schemas/Address"
+          - $ref: "#/components/schemas/AddressType"
           description: The officer's address.
         phone:
           allOf:
-          - $ref: "#/components/schemas/Phone"
+          - $ref: "#/components/schemas/PhoneType"
           description: The officer's phone number.
         email:
           description: The officer's email address.
@@ -1488,7 +3298,7 @@ components:
       - phone
       - title
       type: object
-    BeneficialOwnerRequest:
+    BeneficialOwnerRequestType:
       example:
         fullName:
           first: Richard
@@ -1509,7 +3319,7 @@ components:
       properties:
         fullName:
           allOf:
-          - $ref: "#/components/schemas/FullName"
+          - $ref: "#/components/schemas/FullNameType"
           description: Full name of the beneficial owner.
         ssn:
           description: SSN of the beneficial owner (numbers only). One of ssn or passport
@@ -1530,11 +3340,11 @@ components:
           type: string
         address:
           allOf:
-          - $ref: "#/components/schemas/Address"
+          - $ref: "#/components/schemas/AddressType"
           description: The beneficial owner's address.
         phone:
           allOf:
-          - $ref: "#/components/schemas/Phone"
+          - $ref: "#/components/schemas/PhoneType"
           description: The beneficial owner's phone number.
         email:
           description: The beneficial owner's email address.
@@ -1677,6 +3487,276 @@ components:
       required:
       - data
       type: object
+    createFee_request:
+      properties:
+        data:
+          $ref: "#/components/schemas/CreateFeeData"
+      required:
+      - data
+      type: object
+    createFee_201_response:
+      properties:
+        data:
+          $ref: "#/components/schemas/Fee"
+      required:
+      - data
+      type: object
+    reverseFee_request:
+      properties:
+        data:
+          $ref: "#/components/schemas/ReverseFeeData"
+      required:
+      - data
+      type: object
+    reverseFee_201_response:
+      properties:
+        data:
+          $ref: "#/components/schemas/FeeReversal"
+      required:
+      - data
+      type: object
+    listAccounts_200_response_data_inner:
+      discriminator:
+        mapping:
+          depositAccount: "#/components/schemas/DepositAccount"
+          creditAccount: "#/components/schemas/CreditAccount"
+          walletAccount: "#/components/schemas/WalletAccount"
+        propertyName: type
+      oneOf:
+      - $ref: "#/components/schemas/DepositAccount"
+      - $ref: "#/components/schemas/CreditAccount"
+      - $ref: "#/components/schemas/WalletAccount"
+    listAccounts_200_response:
+      properties:
+        data:
+          items:
+            $ref: "#/components/schemas/listAccounts_200_response_data_inner"
+          type: array
+        included:
+          description: Array of resources requested by the include query parameter.
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+      required:
+      - data
+      type: object
+    createAccount_request:
+      oneOf:
+      - $ref: "#/components/schemas/CreateDepositAccountRequest"
+      - $ref: "#/components/schemas/CreateCreditAccountRequest"
+      - $ref: "#/components/schemas/CreateWalletRequest"
+    createAccount_201_response:
+      properties:
+        data:
+          $ref: "#/components/schemas/listAccounts_200_response_data_inner"
+      required:
+      - data
+      type: object
+    updateAccount_request:
+      oneOf:
+      - $ref: "#/components/schemas/UpdateDepositAccountRequest"
+      - $ref: "#/components/schemas/UpdateCreditAccountRequest"
+      - $ref: "#/components/schemas/UpdateWalletRequest"
+    verifyAccount_request:
+      properties:
+        data:
+          $ref: "#/components/schemas/VerifyAccountData"
+      required:
+      - data
+      type: object
+    verifyAccount_200_response_data_account:
+      description: "Present when exists is true. Same shape as GET /accounts/:id.\
+        \ May be any account type (e.g. depositAccount, walletAccount)."
+      discriminator:
+        mapping:
+          depositAccount: "#/components/schemas/DepositAccount"
+          creditAccount: "#/components/schemas/CreditAccount"
+          walletAccount: "#/components/schemas/WalletAccount"
+        propertyName: type
+      oneOf:
+      - $ref: "#/components/schemas/DepositAccount"
+      - $ref: "#/components/schemas/CreditAccount"
+      - $ref: "#/components/schemas/WalletAccount"
+    verifyAccount_200_response_data:
+      properties:
+        exists:
+          description: true when a matching account is found; false otherwise.
+          type: boolean
+        account:
+          $ref: "#/components/schemas/verifyAccount_200_response_data_account"
+      required:
+      - exists
+      type: object
+    verifyAccount_200_response:
+      properties:
+        data:
+          $ref: "#/components/schemas/verifyAccount_200_response_data"
+      required:
+      - data
+      type: object
+    closeAccount_request:
+      oneOf:
+      - $ref: "#/components/schemas/CloseDepositAccountRequest"
+      - $ref: "#/components/schemas/CloseCreditAccountRequest"
+      - $ref: "#/components/schemas/CloseWalletRequest"
+    freezeAccount_request:
+      oneOf:
+      - $ref: "#/components/schemas/FreezeDepositAccountRequest"
+      - $ref: "#/components/schemas/FreezeCreditAccountRequest"
+      - $ref: "#/components/schemas/FreezeWalletRequest"
+    reopenAccount_200_response_data:
+      discriminator:
+        mapping:
+          depositAccount: "#/components/schemas/DepositAccount"
+          walletAccount: "#/components/schemas/WalletAccount"
+        propertyName: type
+      oneOf:
+      - $ref: "#/components/schemas/DepositAccount"
+      - $ref: "#/components/schemas/WalletAccount"
+    reopenAccount_200_response:
+      properties:
+        data:
+          $ref: "#/components/schemas/reopenAccount_200_response_data"
+      required:
+      - data
+      type: object
+    getAccountLimits_200_response_data:
+      properties:
+        type:
+          type: string
+        id:
+          type: string
+        attributes:
+          additionalProperties: true
+          type: object
+      type: object
+    getAccountLimits_200_response:
+      properties:
+        data:
+          $ref: "#/components/schemas/getAccountLimits_200_response_data"
+      required:
+      - data
+      type: object
+    getAvailableDepositProducts_200_response_data_inner_attributes:
+      properties:
+        name:
+          type: string
+      type: object
+    getAvailableDepositProducts_200_response_data_inner:
+      properties:
+        type:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/getAvailableDepositProducts_200_response_data_inner_attributes"
+      type: object
+    getAvailableDepositProducts_200_response:
+      properties:
+        data:
+          items:
+            $ref: "#/components/schemas/getAvailableDepositProducts_200_response_data_inner"
+          type: array
+      required:
+      - data
+      type: object
+    addAccountOwners_request_data_attributes:
+      properties:
+        data:
+          description: A list of individual customers to be added to the account.
+          items:
+            $ref: "#/components/schemas/ResourceIdentifier"
+          type: array
+      required:
+      - data
+      type: object
+    addAccountOwners_request_data:
+      properties:
+        attributes:
+          $ref: "#/components/schemas/addAccountOwners_request_data_attributes"
+      required:
+      - attributes
+      type: object
+    addAccountOwners_request:
+      properties:
+        data:
+          $ref: "#/components/schemas/addAccountOwners_request_data"
+      required:
+      - data
+      type: object
+    addAccountOwners_200_response:
+      properties:
+        data:
+          $ref: "#/components/schemas/DepositAccount"
+      required:
+      - data
+      type: object
+    removeAccountOwners_request_data_attributes:
+      properties:
+        data:
+          description: A list of individual customers to be removed from the account.
+          items:
+            $ref: "#/components/schemas/ResourceIdentifier"
+          type: array
+      required:
+      - data
+      type: object
+    removeAccountOwners_request_data:
+      properties:
+        attributes:
+          $ref: "#/components/schemas/removeAccountOwners_request_data_attributes"
+      required:
+      - attributes
+      type: object
+    removeAccountOwners_request:
+      properties:
+        data:
+          $ref: "#/components/schemas/removeAccountOwners_request_data"
+      required:
+      - data
+      type: object
+    getAccountBalanceHistory_200_response:
+      properties:
+        data:
+          items:
+            $ref: "#/components/schemas/AccountEndOfDay"
+          type: array
+        meta:
+          $ref: "#/components/schemas/Meta"
+      required:
+      - data
+      type: object
+    listAccountHolds_200_response:
+      properties:
+        data:
+          items:
+            $ref: "#/components/schemas/AccountHold"
+          type: array
+        meta:
+          $ref: "#/components/schemas/Meta"
+      required:
+      - data
+      type: object
+    createAccountHold_request:
+      properties:
+        data:
+          $ref: "#/components/schemas/CreateAccountHoldData"
+      required:
+      - data
+      type: object
+    createAccountHold_201_response:
+      properties:
+        data:
+          $ref: "#/components/schemas/AccountHold"
+      required:
+      - data
+      type: object
+    releaseAccountHold_request:
+      properties:
+        data:
+          $ref: "#/components/schemas/ReleaseAccountHoldData"
+      required:
+      - data
+      type: object
     Relationship_data:
       nullable: true
       oneOf:
@@ -1729,11 +3809,11 @@ components:
           type: string
         address:
           allOf:
-          - $ref: "#/components/schemas/Address"
+          - $ref: "#/components/schemas/AddressType"
           description: Address of the business. Must be a US address
         phone:
           allOf:
-          - $ref: "#/components/schemas/Phone"
+          - $ref: "#/components/schemas/PhoneType"
           description: Phone number of the business.
         stateOfIncorporation:
           description: Two letters representing a US state.
@@ -1759,12 +3839,12 @@ components:
           type: string
         contact:
           allOf:
-          - $ref: "#/components/schemas/BusinessContact"
+          - $ref: "#/components/schemas/BusinessContactType"
           description: Primary contact of the business. This person is the one that
             will have access to the account.
         officer:
           allOf:
-          - $ref: "#/components/schemas/OfficerRequest"
+          - $ref: "#/components/schemas/OfficerRequestType"
           description: "Officer representing the business (must be the CEO, COO, CFO,\
             \ President, BenefitsAdministrationOfficer, CIO, VP, AVP, Treasurer, Secretary,\
             \ Controller, Manager, Partner or Member). To onboard a business successfully,\
@@ -1776,21 +3856,21 @@ components:
             \ beneficial owner's personal details. If the business has no beneficial\
             \ owners, the array should be empty."
           items:
-            $ref: "#/components/schemas/BeneficialOwnerRequest"
+            $ref: "#/components/schemas/BeneficialOwnerRequestType"
           type: array
         annualRevenue:
           allOf:
-          - $ref: "#/components/schemas/BusinessAnnualRevenue"
+          - $ref: "#/components/schemas/BusinessAnnualRevenueType"
           description: Required if any of the officer / BeneficialOwner of the business
             have a non US nationality. Annual revenue of the business.
         numberOfEmployees:
           allOf:
-          - $ref: "#/components/schemas/BusinessNumberOfEmployees"
+          - $ref: "#/components/schemas/BusinessNumberOfEmployeesType"
           description: Required if any of the officer / BeneficialOwner of the business
             have a non US nationality. Number of employees of the business.
         cashFlow:
           allOf:
-          - $ref: "#/components/schemas/CashFlow"
+          - $ref: "#/components/schemas/CashFlowType"
           description: Required if any of the officer / BeneficialOwner of the business
             have a non US nationality. Cash flow of the business.
           example: Predictable
@@ -1815,7 +3895,7 @@ components:
           type: string
         businessVertical:
           allOf:
-          - $ref: "#/components/schemas/BusinessVertical"
+          - $ref: "#/components/schemas/BusinessVerticalType"
           description: The business vertical of the business.
           example: TechnologyMediaOrTelecom
         ip:
@@ -1840,7 +3920,7 @@ components:
           description: Optional. A list of device fingerprints for fraud and risk
             prevention (See Device Fingerprints).
           items:
-            $ref: "#/components/schemas/DeviceFingerprint"
+            $ref: "#/components/schemas/DeviceFingerprintType"
           type: array
         banks:
           description: "Optional. The name of the bank or banks that should be associated\
@@ -1853,7 +3933,7 @@ components:
           description: Optional. The product being applied for. Contact Unit to enable
             BillPay and Capital products.
           items:
-            $ref: "#/components/schemas/RequestedProduct"
+            $ref: "#/components/schemas/RequestedProductType"
           type: array
       required:
       - address
@@ -1890,7 +3970,7 @@ components:
           type: string
         fullName:
           allOf:
-          - $ref: "#/components/schemas/FullName"
+          - $ref: "#/components/schemas/FullNameType"
           description: Full name of the individual.
         dateOfBirth:
           description: Date only (e.g. "2001-08-15").
@@ -1898,11 +3978,11 @@ components:
           type: string
         address:
           allOf:
-          - $ref: "#/components/schemas/Address"
+          - $ref: "#/components/schemas/AddressType"
           description: Address of the individual. Must be a US address.
         phone:
           allOf:
-          - $ref: "#/components/schemas/Phone"
+          - $ref: "#/components/schemas/PhoneType"
           description: Phone number of the individual.
         email:
           description: Email address of the individual.
@@ -1913,17 +3993,17 @@ components:
           type: string
         occupation:
           allOf:
-          - $ref: "#/components/schemas/Occupation"
+          - $ref: "#/components/schemas/OccupationType"
           description: Occupation of the individual.
           example: ArchitectOrEngineer
         annualIncome:
           allOf:
-          - $ref: "#/components/schemas/AnnualIncome"
+          - $ref: "#/components/schemas/AnnualIncomeType"
           description: Required if nationality is not US. Annual income of the individual.
           example: Between50kAnd100k
         sourceOfIncome:
           allOf:
-          - $ref: "#/components/schemas/SourceOfIncome"
+          - $ref: "#/components/schemas/SourceOfIncomeType"
           description: Required if nationality is not US. Source of income of the
             individual.
           example: EmploymentOrPayrollIncome
@@ -1949,7 +4029,7 @@ components:
           description: Optional. A list of device fingerprints for fraud and risk
             prevention (See Device Fingerprints).
           items:
-            $ref: "#/components/schemas/DeviceFingerprint"
+            $ref: "#/components/schemas/DeviceFingerprintType"
           type: array
         jwtSubject:
           description: Optional. See this section for more information.
@@ -1988,7 +4068,7 @@ components:
           type: string
         fullName:
           allOf:
-          - $ref: "#/components/schemas/FullName"
+          - $ref: "#/components/schemas/FullNameType"
           description: Full name of the individual.
         dateOfBirth:
           description: Date only (e.g. "2001-08-15").
@@ -1996,11 +4076,11 @@ components:
           type: string
         address:
           allOf:
-          - $ref: "#/components/schemas/Address"
+          - $ref: "#/components/schemas/AddressType"
           description: Address of the individual. Must be a US address.
         phone:
           allOf:
-          - $ref: "#/components/schemas/Phone"
+          - $ref: "#/components/schemas/PhoneType"
           description: Phone number of the individual.
         email:
           description: Email address of the individual.
@@ -2029,17 +4109,17 @@ components:
           type: string
         annualRevenue:
           allOf:
-          - $ref: "#/components/schemas/SoleProprietorAnnualRevenue"
+          - $ref: "#/components/schemas/SoleProprietorAnnualRevenueType"
           description: "Required if nationality is not US. For sole proprietors, specify\
             \ the annual revenue here."
         numberOfEmployees:
           allOf:
-          - $ref: "#/components/schemas/SoleProprietorNumberOfEmployees"
+          - $ref: "#/components/schemas/SoleProprietorNumberOfEmployeesType"
           description: "Required if nationality is not US. For sole proprietors, specify\
             \ the number of employees here."
         businessVertical:
           allOf:
-          - $ref: "#/components/schemas/BusinessVertical"
+          - $ref: "#/components/schemas/BusinessVerticalType"
           description: "For sole proprietors, specify the business vertical here."
           example: TechnologyMediaOrTelecom
         website:
@@ -2070,7 +4150,7 @@ components:
           description: Optional. A list of device fingerprints for fraud and risk
             prevention (See Device Fingerprints).
           items:
-            $ref: "#/components/schemas/DeviceFingerprint"
+            $ref: "#/components/schemas/DeviceFingerprintType"
           type: array
         jwtSubject:
           description: Optional. See this section for more information.
@@ -2086,7 +4166,7 @@ components:
           description: Optional. The product being applied for. Contact Unit to enable
             BillPay and Capital products.
           items:
-            $ref: "#/components/schemas/RequestedProduct"
+            $ref: "#/components/schemas/RequestedProductType"
           type: array
       required:
       - address
@@ -2107,7 +4187,7 @@ components:
           type: string
         fullName:
           allOf:
-          - $ref: "#/components/schemas/FullName"
+          - $ref: "#/components/schemas/FullNameType"
           description: Full name of the beneficial owner.
         ssn:
           description: SSN of the beneficial owner (numbers only). One of ssn or passport
@@ -2129,26 +4209,26 @@ components:
           type: string
         address:
           allOf:
-          - $ref: "#/components/schemas/Address"
+          - $ref: "#/components/schemas/AddressType"
           description: The beneficial owner's address.
         phone:
           allOf:
-          - $ref: "#/components/schemas/Phone"
+          - $ref: "#/components/schemas/PhoneType"
           description: The beneficial owner's phone number.
         email:
           description: The beneficial owner's email address.
           type: string
         occupation:
           allOf:
-          - $ref: "#/components/schemas/Occupation"
+          - $ref: "#/components/schemas/OccupationType"
           description: Optional. Occupation of the beneficial owner.
         annualIncome:
           allOf:
-          - $ref: "#/components/schemas/AnnualIncome"
+          - $ref: "#/components/schemas/AnnualIncomeType"
           description: Optional. Annual income of the beneficial owner.
         sourceOfIncome:
           allOf:
-          - $ref: "#/components/schemas/SourceOfIncome"
+          - $ref: "#/components/schemas/SourceOfIncomeType"
           description: Optional. Source of income of the beneficial owner.
       required:
       - address
@@ -2183,17 +4263,17 @@ components:
           type: string
         address:
           allOf:
-          - $ref: "#/components/schemas/Address"
+          - $ref: "#/components/schemas/AddressType"
           description: Address of the business.
         operatingAddress:
           allOf:
-          - $ref: "#/components/schemas/Address"
+          - $ref: "#/components/schemas/AddressType"
           description: Optional. The operating address of the business. Required when
             the address is of a registered agent or if any beneficial owner or officer
             is non-US.
         phone:
           allOf:
-          - $ref: "#/components/schemas/Phone"
+          - $ref: "#/components/schemas/PhoneType"
           description: Phone of the business.
         stateOfIncorporation:
           description: Two letters representing a US state.
@@ -2203,7 +4283,7 @@ components:
           type: string
         industry:
           allOf:
-          - $ref: "#/components/schemas/Industry"
+          - $ref: "#/components/schemas/IndustryType"
           description: "Optional. Business industry, if specified."
         entityType:
           description: "The business entity type. Documented values are LLC, Partnership,\
@@ -2217,11 +4297,11 @@ components:
           type: string
         contact:
           allOf:
-          - $ref: "#/components/schemas/BusinessContact"
+          - $ref: "#/components/schemas/BusinessContactType"
           description: Primary contact of the business.
         officer:
           allOf:
-          - $ref: "#/components/schemas/Officer"
+          - $ref: "#/components/schemas/OfficerType"
           description: "Officer representing the business, must be the CEO, COO, CFO,\
             \ President, BenefitsAdministrationOfficer, CIO, VP, AVP, Treasurer, Secretary,\
             \ Controller, Manager, Partner or Member. The officer would need to go\
@@ -2229,22 +4309,22 @@ components:
         beneficialOwners:
           items:
             allOf:
-            - $ref: "#/components/schemas/BeneficialOwner-2"
+            - $ref: "#/components/schemas/BeneficialOwnerType"
             description: Array of beneficial owners of the business. Beneficial Owner
               is anyone with more than 25% ownership. Beneficial Owners would need
               to go over KYC process and provide documents.
           type: array
         annualRevenue:
           allOf:
-          - $ref: "#/components/schemas/AnnualRevenue"
+          - $ref: "#/components/schemas/AnnualRevenueType"
           description: Optional. Annual revenue of the business.
         numberOfEmployees:
           allOf:
-          - $ref: "#/components/schemas/NumberOfEmployees"
+          - $ref: "#/components/schemas/NumberOfEmployeesType"
           description: Optional. Number of employees of the business.
         cashFlow:
           allOf:
-          - $ref: "#/components/schemas/CashFlow"
+          - $ref: "#/components/schemas/CashFlowType"
           description: Optional. Cash flow of the business.
         yearOfIncorporation:
           description: Year of incorporation of the business.
@@ -2262,7 +4342,7 @@ components:
           type: string
         businessVertical:
           allOf:
-          - $ref: "#/components/schemas/BusinessVertical"
+          - $ref: "#/components/schemas/BusinessVerticalType"
           description: The business vertical of the business.
         ip:
           description: "Optional. IP address of the end-customer creating the application.\
@@ -2331,7 +4411,7 @@ components:
           type: string
         address:
           allOf:
-          - $ref: "#/components/schemas/Address"
+          - $ref: "#/components/schemas/AddressType"
           description: "Individual address, present only for the AddressVerification\
             \ document type."
         dateOfBirth:
@@ -2400,7 +4480,7 @@ components:
           type: string
         fullName:
           allOf:
-          - $ref: "#/components/schemas/FullName"
+          - $ref: "#/components/schemas/FullNameType"
           description: Full name of the individual.
         dateOfBirth:
           description: Date only (e.g. "2001-08-15").
@@ -2408,11 +4488,11 @@ components:
           type: string
         address:
           allOf:
-          - $ref: "#/components/schemas/Address"
+          - $ref: "#/components/schemas/AddressType"
           description: Address of the individual.
         phone:
           allOf:
-          - $ref: "#/components/schemas/Phone"
+          - $ref: "#/components/schemas/PhoneType"
           description: Phone of the individual.
         email:
           description: Email address of the individual.
@@ -2431,7 +4511,7 @@ components:
           type: string
         industry:
           allOf:
-          - $ref: "#/components/schemas/Industry"
+          - $ref: "#/components/schemas/IndustryType"
           description: "Optional. Indicates if the individual is a sole proprietor\
             \ who has a business industry, if specified."
         dba:
@@ -2487,15 +4567,15 @@ components:
           type: object
         annualRevenue:
           allOf:
-          - $ref: "#/components/schemas/BusinessAnnualRevenue"
+          - $ref: "#/components/schemas/BusinessAnnualRevenueType"
           description: Optional. Annual revenue of the business.
         numberOfEmployees:
           allOf:
-          - $ref: "#/components/schemas/BusinessNumberOfEmployees"
+          - $ref: "#/components/schemas/BusinessNumberOfEmployeesType"
           description: Optional. Number of employees of the business.
         cashFlow:
           allOf:
-          - $ref: "#/components/schemas/CashFlow"
+          - $ref: "#/components/schemas/CashFlowType"
           description: Optional. Cash flow of the business.
           example: Predictable
         yearOfIncorporation:
@@ -2520,7 +4600,7 @@ components:
           type: string
         businessVertical:
           allOf:
-          - $ref: "#/components/schemas/BusinessVertical"
+          - $ref: "#/components/schemas/BusinessVerticalType"
           description: Optional. The business vertical of the business.
           example: TechnologyMediaOrTelecom
       required:
@@ -2530,17 +4610,17 @@ components:
       properties:
         officer.occupation:
           allOf:
-          - $ref: "#/components/schemas/Occupation"
+          - $ref: "#/components/schemas/OccupationType"
           description: Optional. Occupation of the officer.
           example: ArchitectOrEngineer
         officer.annualIncome:
           allOf:
-          - $ref: "#/components/schemas/AnnualIncome"
+          - $ref: "#/components/schemas/AnnualIncomeType"
           description: Optional. Annual income of the officer.
           example: Between10kAnd25k
         officer.sourceOfIncome:
           allOf:
-          - $ref: "#/components/schemas/SourceOfIncome"
+          - $ref: "#/components/schemas/SourceOfIncomeType"
           description: Optional. Source of income of the officer.
           example: EmploymentOrPayrollIncome
       type: object
@@ -2555,17 +4635,17 @@ components:
           type: object
         occupation:
           allOf:
-          - $ref: "#/components/schemas/Occupation"
+          - $ref: "#/components/schemas/OccupationType"
           description: Optional. Occupation of the individual.
           example: ArchitectOrEngineer
         annualIncome:
           allOf:
-          - $ref: "#/components/schemas/AnnualIncome"
+          - $ref: "#/components/schemas/AnnualIncomeType"
           description: Optional. Annual income of the individual.
           example: Between10kAnd25k
         sourceOfIncome:
           allOf:
-          - $ref: "#/components/schemas/SourceOfIncome"
+          - $ref: "#/components/schemas/SourceOfIncomeType"
           description: Optional. Source of income of the individual.
           example: EmploymentOrPayrollIncome
       required:
@@ -2582,15 +4662,15 @@ components:
           type: object
         annualRevenue:
           allOf:
-          - $ref: "#/components/schemas/SoleProprietorAnnualRevenue"
+          - $ref: "#/components/schemas/SoleProprietorAnnualRevenueType"
           description: Optional. Specify the annual revenue here.
         numberOfEmployees:
           allOf:
-          - $ref: "#/components/schemas/SoleProprietorNumberOfEmployees"
+          - $ref: "#/components/schemas/SoleProprietorNumberOfEmployeesType"
           description: Optional. Specify the number of employees here.
         businessVertical:
           allOf:
-          - $ref: "#/components/schemas/BusinessVertical"
+          - $ref: "#/components/schemas/BusinessVerticalType"
           description: Optional. Specify the business vertical here.
           example: BusinessSupportOrBuildingServices
         website:
@@ -2612,7 +4692,7 @@ components:
       properties:
         address:
           allOf:
-          - $ref: "#/components/schemas/Address"
+          - $ref: "#/components/schemas/AddressType"
           description: The address to check. Must be a US address
       required:
       - address
@@ -2621,17 +4701,17 @@ components:
       properties:
         occupation:
           allOf:
-          - $ref: "#/components/schemas/Occupation"
+          - $ref: "#/components/schemas/OccupationType"
           description: Optional. Occupation of the beneficial owner.
           example: ArchitectOrEngineer
         annualIncome:
           allOf:
-          - $ref: "#/components/schemas/AnnualIncome"
+          - $ref: "#/components/schemas/AnnualIncomeType"
           description: Optional. Annual income of the beneficial owner.
           example: Between10kAnd25k
         sourceOfIncome:
           allOf:
-          - $ref: "#/components/schemas/SourceOfIncome"
+          - $ref: "#/components/schemas/SourceOfIncomeType"
           description: Optional. Source of income of the beneficial owner.
           example: EmploymentOrPayrollIncome
         percentage:
@@ -2645,6 +4725,631 @@ components:
           $ref: "#/components/schemas/Relationship"
       required:
       - application
+      type: object
+    CreateFeeData_attributes:
+      properties:
+        amount:
+          description: The amount (in cents) to charge the account.
+          example: 1000
+          type: integer
+        description:
+          description: Description of the fee (maximum of 50 characters).
+          example: Monthly Subscription
+          type: string
+        tags:
+          additionalProperties: true
+          description: Optional. See Tags.
+          type: object
+        idempotencyKey:
+          description: "Optional, but **strongly recommended**. See Idempotency."
+          type: string
+      required:
+      - amount
+      - description
+      type: object
+    CreateFeeData_relationships:
+      properties:
+        account:
+          $ref: "#/components/schemas/Relationship"
+      required:
+      - account
+      type: object
+    ReverseFeeData_attributes:
+      properties:
+        description:
+          description: Description of the fee (maximum of 50 characters).
+          example: Monthly Subscription - reverse
+          type: string
+        tags:
+          additionalProperties: true
+          description: Optional. See Tags.
+          type: object
+        idempotencyKey:
+          description: "Optional, but **strongly recommended**. See Idempotency."
+          type: string
+      required:
+      - description
+      type: object
+    ReverseFeeData_relationships:
+      properties:
+        account:
+          $ref: "#/components/schemas/Relationship"
+        transaction:
+          $ref: "#/components/schemas/Relationship"
+      required:
+      - account
+      - transaction
+      type: object
+    Fee_attributes:
+      properties:
+        amount:
+          description: The amount (in cents) of the fee.
+          type: integer
+        description:
+          description: Description of the fee.
+          type: string
+        tags:
+          additionalProperties: true
+          description: See Tags.
+          type: object
+      required:
+      - amount
+      - description
+      type: object
+    Fee_relationships:
+      properties:
+        account:
+          $ref: "#/components/schemas/Relationship"
+      type: object
+    FeeReversal_attributes:
+      properties:
+        description:
+          description: Description of the fee.
+          type: string
+        tags:
+          additionalProperties: true
+          description: See Tags.
+          type: object
+      required:
+      - description
+      type: object
+    FeeReversal_relationships:
+      properties:
+        account:
+          $ref: "#/components/schemas/Relationship"
+        transaction:
+          $ref: "#/components/schemas/Relationship"
+      type: object
+    DepositAccount_attributes:
+      properties:
+        createdAt:
+          description: The date the resource was created.
+          format: date-time
+          type: string
+        updatedAt:
+          description: Optional. The date the resource was updated.
+          format: date-time
+          type: string
+        name:
+          description: Name of the account holder.
+          type: string
+        depositProduct:
+          description: The name of the deposit product.
+          type: string
+        routingNumber:
+          description: Routing number of account.
+          type: string
+        accountNumber:
+          description: "Account number, together with the routingNumber forms the\
+            \ identifier of the account on the ACH network."
+          type: string
+        currency:
+          description: Currency of the account.
+          type: string
+        balance:
+          description: The balance amount (in cents). The balance represents the funds
+            that are currently in the account (not taking into account future commitments).
+            The balance equals the sum of 'available' and 'hold'.
+          type: integer
+        hold:
+          description: "The hold amount (in cents). The hold represents funds that\
+            \ are not available for spending, due to an outstanding card authorization."
+          type: integer
+        available:
+          description: The available balance for spending (in cents). Equals the balance
+            minus the hold amount.
+          type: integer
+        tags:
+          additionalProperties: true
+          description: See Tags.
+          type: object
+        status:
+          description: "Status of the account, either Open, Frozen, or Closed."
+          type: string
+        interestTerms:
+          allOf:
+          - $ref: "#/components/schemas/TotalAccruedInterestType"
+          description: "The interest terms of the deposit account. Only available\
+            \ if extraFields[account] is used when calling the Get Account by Id endpoint."
+        freezeReason:
+          description: "Optional. The reason the account was frozen, either Fraud,\
+            \ ByBank, or free-text description."
+          type: string
+        closeReason:
+          description: "Optional. The reason the account was closed, either ByCustomer,\
+            \ Fraud or ByBank."
+          type: string
+        fraudReason:
+          description: "Optional. The expanded fraud reason for closing the account\
+            \ when Fraud is specified as the reason. Can be one of: (ACHActivity,\
+            \ CardActivity, CheckActivity, ApplicationHistory, AccountActivity, ClientIdentified,\
+            \ IdentityTheft, LinkedToFraudulentCustomer)."
+          type: string
+        dacaStatus:
+          description: "Optional. The account DACA (Deposit Account Control Agreements)\
+            \ status. Can be one of: Entered, Activated."
+          type: string
+      required:
+      - accountNumber
+      - available
+      - balance
+      - createdAt
+      - currency
+      - depositProduct
+      - hold
+      - name
+      - routingNumber
+      - status
+      type: object
+    DepositAccount_relationships:
+      properties:
+        customer:
+          $ref: "#/components/schemas/Relationship"
+        customers:
+          $ref: "#/components/schemas/Relationship"
+      type: object
+    CreditAccount_attributes:
+      properties:
+        createdAt:
+          description: The date the resource was created.
+          format: date-time
+          type: string
+        updatedAt:
+          description: Optional. The date the resource was updated.
+          format: date-time
+          type: string
+        name:
+          description: Name of the account holder.
+          type: string
+        creditTerms:
+          description: The selected credit terms.
+          type: string
+        currency:
+          description: Currency of the account.
+          type: string
+        creditLimit:
+          description: The credit limit (cents).
+          type: integer
+        balance:
+          description: The balance amount (cents). The balance represents the funds
+            that are currently in the account (not taking into account future commitments).
+            The balance equals the sum of settled transactions minus any repayments.
+          type: integer
+        hold:
+          description: "The hold amount (cents). The hold represents funds that are\
+            \ not available for spending, due to an outstanding card authorization."
+          type: integer
+        available:
+          description: "The available balance for spending (cents). Equals the credit\
+            \ limit, minus the balance and hold amounts."
+          type: integer
+        tags:
+          additionalProperties: true
+          description: See Tags.
+          type: object
+        status:
+          description: "Status of the account, either Open, Frozen, or Closed."
+          type: string
+        freezeReason:
+          description: "Optional. The reason the account was frozen, either Fraud,\
+            \ ByBank, or free-text description."
+          type: string
+        closeReason:
+          description: "Optional. The reason the account was closed, either ByCustomer,\
+            \ Overdue or Fraud."
+          type: string
+        closeReasonText:
+          description: Optional. An expanded free-text reason for account closure.
+          type: string
+        fraudReason:
+          description: "Optional. The expanded fraud reason for closing the account\
+            \ when Fraud is specified as the reason. Can be one of: (ACHActivity,\
+            \ CardActivity, CheckActivity, ApplicationHistory, AccountActivity, ClientIdentified,\
+            \ IdentityTheft, LinkedToFraudulentCustomer)."
+          type: string
+      required:
+      - available
+      - balance
+      - createdAt
+      - creditLimit
+      - creditTerms
+      - currency
+      - hold
+      - name
+      - status
+      type: object
+    CreditAccount_relationships:
+      properties:
+        customer:
+          $ref: "#/components/schemas/Relationship"
+      type: object
+    WalletAccount_attributes:
+      properties:
+        createdAt:
+          description: The date the resource was created.
+          format: date-time
+          type: string
+        name:
+          description: The official name.
+          type: string
+        status:
+          description: "Status of the account, either Open, Frozen, or Closed."
+          type: string
+        walletTerms:
+          description: The name of the wallet terms.
+          type: string
+        routingNumber:
+          description: Routing number of wallet.
+          type: string
+        accountNumber:
+          description: "Account number, together with the routingNumber forms the\
+            \ identifier of the wallet on the ACH network."
+          type: string
+        currency:
+          description: Currency of the wallet.
+          type: string
+        balance:
+          description: The balance amount (in cents). The balance represents the funds
+            that are currently in the wallet (not taking into account future commitments).
+            The balance equals the sum of 'available' and 'hold'.
+          type: integer
+        hold:
+          description: "The hold amount (in cents). The hold represents funds that\
+            \ are not available for spending, due to an outstanding card authorization."
+          type: integer
+        available:
+          description: The available balance for spending (in cents). Equals the balance
+            minus the hold amount.
+          type: integer
+        tags:
+          additionalProperties: true
+          description: See Tags.
+          type: object
+        freezeReason:
+          description: "Optional. The reason the wallet was frozen, either Fraud,\
+            \ ByBank, or free-text description."
+          type: string
+        closeReason:
+          description: "Optional. The reason the wallet was closed, either ByCustomer\
+            \ or Fraud."
+          type: string
+        fraudReason:
+          description: "Optional. The expanded fraud reason for closing the wallet\
+            \ when Fraud is specified as the reason. Can be one of: (ACHActivity,\
+            \ CardActivity, CheckActivity, ApplicationHistory, AccountActivity, ClientIdentified,\
+            \ IdentityTheft, LinkedToFraudulentCustomer)."
+          type: string
+      required:
+      - accountNumber
+      - available
+      - balance
+      - createdAt
+      - currency
+      - hold
+      - name
+      - routingNumber
+      - status
+      - walletTerms
+      type: object
+    AccountHold_attributes:
+      properties:
+        createdAt:
+          description: The date the resource was created.
+          format: date-time
+          type: string
+        status:
+          description: "Status of the account hold, either Active, Released, PartiallyReleased."
+          type: string
+        amount:
+          description: The amount (cents) of the payment.
+          type: integer
+        remainingHoldAmount:
+          description: Optional. The remaining amount (cents) being held. Only present
+            when status is PartiallyReleased.
+          type: integer
+        expiredAt:
+          description: Optional. Date only (e.g. "2001-08-15"). the date the account
+            hold will be automatically released at.
+          format: date
+          type: string
+        description:
+          description: Account hold description (maximum of 80 characters).
+          type: string
+        tags:
+          additionalProperties: true
+          description: Optional. See Tags.
+          type: object
+      required:
+      - amount
+      - createdAt
+      - description
+      - status
+      type: object
+    AccountEndOfDay_attributes:
+      properties:
+        date:
+          description: The date the account end-of-day resource was created.
+          format: date
+          type: string
+        balance:
+          description: The balance amount (in cents). The balance equals the sum of
+            'available' and 'hold'.
+          type: integer
+        hold:
+          description: The hold amount (in cents). Not available for spending.
+          type: integer
+        available:
+          description: The available balance for spending (in cents).
+          type: integer
+        overdraftLimit:
+          description: Optional. The overdraft limit amount.
+          type: integer
+      required:
+      - available
+      - balance
+      - date
+      - hold
+      type: object
+    AccountEndOfDay_relationships:
+      properties:
+        account:
+          $ref: "#/components/schemas/Relationship"
+        customer:
+          $ref: "#/components/schemas/Relationship"
+        customers:
+          $ref: "#/components/schemas/Relationship"
+      type: object
+    CreateDepositAccountData_attributes:
+      properties:
+        depositProduct:
+          description: The name of the deposit product.
+          example: checking
+          type: string
+        tags:
+          additionalProperties: true
+          description: Optional. See Tags.
+          type: object
+        idempotencyKey:
+          description: Optional. See Idempotency.
+          type: string
+      required:
+      - depositProduct
+      type: object
+    CreateDepositAccountData_relationships:
+      properties:
+        customer:
+          $ref: "#/components/schemas/Relationship"
+      required:
+      - customer
+      type: object
+    CreateCreditAccountData_attributes:
+      properties:
+        creditTerms:
+          description: The credit terms that will be associated with the account.
+          example: credit_terms_1
+          type: string
+        creditLimit:
+          description: The credit limit of the account (in cents).
+          example: 20000
+          type: integer
+        tags:
+          additionalProperties: true
+          description: Optional. See Tags.
+          type: object
+        idempotencyKey:
+          description: Optional. See Idempotency.
+          type: string
+      required:
+      - creditLimit
+      - creditTerms
+      type: object
+    CreateWalletData_attributes:
+      properties:
+        walletTerms:
+          description: The name of the wallet terms.
+          example: walletDefault
+          type: string
+        tags:
+          additionalProperties: true
+          description: Optional. See Tags.
+          type: object
+        idempotencyKey:
+          description: Optional. See Idempotency.
+          type: string
+      required:
+      - walletTerms
+      type: object
+    UpdateDepositAccountData_attributes:
+      properties:
+        tags:
+          additionalProperties: true
+          description: Optional. See Updating Tags.
+          type: object
+        depositProduct:
+          description: Optional. Name of the selected deposit product (you can get
+            the list of available deposit products using a dedicated API endpoint).
+          type: string
+      type: object
+    UpdateCreditAccountData_attributes:
+      properties:
+        tags:
+          additionalProperties: true
+          description: Optional. See Updating Tags.
+          type: object
+        creditLimit:
+          description: Optional. The credit limit of the account (in cents).
+          type: integer
+      type: object
+    UpdateWalletData_attributes:
+      properties:
+        name:
+          description: Optional. The name of the wallet.
+          type: string
+        tags:
+          additionalProperties: true
+          description: Optional. See Tags.
+          type: object
+        walletTerms:
+          description: Optional. The name of the selected wallet terms.
+          type: string
+      type: object
+    CloseDepositAccountData_attributes:
+      properties:
+        reason:
+          description: "The reason for closing the account. Either ByCustomer, Fraud,\
+            \ ByBank, or NegativeBalance."
+          example: ByCustomer
+          type: string
+        fraudReason:
+          description: "Optional. The expanded fraud reason for closing the account\
+            \ when Fraud is specified as the reason. Can be one of: (ACHActivity,\
+            \ CardActivity, CheckActivity, ApplicationHistory, AccountActivity, ClientIdentified,\
+            \ IdentityTheft, LinkedToFraudulentCustomer)."
+          type: string
+        bankReason:
+          description: "Optional. The expanded bank reason for closing the account\
+            \ when ByBank is specified as the reason. Can be one of: (ProhibitedBusiness,\
+            \ MissingCddEdd, NonUsOperations, SuspectedFraud). This list is subject\
+            \ to change."
+          type: string
+      required:
+      - reason
+      type: object
+    CloseCreditAccountData_attributes:
+      properties:
+        reason:
+          description: "The reason for closing the account. Either ByCustomer, Fraud\
+            \ or Overdue. If not specified, will default to ByCustomer."
+          example: Overdue
+          type: string
+        fraudReason:
+          description: "Optional. The expanded fraud reason for closing the account\
+            \ when Fraud is specified as the reason. Can be one of: (ACHActivity,\
+            \ CardActivity, CheckActivity, ApplicationHistory, AccountActivity, ClientIdentified,\
+            \ IdentityTheft, LinkedToFraudulentCustomer)."
+          type: string
+      type: object
+    CloseWalletData_attributes:
+      properties:
+        reason:
+          description: "The reason for closing the wallet. Either ByCustomer, Fraud,\
+            \ ByBank, or NegativeBalance."
+          example: ByCustomer
+          type: string
+        fraudReason:
+          description: "Optional. The expanded fraud reason for closing the wallet\
+            \ when Fraud is specified as the reason. Can be one of: (ACHActivity,\
+            \ CardActivity, CheckActivity, ApplicationHistory, AccountActivity, ClientIdentified,\
+            \ IdentityTheft, LinkedToFraudulentCustomer)."
+          type: string
+        bankReason:
+          description: "Optional. The expanded bank reason for closing the wallet\
+            \ when ByBank is specified as the reason. Can be one of: (ProhibitedBusiness,\
+            \ MissingCddEdd, NonUsOperations, SuspectedFraud). This list is subject\
+            \ to change."
+          type: string
+      required:
+      - reason
+      type: object
+    FreezeDepositAccountData_attributes:
+      properties:
+        reason:
+          description: "The reason for freezing the account. Either Fraud or Other,\
+            \ with a specified reasonText."
+          example: Other
+          type: string
+        reasonText:
+          description: Optional. The free-text reason for freezing the account (up
+            to 255 characters) when Other is specified.
+          example: Per request from customer
+          type: string
+      required:
+      - reason
+      type: object
+    FreezeWalletData_attributes:
+      properties:
+        reason:
+          description: "The reason for freezing the wallet. Either Fraud or Other,\
+            \ with a specified reasonText."
+          example: Other
+          type: string
+        reasonText:
+          description: Optional. The free-text reason for freezing the wallet (up
+            to 255 characters) when Other is specified.
+          example: Per request from customer
+          type: string
+      required:
+      - reason
+      type: object
+    CreateAccountHoldData_attributes:
+      properties:
+        amount:
+          description: The amount (in cents).
+          example: 6000
+          type: integer
+        expiredAt:
+          description: Optional. Date only (e.g. "2001-08-15"). the date the account
+            hold will be automatically released at.
+          example: 2024-10-29
+          format: date
+          type: string
+        description:
+          description: Description of the AccountHold (maximum of 80 characters).
+          example: Hold reason
+          type: string
+        idempotencyKey:
+          description: Optional. See Idempotency.
+          type: string
+      required:
+      - amount
+      - description
+      type: object
+    ReleaseAccountHoldData_attributes:
+      properties:
+        amount:
+          description: The amount (in cents) to release from the hold. The hold status
+            will become PartiallyReleased.
+          example: 2500
+          type: integer
+        idempotencyKey:
+          description: See Idempotency.
+          type: string
+      required:
+      - amount
+      type: object
+    VerifyAccountData_attributes:
+      properties:
+        routingNumber:
+          description: Required. Routing number (exactly 9 digits).
+          example: "051000017"
+          type: string
+        accountNumber:
+          description: Required. Account number (1-17 digits).
+          example: "10000123"
+          type: string
+      required:
+      - accountNumber
+      - routingNumber
       type: object
   securitySchemes:
     bearerAuth:
