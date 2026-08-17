@@ -4,9 +4,9 @@
 
 | Name | Type | Description | Notes |
 | ---- | ---- | ----------- | ----- |
-| **officer_occupation** | [**Occupation**](Occupation.md) | Optional. Occupation of the officer. | [optional] |
-| **officer_annual_income** | [**AnnualIncome**](AnnualIncome.md) | Optional. Annual income of the officer. | [optional] |
-| **officer_source_of_income** | [**SourceOfIncome**](SourceOfIncome.md) | Optional. Source of income of the officer. | [optional] |
+| **officer_occupation** | [**OccupationType**](OccupationType.md) | Optional. Occupation of the officer. | [optional] |
+| **officer_annual_income** | [**AnnualIncomeType**](AnnualIncomeType.md) | Optional. Annual income of the officer. | [optional] |
+| **officer_source_of_income** | [**SourceOfIncomeType**](SourceOfIncomeType.md) | Optional. Source of income of the officer. | [optional] |
 
 ## Example
 

@@ -7,10 +7,10 @@ import type {
 	UpdateBusinessBeneficialOwnerRequest,
 } from "../..";
 import {
-	BusinessAnnualRevenue,
-	BusinessNumberOfEmployees,
-	SoleProprietorAnnualRevenue,
-	SoleProprietorNumberOfEmployees,
+	BusinessAnnualRevenueType,
+	BusinessNumberOfEmployeesType,
+	SoleProprietorAnnualRevenueType,
+	SoleProprietorNumberOfEmployeesType,
 } from "../..";
 import { TEST_RUN_ID } from "./api";
 
@@ -78,8 +78,8 @@ export function buildBusinessApplicationRequest(): CreateBusinessApplicationRequ
 				contact: businessContact(),
 				officer: officer(),
 				beneficialOwners: beneficialOwners(),
-				annualRevenue: BusinessAnnualRevenue.Between500kAnd1m,
-				numberOfEmployees: BusinessNumberOfEmployees.Between50And100,
+				annualRevenue: BusinessAnnualRevenueType.Between500kAnd1m,
+				numberOfEmployees: BusinessNumberOfEmployeesType.Between50And100,
 				cashFlow: "Predictable",
 				tags: baseTags(),
 			},
@@ -150,8 +150,8 @@ export function buildSoleProprietorApplicationRequest(): CreateSoleProprietorApp
 				ein: "123456789",
 				dba: `Pied Piper SP ${TEST_RUN_ID}`,
 				businessVertical: "TechnologyMediaOrTelecom",
-				annualRevenue: SoleProprietorAnnualRevenue.Between100kAnd200k,
-				numberOfEmployees: SoleProprietorNumberOfEmployees.Between2And5,
+				annualRevenue: SoleProprietorAnnualRevenueType.Between100kAnd200k,
+				numberOfEmployees: SoleProprietorNumberOfEmployeesType.Between2And5,
 				website: "https://www.piedpiper.com",
 				tags: baseTags(),
 			},
