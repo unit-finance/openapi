@@ -9,7 +9,10 @@
  *   1. $SPEC_BUNDLE_PATH  — explicit local file (used in CI when the spec repo
  *      is checked out alongside, or for offline/local dev).
  *   2. $SPEC_BUNDLE_URL   — explicit URL override.
- *   3. The GitHub release asset for the version pinned in `spec-version.json`
+ *   3. A gitignored local drop file at `spec/local/<assetName>` — the no-token
+ *      local flow: download the release asset from GitHub's UI once, drop it
+ *      there, and `npm run generate-sdks` uses it without needing a token.
+ *   4. The GitHub release asset for the version pinned in `spec-version.json`
  *      (`https://github.com/<repo>/releases/download/v<version>/<assetName>`).
  *
  * The downloaded/copied file is git-ignored: it is a derived artifact, fully
@@ -23,6 +26,8 @@ import path from "node:path";
 const REPO_ROOT = process.cwd();
 const LOCK_PATH = path.join(REPO_ROOT, "spec-version.json");
 const OUT_PATH = path.join(REPO_ROOT, "spec", "openapi.bundled.json");
+/** Gitignored folder for a manually-dropped spec bundle (no-token local flow). */
+const LOCAL_DIR = path.join(REPO_ROOT, "spec", "local");
 
 interface SpecLock {
 	repo: string;
@@ -205,7 +210,20 @@ async function main(): Promise<void> {
 		return;
 	}
 
-	await fromRelease(readLock());
+	const lock = readLock();
+
+	// No-token local flow: if a bundle for the pinned version has been dropped
+	// into the gitignored spec/local/ folder, use it instead of hitting GitHub.
+	const localPath = path.join(LOCAL_DIR, lock.assetName);
+	if (fs.existsSync(localPath)) {
+		console.log(
+			`[fetch-spec] Using local spec ${path.relative(REPO_ROOT, localPath)}`,
+		);
+		writeOut(fs.readFileSync(localPath), localPath, lock.version);
+		return;
+	}
+
+	await fromRelease(lock);
 }
 
 main().catch((err) => {
