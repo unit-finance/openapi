@@ -50,13 +50,17 @@ jobs:
           fi
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
-      - name: Bump spec-version.json
-        run: |
-          node -e "const f='spec-version.json';const j=require('./'+f);j.version='${{ steps.ver.outputs.version }}';require('fs').writeFileSync(f, JSON.stringify(j,null,2)+'\n');"
-          cat spec-version.json
-
       - name: Install
         run: npm ci
+
+      # Update the single version knob before generating. `set-spec-version`
+      # validates/normalizes the input; `generate-sdks` then fetches the matching
+      # release asset, fails if its info.version disagrees, and stamps this
+      # version onto every SDK manifest.
+      - name: Bump spec-version.json
+        run: |
+          npm run set-spec-version -- "${{ steps.ver.outputs.version }}"
+          cat spec-version.json
 
       - name: Regenerate SDKs
         run: npm run generate-sdks

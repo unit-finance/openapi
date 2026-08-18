@@ -21,6 +21,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import { readSpecVersion } from "./spec-version";
 
 const REPO_ROOT = process.cwd();
 const SDK_DIR = path.join(REPO_ROOT, "sdks", "java");
@@ -50,9 +51,17 @@ function main(): void {
 		fail(`dependency fragment not found: ${rel(FRAGMENT)}`);
 	}
 
-	const pom = fs.readFileSync(POM, "utf8");
+	let pom = fs.readFileSync(POM, "utf8");
+
+	// Stamp the pinned spec version onto the project's own <version> so the
+	// published artifact tracks spec-version.json rather than the config's
+	// hardcoded artifactVersion. Idempotent, so it also corrects a pom that was
+	// already dependency-overlaid on a prior run.
+	pom = stampVersion(pom);
+
 	if (pom.includes(MARKER)) {
-		console.log(`pom already overlaid; nothing to do (${rel(POM)})`);
+		fs.writeFileSync(POM, pom, "utf8");
+		console.log(`pom already overlaid; stamped version only (${rel(POM)})`);
 		return;
 	}
 
@@ -72,6 +81,30 @@ function main(): void {
 	const merged = `${pom.slice(0, idx)}${fragment}\n${pom.slice(idx)}`;
 	fs.writeFileSync(POM, merged, "utf8");
 	console.log(`Overlaid ${rel(FRAGMENT)} into ${rel(POM)}`);
+}
+
+/**
+ * Replace the project-level `<version>` — the one immediately following the
+ * project `<name>` — leaving dependency versions untouched.
+ */
+function stampVersion(pom: string): string {
+	const version = readSpecVersion();
+	let replaced = false;
+	const out = pom.replace(
+		/(<name>unit-java-sdk<\/name>\s*<version>)[^<]*(<\/version>)/,
+		(_m, p1, p2) => {
+			replaced = true;
+			return `${p1}${version}${p2}`;
+		},
+	);
+	if (!replaced) {
+		fail(
+			"could not find the project-level <version> after <name>unit-java-sdk</name>; " +
+				"the generator output may have changed.",
+		);
+	}
+	console.log(`Stamped ${rel(POM)}: <version>${version}</version>`);
+	return out;
 }
 
 main();

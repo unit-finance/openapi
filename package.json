@@ -5,6 +5,7 @@
   "description": "Generation harness and committed SDK output (Node, Java, Python, Ruby) for the Unit API, generated from the unit-openapi spec.",
   "scripts": {
     "fetch-spec": "tsx scripts/openapi/fetch-spec.ts",
+    "set-spec-version": "tsx scripts/openapi/set-spec-version.ts",
     "test-coverage": "tsx scripts/openapi/test-coverage-report.ts",
     "author-tests": "tsx scripts/agents/author-tests.ts",
     "generate-sdk:node": "rm -rf sdks/node && openapi-generator-cli generate -i spec/openapi.bundled.json -g typescript-axios -o sdks/node -c templates/node/config.json",

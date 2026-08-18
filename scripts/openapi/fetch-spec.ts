@@ -91,12 +91,26 @@ function httpGet(url: string, headers: Headers = {}): Promise<HttpResponse> {
 	});
 }
 
-function writeOut(buf: Buffer, source: string): void {
+function writeOut(buf: Buffer, source: string, expectedVersion?: string): void {
 	const text = buf.toString("utf8");
+	let doc: { info?: { version?: string } };
 	try {
-		JSON.parse(text);
+		doc = JSON.parse(text);
 	} catch (err) {
 		console.error(`[fetch-spec] ${source} is not valid JSON: ${String(err)}`);
+		process.exit(1);
+	}
+	// Guard against a dishonest pin: the version we generate (and publish) SDKs
+	// under comes from spec-version.json, so the fetched document's own
+	// info.version must agree with it. A mismatch means the pinned release asset
+	// was rebuilt from a different spec, or the pin was bumped without a matching
+	// release — either way the SDKs would be stamped with the wrong version.
+	const actual = doc.info?.version;
+	if (expectedVersion && actual && actual !== expectedVersion) {
+		console.error(
+			`[fetch-spec] Spec info.version (${actual}) does not match ` +
+				`spec-version.json (${expectedVersion}). Fix the pin or the release asset.`,
+		);
 		process.exit(1);
 	}
 	fs.mkdirSync(path.dirname(OUT_PATH), { recursive: true });
@@ -127,9 +141,13 @@ async function fromRelease(lock: SpecLock): Promise<void> {
 	const token = specRepoToken();
 
 	if (!token) {
-		await fromUrl(
-			`https://github.com/${lock.repo}/releases/download/${tag}/${lock.assetName}`,
-		);
+		const url = `https://github.com/${lock.repo}/releases/download/${tag}/${lock.assetName}`;
+		console.log(`[fetch-spec] Downloading spec from ${url}`);
+		const res = await httpGet(url);
+		if (res.statusCode !== 200) {
+			throw new Error(`GET ${url} -> HTTP ${res.statusCode}`);
+		}
+		writeOut(res.body, url, lock.version);
 		return;
 	}
 
@@ -167,7 +185,7 @@ async function fromRelease(lock: SpecLock): Promise<void> {
 	if (dl.statusCode !== 200) {
 		throw new Error(`GET ${asset.url} -> HTTP ${dl.statusCode}`);
 	}
-	writeOut(dl.body, `${lock.repo}@${tag}:${lock.assetName}`);
+	writeOut(dl.body, `${lock.repo}@${tag}:${lock.assetName}`, lock.version);
 }
 
 async function main(): Promise<void> {
