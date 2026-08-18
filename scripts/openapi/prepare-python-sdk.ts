@@ -18,6 +18,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import { readSpecVersion } from "./spec-version";
 
 const REPO_ROOT = process.cwd();
 const SDK_DIR = path.join(REPO_ROOT, "sdks", "python");
@@ -45,10 +46,28 @@ function main(): void {
 	if (!fs.existsSync(PYPROJECT_SRC)) {
 		fail(`Curated pyproject.toml not found: ${rel(PYPROJECT_SRC)}`);
 	}
-	fs.copyFileSync(PYPROJECT_SRC, PYPROJECT_DEST);
+	// Stamp the pinned spec version onto the `[project] version` field so the
+	// published package tracks spec-version.json rather than a stale literal.
+	const version = readSpecVersion();
+	const src = fs.readFileSync(PYPROJECT_SRC, "utf8");
+	const stamped = stampVersion(src, version);
+	fs.writeFileSync(PYPROJECT_DEST, stamped, "utf8");
 	console.log(
-		`Replaced SDK pyproject.toml: ${rel(PYPROJECT_SRC)} -> ${rel(PYPROJECT_DEST)}`,
+		`Wrote SDK pyproject.toml (version ${version}): ${rel(PYPROJECT_SRC)} -> ${rel(PYPROJECT_DEST)}`,
 	);
+}
+
+/** Replace the first top-level `version = "..."` assignment (the [project] one). */
+function stampVersion(toml: string, version: string): string {
+	let replaced = false;
+	const out = toml.replace(/^version\s*=\s*".*"\s*$/m, () => {
+		replaced = true;
+		return `version = "${version}"`;
+	});
+	if (!replaced) {
+		fail("could not find a `version = \"...\"` line in pyproject.toml to stamp");
+	}
+	return out;
 }
 
 main();

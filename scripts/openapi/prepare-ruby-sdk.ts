@@ -20,9 +20,11 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import { readSpecVersion } from "./spec-version";
 
 const REPO_ROOT = process.cwd();
 const SDK_DIR = path.join(REPO_ROOT, "sdks", "ruby");
+const VERSION_RB = path.join(SDK_DIR, "lib", "unit_finance_sdk", "version.rb");
 const GEMSPEC_NAME = "unit_finance_sdk.gemspec";
 const GEMSPEC_SRC = path.join(
 	REPO_ROOT,
@@ -52,6 +54,31 @@ function main(): void {
 	console.log(
 		`Replaced SDK gemspec: ${rel(GEMSPEC_SRC)} -> ${rel(GEMSPEC_DEST)}`,
 	);
+	stampVersion();
+}
+
+/**
+ * The curated gemspec pulls its version from `UnitFinanceSdk::VERSION`
+ * (lib/unit_finance_sdk/version.rb), which the generator emits from the
+ * config's `gemVersion`. Rewrite that constant to the pinned spec version so
+ * the built gem tracks spec-version.json.
+ */
+function stampVersion(): void {
+	if (!fs.existsSync(VERSION_RB)) {
+		fail(`version.rb not found: ${rel(VERSION_RB)}. Run \`npm run generate-sdk:ruby\` first.`);
+	}
+	const version = readSpecVersion();
+	const src = fs.readFileSync(VERSION_RB, "utf8");
+	let replaced = false;
+	const out = src.replace(/^(\s*VERSION\s*=\s*)'[^']*'(\s*)$/m, (_m, p1, p2) => {
+		replaced = true;
+		return `${p1}'${version}'${p2}`;
+	});
+	if (!replaced) {
+		fail(`could not find a VERSION constant in ${rel(VERSION_RB)} to stamp`);
+	}
+	fs.writeFileSync(VERSION_RB, out, "utf8");
+	console.log(`Stamped ${rel(VERSION_RB)}: VERSION = '${version}'`);
 }
 
 main();

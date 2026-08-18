@@ -18,8 +18,11 @@ on:
         options: [node, java, python, ruby]
 
 # Each job runs only for its matching tag prefix (or the manual target).
-# Versions are taken from the curated manifests under templates/<lang>; bump
-# those alongside spec-version.json, then push a `<lang>-vX.Y.Z` tag.
+# Versions are single-sourced from spec-version.json: `npm run generate-sdks`
+# stamps that version onto every SDK manifest (package.json / pyproject.toml /
+# version.rb / pom.xml) during the prepare-*-sdk steps. Bump spec-version.json
+# (the regeneration workflow does this automatically), then push a
+# `<lang>-vX.Y.Z` tag whose X.Y.Z matches the pinned spec version.
 
 # Token for fetching the (private) unit-openapi spec release in `fetch-spec`.
 env:

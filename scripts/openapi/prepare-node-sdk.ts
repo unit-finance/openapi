@@ -25,6 +25,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import { readSpecVersion } from "./spec-version";
 
 const REPO_ROOT = process.cwd();
 const SDK_DIR = path.join(REPO_ROOT, "sdks", "node");
@@ -53,8 +54,17 @@ function ensureExists(p: string, what: string): void {
 function replacePackageJson(): void {
 	ensureExists(PKG_SRC, "Curated package.json");
 	ensureExists(SDK_DIR, "SDK dir");
-	fs.copyFileSync(PKG_SRC, PKG_DEST);
-	console.log(`Replaced SDK package.json: ${rel(PKG_SRC)} -> ${rel(PKG_DEST)}`);
+	// Stamp the pinned spec version onto the curated manifest so the published
+	// package version tracks spec-version.json rather than a stale hardcoded one.
+	const version = readSpecVersion();
+	const pkg = JSON.parse(fs.readFileSync(PKG_SRC, "utf8")) as {
+		version?: string;
+	};
+	pkg.version = version;
+	fs.writeFileSync(PKG_DEST, `${JSON.stringify(pkg, null, 2)}\n`, "utf8");
+	console.log(
+		`Wrote SDK package.json (version ${version}): ${rel(PKG_SRC)} -> ${rel(PKG_DEST)}`,
+	);
 }
 
 function patchTsconfig(file: string): void {
