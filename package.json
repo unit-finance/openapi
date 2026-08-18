@@ -20,7 +20,7 @@
     "place-java-tests": "tsx scripts/openapi/place-java-tests.ts",
     "place-python-tests": "tsx scripts/openapi/place-python-tests.ts",
     "place-ruby-tests": "tsx scripts/openapi/place-ruby-tests.ts",
-    "generate-sdks": "npm run fetch-spec && npm run generate-sdk:node && npm run prepare-node-sdk && npm run place-node-tests && npm run generate-sdk:java && npm run prepare-java-sdk && npm run place-java-tests && npm run generate-sdk:python && npm run prepare-python-sdk && npm run place-python-tests && npm run generate-sdk:ruby && npm run prepare-ruby-sdk && npm run place-ruby-tests",
+    "generate-sdks": "tsx scripts/openapi/generate-sdks.ts",
     "test:sdk:node": "npm install --prefix sdks/node --no-package-lock --no-audit --no-fund && npm install --prefix sdks/node/tests --no-audit --no-fund && npm test --prefix sdks/node/tests",
     "test:sdk:java": "npm run place-java-tests && npm run prepare-java-sdk && tsx scripts/openapi/run-mvn.ts -q -f sdks/java/pom.xml '-Dtest=*IT' clean test",
     "lint:sdk:python": "tsx scripts/openapi/run-ruff.ts",
