@@ -10,24 +10,24 @@
 | **updated_at** | **Time** | Optional. The date the resource was updated. | [optional] |
 | **name** | **String** | Name of the business. |  |
 | **dba** | **String** | Optional. \&quot;Doing business as\&quot;. | [optional] |
-| **address** | [**AddressType**](AddressType.md) | Address of the business. |  |
-| **operating_address** | [**AddressType**](AddressType.md) | Optional. The operating address of the business. Required when the address is of a registered agent or if any beneficial owner or officer is non-US. | [optional] |
-| **phone** | [**PhoneType**](PhoneType.md) | Phone of the business. |  |
+| **address** | [**Address**](Address.md) | Address of the business. |  |
+| **operating_address** | [**Address**](Address.md) | Optional. The operating address of the business. Required when the address is of a registered agent or if any beneficial owner or officer is non-US. | [optional] |
+| **phone** | [**Phone**](Phone.md) | Phone of the business. |  |
 | **state_of_incorporation** | **String** | Two letters representing a US state. |  |
 | **ein** | **String** | Business EIN (numbers only). |  |
-| **industry** | [**IndustryType**](IndustryType.md) | Optional. Business industry, if specified. | [optional] |
+| **industry** | [**Industry**](Industry.md) | Optional. Business industry, if specified. | [optional] |
 | **entity_type** | **String** | The business entity type. Documented values are LLC, Partnership, PubliclyTradedCorporation, PrivatelyHeldCorporation and NotForProfitOrganization, but the live API also returns Corporation, so the documented list is not exhaustive. Kept as a free-form string (not a strict enum) to avoid breaking strict client deserialization on undocumented values. |  |
 | **website** | **String** | Optional. Business&#39;s website. | [optional] |
-| **contact** | [**BusinessContactType**](BusinessContactType.md) | Primary contact of the business. |  |
-| **officer** | [**OfficerType**](OfficerType.md) | Officer representing the business, must be the CEO, COO, CFO, President, BenefitsAdministrationOfficer, CIO, VP, AVP, Treasurer, Secretary, Controller, Manager, Partner or Member. The officer would need to go over KYC process and provide documents. |  |
-| **beneficial_owners** | [**Array&lt;BeneficialOwnerType&gt;**](BeneficialOwnerType.md) |  |  |
-| **annual_revenue** | [**AnnualRevenueType**](AnnualRevenueType.md) | Optional. Annual revenue of the business. | [optional] |
-| **number_of_employees** | [**NumberOfEmployeesType**](NumberOfEmployeesType.md) | Optional. Number of employees of the business. | [optional] |
-| **cash_flow** | [**CashFlowType**](CashFlowType.md) | Optional. Cash flow of the business. | [optional] |
+| **contact** | [**BusinessContact**](BusinessContact.md) | Primary contact of the business. |  |
+| **officer** | [**Officer**](Officer.md) | Officer representing the business, must be the CEO, COO, CFO, President, BenefitsAdministrationOfficer, CIO, VP, AVP, Treasurer, Secretary, Controller, Manager, Partner or Member. The officer would need to go over KYC process and provide documents. |  |
+| **beneficial_owners** | [**Array&lt;BeneficialOwner2&gt;**](BeneficialOwner2.md) |  |  |
+| **annual_revenue** | [**AnnualRevenue**](AnnualRevenue.md) | Optional. Annual revenue of the business. | [optional] |
+| **number_of_employees** | [**NumberOfEmployees**](NumberOfEmployees.md) | Optional. Number of employees of the business. | [optional] |
+| **cash_flow** | [**CashFlow**](CashFlow.md) | Optional. Cash flow of the business. | [optional] |
 | **year_of_incorporation** | **String** | Year of incorporation of the business. |  |
 | **countries_of_operation** | **Array&lt;String&gt;** | Optional. An array of two letter codes representing the countries of operation of the business. | [optional] |
 | **stock_symbol** | **String** | Optional. The stock symbol (ticker) of the business. | [optional] |
-| **business_vertical** | [**BusinessVerticalType**](BusinessVerticalType.md) | The business vertical of the business. |  |
+| **business_vertical** | [**BusinessVertical**](BusinessVertical.md) | The business vertical of the business. |  |
 | **ip** | **String** | Optional. IP address of the end-customer creating the application. Both IPv4 and IPv6 formats are supported. Highly recommended as a fraud prevention measure, if the information is available when submitting the application. | [optional] |
 | **archived** | **Boolean** | Indicates whether the application has been archived. Archived applications are read-only and no changes can be made to them. An application becomes archived once the corresponding customer is archived. |  |
 | **tags** | **Hash&lt;String, Object&gt;** | See Tags. |  |
