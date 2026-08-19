@@ -6,9 +6,9 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **tags** | **{ [key: string]: any; }** | See Updating Tags. | [default to undefined]
-**occupation** | [**Occupation**](Occupation.md) | Optional. Occupation of the individual. | [optional] [default to undefined]
-**annualIncome** | [**AnnualIncome**](AnnualIncome.md) | Optional. Annual income of the individual. | [optional] [default to undefined]
-**sourceOfIncome** | [**SourceOfIncome**](SourceOfIncome.md) | Optional. Source of income of the individual. | [optional] [default to undefined]
+**occupation** | [**OccupationType**](OccupationType.md) | Optional. Occupation of the individual. | [optional] [default to undefined]
+**annualIncome** | [**AnnualIncomeType**](AnnualIncomeType.md) | Optional. Annual income of the individual. | [optional] [default to undefined]
+**sourceOfIncome** | [**SourceOfIncomeType**](SourceOfIncomeType.md) | Optional. Source of income of the individual. | [optional] [default to undefined]
 
 ## Example
 
