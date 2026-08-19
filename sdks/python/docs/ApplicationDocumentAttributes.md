@@ -9,7 +9,7 @@ Name | Type | Description | Notes
 **document_type** | **str** | One of IdDocument, Passport, AddressVerification, CertificateOfIncorporation, EmployerIdentificationNumberConfirmation, SocialSecurityCard, ClientRequested or SelfieVerification. | 
 **description** | **str** | The document requirements description. | 
 **name** | **str** | Name of business or individual. | 
-**address** | [**AddressType**](AddressType.md) | Individual address, present only for the AddressVerification document type. | [optional] 
+**address** | [**Address**](Address.md) | Individual address, present only for the AddressVerification document type. | [optional] 
 **date_of_birth** | **date** | Date only (e.g. \&quot;2001-08-15\&quot;). Present only for Passport and IdDocument document types. | [optional] 
 **passport** | **str** | Individual passport number. Present only for the Passport document type. | [optional] 
 **ein** | **str** | Business EIN. Present only for the EmployerIdentificationNumberConfirmation document type. | [optional] 

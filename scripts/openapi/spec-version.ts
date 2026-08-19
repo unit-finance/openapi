@@ -22,6 +22,8 @@ interface SpecLock {
 	repo: string;
 	version: string;
 	assetName: string;
+	/** API slices (tags) present in the spec; maintained by `fetch-spec`. */
+	slices?: string[];
 }
 
 /** Reads and validates `spec-version.json`, returning the parsed lock. */

@@ -33,6 +33,8 @@ interface SpecLock {
 	repo: string;
 	version: string;
 	assetName: string;
+	/** API slices (tags) present in the spec; maintained by `updateLockSlices`. */
+	slices?: string[];
 }
 
 function readLock(): SpecLock {
@@ -96,9 +98,55 @@ function httpGet(url: string, headers: Headers = {}): Promise<HttpResponse> {
 	});
 }
 
+interface OpenApiDoc {
+	info?: { version?: string };
+	tags?: Array<{ name?: string }>;
+	paths?: Record<string, Record<string, { tags?: string[] }>>;
+}
+
+/**
+ * The set of API "slices" the spec exposes — the tags that group its
+ * operations (e.g. Applications, Accounts, Fees). Derived from the operation
+ * tags, unioned with any declared top-level `tags`, and sorted for a stable,
+ * diff-friendly ordering.
+ */
+function extractSlices(doc: OpenApiDoc): string[] {
+	const slices = new Set<string>();
+	for (const ops of Object.values(doc.paths ?? {})) {
+		for (const op of Object.values(ops)) {
+			if (op && typeof op === "object" && Array.isArray(op.tags)) {
+				for (const tag of op.tags) slices.add(String(tag));
+			}
+		}
+	}
+	for (const tag of doc.tags ?? []) {
+		if (tag?.name) slices.add(String(tag.name));
+	}
+	return [...slices].sort();
+}
+
+/**
+ * Persist the spec's slices back into spec-version.json, preserving the file's
+ * other fields, ordering, and formatting. Keeps the recorded slices in lockstep
+ * with the spec the SDKs are actually generated from.
+ */
+function updateLockSlices(doc: OpenApiDoc): void {
+	const slices = extractSlices(doc);
+	const lock = JSON.parse(fs.readFileSync(LOCK_PATH, "utf8")) as Record<
+		string,
+		unknown
+	>;
+	lock.slices = slices;
+	fs.writeFileSync(LOCK_PATH, `${JSON.stringify(lock, null, 2)}\n`, "utf8");
+	console.log(
+		`[fetch-spec] Recorded slices in ${path.relative(REPO_ROOT, LOCK_PATH)}: ` +
+			`${slices.join(", ") || "(none)"}`,
+	);
+}
+
 function writeOut(buf: Buffer, source: string, expectedVersion?: string): void {
 	const text = buf.toString("utf8");
-	let doc: { info?: { version?: string } };
+	let doc: OpenApiDoc;
 	try {
 		doc = JSON.parse(text);
 	} catch (err) {
@@ -123,6 +171,7 @@ function writeOut(buf: Buffer, source: string, expectedVersion?: string): void {
 	console.log(
 		`[fetch-spec] Wrote ${path.relative(REPO_ROOT, OUT_PATH)} from ${source}`,
 	);
+	updateLockSlices(doc);
 }
 
 async function fromUrl(url: string): Promise<void> {

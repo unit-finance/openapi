@@ -5,9 +5,9 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**occupation** | [**OccupationType**](OccupationType.md) | Optional. Occupation of the beneficial owner. | [optional] [default to undefined]
-**annualIncome** | [**AnnualIncomeType**](AnnualIncomeType.md) | Optional. Annual income of the beneficial owner. | [optional] [default to undefined]
-**sourceOfIncome** | [**SourceOfIncomeType**](SourceOfIncomeType.md) | Optional. Source of income of the beneficial owner. | [optional] [default to undefined]
+**occupation** | [**Occupation**](Occupation.md) | Optional. Occupation of the beneficial owner. | [optional] [default to undefined]
+**annualIncome** | [**AnnualIncome**](AnnualIncome.md) | Optional. Annual income of the beneficial owner. | [optional] [default to undefined]
+**sourceOfIncome** | [**SourceOfIncome**](SourceOfIncome.md) | Optional. Source of income of the beneficial owner. | [optional] [default to undefined]
 **percentage** | **string** | Optional. The beneficial owner percentage of ownership at the business (between 25 and 100). | [optional] [default to undefined]
 
 ## Example
