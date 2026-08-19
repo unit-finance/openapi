@@ -8,9 +8,9 @@ on:
         description: 'unit-openapi spec version to pin (e.g. 0.2.0)'
         required: true
       model:
-        description: 'Cursor model for the test-authoring agent (e.g. auto, composer-2.5)'
+        description: 'Cursor model for the test-authoring agent (e.g. composer-2.5, auto)'
         required: false
-        default: auto
+        default: composer-2.5
 
 permissions:
   contents: write
@@ -50,13 +50,17 @@ jobs:
           fi
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
-      - name: Bump spec-version.json
-        run: |
-          node -e "const f='spec-version.json';const j=require('./'+f);j.version='${{ steps.ver.outputs.version }}';require('fs').writeFileSync(f, JSON.stringify(j,null,2)+'\n');"
-          cat spec-version.json
-
       - name: Install
         run: npm ci
+
+      # Update the single version knob before generating. `set-spec-version`
+      # validates/normalizes the input; `generate-sdks` then fetches the matching
+      # release asset, fails if its info.version disagrees, and stamps this
+      # version onto every SDK manifest.
+      - name: Bump spec-version.json
+        run: |
+          npm run set-spec-version -- "${{ steps.ver.outputs.version }}"
+          cat spec-version.json
 
       - name: Regenerate SDKs
         run: npm run generate-sdks
@@ -89,7 +93,7 @@ jobs:
         # stay fast. The opened PR's own CI runs the suites live for real.
         env:
           # Model resolution order: repository_dispatch payload, workflow_dispatch
-          # input, then the script's own default (auto).
+          # input, then the script's own default (composer-2.5).
           AGENT_MODEL: ${{ github.event.client_payload.model || github.event.inputs.model }}
         run: |
           if [ -n "$AGENT_MODEL" ]; then

@@ -1,6 +1,9 @@
 {
-  "$comment": "Pins the unit-openapi spec version the committed SDKs were generated from. The dispatch-driven regeneration PR bumps `version`; `fetch-spec` downloads the matching bundled spec. Keep this in sync with the spec/openapi.json `info.version` in the unit-openapi repo.",
+  "$comment": "Pins the unit-openapi spec version the committed SDKs were generated from. The dispatch-driven regeneration PR bumps `version`; `fetch-spec` downloads the matching bundled spec. Keep this in sync with the spec/openapi.json `info.version` in the unit-openapi repo. `slices` is derived automatically by `fetch-spec` from the materialized spec's tags — do not edit by hand.",
   "repo": "unit-finance/unit-openapi",
   "version": "0.1.0",
-  "assetName": "openapi.bundled.json"
+  "assetName": "openapi.bundled.json",
+  "slices": [
+    "Applications"
+  ]
 }
