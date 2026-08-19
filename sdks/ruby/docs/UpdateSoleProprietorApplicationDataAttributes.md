@@ -5,9 +5,9 @@
 | Name | Type | Description | Notes |
 | ---- | ---- | ----------- | ----- |
 | **tags** | **Hash&lt;String, Object&gt;** | See Updating Tags. |  |
-| **annual_revenue** | [**SoleProprietorAnnualRevenueType**](SoleProprietorAnnualRevenueType.md) | Optional. Specify the annual revenue here. | [optional] |
-| **number_of_employees** | [**SoleProprietorNumberOfEmployeesType**](SoleProprietorNumberOfEmployeesType.md) | Optional. Specify the number of employees here. | [optional] |
-| **business_vertical** | [**BusinessVerticalType**](BusinessVerticalType.md) | Optional. Specify the business vertical here. | [optional] |
+| **annual_revenue** | [**SoleProprietorAnnualRevenue**](SoleProprietorAnnualRevenue.md) | Optional. Specify the annual revenue here. | [optional] |
+| **number_of_employees** | [**SoleProprietorNumberOfEmployees**](SoleProprietorNumberOfEmployees.md) | Optional. Specify the number of employees here. | [optional] |
+| **business_vertical** | [**BusinessVertical**](BusinessVertical.md) | Optional. Specify the business vertical here. | [optional] |
 | **website** | **String** | Optional. Specify the business website here. | [optional] |
 
 ## Example
