@@ -6,17 +6,17 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **status** | **str** | One of Approved, Denied or PendingReview. | 
-**full_name** | [**FullNameType**](FullNameType.md) | Full name of the beneficial owner. | 
+**full_name** | [**FullName**](FullName.md) | Full name of the beneficial owner. | 
 **ssn** | **str** | SSN of the beneficial owner (numbers only). One of ssn or passport is required. | [optional] 
 **passport** | **str** | Passport of the beneficial owner. One of ssn or passport is required. | [optional] 
 **nationality** | **str** | Always when Passport is populated and optional when SSN is populated. Two letters representing the beneficial owner&#39;s nationality. | [optional] 
 **date_of_birth** | **date** | Date only (e.g. \&quot;2001-08-15\&quot;). | 
-**address** | [**AddressType**](AddressType.md) | The beneficial owner&#39;s address. | 
-**phone** | [**PhoneType**](PhoneType.md) | The beneficial owner&#39;s phone number. | 
+**address** | [**Address**](Address.md) | The beneficial owner&#39;s address. | 
+**phone** | [**Phone**](Phone.md) | The beneficial owner&#39;s phone number. | 
 **email** | **str** | The beneficial owner&#39;s email address. | 
-**occupation** | [**OccupationType**](OccupationType.md) | Optional. Occupation of the beneficial owner. | [optional] 
-**annual_income** | [**AnnualIncomeType**](AnnualIncomeType.md) | Optional. Annual income of the beneficial owner. | [optional] 
-**source_of_income** | [**SourceOfIncomeType**](SourceOfIncomeType.md) | Optional. Source of income of the beneficial owner. | [optional] 
+**occupation** | [**Occupation**](Occupation.md) | Optional. Occupation of the beneficial owner. | [optional] 
+**annual_income** | [**AnnualIncome**](AnnualIncome.md) | Optional. Annual income of the beneficial owner. | [optional] 
+**source_of_income** | [**SourceOfIncome**](SourceOfIncome.md) | Optional. Source of income of the beneficial owner. | [optional] 
 
 ## Example
 

@@ -1,7 +1,7 @@
 # unit-java-sdk
 
 Unit API
-- API version: 0.3.0
+- API version: 0.1.0
   - Generator version: 7.22.0
 
 JSON:API-compliant banking API.
@@ -85,7 +85,7 @@ import com.unit.finance.sdk.ApiException;
 import com.unit.finance.sdk.Configuration;
 import com.unit.finance.sdk.auth.*;
 import com.unit.finance.sdk.model.*;
-import com.unit.finance.sdk.api.AccountsApi;
+import com.unit.finance.sdk.api.ApplicationsApi;
 
 public class Example {
   public static void main(String[] args) {
@@ -96,14 +96,19 @@ public class Example {
     HttpBearerAuth bearerAuth = (HttpBearerAuth) defaultClient.getAuthentication("bearerAuth");
     bearerAuth.setBearerToken("BEARER TOKEN");
 
-    AccountsApi apiInstance = new AccountsApi(defaultClient);
-    String accountId = "accountId_example"; // String | 
-    AddAccountOwnersRequest addAccountOwnersRequest = new AddAccountOwnersRequest(); // AddAccountOwnersRequest | 
+    ApplicationsApi apiInstance = new ApplicationsApi(defaultClient);
+    String pageLimit = "100"; // String | Optional. Maximum number of resources that will be returned. Maximum is 1000 resources. See Pagination. Sent as a numeric string (query parameters are strings in HTTP).
+    String pageOffset = "0"; // String | Optional. Number of resources to skip. See Pagination. Sent as a numeric string (query parameters are strings in HTTP).
+    String filterQuery = "filterQuery_example"; // String | Optional. Search term according to the Full-Text Search Rules.
+    String filterStatus = "filterStatus_example"; // String | Optional. Filter applications by Application Status. Usage example: *filter[status][0]=Pending&filter[status][1]=Approved*
+    String filterEmail = "filterEmail_example"; // String | Optional. Filter applications by email address (case sensitive).
+    String filterTags = "filterTags_example"; // String | Optional. Filter Applications by Tags.
+    String sort = "-createdAt"; // String | Optional. sort=createdAt for ascending order or sort=-createdAt (leading minus sign) for descending order.
     try {
-      AddAccountOwners200Response result = apiInstance.addAccountOwners(accountId, addAccountOwnersRequest);
+      List200Response result = apiInstance.callList(pageLimit, pageOffset, filterQuery, filterStatus, filterEmail, filterTags, sort);
       System.out.println(result);
     } catch (ApiException e) {
-      System.err.println("Exception when calling AccountsApi#addAccountOwners");
+      System.err.println("Exception when calling ApplicationsApi#callList");
       System.err.println("Status code: " + e.getCode());
       System.err.println("Reason: " + e.getResponseBody());
       System.err.println("Response headers: " + e.getResponseHeaders());
@@ -120,24 +125,6 @@ All URIs are relative to *https://api.s.unit.sh*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
-*AccountsApi* | [**addAccountOwners**](docs/AccountsApi.md#addAccountOwners) | **POST** /accounts/{accountId}/relationships/customers | Add account owners
-*AccountsApi* | [**closeAccount**](docs/AccountsApi.md#closeAccount) | **POST** /accounts/{accountId}/close | Close an account
-*AccountsApi* | [**createAccount**](docs/AccountsApi.md#createAccount) | **POST** /accounts | Create an account
-*AccountsApi* | [**createAccountHold**](docs/AccountsApi.md#createAccountHold) | **POST** /account-holds | Create an account hold
-*AccountsApi* | [**freezeAccount**](docs/AccountsApi.md#freezeAccount) | **POST** /accounts/{accountId}/freeze | Freeze an account
-*AccountsApi* | [**getAccount**](docs/AccountsApi.md#getAccount) | **GET** /accounts/{accountId} | Get an account by id
-*AccountsApi* | [**getAccountBalanceHistory**](docs/AccountsApi.md#getAccountBalanceHistory) | **GET** /account-end-of-day | List account end-of-day balances
-*AccountsApi* | [**getAccountHoldById**](docs/AccountsApi.md#getAccountHoldById) | **GET** /account-holds/{id} | Get an account hold by id
-*AccountsApi* | [**getAccountLimits**](docs/AccountsApi.md#getAccountLimits) | **GET** /accounts/{accountId}/limits | Get account limits
-*AccountsApi* | [**getAvailableDepositProducts**](docs/AccountsApi.md#getAvailableDepositProducts) | **GET** /accounts/{accountId}/deposit-products | Get available deposit products
-*AccountsApi* | [**listAccountHolds**](docs/AccountsApi.md#listAccountHolds) | **GET** /account-holds | List account holds
-*AccountsApi* | [**listAccounts**](docs/AccountsApi.md#listAccounts) | **GET** /accounts | List accounts
-*AccountsApi* | [**releaseAccountHold**](docs/AccountsApi.md#releaseAccountHold) | **POST** /account-holds/{id}/release | Release an account hold
-*AccountsApi* | [**removeAccountOwners**](docs/AccountsApi.md#removeAccountOwners) | **DELETE** /accounts/{accountId}/relationships/customers | Remove account owners
-*AccountsApi* | [**reopenAccount**](docs/AccountsApi.md#reopenAccount) | **POST** /accounts/{accountId}/reopen | Reopen an account
-*AccountsApi* | [**unfreezeAccount**](docs/AccountsApi.md#unfreezeAccount) | **POST** /accounts/{accountId}/unfreeze | Unfreeze an account
-*AccountsApi* | [**updateAccount**](docs/AccountsApi.md#updateAccount) | **PATCH** /accounts/{accountId} | Update an account
-*AccountsApi* | [**verifyAccount**](docs/AccountsApi.md#verifyAccount) | **POST** /accounts/verify | Verify an account
 *ApplicationsApi* | [**callList**](docs/ApplicationsApi.md#callList) | **GET** /applications | List applications
 *ApplicationsApi* | [**cancelApplication**](docs/ApplicationsApi.md#cancelApplication) | **POST** /applications/{id}/cancel | Cancel an application
 *ApplicationsApi* | [**checkRegisteredAgentAddress**](docs/ApplicationsApi.md#checkRegisteredAgentAddress) | **POST** /applications/check-registered-agent-address | Check a registered agent address
@@ -145,163 +132,76 @@ Class | Method | HTTP request | Description
 *ApplicationsApi* | [**getById**](docs/ApplicationsApi.md#getById) | **GET** /applications/{id} | Get an application
 *ApplicationsApi* | [**updateApplication**](docs/ApplicationsApi.md#updateApplication) | **PATCH** /applications/{id} | Update an application
 *ApplicationsApi* | [**updateBusinessBeneficialOwner**](docs/ApplicationsApi.md#updateBusinessBeneficialOwner) | **PATCH** /beneficial-owner/{id} | Update a business beneficial owner
-*FeesApi* | [**createFee**](docs/FeesApi.md#createFee) | **POST** /fees | Create a fee
-*FeesApi* | [**reverseFee**](docs/FeesApi.md#reverseFee) | **POST** /fees/reverse | Reverse a fee
 
 
 ## Documentation for Models
 
- - [AccountEndOfDay](docs/AccountEndOfDay.md)
- - [AccountEndOfDayAttributes](docs/AccountEndOfDayAttributes.md)
- - [AccountEndOfDayRelationships](docs/AccountEndOfDayRelationships.md)
- - [AccountHold](docs/AccountHold.md)
- - [AccountHoldAttributes](docs/AccountHoldAttributes.md)
- - [AddAccountOwners200Response](docs/AddAccountOwners200Response.md)
- - [AddAccountOwnersRequest](docs/AddAccountOwnersRequest.md)
- - [AddAccountOwnersRequestData](docs/AddAccountOwnersRequestData.md)
- - [AddAccountOwnersRequestDataAttributes](docs/AddAccountOwnersRequestDataAttributes.md)
- - [AddressType](docs/AddressType.md)
- - [AnnualIncomeType](docs/AnnualIncomeType.md)
- - [AnnualRevenueType](docs/AnnualRevenueType.md)
+ - [Address](docs/Address.md)
+ - [AnnualIncome](docs/AnnualIncome.md)
+ - [AnnualRevenue](docs/AnnualRevenue.md)
  - [ApplicationDocument](docs/ApplicationDocument.md)
  - [ApplicationDocumentAttributes](docs/ApplicationDocumentAttributes.md)
  - [BeneficialOwner](docs/BeneficialOwner.md)
+ - [BeneficialOwner2](docs/BeneficialOwner2.md)
  - [BeneficialOwnerAttributes](docs/BeneficialOwnerAttributes.md)
- - [BeneficialOwnerRequestType](docs/BeneficialOwnerRequestType.md)
- - [BeneficialOwnerType](docs/BeneficialOwnerType.md)
- - [BusinessAnnualRevenueType](docs/BusinessAnnualRevenueType.md)
+ - [BeneficialOwnerRequest](docs/BeneficialOwnerRequest.md)
+ - [BusinessAnnualRevenue](docs/BusinessAnnualRevenue.md)
  - [BusinessApplication](docs/BusinessApplication.md)
  - [BusinessApplicationAttributes](docs/BusinessApplicationAttributes.md)
  - [BusinessApplicationRelationships](docs/BusinessApplicationRelationships.md)
- - [BusinessContactType](docs/BusinessContactType.md)
- - [BusinessNumberOfEmployeesType](docs/BusinessNumberOfEmployeesType.md)
- - [BusinessVerticalType](docs/BusinessVerticalType.md)
+ - [BusinessContact](docs/BusinessContact.md)
+ - [BusinessNumberOfEmployees](docs/BusinessNumberOfEmployees.md)
+ - [BusinessVertical](docs/BusinessVertical.md)
  - [CancelApplication201Response](docs/CancelApplication201Response.md)
  - [CancelApplicationData](docs/CancelApplicationData.md)
  - [CancelApplicationDataAttributes](docs/CancelApplicationDataAttributes.md)
  - [CancelApplicationRequest](docs/CancelApplicationRequest.md)
- - [CashFlowType](docs/CashFlowType.md)
+ - [CashFlow](docs/CashFlow.md)
+ - [CheckRegisteredAgentAddress](docs/CheckRegisteredAgentAddress.md)
  - [CheckRegisteredAgentAddress200Response](docs/CheckRegisteredAgentAddress200Response.md)
  - [CheckRegisteredAgentAddress200ResponseData](docs/CheckRegisteredAgentAddress200ResponseData.md)
  - [CheckRegisteredAgentAddress200ResponseDataAttributes](docs/CheckRegisteredAgentAddress200ResponseDataAttributes.md)
  - [CheckRegisteredAgentAddressData](docs/CheckRegisteredAgentAddressData.md)
  - [CheckRegisteredAgentAddressDataAttributes](docs/CheckRegisteredAgentAddressDataAttributes.md)
  - [CheckRegisteredAgentAddressRequest](docs/CheckRegisteredAgentAddressRequest.md)
- - [CheckRegisteredAgentAddressType](docs/CheckRegisteredAgentAddressType.md)
- - [CloseAccountRequest](docs/CloseAccountRequest.md)
- - [CloseCreditAccountData](docs/CloseCreditAccountData.md)
- - [CloseCreditAccountDataAttributes](docs/CloseCreditAccountDataAttributes.md)
- - [CloseCreditAccountRequest](docs/CloseCreditAccountRequest.md)
- - [CloseDepositAccountData](docs/CloseDepositAccountData.md)
- - [CloseDepositAccountDataAttributes](docs/CloseDepositAccountDataAttributes.md)
- - [CloseDepositAccountRequest](docs/CloseDepositAccountRequest.md)
- - [CloseWalletData](docs/CloseWalletData.md)
- - [CloseWalletDataAttributes](docs/CloseWalletDataAttributes.md)
- - [CloseWalletRequest](docs/CloseWalletRequest.md)
- - [CreateAccount201Response](docs/CreateAccount201Response.md)
- - [CreateAccountHold201Response](docs/CreateAccountHold201Response.md)
- - [CreateAccountHoldData](docs/CreateAccountHoldData.md)
- - [CreateAccountHoldDataAttributes](docs/CreateAccountHoldDataAttributes.md)
- - [CreateAccountHoldRequest](docs/CreateAccountHoldRequest.md)
- - [CreateAccountRequest](docs/CreateAccountRequest.md)
  - [CreateApplication201Response](docs/CreateApplication201Response.md)
  - [CreateApplication201ResponseIncludedInner](docs/CreateApplication201ResponseIncludedInner.md)
  - [CreateApplicationRequest](docs/CreateApplicationRequest.md)
  - [CreateBusinessApplicationData](docs/CreateBusinessApplicationData.md)
  - [CreateBusinessApplicationDataAttributes](docs/CreateBusinessApplicationDataAttributes.md)
  - [CreateBusinessApplicationRequest](docs/CreateBusinessApplicationRequest.md)
- - [CreateCreditAccountData](docs/CreateCreditAccountData.md)
- - [CreateCreditAccountDataAttributes](docs/CreateCreditAccountDataAttributes.md)
- - [CreateCreditAccountRequest](docs/CreateCreditAccountRequest.md)
- - [CreateDepositAccountData](docs/CreateDepositAccountData.md)
- - [CreateDepositAccountDataAttributes](docs/CreateDepositAccountDataAttributes.md)
- - [CreateDepositAccountDataRelationships](docs/CreateDepositAccountDataRelationships.md)
- - [CreateDepositAccountRequest](docs/CreateDepositAccountRequest.md)
- - [CreateFee201Response](docs/CreateFee201Response.md)
- - [CreateFeeData](docs/CreateFeeData.md)
- - [CreateFeeDataAttributes](docs/CreateFeeDataAttributes.md)
- - [CreateFeeDataRelationships](docs/CreateFeeDataRelationships.md)
- - [CreateFeeRequest](docs/CreateFeeRequest.md)
  - [CreateIndividualApplicationData](docs/CreateIndividualApplicationData.md)
  - [CreateIndividualApplicationDataAttributes](docs/CreateIndividualApplicationDataAttributes.md)
  - [CreateIndividualApplicationRequest](docs/CreateIndividualApplicationRequest.md)
  - [CreateSoleProprietorApplicationData](docs/CreateSoleProprietorApplicationData.md)
  - [CreateSoleProprietorApplicationDataAttributes](docs/CreateSoleProprietorApplicationDataAttributes.md)
  - [CreateSoleProprietorApplicationRequest](docs/CreateSoleProprietorApplicationRequest.md)
- - [CreateWalletData](docs/CreateWalletData.md)
- - [CreateWalletDataAttributes](docs/CreateWalletDataAttributes.md)
- - [CreateWalletRequest](docs/CreateWalletRequest.md)
- - [CreditAccount](docs/CreditAccount.md)
- - [CreditAccountAttributes](docs/CreditAccountAttributes.md)
- - [CreditAccountRelationships](docs/CreditAccountRelationships.md)
- - [DepositAccount](docs/DepositAccount.md)
- - [DepositAccountAttributes](docs/DepositAccountAttributes.md)
- - [DepositAccountRelationships](docs/DepositAccountRelationships.md)
- - [DeviceFingerprintType](docs/DeviceFingerprintType.md)
+ - [DeviceFingerprint](docs/DeviceFingerprint.md)
  - [ErrorDocument](docs/ErrorDocument.md)
  - [ErrorDocumentErrorsInner](docs/ErrorDocumentErrorsInner.md)
  - [ErrorDocumentErrorsInnerSource](docs/ErrorDocumentErrorsInnerSource.md)
- - [Fee](docs/Fee.md)
- - [FeeAttributes](docs/FeeAttributes.md)
- - [FeeRelationships](docs/FeeRelationships.md)
- - [FeeReversal](docs/FeeReversal.md)
- - [FeeReversalAttributes](docs/FeeReversalAttributes.md)
- - [FeeReversalRelationships](docs/FeeReversalRelationships.md)
- - [FreezeAccountRequest](docs/FreezeAccountRequest.md)
- - [FreezeCreditAccountData](docs/FreezeCreditAccountData.md)
- - [FreezeCreditAccountRequest](docs/FreezeCreditAccountRequest.md)
- - [FreezeDepositAccountData](docs/FreezeDepositAccountData.md)
- - [FreezeDepositAccountDataAttributes](docs/FreezeDepositAccountDataAttributes.md)
- - [FreezeDepositAccountRequest](docs/FreezeDepositAccountRequest.md)
- - [FreezeWalletData](docs/FreezeWalletData.md)
- - [FreezeWalletDataAttributes](docs/FreezeWalletDataAttributes.md)
- - [FreezeWalletRequest](docs/FreezeWalletRequest.md)
- - [FullNameType](docs/FullNameType.md)
- - [GetAccountBalanceHistory200Response](docs/GetAccountBalanceHistory200Response.md)
- - [GetAccountLimits200Response](docs/GetAccountLimits200Response.md)
- - [GetAccountLimits200ResponseData](docs/GetAccountLimits200ResponseData.md)
- - [GetAvailableDepositProducts200Response](docs/GetAvailableDepositProducts200Response.md)
- - [GetAvailableDepositProducts200ResponseDataInner](docs/GetAvailableDepositProducts200ResponseDataInner.md)
- - [GetAvailableDepositProducts200ResponseDataInnerAttributes](docs/GetAvailableDepositProducts200ResponseDataInnerAttributes.md)
+ - [FullName](docs/FullName.md)
  - [IndividualApplication](docs/IndividualApplication.md)
  - [IndividualApplicationAttributes](docs/IndividualApplicationAttributes.md)
  - [IndividualApplicationRelationships](docs/IndividualApplicationRelationships.md)
- - [IndustryType](docs/IndustryType.md)
+ - [Industry](docs/Industry.md)
  - [List200Response](docs/List200Response.md)
  - [List200ResponseDataInner](docs/List200ResponseDataInner.md)
- - [ListAccountHolds200Response](docs/ListAccountHolds200Response.md)
- - [ListAccounts200Response](docs/ListAccounts200Response.md)
- - [ListAccounts200ResponseDataInner](docs/ListAccounts200ResponseDataInner.md)
  - [Meta](docs/Meta.md)
  - [MetaPagination](docs/MetaPagination.md)
- - [NumberOfEmployeesType](docs/NumberOfEmployeesType.md)
- - [OccupationType](docs/OccupationType.md)
- - [OfficerRequestType](docs/OfficerRequestType.md)
- - [OfficerType](docs/OfficerType.md)
- - [PhoneType](docs/PhoneType.md)
+ - [NumberOfEmployees](docs/NumberOfEmployees.md)
+ - [Occupation](docs/Occupation.md)
+ - [Officer](docs/Officer.md)
+ - [OfficerRequest](docs/OfficerRequest.md)
+ - [Phone](docs/Phone.md)
  - [Relationship](docs/Relationship.md)
  - [RelationshipData](docs/RelationshipData.md)
- - [ReleaseAccountHoldData](docs/ReleaseAccountHoldData.md)
- - [ReleaseAccountHoldDataAttributes](docs/ReleaseAccountHoldDataAttributes.md)
- - [ReleaseAccountHoldRequest](docs/ReleaseAccountHoldRequest.md)
- - [RemoveAccountOwnersRequest](docs/RemoveAccountOwnersRequest.md)
- - [RemoveAccountOwnersRequestData](docs/RemoveAccountOwnersRequestData.md)
- - [RemoveAccountOwnersRequestDataAttributes](docs/RemoveAccountOwnersRequestDataAttributes.md)
- - [ReopenAccount200Response](docs/ReopenAccount200Response.md)
- - [ReopenAccount200ResponseData](docs/ReopenAccount200ResponseData.md)
- - [RequestedProductType](docs/RequestedProductType.md)
+ - [RequestedProduct](docs/RequestedProduct.md)
  - [ResourceIdentifier](docs/ResourceIdentifier.md)
- - [ReverseFee201Response](docs/ReverseFee201Response.md)
- - [ReverseFeeData](docs/ReverseFeeData.md)
- - [ReverseFeeDataAttributes](docs/ReverseFeeDataAttributes.md)
- - [ReverseFeeDataRelationships](docs/ReverseFeeDataRelationships.md)
- - [ReverseFeeRequest](docs/ReverseFeeRequest.md)
- - [SoleProprietorAnnualRevenueType](docs/SoleProprietorAnnualRevenueType.md)
- - [SoleProprietorNumberOfEmployeesType](docs/SoleProprietorNumberOfEmployeesType.md)
- - [SourceOfIncomeType](docs/SourceOfIncomeType.md)
+ - [SoleProprietorAnnualRevenue](docs/SoleProprietorAnnualRevenue.md)
+ - [SoleProprietorNumberOfEmployees](docs/SoleProprietorNumberOfEmployees.md)
+ - [SourceOfIncome](docs/SourceOfIncome.md)
  - [ToManyRelationship](docs/ToManyRelationship.md)
- - [TotalAccruedInterestType](docs/TotalAccruedInterestType.md)
- - [UpdateAccountRequest](docs/UpdateAccountRequest.md)
  - [UpdateApplicationRequest](docs/UpdateApplicationRequest.md)
  - [UpdateBusinessApplicationData](docs/UpdateBusinessApplicationData.md)
  - [UpdateBusinessApplicationDataAttributes](docs/UpdateBusinessApplicationDataAttributes.md)
@@ -314,29 +214,12 @@ Class | Method | HTTP request | Description
  - [UpdateBusinessOfficerData](docs/UpdateBusinessOfficerData.md)
  - [UpdateBusinessOfficerDataAttributes](docs/UpdateBusinessOfficerDataAttributes.md)
  - [UpdateBusinessOfficerRequest](docs/UpdateBusinessOfficerRequest.md)
- - [UpdateCreditAccountData](docs/UpdateCreditAccountData.md)
- - [UpdateCreditAccountDataAttributes](docs/UpdateCreditAccountDataAttributes.md)
- - [UpdateCreditAccountRequest](docs/UpdateCreditAccountRequest.md)
- - [UpdateDepositAccountData](docs/UpdateDepositAccountData.md)
- - [UpdateDepositAccountDataAttributes](docs/UpdateDepositAccountDataAttributes.md)
- - [UpdateDepositAccountRequest](docs/UpdateDepositAccountRequest.md)
  - [UpdateIndividualApplicationData](docs/UpdateIndividualApplicationData.md)
  - [UpdateIndividualApplicationDataAttributes](docs/UpdateIndividualApplicationDataAttributes.md)
  - [UpdateIndividualApplicationRequest](docs/UpdateIndividualApplicationRequest.md)
  - [UpdateSoleProprietorApplicationData](docs/UpdateSoleProprietorApplicationData.md)
  - [UpdateSoleProprietorApplicationDataAttributes](docs/UpdateSoleProprietorApplicationDataAttributes.md)
  - [UpdateSoleProprietorApplicationRequest](docs/UpdateSoleProprietorApplicationRequest.md)
- - [UpdateWalletData](docs/UpdateWalletData.md)
- - [UpdateWalletDataAttributes](docs/UpdateWalletDataAttributes.md)
- - [UpdateWalletRequest](docs/UpdateWalletRequest.md)
- - [VerifyAccount200Response](docs/VerifyAccount200Response.md)
- - [VerifyAccount200ResponseData](docs/VerifyAccount200ResponseData.md)
- - [VerifyAccount200ResponseDataAccount](docs/VerifyAccount200ResponseDataAccount.md)
- - [VerifyAccountData](docs/VerifyAccountData.md)
- - [VerifyAccountDataAttributes](docs/VerifyAccountDataAttributes.md)
- - [VerifyAccountRequest](docs/VerifyAccountRequest.md)
- - [WalletAccount](docs/WalletAccount.md)
- - [WalletAccountAttributes](docs/WalletAccountAttributes.md)
 
 
 <a id="documentation-for-authorization"></a>
