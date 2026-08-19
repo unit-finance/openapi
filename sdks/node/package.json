@@ -1,6 +1,6 @@
 {
   "name": "@unit-finance/unit-node-sdk",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "description": "Node.js SDK for the Unit banking API. Auto-generated from the unit-openapi spec.",
   "license": "MPL-2.0",
   "main": "./dist/index.js",
@@ -17,7 +17,7 @@
     "prepare": "npm run build"
   },
   "dependencies": {
-    "axios": "^1.15.2"
+    "axios": ">=1.15.2 <1.19.0"
   },
   "devDependencies": {
     "@types/node": "^20.14.0",
