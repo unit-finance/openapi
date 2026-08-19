@@ -9,7 +9,10 @@
  *   1. $SPEC_BUNDLE_PATH  — explicit local file (used in CI when the spec repo
  *      is checked out alongside, or for offline/local dev).
  *   2. $SPEC_BUNDLE_URL   — explicit URL override.
- *   3. The GitHub release asset for the version pinned in `spec-version.json`
+ *   3. A gitignored local drop file at `spec/local/<assetName>` — the no-token
+ *      local flow: download the release asset from GitHub's UI once, drop it
+ *      there, and `npm run generate-sdks` uses it without needing a token.
+ *   4. The GitHub release asset for the version pinned in `spec-version.json`
  *      (`https://github.com/<repo>/releases/download/v<version>/<assetName>`).
  *
  * The downloaded/copied file is git-ignored: it is a derived artifact, fully
@@ -23,11 +26,15 @@ import path from "node:path";
 const REPO_ROOT = process.cwd();
 const LOCK_PATH = path.join(REPO_ROOT, "spec-version.json");
 const OUT_PATH = path.join(REPO_ROOT, "spec", "openapi.bundled.json");
+/** Gitignored folder for a manually-dropped spec bundle (no-token local flow). */
+const LOCAL_DIR = path.join(REPO_ROOT, "spec", "local");
 
 interface SpecLock {
 	repo: string;
 	version: string;
 	assetName: string;
+	/** API slices (tags) present in the spec; maintained by `updateLockSlices`. */
+	slices?: string[];
 }
 
 function readLock(): SpecLock {
@@ -91,12 +98,72 @@ function httpGet(url: string, headers: Headers = {}): Promise<HttpResponse> {
 	});
 }
 
-function writeOut(buf: Buffer, source: string): void {
+interface OpenApiDoc {
+	info?: { version?: string };
+	tags?: Array<{ name?: string }>;
+	paths?: Record<string, Record<string, { tags?: string[] }>>;
+}
+
+/**
+ * The set of API "slices" the spec exposes — the tags that group its
+ * operations (e.g. Applications, Accounts, Fees). Derived from the operation
+ * tags, unioned with any declared top-level `tags`, and sorted for a stable,
+ * diff-friendly ordering.
+ */
+function extractSlices(doc: OpenApiDoc): string[] {
+	const slices = new Set<string>();
+	for (const ops of Object.values(doc.paths ?? {})) {
+		for (const op of Object.values(ops)) {
+			if (op && typeof op === "object" && Array.isArray(op.tags)) {
+				for (const tag of op.tags) slices.add(String(tag));
+			}
+		}
+	}
+	for (const tag of doc.tags ?? []) {
+		if (tag?.name) slices.add(String(tag.name));
+	}
+	return [...slices].sort();
+}
+
+/**
+ * Persist the spec's slices back into spec-version.json, preserving the file's
+ * other fields, ordering, and formatting. Keeps the recorded slices in lockstep
+ * with the spec the SDKs are actually generated from.
+ */
+function updateLockSlices(doc: OpenApiDoc): void {
+	const slices = extractSlices(doc);
+	const lock = JSON.parse(fs.readFileSync(LOCK_PATH, "utf8")) as Record<
+		string,
+		unknown
+	>;
+	lock.slices = slices;
+	fs.writeFileSync(LOCK_PATH, `${JSON.stringify(lock, null, 2)}\n`, "utf8");
+	console.log(
+		`[fetch-spec] Recorded slices in ${path.relative(REPO_ROOT, LOCK_PATH)}: ` +
+			`${slices.join(", ") || "(none)"}`,
+	);
+}
+
+function writeOut(buf: Buffer, source: string, expectedVersion?: string): void {
 	const text = buf.toString("utf8");
+	let doc: OpenApiDoc;
 	try {
-		JSON.parse(text);
+		doc = JSON.parse(text);
 	} catch (err) {
 		console.error(`[fetch-spec] ${source} is not valid JSON: ${String(err)}`);
+		process.exit(1);
+	}
+	// Guard against a dishonest pin: the version we generate (and publish) SDKs
+	// under comes from spec-version.json, so the fetched document's own
+	// info.version must agree with it. A mismatch means the pinned release asset
+	// was rebuilt from a different spec, or the pin was bumped without a matching
+	// release — either way the SDKs would be stamped with the wrong version.
+	const actual = doc.info?.version;
+	if (expectedVersion && actual && actual !== expectedVersion) {
+		console.error(
+			`[fetch-spec] Spec info.version (${actual}) does not match ` +
+				`spec-version.json (${expectedVersion}). Fix the pin or the release asset.`,
+		);
 		process.exit(1);
 	}
 	fs.mkdirSync(path.dirname(OUT_PATH), { recursive: true });
@@ -104,6 +171,7 @@ function writeOut(buf: Buffer, source: string): void {
 	console.log(
 		`[fetch-spec] Wrote ${path.relative(REPO_ROOT, OUT_PATH)} from ${source}`,
 	);
+	updateLockSlices(doc);
 }
 
 async function fromUrl(url: string): Promise<void> {
@@ -127,9 +195,13 @@ async function fromRelease(lock: SpecLock): Promise<void> {
 	const token = specRepoToken();
 
 	if (!token) {
-		await fromUrl(
-			`https://github.com/${lock.repo}/releases/download/${tag}/${lock.assetName}`,
-		);
+		const url = `https://github.com/${lock.repo}/releases/download/${tag}/${lock.assetName}`;
+		console.log(`[fetch-spec] Downloading spec from ${url}`);
+		const res = await httpGet(url);
+		if (res.statusCode !== 200) {
+			throw new Error(`GET ${url} -> HTTP ${res.statusCode}`);
+		}
+		writeOut(res.body, url, lock.version);
 		return;
 	}
 
@@ -167,7 +239,7 @@ async function fromRelease(lock: SpecLock): Promise<void> {
 	if (dl.statusCode !== 200) {
 		throw new Error(`GET ${asset.url} -> HTTP ${dl.statusCode}`);
 	}
-	writeOut(dl.body, `${lock.repo}@${tag}:${lock.assetName}`);
+	writeOut(dl.body, `${lock.repo}@${tag}:${lock.assetName}`, lock.version);
 }
 
 async function main(): Promise<void> {
@@ -187,7 +259,20 @@ async function main(): Promise<void> {
 		return;
 	}
 
-	await fromRelease(readLock());
+	const lock = readLock();
+
+	// No-token local flow: if a bundle for the pinned version has been dropped
+	// into the gitignored spec/local/ folder, use it instead of hitting GitHub.
+	const localPath = path.join(LOCAL_DIR, lock.assetName);
+	if (fs.existsSync(localPath)) {
+		console.log(
+			`[fetch-spec] Using local spec ${path.relative(REPO_ROOT, localPath)}`,
+		);
+		writeOut(fs.readFileSync(localPath), localPath, lock.version);
+		return;
+	}
+
+	await fromRelease(lock);
 }
 
 main().catch((err) => {
