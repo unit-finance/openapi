@@ -10,6 +10,7 @@
 # This sidesteps the union-wrapping the Python suite needs, where a raw dict
 # coerces to an empty union.
 
+require 'securerandom'
 require_relative 'api'
 
 module Helpers
@@ -183,6 +184,257 @@ module Helpers
         'data' => {
           'type' => 'checkRegisteredAgentAddress',
           'attributes' => { 'address' => US_ADDRESS }
+        }
+      }
+    end
+
+    def deposit_account_request_for_customer(customer_id)
+      create_deposit_account_request(customer_id)
+    end
+
+    def create_deposit_account_request(customer_id)
+      {
+        'data' => {
+          'type' => 'depositAccount',
+          'attributes' => {
+            'depositProduct' => 'checking',
+            'tags' => base_tags
+          },
+          'relationships' => {
+            'customer' => { 'data' => { 'type' => 'customer', 'id' => customer_id } }
+          }
+        }
+      }
+    end
+
+    def update_deposit_account_request
+      {
+        'data' => {
+          'type' => 'depositAccount',
+          'attributes' => {
+            'tags' => base_tags.merge('updated' => 'true')
+          }
+        }
+      }
+    end
+
+    def verify_account_request(routing_number, account_number)
+      {
+        'data' => {
+          'type' => 'accountVerify',
+          'attributes' => { 'routingNumber' => routing_number, 'accountNumber' => account_number }
+        }
+      }
+    end
+
+    def close_deposit_account_request
+      {
+        'data' => {
+          'type' => 'depositAccountClose',
+          'attributes' => { 'reason' => 'ByOrg' }
+        }
+      }
+    end
+
+    def freeze_deposit_account_request
+      {
+        'data' => {
+          'type' => 'depositAccountFreeze',
+          'attributes' => { 'reason' => 'Other' }
+        }
+      }
+    end
+
+    def create_fee_request(account_id)
+      {
+        'data' => {
+          'type' => 'fee',
+          'attributes' => {
+            'amount' => 100,
+            'description' => 'SDK integration test fee',
+            'tags' => base_tags
+          },
+          'relationships' => {
+            'account' => { 'data' => { 'type' => 'account', 'id' => account_id } }
+          }
+        }
+      }
+    end
+
+    def reverse_fee_request(fee_id)
+      {
+        'data' => {
+          'type' => 'feeReversal',
+          'attributes' => {
+            'description' => 'SDK integration test fee reversal',
+            'tags' => base_tags
+          },
+          'relationships' => {
+            'fee' => { 'data' => { 'type' => 'fee', 'id' => fee_id } }
+          }
+        }
+      }
+    end
+
+    def create_account_hold_request(account_id)
+      {
+        'data' => {
+          'type' => 'createAccountHoldJson',
+          'attributes' => {
+            'amount' => 500,
+            'description' => 'SDK integration test hold'
+          },
+          'relationships' => {
+            'account' => { 'data' => { 'type' => 'account', 'id' => account_id } }
+          }
+        }
+      }
+    end
+
+    def release_account_hold_request
+      {
+        'data' => {
+          'type' => 'releaseAccountHold',
+          'attributes' => {}
+        }
+      }
+    end
+
+    def create_book_payment_request(account_id, counterparty_account_id)
+      {
+        'data' => {
+          'type' => 'bookPayment',
+          'attributes' => {
+            'amount' => 100,
+            'description' => 'SDK integration test book payment',
+            'tags' => base_tags
+          },
+          'relationships' => {
+            'account' => { 'data' => { 'type' => 'account', 'id' => account_id } },
+            'counterpartyAccount' => {
+              'data' => { 'type' => 'account', 'id' => counterparty_account_id }
+            }
+          }
+        }
+      }
+    end
+
+    def update_book_payment_request
+      {
+        'data' => {
+          'type' => 'bookPayment',
+          'attributes' => {
+            'tags' => base_tags.merge('updated' => 'true')
+          }
+        }
+      }
+    end
+
+    def get_expected_ach_completion_date_request(account_id)
+      {
+        'data' => {
+          'type' => 'achExpectedCompletionDate',
+          'attributes' => {
+            'direction' => 'Credit',
+            'amount' => 1000
+          },
+          'relationships' => {
+            'account' => { 'data' => { 'type' => 'account', 'id' => account_id } }
+          }
+        }
+      }
+    end
+
+    def create_recurring_book_payment_request(account_id, counterparty_account_id)
+      start = Time.now.utc + (7 * 86_400)
+      ending = start + (90 * 86_400)
+      {
+        'data' => {
+          'type' => 'recurringBookPayment',
+          'attributes' => {
+            'amount' => 100,
+            'description' => 'SDK integration test recurring payment',
+            'schedule' => {
+              'startTime' => start.strftime('%Y-%m-%d'),
+              'endTime' => ending.strftime('%Y-%m-%d'),
+              'interval' => 'Monthly',
+              'dayOfMonth' => 15
+            },
+            'tags' => base_tags
+          },
+          'relationships' => {
+            'account' => { 'data' => { 'type' => 'account', 'id' => account_id } },
+            'counterpartyAccount' => {
+              'data' => { 'type' => 'account', 'id' => counterparty_account_id }
+            }
+          }
+        }
+      }
+    end
+
+    def update_received_payment_request
+      {
+        'data' => {
+          'type' => 'receivedPayment',
+          'attributes' => {
+            'tags' => base_tags.merge('updated' => 'true')
+          }
+        }
+      }
+    end
+
+    def generate_cash_deposit_barcode_request(account_id)
+      {
+        'data' => {
+          'type' => 'cashDepositBarcode',
+          'attributes' => {
+            'amount' => 1000,
+            'description' => 'SDK integration test cash deposit',
+            'tags' => base_tags
+          },
+          'relationships' => {
+            'account' => { 'data' => { 'type' => 'depositAccount', 'id' => account_id } }
+          }
+        }
+      }
+    end
+
+    def add_account_owners_request(customer_ids)
+      {
+        'data' => customer_ids.map { |id| { 'type' => 'customer', 'id' => id } }
+      }
+    end
+
+    def remove_account_owners_request(customer_ids)
+      {
+        'data' => customer_ids.map { |id| { 'type' => 'customer', 'id' => id } }
+      }
+    end
+
+    def create_batch_releases_request
+      {
+        'data' => {
+          'type' => 'batchRelease',
+          'attributes' => {
+            'amount' => 100,
+            'description' => 'SDK integration test batch release',
+            'senderName' => 'Peter Parker',
+            'senderAddress' => US_ADDRESS,
+            'senderAccountNumber' => '12345678901234567',
+            'tags' => base_tags
+          }
+        }
+      }
+    end
+
+    def send_drawdown_payment_request
+      {
+        'data' => {
+          'type' => 'sendWireDrawdown',
+          'attributes' => {
+            'idempotencyKey' => SecureRandom.uuid,
+            'tags' => base_tags
+          }
         }
       }
     end

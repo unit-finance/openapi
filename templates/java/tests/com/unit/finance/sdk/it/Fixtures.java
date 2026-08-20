@@ -1,39 +1,93 @@
 package com.unit.finance.sdk.it;
 
-import com.unit.finance.sdk.model.Address;
-import com.unit.finance.sdk.model.AnnualIncome;
-import com.unit.finance.sdk.model.BeneficialOwnerRequest;
-import com.unit.finance.sdk.model.BusinessAnnualRevenue;
-import com.unit.finance.sdk.model.BusinessContact;
-import com.unit.finance.sdk.model.BusinessNumberOfEmployees;
-import com.unit.finance.sdk.model.BusinessVertical;
-import com.unit.finance.sdk.model.CashFlow;
+import com.unit.finance.sdk.model.AddressType;
+import com.unit.finance.sdk.model.AnnualIncomeType;
+import com.unit.finance.sdk.model.BeneficialOwnerRequestType;
+import com.unit.finance.sdk.model.BusinessAnnualRevenueType;
+import com.unit.finance.sdk.model.BusinessContactType;
+import com.unit.finance.sdk.model.BusinessNumberOfEmployeesType;
+import com.unit.finance.sdk.model.BusinessVerticalType;
+import com.unit.finance.sdk.model.CashFlowType;
 import com.unit.finance.sdk.model.CancelApplicationData;
 import com.unit.finance.sdk.model.CancelApplicationDataAttributes;
 import com.unit.finance.sdk.model.CancelApplicationRequest;
 import com.unit.finance.sdk.model.CheckRegisteredAgentAddressData;
 import com.unit.finance.sdk.model.CheckRegisteredAgentAddressDataAttributes;
 import com.unit.finance.sdk.model.CheckRegisteredAgentAddressRequest;
+import com.unit.finance.sdk.model.CloseAccountRequest;
+import com.unit.finance.sdk.model.CloseDepositAccountData;
+import com.unit.finance.sdk.model.CloseDepositAccountDataAttributes;
+import com.unit.finance.sdk.model.CloseDepositAccountRequest;
+import com.unit.finance.sdk.model.CreateABookPaymentData;
+import com.unit.finance.sdk.model.CreateABookPaymentDataAttributes;
+import com.unit.finance.sdk.model.CreateABookPaymentDataRelationships;
+import com.unit.finance.sdk.model.CreateABookPaymentRequest;
+import com.unit.finance.sdk.model.CreateAccountHoldData;
+import com.unit.finance.sdk.model.CreateAccountHoldDataAttributes;
+import com.unit.finance.sdk.model.CreateAccountHoldRequest;
+import com.unit.finance.sdk.model.CreateAccountRequest;
+import com.unit.finance.sdk.model.CreateBatchReleasesData;
+import com.unit.finance.sdk.model.CreateBatchReleasesDataAttributes;
+import com.unit.finance.sdk.model.CreateBatchReleasesRequest;
 import com.unit.finance.sdk.model.CreateBusinessApplicationData;
 import com.unit.finance.sdk.model.CreateBusinessApplicationDataAttributes;
 import com.unit.finance.sdk.model.CreateBusinessApplicationRequest;
+import com.unit.finance.sdk.model.CreateDepositAccountData;
+import com.unit.finance.sdk.model.CreateDepositAccountDataAttributes;
+import com.unit.finance.sdk.model.CreateDepositAccountDataRelationships;
+import com.unit.finance.sdk.model.CreateDepositAccountRequest;
+import com.unit.finance.sdk.model.CreateFeeData;
+import com.unit.finance.sdk.model.CreateFeeDataAttributes;
+import com.unit.finance.sdk.model.CreateFeeDataRelationships;
+import com.unit.finance.sdk.model.CreateFeeRequest;
 import com.unit.finance.sdk.model.CreateIndividualApplicationData;
 import com.unit.finance.sdk.model.CreateIndividualApplicationDataAttributes;
 import com.unit.finance.sdk.model.CreateIndividualApplicationRequest;
+import com.unit.finance.sdk.model.CreatePaymentRequest;
+import com.unit.finance.sdk.model.CreateRecurringCreditBookPaymentData;
+import com.unit.finance.sdk.model.CreateRecurringCreditBookPaymentDataAttributes;
+import com.unit.finance.sdk.model.CreateRecurringCreditBookPaymentRequest;
+import com.unit.finance.sdk.model.CreateRecurringPaymentRequest;
+import com.unit.finance.sdk.model.CreateScheduleType;
 import com.unit.finance.sdk.model.CreateSoleProprietorApplicationData;
 import com.unit.finance.sdk.model.CreateSoleProprietorApplicationDataAttributes;
 import com.unit.finance.sdk.model.CreateSoleProprietorApplicationRequest;
-import com.unit.finance.sdk.model.FullName;
-import com.unit.finance.sdk.model.Occupation;
-import com.unit.finance.sdk.model.OfficerRequest;
-import com.unit.finance.sdk.model.Phone;
+import com.unit.finance.sdk.model.FreezeAccountRequest;
+import com.unit.finance.sdk.model.FreezeDepositAccountData;
+import com.unit.finance.sdk.model.FreezeDepositAccountDataAttributes;
+import com.unit.finance.sdk.model.FreezeDepositAccountRequest;
+import com.unit.finance.sdk.model.FullNameType;
+import com.unit.finance.sdk.model.GenerateBarcodeData;
+import com.unit.finance.sdk.model.GenerateBarcodeDataAttributes;
+import com.unit.finance.sdk.model.GenerateBarcodeDataRelationships;
+import com.unit.finance.sdk.model.GenerateCashDepositBarcodeRequest;
+import com.unit.finance.sdk.model.GetExpectedACHCompletionDateData;
+import com.unit.finance.sdk.model.GetExpectedACHCompletionDateDataAttributes;
+import com.unit.finance.sdk.model.GetExpectedAchCompletionDateRequest;
+import com.unit.finance.sdk.model.OccupationType;
+import com.unit.finance.sdk.model.OfficerRequestType;
+import com.unit.finance.sdk.model.PhoneType;
 import com.unit.finance.sdk.model.Relationship;
 import com.unit.finance.sdk.model.RelationshipData;
+import com.unit.finance.sdk.model.ReleaseAccountHoldData;
+import com.unit.finance.sdk.model.ReleaseAccountHoldDataAttributes;
+import com.unit.finance.sdk.model.ReleaseAccountHoldRequest;
 import com.unit.finance.sdk.model.ResourceIdentifier;
-import com.unit.finance.sdk.model.SoleProprietorAnnualRevenue;
-import com.unit.finance.sdk.model.SoleProprietorNumberOfEmployees;
-import com.unit.finance.sdk.model.SourceOfIncome;
+import com.unit.finance.sdk.model.ReverseFeeData;
+import com.unit.finance.sdk.model.ReverseFeeDataAttributes;
+import com.unit.finance.sdk.model.ReverseFeeDataRelationships;
+import com.unit.finance.sdk.model.ReverseFeeRequest;
+import com.unit.finance.sdk.model.SendDrawdownPaymentData;
+import com.unit.finance.sdk.model.SendDrawdownPaymentDataAttributes;
+import com.unit.finance.sdk.model.SendDrawdownPaymentRequest;
+import com.unit.finance.sdk.model.SoleProprietorAnnualRevenueType;
+import com.unit.finance.sdk.model.SoleProprietorNumberOfEmployeesType;
+import com.unit.finance.sdk.model.SourceOfIncomeType;
+import com.unit.finance.sdk.model.UpdateAccountRequest;
 import com.unit.finance.sdk.model.UpdateApplicationRequest;
+import com.unit.finance.sdk.model.UpdateBookPaymentData;
+import com.unit.finance.sdk.model.UpdateBookPaymentDataAttributes;
+import com.unit.finance.sdk.model.UpdateBookPaymentRequest;
 import com.unit.finance.sdk.model.UpdateBusinessApplicationData;
 import com.unit.finance.sdk.model.UpdateBusinessApplicationDataAttributes;
 import com.unit.finance.sdk.model.UpdateBusinessApplicationRequest;
@@ -41,11 +95,26 @@ import com.unit.finance.sdk.model.UpdateBusinessBeneficialOwnerData;
 import com.unit.finance.sdk.model.UpdateBusinessBeneficialOwnerDataAttributes;
 import com.unit.finance.sdk.model.UpdateBusinessBeneficialOwnerDataRelationships;
 import com.unit.finance.sdk.model.UpdateBusinessBeneficialOwnerRequest;
+import com.unit.finance.sdk.model.UpdateDepositAccountData;
+import com.unit.finance.sdk.model.UpdateDepositAccountDataAttributes;
+import com.unit.finance.sdk.model.UpdateDepositAccountRequest;
+import com.unit.finance.sdk.model.UpdatePaymentRequest;
+import com.unit.finance.sdk.model.UpdateReceivedPaymentData;
+import com.unit.finance.sdk.model.UpdateReceivedPaymentRequest;
+import com.unit.finance.sdk.model.VerifyAccountData;
+import com.unit.finance.sdk.model.VerifyAccountDataAttributes;
+import com.unit.finance.sdk.model.VerifyAccountRequest;
+import com.unit.finance.sdk.model.AddAccountOwnersRequest;
+import com.unit.finance.sdk.model.RemoveAccountOwnersRequest;
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Request-body builders, mirroring the Node {@code tests/helpers/fixtures.ts}.
@@ -69,8 +138,8 @@ final class Fixtures {
     return out;
   }
 
-  static Address usAddress() {
-    return new Address()
+  static AddressType usAddress() {
+    return new AddressType()
         .street("20 Ingram St")
         .city("Forest Hills")
         .state("NY")
@@ -78,27 +147,27 @@ final class Fixtures {
         .country("US");
   }
 
-  static Phone usPhone() {
-    return new Phone().countryCode("1").number("5555555555");
+  static PhoneType usPhone() {
+    return new PhoneType().countryCode("1").number("5555555555");
   }
 
-  static FullName fullName() {
-    return new FullName().first("Peter").last("Parker");
+  static FullNameType fullName() {
+    return new FullNameType().first("Peter").last("Parker");
   }
 
   static Map<String, Object> baseTags() {
     return map("testRun", RUN);
   }
 
-  static BusinessContact businessContact() {
-    return new BusinessContact()
+  static BusinessContactType businessContact() {
+    return new BusinessContactType()
         .fullName(fullName())
         .email("peter+" + RUN + "@oscorp.com")
         .phone(usPhone());
   }
 
-  static OfficerRequest officer() {
-    return new OfficerRequest()
+  static OfficerRequestType officer() {
+    return new OfficerRequestType()
         .fullName(fullName())
         .dateOfBirth("2001-08-15")
         .title("CEO")
@@ -108,11 +177,11 @@ final class Fixtures {
         .address(usAddress());
   }
 
-  static List<BeneficialOwnerRequest> beneficialOwners() {
-    List<BeneficialOwnerRequest> owners = new ArrayList<>();
+  static List<BeneficialOwnerRequestType> beneficialOwners() {
+    List<BeneficialOwnerRequestType> owners = new ArrayList<>();
     owners.add(
-        new BeneficialOwnerRequest()
-            .fullName(new FullName().first("Mary Jane").last("Watson"))
+        new BeneficialOwnerRequestType()
+            .fullName(new FullNameType().first("Mary Jane").last("Watson"))
             .dateOfBirth("2001-08-15")
             .ssn("574567625")
             .email("mj+" + RUN + "@oscorp.com")
@@ -133,14 +202,14 @@ final class Fixtures {
             .entityType("Corporation")
             .yearOfIncorporation("2020")
             .countriesOfOperation(Arrays.asList("US"))
-            .businessVertical(BusinessVertical.TECHNOLOGY_MEDIA_OR_TELECOM)
+            .businessVertical(BusinessVerticalType.TECHNOLOGY_MEDIA_OR_TELECOM)
             .website("https://www.piedpiper.com")
             .contact(businessContact())
             .officer(officer())
             .beneficialOwners(beneficialOwners())
-            .annualRevenue(BusinessAnnualRevenue.BETWEEN500K_AND1M)
-            .numberOfEmployees(BusinessNumberOfEmployees.BETWEEN50_AND100)
-            .cashFlow(CashFlow.PREDICTABLE)
+            .annualRevenue(BusinessAnnualRevenueType.BETWEEN500K_AND1M)
+            .numberOfEmployees(BusinessNumberOfEmployeesType.BETWEEN50_AND100)
+            .cashFlow(CashFlowType.PREDICTABLE)
             .tags(baseTags());
     CreateBusinessApplicationData data =
         new CreateBusinessApplicationData()
@@ -158,9 +227,9 @@ final class Fixtures {
             .address(usAddress())
             .phone(usPhone())
             .email("peter+" + RUN + "@oscorp.com")
-            .occupation(Occupation.ARCHITECT_OR_ENGINEER)
-            .annualIncome(AnnualIncome.BETWEEN50K_AND100K)
-            .sourceOfIncome(SourceOfIncome.EMPLOYMENT_OR_PAYROLL_INCOME)
+            .occupation(OccupationType.ARCHITECT_OR_ENGINEER)
+            .annualIncome(AnnualIncomeType.BETWEEN50K_AND100K)
+            .sourceOfIncome(SourceOfIncomeType.EMPLOYMENT_OR_PAYROLL_INCOME)
             .tags(baseTags());
     CreateIndividualApplicationData data =
         new CreateIndividualApplicationData()
@@ -193,9 +262,9 @@ final class Fixtures {
             .soleProprietorship(true)
             .ein("123456789")
             .dba("Pied Piper SP " + RUN)
-            .businessVertical(BusinessVertical.TECHNOLOGY_MEDIA_OR_TELECOM)
-            .annualRevenue(SoleProprietorAnnualRevenue.BETWEEN100K_AND200K)
-            .numberOfEmployees(SoleProprietorNumberOfEmployees.BETWEEN2_AND5)
+            .businessVertical(BusinessVerticalType.TECHNOLOGY_MEDIA_OR_TELECOM)
+            .annualRevenue(SoleProprietorAnnualRevenueType.BETWEEN100K_AND200K)
+            .numberOfEmployees(SoleProprietorNumberOfEmployeesType.BETWEEN2_AND5)
             .website("https://www.piedpiper.com")
             .tags(baseTags());
     CreateSoleProprietorApplicationData data =
@@ -220,7 +289,7 @@ final class Fixtures {
   static UpdateBusinessBeneficialOwnerRequest updateBusinessBeneficialOwnerRequest(
       String applicationId) {
     UpdateBusinessBeneficialOwnerDataAttributes attributes =
-        new UpdateBusinessBeneficialOwnerDataAttributes().occupation(Occupation.ARCHITECT_OR_ENGINEER);
+        new UpdateBusinessBeneficialOwnerDataAttributes().occupation(OccupationType.ARCHITECT_OR_ENGINEER);
     UpdateBusinessBeneficialOwnerDataRelationships relationships =
         new UpdateBusinessBeneficialOwnerDataRelationships()
             .application(
@@ -256,5 +325,270 @@ final class Fixtures {
             .type(CheckRegisteredAgentAddressData.TypeEnum.CHECK_REGISTERED_AGENT_ADDRESS)
             .attributes(attributes);
     return new CheckRegisteredAgentAddressRequest().data(data);
+  }
+
+  static Relationship relationship(String type, String id) {
+    return new Relationship()
+        .data(new RelationshipData(new ResourceIdentifier().type(type).id(id)));
+  }
+
+  static CreateDepositAccountRequest createDepositAccountRequest(String customerId) {
+    CreateDepositAccountDataAttributes attributes =
+        new CreateDepositAccountDataAttributes().depositProduct("checking").tags(baseTags());
+    CreateDepositAccountDataRelationships relationships =
+        new CreateDepositAccountDataRelationships().customer(relationship("customer", customerId));
+    CreateDepositAccountData data =
+        new CreateDepositAccountData()
+            .type(CreateDepositAccountData.TypeEnum.DEPOSIT_ACCOUNT)
+            .attributes(attributes)
+            .relationships(relationships);
+    return new CreateDepositAccountRequest().data(data);
+  }
+
+  static CreateAccountRequest depositAccountRequestForCustomer(String customerId) {
+    return new CreateAccountRequest(createDepositAccountRequest(customerId));
+  }
+
+  static UpdateAccountRequest updateDepositAccountRequest() {
+    Map<String, Object> tags = baseTags();
+    tags.put("updated", "true");
+    UpdateDepositAccountDataAttributes attributes =
+        new UpdateDepositAccountDataAttributes().tags(tags);
+    UpdateDepositAccountData data =
+        new UpdateDepositAccountData()
+            .type(UpdateDepositAccountData.TypeEnum.DEPOSIT_ACCOUNT)
+            .attributes(attributes);
+    return new UpdateAccountRequest(new UpdateDepositAccountRequest().data(data));
+  }
+
+  static VerifyAccountRequest verifyAccountRequest(String routingNumber, String accountNumber) {
+    VerifyAccountDataAttributes attributes =
+        new VerifyAccountDataAttributes()
+            .routingNumber(routingNumber)
+            .accountNumber(accountNumber);
+    VerifyAccountData data =
+        new VerifyAccountData()
+            .type(VerifyAccountData.TypeEnum.ACCOUNT_VERIFY)
+            .attributes(attributes);
+    return new VerifyAccountRequest().data(data);
+  }
+
+  static CloseAccountRequest closeDepositAccountRequest() {
+    CloseDepositAccountDataAttributes attributes =
+        new CloseDepositAccountDataAttributes().reason("ByOrg");
+    CloseDepositAccountData data =
+        new CloseDepositAccountData()
+            .type(CloseDepositAccountData.TypeEnum.DEPOSIT_ACCOUNT_CLOSE)
+            .attributes(attributes);
+    return new CloseAccountRequest(new CloseDepositAccountRequest().data(data));
+  }
+
+  static FreezeAccountRequest freezeDepositAccountRequest() {
+    FreezeDepositAccountDataAttributes attributes =
+        new FreezeDepositAccountDataAttributes().reason("Other");
+    FreezeDepositAccountData data =
+        new FreezeDepositAccountData()
+            .type(FreezeDepositAccountData.TypeEnum.ACCOUNT_FREEZE)
+            .attributes(attributes);
+    return new FreezeAccountRequest(new FreezeDepositAccountRequest().data(data));
+  }
+
+  static CreateFeeRequest createFeeRequest(String accountId) {
+    CreateFeeDataAttributes attributes =
+        new CreateFeeDataAttributes()
+            .amount(100)
+            .description("SDK integration test fee")
+            .tags(baseTags());
+    CreateFeeDataRelationships relationships =
+        new CreateFeeDataRelationships().account(relationship("account", accountId));
+    CreateFeeData data =
+        new CreateFeeData()
+            .type(CreateFeeData.TypeEnum.FEE)
+            .attributes(attributes)
+            .relationships(relationships);
+    return new CreateFeeRequest().data(data);
+  }
+
+  static ReverseFeeRequest reverseFeeRequest(String accountId, String transactionId) {
+    ReverseFeeDataAttributes attributes =
+        new ReverseFeeDataAttributes()
+            .description("SDK integration test fee reversal")
+            .tags(baseTags());
+    ReverseFeeDataRelationships relationships =
+        new ReverseFeeDataRelationships()
+            .account(relationship("account", accountId))
+            .transaction(relationship("transaction", transactionId));
+    ReverseFeeData data =
+        new ReverseFeeData()
+            .type(ReverseFeeData.TypeEnum.FEE_REVERSAL)
+            .attributes(attributes)
+            .relationships(relationships);
+    return new ReverseFeeRequest().data(data);
+  }
+
+  static CreateAccountHoldRequest createAccountHoldRequest(String accountId) {
+    CreateAccountHoldDataAttributes attributes =
+        new CreateAccountHoldDataAttributes()
+            .amount(500)
+            .description("SDK integration test hold");
+    CreateAccountHoldData data =
+        new CreateAccountHoldData()
+            .type(CreateAccountHoldData.TypeEnum.CREATE_ACCOUNT_HOLD_JSON)
+            .attributes(attributes)
+            .relationships(new CreateFeeDataRelationships().account(relationship("account", accountId)));
+    return new CreateAccountHoldRequest().data(data);
+  }
+
+  static ReleaseAccountHoldRequest releaseAccountHoldRequest(int amount) {
+    ReleaseAccountHoldDataAttributes attributes = new ReleaseAccountHoldDataAttributes().amount(amount);
+    ReleaseAccountHoldData data =
+        new ReleaseAccountHoldData()
+            .type(ReleaseAccountHoldData.TypeEnum.ACCOUNT_HOLD)
+            .attributes(attributes);
+    return new ReleaseAccountHoldRequest().data(data);
+  }
+
+  static CreatePaymentRequest createBookPaymentRequest(
+      String accountId, String counterpartyAccountId) {
+    CreateABookPaymentDataAttributes attributes =
+        new CreateABookPaymentDataAttributes()
+            .amount(100)
+            .description("SDK integration test book payment")
+            .tags(baseTags());
+    CreateABookPaymentDataRelationships relationships =
+        new CreateABookPaymentDataRelationships()
+            .account(relationship("account", accountId))
+            .counterpartyAccount(relationship("account", counterpartyAccountId));
+    CreateABookPaymentData data =
+        new CreateABookPaymentData()
+            .type(CreateABookPaymentData.TypeEnum.BOOK_PAYMENT)
+            .attributes(attributes)
+            .relationships(relationships);
+    return new CreatePaymentRequest(new CreateABookPaymentRequest().data(data));
+  }
+
+  static UpdatePaymentRequest updateBookPaymentRequest() {
+    Map<String, Object> tags = baseTags();
+    tags.put("updated", "true");
+    UpdateBookPaymentDataAttributes attributes = new UpdateBookPaymentDataAttributes().tags(tags);
+    UpdateBookPaymentData data =
+        new UpdateBookPaymentData()
+            .type(UpdateBookPaymentData.TypeEnum.BOOK_PAYMENT)
+            .attributes(attributes);
+    return new UpdatePaymentRequest(new UpdateBookPaymentRequest().data(data));
+  }
+
+  static GetExpectedAchCompletionDateRequest getExpectedAchCompletionDateRequest(String accountId) {
+    GetExpectedACHCompletionDateDataAttributes attributes =
+        new GetExpectedACHCompletionDateDataAttributes().direction("Credit").amount(1000);
+    GetExpectedACHCompletionDateData data =
+        new GetExpectedACHCompletionDateData()
+            .type(GetExpectedACHCompletionDateData.TypeEnum.ACH_EXPECTED_COMPLETION_DATE)
+            .attributes(attributes)
+            .relationships(new CreateFeeDataRelationships().account(relationship("account", accountId)));
+    return new GetExpectedAchCompletionDateRequest().data(data);
+  }
+
+  static CreateRecurringPaymentRequest createRecurringBookPaymentRequest(
+      String accountId, String counterpartyAccountId) {
+    LocalDate start = LocalDate.now(ZoneOffset.UTC).plusDays(7);
+    LocalDate end = start.plusMonths(3);
+    CreateScheduleType schedule =
+        new CreateScheduleType()
+            .startTime(start.atStartOfDay().atOffset(ZoneOffset.UTC))
+            .endTime(end.atStartOfDay().atOffset(ZoneOffset.UTC))
+            .interval("Monthly")
+            .dayOfMonth(15);
+    CreateRecurringCreditBookPaymentDataAttributes attributes =
+        new CreateRecurringCreditBookPaymentDataAttributes()
+            .amount(100)
+            .description("SDK integration test recurring payment")
+            .schedule(schedule)
+            .tags(baseTags());
+    CreateABookPaymentDataRelationships relationships =
+        new CreateABookPaymentDataRelationships()
+            .account(relationship("account", accountId))
+            .counterpartyAccount(relationship("account", counterpartyAccountId));
+    CreateRecurringCreditBookPaymentData data =
+        new CreateRecurringCreditBookPaymentData()
+            .type(CreateRecurringCreditBookPaymentData.TypeEnum.RECURRING_BOOK_PAYMENT)
+            .attributes(attributes)
+            .relationships(relationships);
+    return new CreateRecurringPaymentRequest(new CreateRecurringCreditBookPaymentRequest().data(data));
+  }
+
+  static UpdateReceivedPaymentRequest updateReceivedPaymentRequest() {
+    Map<String, Object> tags = baseTags();
+    tags.put("updated", "true");
+    UpdateBookPaymentDataAttributes attributes =
+        new UpdateBookPaymentDataAttributes().tags(tags);
+    UpdateReceivedPaymentData data =
+        new UpdateReceivedPaymentData()
+            .type(UpdateReceivedPaymentData.TypeEnum.ACH_RECEIVED_PAYMENT)
+            .attributes(attributes);
+    return new UpdateReceivedPaymentRequest().data(data);
+  }
+
+  static GenerateCashDepositBarcodeRequest generateCashDepositBarcodeRequest(
+      String customerId, String accountId, String storeId) {
+    GenerateBarcodeDataAttributes attributes = new GenerateBarcodeDataAttributes().storeId(storeId);
+    GenerateBarcodeDataRelationships relationships =
+        new GenerateBarcodeDataRelationships()
+            .customer(relationship("customer", customerId))
+            .account(relationship("depositAccount", accountId));
+    GenerateBarcodeData data =
+        new GenerateBarcodeData()
+            .type(GenerateBarcodeData.TypeEnum.CASH_DEPOSIT_BARCODE)
+            .attributes(attributes)
+            .relationships(relationships);
+    return new GenerateCashDepositBarcodeRequest().data(data);
+  }
+
+  static AddAccountOwnersRequest addAccountOwnersRequest(List<String> customerIds) {
+    List<ResourceIdentifier> data =
+        customerIds.stream()
+            .map(id -> new ResourceIdentifier().type("customer").id(id))
+            .collect(Collectors.toList());
+    return new AddAccountOwnersRequest().data(data);
+  }
+
+  static RemoveAccountOwnersRequest removeAccountOwnersRequest(List<String> customerIds) {
+    List<ResourceIdentifier> data =
+        customerIds.stream()
+            .map(id -> new ResourceIdentifier().type("customer").id(id))
+            .collect(Collectors.toList());
+    return new RemoveAccountOwnersRequest().data(data);
+  }
+
+  static AddressType addressType() {
+    return usAddress();
+  }
+
+  static CreateBatchReleasesRequest createBatchReleasesRequest() {
+    CreateBatchReleasesDataAttributes attributes =
+        new CreateBatchReleasesDataAttributes()
+            .amount(100)
+            .description("SDK integration test batch release")
+            .senderName("SDK Test Sender")
+            .senderAddress(addressType())
+            .senderAccountNumber("123456789012345")
+            .tags(baseTags());
+    CreateBatchReleasesData data =
+        new CreateBatchReleasesData()
+            .type(CreateBatchReleasesData.TypeEnum.BATCH_RELEASE)
+            .attributes(attributes);
+    return new CreateBatchReleasesRequest().data(data);
+  }
+
+  static SendDrawdownPaymentRequest sendDrawdownPaymentRequest() {
+    SendDrawdownPaymentDataAttributes attributes =
+        new SendDrawdownPaymentDataAttributes()
+            .idempotencyKey("sdk-java-drawdown-" + RUN)
+            .tags(baseTags());
+    SendDrawdownPaymentData data =
+        new SendDrawdownPaymentData()
+            .type(SendDrawdownPaymentData.TypeEnum.SEND_WIRE_DRAWDOWN)
+            .attributes(attributes);
+    return new SendDrawdownPaymentRequest().data(data);
   }
 }
