@@ -13,6 +13,8 @@
     "README.md"
   ],
   "scripts": {
+    "clean": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\"",
+    "prebuild": "npm run clean",
     "build": "tsc && tsc -p tsconfig.esm.json",
     "prepare": "npm run build"
   },
