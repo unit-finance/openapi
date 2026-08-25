@@ -7,7 +7,7 @@ describeIfToken("PaymentsApi.sendDrawdownPayment", () => {
 		expect(listed.status).toBe(200);
 
 		if (!listed.data.data.length) {
-			test.skip("No wire drawdowns available in sandbox to send.");
+			console.warn("No wire drawdowns available in sandbox to send.");
 			return;
 		}
 

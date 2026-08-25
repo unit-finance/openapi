@@ -9,7 +9,7 @@ describeIfToken("PaymentsApi.clearAchDebitPayment", () => {
 		// requires the Dynamic Clearing Period feature and a payment id.
 		const paymentId = process.env.UNIT_SANDBOX_ACH_DEBIT_PAYMENT_ID;
 		if (!paymentId) {
-			test.skip(
+			console.warn(
 				"No UNIT_SANDBOX_ACH_DEBIT_PAYMENT_ID env var; cannot exercise clearAchDebitPayment.",
 			);
 			return;

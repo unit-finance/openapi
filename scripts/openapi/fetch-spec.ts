@@ -199,7 +199,29 @@ async function fromRelease(lock: SpecLock): Promise<void> {
 		console.log(`[fetch-spec] Downloading spec from ${url}`);
 		const res = await httpGet(url);
 		if (res.statusCode !== 200) {
-			throw new Error(`GET ${url} -> HTTP ${res.statusCode}`);
+			const localHint = path.relative(
+				REPO_ROOT,
+				path.join(LOCAL_DIR, lock.assetName),
+			);
+			const lines = [
+				`GET ${url} -> HTTP ${res.statusCode}`,
+				"",
+				`The release asset could not be downloaded anonymously (${lock.repo} is`,
+				"likely private, and no token was provided).",
+				"",
+				"To run locally, pick one of:",
+				"",
+				`  1. Drop the spec into ${localHint}`,
+				`     Download ${lock.assetName} from the release page in your browser,`,
+				"     save it to that path, then re-run. No token needed.",
+				"",
+				`  2. Set SPEC_REPO_TOKEN (a token with Contents: read on ${lock.repo}),`,
+				"     then re-run.",
+				"",
+				"  3. Point SPEC_BUNDLE_PATH (local file) or SPEC_BUNDLE_URL at a spec",
+				"     directly.",
+			];
+			throw new Error(lines.join("\n"));
 		}
 		writeOut(res.body, url, lock.version);
 		return;
