@@ -9,10 +9,7 @@
  *   1. $SPEC_BUNDLE_PATH  — explicit local file (used in CI when the spec repo
  *      is checked out alongside, or for offline/local dev).
  *   2. $SPEC_BUNDLE_URL   — explicit URL override.
- *   3. A gitignored local drop file at `spec/local/<assetName>` — the no-token
- *      local flow: download the release asset from GitHub's UI once, drop it
- *      there, and `npm run generate-sdks` uses it without needing a token.
- *   4. The GitHub release asset for the version pinned in `spec-version.json`
+ *   3. The GitHub release asset for the version pinned in `spec-version.json`
  *      (`https://github.com/<repo>/releases/download/v<version>/<assetName>`).
  *
  * The downloaded/copied file is git-ignored: it is a derived artifact, fully
@@ -26,8 +23,6 @@ import path from "node:path";
 const REPO_ROOT = process.cwd();
 const LOCK_PATH = path.join(REPO_ROOT, "spec-version.json");
 const OUT_PATH = path.join(REPO_ROOT, "spec", "openapi.bundled.json");
-/** Gitignored folder for a manually-dropped spec bundle (no-token local flow). */
-const LOCAL_DIR = path.join(REPO_ROOT, "spec", "local");
 
 interface SpecLock {
 	repo: string;
@@ -199,10 +194,6 @@ async function fromRelease(lock: SpecLock): Promise<void> {
 		console.log(`[fetch-spec] Downloading spec from ${url}`);
 		const res = await httpGet(url);
 		if (res.statusCode !== 200) {
-			const localHint = path.relative(
-				REPO_ROOT,
-				path.join(LOCAL_DIR, lock.assetName),
-			);
 			const lines = [
 				`GET ${url} -> HTTP ${res.statusCode}`,
 				"",
@@ -211,14 +202,10 @@ async function fromRelease(lock: SpecLock): Promise<void> {
 				"",
 				"To run locally, pick one of:",
 				"",
-				`  1. Drop the spec into ${localHint}`,
-				`     Download ${lock.assetName} from the release page in your browser,`,
-				"     save it to that path, then re-run. No token needed.",
-				"",
-				`  2. Set SPEC_REPO_TOKEN (a token with Contents: read on ${lock.repo}),`,
+				`  1. Set SPEC_REPO_TOKEN (a token with Contents: read on ${lock.repo}),`,
 				"     then re-run.",
 				"",
-				"  3. Point SPEC_BUNDLE_PATH (local file) or SPEC_BUNDLE_URL at a spec",
+				"  2. Point SPEC_BUNDLE_PATH (local file) or SPEC_BUNDLE_URL at a spec",
 				"     directly.",
 			];
 			throw new Error(lines.join("\n"));
@@ -281,20 +268,7 @@ async function main(): Promise<void> {
 		return;
 	}
 
-	const lock = readLock();
-
-	// No-token local flow: if a bundle for the pinned version has been dropped
-	// into the gitignored spec/local/ folder, use it instead of hitting GitHub.
-	const localPath = path.join(LOCAL_DIR, lock.assetName);
-	if (fs.existsSync(localPath)) {
-		console.log(
-			`[fetch-spec] Using local spec ${path.relative(REPO_ROOT, localPath)}`,
-		);
-		writeOut(fs.readFileSync(localPath), localPath, lock.version);
-		return;
-	}
-
-	await fromRelease(lock);
+	await fromRelease(readLock());
 }
 
 main().catch((err) => {
