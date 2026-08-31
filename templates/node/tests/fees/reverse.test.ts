@@ -3,12 +3,14 @@ import {
 	buildCreateFeeRequest,
 	buildReverseFeeRequest,
 } from "../helpers/fixtures";
+import { fundAccount } from "../helpers/funding";
 import { getOrCreateSharedAccount } from "../helpers/sharedAccount";
 
 describeIfToken("FeesApi.reverseFee", () => {
 	it("creates a fee then reverses it", async () => {
 		const api = buildFeesApi();
 		const shared = await getOrCreateSharedAccount();
+		await fundAccount(shared.accountId, 1000);
 
 		const created = await api.createFee({
 			createFeeRequest: buildCreateFeeRequest(shared.accountId),
