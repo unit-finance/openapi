@@ -61,7 +61,6 @@ One file per operation in `applications/`:
 | `update_application` (UpdateBusiness variant) | `applications/update_spec.rb` |
 | `update_business_beneficial_owner` | `applications/update_beneficial_owner_spec.rb` |
 | `cancel_application` | `applications/cancel_spec.rb` |
-| `check_registered_agent_address` | `applications/check_registered_agent_address_spec.rb` |
 
 Specs assert structural correctness (HTTP status, JSON:API envelope shape,
 `data.type`, `data.id`, expected attribute keys) rather than specific

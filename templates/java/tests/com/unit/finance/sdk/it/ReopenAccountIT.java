@@ -17,7 +17,7 @@ class ReopenAccountIT {
     DepositAccount account = SharedAccount.createDedicatedDepositAccount();
     api.closeAccount(account.getId(), Fixtures.closeDepositAccountRequest());
 
-    ReopenAccount200Response response = api.reopenAccount(account.getId());
+    ReopenAccount200Response response = api.reopenAccount(account.getId(), null);
 
     assertEquals(account.getId(), ApiSupport.jsonApiId(response.getData()));
     assertNotNull(response.getData().getActualInstance());

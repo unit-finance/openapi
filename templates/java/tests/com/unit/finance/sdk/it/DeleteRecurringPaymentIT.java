@@ -21,7 +21,7 @@ class DeleteRecurringPaymentIT {
                 shared.accountId, shared.counterpartyAccountId));
     String id = ApiSupport.jsonApiId(created.getData());
 
-    CreateRecurringPayment201Response response = api.deleteRecurringPayment(id);
+    CreateRecurringPayment201Response response = api.deleteRecurringPayment(id, null);
 
     assertEquals(id, ApiSupport.jsonApiId(response.getData()));
     assertNotNull(response.getData().getActualInstance());

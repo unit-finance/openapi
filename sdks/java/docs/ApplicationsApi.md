@@ -6,7 +6,6 @@ All URIs are relative to *https://api.s.unit.sh*
 |------------- | ------------- | -------------|
 | [**callList**](ApplicationsApi.md#callList) | **GET** /applications | List applications |
 | [**cancelApplication**](ApplicationsApi.md#cancelApplication) | **POST** /applications/{id}/cancel | Cancel an application |
-| [**checkRegisteredAgentAddress**](ApplicationsApi.md#checkRegisteredAgentAddress) | **POST** /applications/check-registered-agent-address | Check a registered agent address |
 | [**createApplication**](ApplicationsApi.md#createApplication) | **POST** /applications | Create an application |
 | [**getById**](ApplicationsApi.md#getById) | **GET** /applications/{id} | Get an application |
 | [**updateApplication**](ApplicationsApi.md#updateApplication) | **PATCH** /applications/{id} | Update an application |
@@ -164,77 +163,6 @@ public class Example {
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 | **201** | The canceled application resource. |  -  |
-| **400** | Bad request. The request body or query parameters failed validation; &#x60;errors[].source.pointer&#x60; identifies the offending field. |  -  |
-| **401** | Unauthorized. The bearer token is missing, invalid or expired. |  -  |
-| **404** | Not found. No resource matches the supplied identifier. |  -  |
-| **0** | Error response |  -  |
-
-<a id="checkRegisteredAgentAddress"></a>
-# **checkRegisteredAgentAddress**
-> CheckRegisteredAgentAddress200Response checkRegisteredAgentAddress(checkRegisteredAgentAddressRequest)
-
-Check a registered agent address
-
-Checks if an address is a registered agent address.
-
-### Example
-```java
-// Import classes:
-import com.unit.finance.sdk.ApiClient;
-import com.unit.finance.sdk.ApiException;
-import com.unit.finance.sdk.Configuration;
-import com.unit.finance.sdk.auth.*;
-import com.unit.finance.sdk.models.*;
-import com.unit.finance.sdk.api.ApplicationsApi;
-
-public class Example {
-  public static void main(String[] args) {
-    ApiClient defaultClient = Configuration.getDefaultApiClient();
-    defaultClient.setBasePath("https://api.s.unit.sh");
-    
-    // Configure HTTP bearer authorization: bearerAuth
-    HttpBearerAuth bearerAuth = (HttpBearerAuth) defaultClient.getAuthentication("bearerAuth");
-    bearerAuth.setBearerToken("BEARER TOKEN");
-
-    ApplicationsApi apiInstance = new ApplicationsApi(defaultClient);
-    CheckRegisteredAgentAddressRequest checkRegisteredAgentAddressRequest = new CheckRegisteredAgentAddressRequest(); // CheckRegisteredAgentAddressRequest | 
-    try {
-      CheckRegisteredAgentAddress200Response result = apiInstance.checkRegisteredAgentAddress(checkRegisteredAgentAddressRequest);
-      System.out.println(result);
-    } catch (ApiException e) {
-      System.err.println("Exception when calling ApplicationsApi#checkRegisteredAgentAddress");
-      System.err.println("Status code: " + e.getCode());
-      System.err.println("Reason: " + e.getResponseBody());
-      System.err.println("Response headers: " + e.getResponseHeaders());
-      e.printStackTrace();
-    }
-  }
-}
-```
-
-### Parameters
-
-| Name | Type | Description  | Notes |
-|------------- | ------------- | ------------- | -------------|
-| **checkRegisteredAgentAddressRequest** | [**CheckRegisteredAgentAddressRequest**](CheckRegisteredAgentAddressRequest.md)|  | |
-
-### Return type
-
-[**CheckRegisteredAgentAddress200Response**](CheckRegisteredAgentAddress200Response.md)
-
-### Authorization
-
-[bearerAuth](../README.md#bearerAuth)
-
-### HTTP request headers
-
- - **Content-Type**: application/vnd.api+json
- - **Accept**: application/vnd.api+json
-
-### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-| **200** | Whether the supplied address is a registered agent address. |  -  |
 | **400** | Bad request. The request body or query parameters failed validation; &#x60;errors[].source.pointer&#x60; identifies the offending field. |  -  |
 | **401** | Unauthorized. The bearer token is missing, invalid or expired. |  -  |
 | **404** | Not found. No resource matches the supplied identifier. |  -  |

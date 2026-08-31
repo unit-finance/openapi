@@ -15,6 +15,10 @@
  *   3. The GitHub release asset for the version pinned in `spec-version.json`
  *      (`https://github.com/<repo>/releases/download/v<version>/<assetName>`).
  *
+ * Options 1 and 2 bypass the pin, so the pinned `version` is synced back from
+ * the materialized spec's `info.version`; option 3 instead validates that the
+ * two already agree.
+ *
  * The downloaded/copied file is git-ignored: it is a derived artifact, fully
  * reproducible from `spec-version.json`. Bumping `spec-version.json` and
  * re-running `npm run generate-sdks` is how the SDKs track a new spec release.
@@ -195,21 +199,42 @@ function extractSlices(doc: OpenApiDoc): string[] {
 }
 
 /**
- * Persist the spec's slices back into spec-version.json, preserving the file's
- * other fields, ordering, and formatting. Keeps the recorded slices in lockstep
- * with the spec the SDKs are actually generated from.
+ * Persist the materialized spec's slices — and, when the spec was not resolved
+ * from the pinned release, its `info.version` — back into spec-version.json,
+ * preserving the file's other fields, ordering, and formatting.
+ *
+ * The release path already validated the pin against `info.version`, so there
+ * is nothing to sync there. The local-file and URL paths bypass that pin
+ * entirely, and the version recorded here is what every `prepare-*-sdk` step
+ * stamps onto the generated packages: without this the SDKs get published under
+ * whatever version the pin happened to be left at.
  */
-function updateLockSlices(doc: OpenApiDoc): void {
+function updateLock(doc: OpenApiDoc, syncVersion: boolean): void {
 	const slices = extractSlices(doc);
 	const lock = JSON.parse(fs.readFileSync(LOCK_PATH, "utf8")) as Record<
 		string,
 		unknown
 	>;
 	lock.slices = slices;
+
+	const specVersion = doc.info?.version?.replace(/^v/, "");
+	let versionNote = "";
+	if (syncVersion && specVersion && specVersion !== lock.version) {
+		if (!/^\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)*$/.test(specVersion)) {
+			console.error(
+				`[fetch-spec] Spec info.version "${specVersion}" is not a valid semver ` +
+					"version, so it cannot be recorded in spec-version.json.",
+			);
+			process.exit(1);
+		}
+		versionNote = `, version ${String(lock.version)} -> ${specVersion}`;
+		lock.version = specVersion;
+	}
+
 	fs.writeFileSync(LOCK_PATH, `${JSON.stringify(lock, null, 2)}\n`, "utf8");
 	console.log(
 		`[fetch-spec] Recorded slices in ${path.relative(REPO_ROOT, LOCK_PATH)}: ` +
-			`${slices.join(", ") || "(none)"}`,
+			`${slices.join(", ") || "(none)"}${versionNote}`,
 	);
 }
 
@@ -248,7 +273,7 @@ function writeOut(buf: Buffer, source: string, expectedVersion?: string): void {
 				`bodyless mutating operation(s): ${patched.join(", ")}`,
 		);
 	}
-	updateLockSlices(doc);
+	updateLock(doc, expectedVersion === undefined);
 }
 
 async function fromUrl(url: string): Promise<void> {

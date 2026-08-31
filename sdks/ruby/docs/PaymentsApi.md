@@ -7,6 +7,7 @@ All URIs are relative to *https://api.s.unit.sh*
 | [**cancel_payment**](PaymentsApi.md#cancel_payment) | **POST** /payments/{paymentId}/cancel | Cancel a payment |
 | [**clear_ach_debit_payment**](PaymentsApi.md#clear_ach_debit_payment) | **POST** /payments/{paymentId}/clear | Clear an ACH debit payment |
 | [**create_batch_releases**](PaymentsApi.md#create_batch_releases) | **POST** /batch-releases | Create batch releases |
+| [**create_bulk_payment**](PaymentsApi.md#create_bulk_payment) | **POST** /payments/bulk | Create a bulk payment |
 | [**create_payment**](PaymentsApi.md#create_payment) | **POST** /payments | Create a payment |
 | [**create_recurring_payment**](PaymentsApi.md#create_recurring_payment) | **POST** /recurring-payments | Create a recurring payment |
 | [**delete_recurring_payment**](PaymentsApi.md#delete_recurring_payment) | **DELETE** /recurring-payments/{id} | Delete a recurring payment |
@@ -29,7 +30,7 @@ All URIs are relative to *https://api.s.unit.sh*
 
 ## cancel_payment
 
-> <CancelPayment200Response> cancel_payment(payment_id)
+> <CancelPayment200Response> cancel_payment(payment_id, opts)
 
 Cancel a payment
 
@@ -48,10 +49,13 @@ end
 
 api_instance = UnitFinanceSdk::PaymentsApi.new
 payment_id = 'payment_id_example' # String | 
+opts = {
+  body: { ... } # Object | 
+}
 
 begin
   # Cancel a payment
-  result = api_instance.cancel_payment(payment_id)
+  result = api_instance.cancel_payment(payment_id, opts)
   p result
 rescue UnitFinanceSdk::ApiError => e
   puts "Error when calling PaymentsApi->cancel_payment: #{e}"
@@ -62,12 +66,12 @@ end
 
 This returns an Array which contains the response data, status code and headers.
 
-> <Array(<CancelPayment200Response>, Integer, Hash)> cancel_payment_with_http_info(payment_id)
+> <Array(<CancelPayment200Response>, Integer, Hash)> cancel_payment_with_http_info(payment_id, opts)
 
 ```ruby
 begin
   # Cancel a payment
-  data, status_code, headers = api_instance.cancel_payment_with_http_info(payment_id)
+  data, status_code, headers = api_instance.cancel_payment_with_http_info(payment_id, opts)
   p status_code # => 2xx
   p headers # => { ... }
   p data # => <CancelPayment200Response>
@@ -81,6 +85,7 @@ end
 | Name | Type | Description | Notes |
 | ---- | ---- | ----------- | ----- |
 | **payment_id** | **String** |  |  |
+| **body** | **Object** |  | [optional] |
 
 ### Return type
 
@@ -92,13 +97,13 @@ end
 
 ### HTTP request headers
 
-- **Content-Type**: Not defined
+- **Content-Type**: application/vnd.api+json
 - **Accept**: application/vnd.api+json
 
 
 ## clear_ach_debit_payment
 
-> <ClearAchDebitPayment200Response> clear_ach_debit_payment(payment_id)
+> <ClearAchDebitPayment200Response> clear_ach_debit_payment(payment_id, opts)
 
 Clear an ACH debit payment
 
@@ -117,10 +122,13 @@ end
 
 api_instance = UnitFinanceSdk::PaymentsApi.new
 payment_id = 'payment_id_example' # String | 
+opts = {
+  body: { ... } # Object | 
+}
 
 begin
   # Clear an ACH debit payment
-  result = api_instance.clear_ach_debit_payment(payment_id)
+  result = api_instance.clear_ach_debit_payment(payment_id, opts)
   p result
 rescue UnitFinanceSdk::ApiError => e
   puts "Error when calling PaymentsApi->clear_ach_debit_payment: #{e}"
@@ -131,12 +139,12 @@ end
 
 This returns an Array which contains the response data, status code and headers.
 
-> <Array(<ClearAchDebitPayment200Response>, Integer, Hash)> clear_ach_debit_payment_with_http_info(payment_id)
+> <Array(<ClearAchDebitPayment200Response>, Integer, Hash)> clear_ach_debit_payment_with_http_info(payment_id, opts)
 
 ```ruby
 begin
   # Clear an ACH debit payment
-  data, status_code, headers = api_instance.clear_ach_debit_payment_with_http_info(payment_id)
+  data, status_code, headers = api_instance.clear_ach_debit_payment_with_http_info(payment_id, opts)
   p status_code # => 2xx
   p headers # => { ... }
   p data # => <ClearAchDebitPayment200Response>
@@ -150,6 +158,7 @@ end
 | Name | Type | Description | Notes |
 | ---- | ---- | ----------- | ----- |
 | **payment_id** | **String** |  |  |
+| **body** | **Object** |  | [optional] |
 
 ### Return type
 
@@ -161,7 +170,7 @@ end
 
 ### HTTP request headers
 
-- **Content-Type**: Not defined
+- **Content-Type**: application/vnd.api+json
 - **Accept**: application/vnd.api+json
 
 
@@ -223,6 +232,75 @@ end
 ### Return type
 
 [**CreateBatchReleases201Response**](CreateBatchReleases201Response.md)
+
+### Authorization
+
+[bearerAuth](../README.md#bearerAuth)
+
+### HTTP request headers
+
+- **Content-Type**: application/vnd.api+json
+- **Accept**: application/vnd.api+json
+
+
+## create_bulk_payment
+
+> <CreateBulkPayment201Response> create_bulk_payment(create_bulk_payment_request)
+
+Create a bulk payment
+
+Creates multiple payments in a single asynchronous request. Each element of data is a payment creation payload — ACH, Book, and Wire types may be mixed in the same bulk.
+
+### Examples
+
+```ruby
+require 'time'
+require 'unit_finance_sdk'
+# setup authorization
+UnitFinanceSdk.configure do |config|
+  # Configure Bearer authorization (JWT): bearerAuth
+  config.access_token = 'YOUR_BEARER_TOKEN'
+end
+
+api_instance = UnitFinanceSdk::PaymentsApi.new
+create_bulk_payment_request = UnitFinanceSdk::CreateBulkPaymentRequest.new({data: [UnitFinanceSdk::CreateABookPaymentData.new({type: 'bookPayment', attributes: UnitFinanceSdk::CreateABookPaymentDataAttributes.new({amount: 10000, description: 'Funding'}), relationships: UnitFinanceSdk::CreateABookPaymentDataRelationships.new({account: UnitFinanceSdk::Relationship.new, counterparty_account: UnitFinanceSdk::Relationship.new})})]}) # CreateBulkPaymentRequest | 
+
+begin
+  # Create a bulk payment
+  result = api_instance.create_bulk_payment(create_bulk_payment_request)
+  p result
+rescue UnitFinanceSdk::ApiError => e
+  puts "Error when calling PaymentsApi->create_bulk_payment: #{e}"
+end
+```
+
+#### Using the create_bulk_payment_with_http_info variant
+
+This returns an Array which contains the response data, status code and headers.
+
+> <Array(<CreateBulkPayment201Response>, Integer, Hash)> create_bulk_payment_with_http_info(create_bulk_payment_request)
+
+```ruby
+begin
+  # Create a bulk payment
+  data, status_code, headers = api_instance.create_bulk_payment_with_http_info(create_bulk_payment_request)
+  p status_code # => 2xx
+  p headers # => { ... }
+  p data # => <CreateBulkPayment201Response>
+rescue UnitFinanceSdk::ApiError => e
+  puts "Error when calling PaymentsApi->create_bulk_payment_with_http_info: #{e}"
+end
+```
+
+### Parameters
+
+| Name | Type | Description | Notes |
+| ---- | ---- | ----------- | ----- |
+| **create_bulk_payment_request** | [**CreateBulkPaymentRequest**](CreateBulkPaymentRequest.md) |  |  |
+
+### Return type
+
+[**CreateBulkPayment201Response**](CreateBulkPayment201Response.md)
 
 ### Authorization
 
@@ -374,7 +452,7 @@ end
 
 ## delete_recurring_payment
 
-> <CreateRecurringPayment201Response> delete_recurring_payment(id)
+> <CreateRecurringPayment201Response> delete_recurring_payment(id, opts)
 
 Delete a recurring payment
 
@@ -393,10 +471,13 @@ end
 
 api_instance = UnitFinanceSdk::PaymentsApi.new
 id = 'id_example' # String | 
+opts = {
+  body: { ... } # Object | 
+}
 
 begin
   # Delete a recurring payment
-  result = api_instance.delete_recurring_payment(id)
+  result = api_instance.delete_recurring_payment(id, opts)
   p result
 rescue UnitFinanceSdk::ApiError => e
   puts "Error when calling PaymentsApi->delete_recurring_payment: #{e}"
@@ -407,12 +488,12 @@ end
 
 This returns an Array which contains the response data, status code and headers.
 
-> <Array(<CreateRecurringPayment201Response>, Integer, Hash)> delete_recurring_payment_with_http_info(id)
+> <Array(<CreateRecurringPayment201Response>, Integer, Hash)> delete_recurring_payment_with_http_info(id, opts)
 
 ```ruby
 begin
   # Delete a recurring payment
-  data, status_code, headers = api_instance.delete_recurring_payment_with_http_info(id)
+  data, status_code, headers = api_instance.delete_recurring_payment_with_http_info(id, opts)
   p status_code # => 2xx
   p headers # => { ... }
   p data # => <CreateRecurringPayment201Response>
@@ -426,6 +507,7 @@ end
 | Name | Type | Description | Notes |
 | ---- | ---- | ----------- | ----- |
 | **id** | **String** |  |  |
+| **body** | **Object** |  | [optional] |
 
 ### Return type
 
@@ -437,13 +519,13 @@ end
 
 ### HTTP request headers
 
-- **Content-Type**: Not defined
+- **Content-Type**: application/vnd.api+json
 - **Accept**: application/vnd.api+json
 
 
 ## disable_recurring_payment
 
-> <CreateRecurringPayment201Response> disable_recurring_payment(id)
+> <CreateRecurringPayment201Response> disable_recurring_payment(id, opts)
 
 Disable a recurring payment
 
@@ -462,10 +544,13 @@ end
 
 api_instance = UnitFinanceSdk::PaymentsApi.new
 id = 'id_example' # String | 
+opts = {
+  body: { ... } # Object | 
+}
 
 begin
   # Disable a recurring payment
-  result = api_instance.disable_recurring_payment(id)
+  result = api_instance.disable_recurring_payment(id, opts)
   p result
 rescue UnitFinanceSdk::ApiError => e
   puts "Error when calling PaymentsApi->disable_recurring_payment: #{e}"
@@ -476,12 +561,12 @@ end
 
 This returns an Array which contains the response data, status code and headers.
 
-> <Array(<CreateRecurringPayment201Response>, Integer, Hash)> disable_recurring_payment_with_http_info(id)
+> <Array(<CreateRecurringPayment201Response>, Integer, Hash)> disable_recurring_payment_with_http_info(id, opts)
 
 ```ruby
 begin
   # Disable a recurring payment
-  data, status_code, headers = api_instance.disable_recurring_payment_with_http_info(id)
+  data, status_code, headers = api_instance.disable_recurring_payment_with_http_info(id, opts)
   p status_code # => 2xx
   p headers # => { ... }
   p data # => <CreateRecurringPayment201Response>
@@ -495,6 +580,7 @@ end
 | Name | Type | Description | Notes |
 | ---- | ---- | ----------- | ----- |
 | **id** | **String** |  |  |
+| **body** | **Object** |  | [optional] |
 
 ### Return type
 
@@ -506,13 +592,13 @@ end
 
 ### HTTP request headers
 
-- **Content-Type**: Not defined
+- **Content-Type**: application/vnd.api+json
 - **Accept**: application/vnd.api+json
 
 
 ## enable_recurring_payment
 
-> <CreateRecurringPayment201Response> enable_recurring_payment(id)
+> <CreateRecurringPayment201Response> enable_recurring_payment(id, opts)
 
 Enable a recurring payment
 
@@ -531,10 +617,13 @@ end
 
 api_instance = UnitFinanceSdk::PaymentsApi.new
 id = 'id_example' # String | 
+opts = {
+  body: { ... } # Object | 
+}
 
 begin
   # Enable a recurring payment
-  result = api_instance.enable_recurring_payment(id)
+  result = api_instance.enable_recurring_payment(id, opts)
   p result
 rescue UnitFinanceSdk::ApiError => e
   puts "Error when calling PaymentsApi->enable_recurring_payment: #{e}"
@@ -545,12 +634,12 @@ end
 
 This returns an Array which contains the response data, status code and headers.
 
-> <Array(<CreateRecurringPayment201Response>, Integer, Hash)> enable_recurring_payment_with_http_info(id)
+> <Array(<CreateRecurringPayment201Response>, Integer, Hash)> enable_recurring_payment_with_http_info(id, opts)
 
 ```ruby
 begin
   # Enable a recurring payment
-  data, status_code, headers = api_instance.enable_recurring_payment_with_http_info(id)
+  data, status_code, headers = api_instance.enable_recurring_payment_with_http_info(id, opts)
   p status_code # => 2xx
   p headers # => { ... }
   p data # => <CreateRecurringPayment201Response>
@@ -564,6 +653,7 @@ end
 | Name | Type | Description | Notes |
 | ---- | ---- | ----------- | ----- |
 | **id** | **String** |  |  |
+| **body** | **Object** |  | [optional] |
 
 ### Return type
 
@@ -575,7 +665,7 @@ end
 
 ### HTTP request headers
 
-- **Content-Type**: Not defined
+- **Content-Type**: application/vnd.api+json
 - **Accept**: application/vnd.api+json
 
 
@@ -1033,9 +1123,10 @@ opts = {
   filter_to_amount: 'filter_to_amount_example', # String | Optional. Filters the Received Payment that have an amount that is lower or equal to the specified amount (in cents). e.g. 7000
   filter_include_completed: 'filter_include_completed_example', # String | Optional. Filter to include ReceivedPayment with Status 'Completed', default False. Can't be stated with filter[status][].
   filter_can_be_reprocessed: 'filter_can_be_reprocessed_example', # String | Optional. If set to true, returns only Received Payments that can be reprocessed. If set to false only returns Received Payments that can't be reprocessed.
-  filter_type: 'filter_type_example', # String | Optional. Filter received payments by type. Valid values: Ach, Wire. Defaults to both Ach and Wire if not specified.
+  filter_type: 'filter_type_example', # String | Optional. Filter received payments by type. Valid values: Ach, Wire, Realtime. Defaults to Ach, Wire, and Realtime if not specified.
   filter_tags: 'filter_tags_example', # String | Optional. Filter received payments by Tags.
-  sort: 'sort_example' # String | Optional. Leave empty or provide sort=createdAt for ascending order. Provide sort=-createdAt (leading minus sign) for descending order.
+  sort: 'sort_example', # String | Optional. Leave empty or provide sort=createdAt for ascending order. Provide sort=-createdAt (leading minus sign) for descending order.
+  include: 'include_example' # String | Optional. A comma-separated list of related resources to include in the response. Related resources include: customer, account. See Getting Related Resources.
 }
 
 begin
@@ -1080,9 +1171,10 @@ end
 | **filter_to_amount** | **String** | Optional. Filters the Received Payment that have an amount that is lower or equal to the specified amount (in cents). e.g. 7000 | [optional] |
 | **filter_include_completed** | **String** | Optional. Filter to include ReceivedPayment with Status &#39;Completed&#39;, default False. Can&#39;t be stated with filter[status][]. | [optional] |
 | **filter_can_be_reprocessed** | **String** | Optional. If set to true, returns only Received Payments that can be reprocessed. If set to false only returns Received Payments that can&#39;t be reprocessed. | [optional] |
-| **filter_type** | **String** | Optional. Filter received payments by type. Valid values: Ach, Wire. Defaults to both Ach and Wire if not specified. | [optional] |
+| **filter_type** | **String** | Optional. Filter received payments by type. Valid values: Ach, Wire, Realtime. Defaults to Ach, Wire, and Realtime if not specified. | [optional] |
 | **filter_tags** | **String** | Optional. Filter received payments by Tags. | [optional] |
-| **sort** | **String** | Optional. Leave empty or provide sort&#x3D;createdAt for ascending order. Provide sort&#x3D;-createdAt (leading minus sign) for descending order. | [optional][default to &#39;-createdAt&#39;] |
+| **sort** | **String** | Optional. Leave empty or provide sort&#x3D;createdAt for ascending order. Provide sort&#x3D;-createdAt (leading minus sign) for descending order. | [optional][default to &#39;createdAt&#39;] |
+| **include** | **String** | Optional. A comma-separated list of related resources to include in the response. Related resources include: customer, account. See Getting Related Resources. | [optional] |
 
 ### Return type
 
@@ -1495,7 +1587,7 @@ end
 
 Update a received payment
 
-Update a Received Payment.
+Update a Received Payment. The request body is one of UpdateACHReceivedPaymentRequest or UpdateRealtimeReceivedPaymentRequest, discriminated by data.type (achReceivedPayment, realtimeReceivedPayment).
 
 ### Examples
 
@@ -1510,7 +1602,7 @@ end
 
 api_instance = UnitFinanceSdk::PaymentsApi.new
 id = 'id_example' # String | 
-update_received_payment_request = UnitFinanceSdk::UpdateReceivedPaymentRequest.new({data: UnitFinanceSdk::UpdateReceivedPaymentData.new({type: 'achReceivedPayment', attributes: UnitFinanceSdk::UpdateReceivedPaymentDataAttributes.new({tags: { key: 3.56}})})}) # UpdateReceivedPaymentRequest | 
+update_received_payment_request = UnitFinanceSdk::UpdateACHReceivedPaymentRequest.new({data: UnitFinanceSdk::UpdateACHReceivedPaymentData.new({type: 'achReceivedPayment', attributes: UnitFinanceSdk::UpdateACHReceivedPaymentDataAttributes.new({tags: { key: 3.56}})})}) # UpdateReceivedPaymentRequest | 
 
 begin
   # Update a received payment

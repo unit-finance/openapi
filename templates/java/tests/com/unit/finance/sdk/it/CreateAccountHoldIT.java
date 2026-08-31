@@ -2,6 +2,7 @@ package com.unit.finance.sdk.it;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import com.unit.finance.sdk.ApiResponse;
 import com.unit.finance.sdk.api.AccountsApi;
@@ -16,9 +17,8 @@ class CreateAccountHoldIT {
     AccountsApi api = ApiSupport.buildAccountsApi();
     SharedAccount shared = SharedAccount.get();
 
-    ApiResponse<CreateAccountHold201Response> response =
-        api.createAccountHoldWithHttpInfo(
-            Fixtures.createAccountHoldRequest(shared.accountId));
+    ApiResponse<CreateAccountHold201Response> response = Holds.createOrSkip(api, shared.accountId);
+    assumeTrue(response != null, "account holds are disabled on this sandbox org");
 
     assertEquals(201, response.getStatusCode());
     assertNotNull(ApiSupport.jsonApiId(response.getData().getData()));

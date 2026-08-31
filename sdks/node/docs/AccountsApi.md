@@ -21,7 +21,6 @@ All URIs are relative to *https://api.s.unit.sh*
 |[**reopenAccount**](#reopenaccount) | **POST** /accounts/{accountId}/reopen | Reopen an account|
 |[**unfreezeAccount**](#unfreezeaccount) | **POST** /accounts/{accountId}/unfreeze | Unfreeze an account|
 |[**updateAccount**](#updateaccount) | **PATCH** /accounts/{accountId} | Update an account|
-|[**verifyAccount**](#verifyaccount) | **POST** /accounts/verify | Verify an account|
 
 # **addAccountOwners**
 > AddAccountOwners200Response addAccountOwners(addAccountOwnersRequest)
@@ -1037,62 +1036,6 @@ const { status, data } = await apiInstance.updateAccount(
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 |**200** | The updated account resource. |  -  |
-|**400** | Bad request. The request body or query parameters failed validation; &#x60;errors[].source.pointer&#x60; identifies the offending field. |  -  |
-|**401** | Unauthorized. The bearer token is missing, invalid or expired. |  -  |
-|**404** | Not found. No resource matches the supplied identifier. |  -  |
-|**0** | Error response |  -  |
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-
-# **verifyAccount**
-> VerifyAccount200Response verifyAccount(verifyAccountRequest)
-
-Verify whether a routing number and account number pair belongs to an account in your organization. A common use case is checking whether a counterparty is an internal Unit account before originating an ACH payment — if a match is found, you can originate a book payment instead.
-
-### Example
-
-```typescript
-import {
-    AccountsApi,
-    Configuration,
-    VerifyAccountRequest
-} from '@unit-finance/unit-node-sdk';
-
-const configuration = new Configuration();
-const apiInstance = new AccountsApi(configuration);
-
-let verifyAccountRequest: VerifyAccountRequest; //
-
-const { status, data } = await apiInstance.verifyAccount(
-    verifyAccountRequest
-);
-```
-
-### Parameters
-
-|Name | Type | Description  | Notes|
-|------------- | ------------- | ------------- | -------------|
-| **verifyAccountRequest** | **VerifyAccountRequest**|  | |
-
-
-### Return type
-
-**VerifyAccount200Response**
-
-### Authorization
-
-[bearerAuth](../README.md#bearerAuth)
-
-### HTTP request headers
-
- - **Content-Type**: application/vnd.api+json
- - **Accept**: application/vnd.api+json
-
-
-### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-|**200** | Verification result. |  -  |
 |**400** | Bad request. The request body or query parameters failed validation; &#x60;errors[].source.pointer&#x60; identifies the offending field. |  -  |
 |**401** | Unauthorized. The bearer token is missing, invalid or expired. |  -  |
 |**404** | Not found. No resource matches the supplied identifier. |  -  |

@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**data** | [**ACHReceivedPayment**](ACHReceivedPayment.md) |  | [default to undefined]
+**data** | [**ListReceivedPayments200ResponseDataInner**](ListReceivedPayments200ResponseDataInner.md) |  | [default to undefined]
 
 ## Example
 

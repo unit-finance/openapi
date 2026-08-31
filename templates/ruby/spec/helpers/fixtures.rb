@@ -179,15 +179,6 @@ module Helpers
       }
     end
 
-    def check_registered_agent_address_request
-      {
-        'data' => {
-          'type' => 'checkRegisteredAgentAddress',
-          'attributes' => { 'address' => US_ADDRESS }
-        }
-      }
-    end
-
     def deposit_account_request_for_customer(customer_id)
       create_deposit_account_request(customer_id)
     end
@@ -214,15 +205,6 @@ module Helpers
           'attributes' => {
             'tags' => base_tags.merge('updated' => 'true')
           }
-        }
-      }
-    end
-
-    def verify_account_request(routing_number, account_number)
-      {
-        'data' => {
-          'type' => 'accountVerify',
-          'attributes' => { 'routingNumber' => routing_number, 'accountNumber' => account_number }
         }
       }
     end
@@ -276,13 +258,18 @@ module Helpers
       }
     end
 
+    # The spec marks `idempotencyKey` optional on both hold requests, but the
+    # sandbox rejects them with a 400 unless it is present. Each call gets a
+    # fresh key so that separately-built holds are never collapsed into one
+    # another.
     def create_account_hold_request(account_id)
       {
         'data' => {
-          'type' => 'createAccountHoldJson',
+          'type' => 'accountHold',
           'attributes' => {
             'amount' => 500,
-            'description' => 'SDK integration test hold'
+            'description' => 'SDK integration test hold',
+            'idempotencyKey' => "#{Helpers::Api::TEST_RUN_ID}-hold-#{SecureRandom.hex(4)}"
           },
           'relationships' => {
             'account' => { 'data' => { 'type' => 'account', 'id' => account_id } }
@@ -291,11 +278,11 @@ module Helpers
       }
     end
 
-    def release_account_hold_request
+    def release_account_hold_request(amount = 500)
       {
         'data' => {
-          'type' => 'releaseAccountHold',
-          'attributes' => {}
+          'type' => 'accountHold',
+          'attributes' => { 'amount' => amount }
         }
       }
     end

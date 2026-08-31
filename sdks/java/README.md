@@ -1,7 +1,7 @@
 # unit-java-sdk
 
 Unit API
-- API version: 0.4.1
+- API version: 0.4.2
   - Generator version: 7.22.0
 
 JSON:API-compliant banking API.
@@ -137,10 +137,8 @@ Class | Method | HTTP request | Description
 *AccountsApi* | [**reopenAccount**](docs/AccountsApi.md#reopenAccount) | **POST** /accounts/{accountId}/reopen | Reopen an account
 *AccountsApi* | [**unfreezeAccount**](docs/AccountsApi.md#unfreezeAccount) | **POST** /accounts/{accountId}/unfreeze | Unfreeze an account
 *AccountsApi* | [**updateAccount**](docs/AccountsApi.md#updateAccount) | **PATCH** /accounts/{accountId} | Update an account
-*AccountsApi* | [**verifyAccount**](docs/AccountsApi.md#verifyAccount) | **POST** /accounts/verify | Verify an account
 *ApplicationsApi* | [**callList**](docs/ApplicationsApi.md#callList) | **GET** /applications | List applications
 *ApplicationsApi* | [**cancelApplication**](docs/ApplicationsApi.md#cancelApplication) | **POST** /applications/{id}/cancel | Cancel an application
-*ApplicationsApi* | [**checkRegisteredAgentAddress**](docs/ApplicationsApi.md#checkRegisteredAgentAddress) | **POST** /applications/check-registered-agent-address | Check a registered agent address
 *ApplicationsApi* | [**createApplication**](docs/ApplicationsApi.md#createApplication) | **POST** /applications | Create an application
 *ApplicationsApi* | [**getById**](docs/ApplicationsApi.md#getById) | **GET** /applications/{id} | Get an application
 *ApplicationsApi* | [**updateApplication**](docs/ApplicationsApi.md#updateApplication) | **PATCH** /applications/{id} | Update an application
@@ -150,6 +148,7 @@ Class | Method | HTTP request | Description
 *PaymentsApi* | [**cancelPayment**](docs/PaymentsApi.md#cancelPayment) | **POST** /payments/{paymentId}/cancel | Cancel a payment
 *PaymentsApi* | [**clearAchDebitPayment**](docs/PaymentsApi.md#clearAchDebitPayment) | **POST** /payments/{paymentId}/clear | Clear an ACH debit payment
 *PaymentsApi* | [**createBatchReleases**](docs/PaymentsApi.md#createBatchReleases) | **POST** /batch-releases | Create batch releases
+*PaymentsApi* | [**createBulkPayment**](docs/PaymentsApi.md#createBulkPayment) | **POST** /payments/bulk | Create a bulk payment
 *PaymentsApi* | [**createPayment**](docs/PaymentsApi.md#createPayment) | **POST** /payments | Create a payment
 *PaymentsApi* | [**createRecurringPayment**](docs/PaymentsApi.md#createRecurringPayment) | **POST** /recurring-payments | Create a recurring payment
 *PaymentsApi* | [**deleteRecurringPayment**](docs/PaymentsApi.md#deleteRecurringPayment) | **DELETE** /recurring-payments/{id} | Delete a recurring payment
@@ -217,13 +216,6 @@ Class | Method | HTTP request | Description
  - [CashDepositBarcodeAttributes](docs/CashDepositBarcodeAttributes.md)
  - [CashDepositBarcodeRelationships](docs/CashDepositBarcodeRelationships.md)
  - [CashFlowType](docs/CashFlowType.md)
- - [CheckRegisteredAgentAddress200Response](docs/CheckRegisteredAgentAddress200Response.md)
- - [CheckRegisteredAgentAddress200ResponseData](docs/CheckRegisteredAgentAddress200ResponseData.md)
- - [CheckRegisteredAgentAddress200ResponseDataAttributes](docs/CheckRegisteredAgentAddress200ResponseDataAttributes.md)
- - [CheckRegisteredAgentAddressData](docs/CheckRegisteredAgentAddressData.md)
- - [CheckRegisteredAgentAddressDataAttributes](docs/CheckRegisteredAgentAddressDataAttributes.md)
- - [CheckRegisteredAgentAddressRequest](docs/CheckRegisteredAgentAddressRequest.md)
- - [CheckRegisteredAgentAddressType](docs/CheckRegisteredAgentAddressType.md)
  - [ClearAchDebitPayment200Response](docs/ClearAchDebitPayment200Response.md)
  - [CloseAccountRequest](docs/CloseAccountRequest.md)
  - [CloseCreditAccountData](docs/CloseCreditAccountData.md)
@@ -267,6 +259,11 @@ Class | Method | HTTP request | Description
  - [CreateBatchReleasesData](docs/CreateBatchReleasesData.md)
  - [CreateBatchReleasesDataAttributes](docs/CreateBatchReleasesDataAttributes.md)
  - [CreateBatchReleasesRequest](docs/CreateBatchReleasesRequest.md)
+ - [CreateBulkPayment201Response](docs/CreateBulkPayment201Response.md)
+ - [CreateBulkPayment201ResponseData](docs/CreateBulkPayment201ResponseData.md)
+ - [CreateBulkPayment201ResponseDataAttributes](docs/CreateBulkPayment201ResponseDataAttributes.md)
+ - [CreateBulkPaymentRequest](docs/CreateBulkPaymentRequest.md)
+ - [CreateBulkPaymentRequestDataInner](docs/CreateBulkPaymentRequestDataInner.md)
  - [CreateBusinessApplicationData](docs/CreateBusinessApplicationData.md)
  - [CreateBusinessApplicationDataAttributes](docs/CreateBusinessApplicationDataAttributes.md)
  - [CreateBusinessApplicationRequest](docs/CreateBusinessApplicationRequest.md)
@@ -360,6 +357,7 @@ Class | Method | HTTP request | Description
  - [ListAccounts200Response](docs/ListAccounts200Response.md)
  - [ListAccounts200ResponseDataInner](docs/ListAccounts200ResponseDataInner.md)
  - [ListReceivedPayments200Response](docs/ListReceivedPayments200Response.md)
+ - [ListReceivedPayments200ResponseDataInner](docs/ListReceivedPayments200ResponseDataInner.md)
  - [ListRecurringPayments200Response](docs/ListRecurringPayments200Response.md)
  - [ListRecurringPayments200ResponseDataInner](docs/ListRecurringPayments200ResponseDataInner.md)
  - [ListStoreLocations200Response](docs/ListStoreLocations200Response.md)
@@ -371,6 +369,10 @@ Class | Method | HTTP request | Description
  - [OfficerRequestType](docs/OfficerRequestType.md)
  - [OfficerType](docs/OfficerType.md)
  - [PhoneType](docs/PhoneType.md)
+ - [RealTimeCounterpartyType](docs/RealTimeCounterpartyType.md)
+ - [RealtimeReceivedPayment](docs/RealtimeReceivedPayment.md)
+ - [RealtimeReceivedPaymentAttributes](docs/RealtimeReceivedPaymentAttributes.md)
+ - [RealtimeReceivedPaymentRelationships](docs/RealtimeReceivedPaymentRelationships.md)
  - [RecurringCreditACHPayment](docs/RecurringCreditACHPayment.md)
  - [RecurringCreditACHPaymentAttributes](docs/RecurringCreditACHPaymentAttributes.md)
  - [RecurringCreditACHPaymentRelationships](docs/RecurringCreditACHPaymentRelationships.md)
@@ -408,6 +410,9 @@ Class | Method | HTTP request | Description
  - [UpdateACHPaymentData](docs/UpdateACHPaymentData.md)
  - [UpdateACHPaymentDataAttributes](docs/UpdateACHPaymentDataAttributes.md)
  - [UpdateACHPaymentRequest](docs/UpdateACHPaymentRequest.md)
+ - [UpdateACHReceivedPaymentData](docs/UpdateACHReceivedPaymentData.md)
+ - [UpdateACHReceivedPaymentDataAttributes](docs/UpdateACHReceivedPaymentDataAttributes.md)
+ - [UpdateACHReceivedPaymentRequest](docs/UpdateACHReceivedPaymentRequest.md)
  - [UpdateAccountRequest](docs/UpdateAccountRequest.md)
  - [UpdateApplicationRequest](docs/UpdateApplicationRequest.md)
  - [UpdateBookPaymentData](docs/UpdateBookPaymentData.md)
@@ -436,9 +441,9 @@ Class | Method | HTTP request | Description
  - [UpdatePayment200Response](docs/UpdatePayment200Response.md)
  - [UpdatePayment200ResponseData](docs/UpdatePayment200ResponseData.md)
  - [UpdatePaymentRequest](docs/UpdatePaymentRequest.md)
+ - [UpdateRealtimeReceivedPaymentData](docs/UpdateRealtimeReceivedPaymentData.md)
+ - [UpdateRealtimeReceivedPaymentRequest](docs/UpdateRealtimeReceivedPaymentRequest.md)
  - [UpdateReceivedPayment200Response](docs/UpdateReceivedPayment200Response.md)
- - [UpdateReceivedPaymentData](docs/UpdateReceivedPaymentData.md)
- - [UpdateReceivedPaymentDataAttributes](docs/UpdateReceivedPaymentDataAttributes.md)
  - [UpdateReceivedPaymentRequest](docs/UpdateReceivedPaymentRequest.md)
  - [UpdateSoleProprietorApplicationData](docs/UpdateSoleProprietorApplicationData.md)
  - [UpdateSoleProprietorApplicationDataAttributes](docs/UpdateSoleProprietorApplicationDataAttributes.md)
@@ -446,12 +451,6 @@ Class | Method | HTTP request | Description
  - [UpdateWalletData](docs/UpdateWalletData.md)
  - [UpdateWalletDataAttributes](docs/UpdateWalletDataAttributes.md)
  - [UpdateWalletRequest](docs/UpdateWalletRequest.md)
- - [VerifyAccount200Response](docs/VerifyAccount200Response.md)
- - [VerifyAccount200ResponseData](docs/VerifyAccount200ResponseData.md)
- - [VerifyAccount200ResponseDataAccount](docs/VerifyAccount200ResponseDataAccount.md)
- - [VerifyAccountData](docs/VerifyAccountData.md)
- - [VerifyAccountDataAttributes](docs/VerifyAccountDataAttributes.md)
- - [VerifyAccountRequest](docs/VerifyAccountRequest.md)
  - [WalletAccount](docs/WalletAccount.md)
  - [WalletAccountAttributes](docs/WalletAccountAttributes.md)
  - [WireCounterpartyType](docs/WireCounterpartyType.md)

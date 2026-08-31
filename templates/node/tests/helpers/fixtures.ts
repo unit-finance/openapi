@@ -1,5 +1,4 @@
 import type {
-	CheckRegisteredAgentAddressRequest,
 	CreateBusinessApplicationRequest,
 	CreateIndividualApplicationRequest,
 	CreateSoleProprietorApplicationRequest,
@@ -186,15 +185,6 @@ export function buildUpdateBusinessBeneficialOwnerRequest(
 	};
 }
 
-export function buildCheckRegisteredAgentAddressRequest(): CheckRegisteredAgentAddressRequest {
-	return {
-		data: {
-			type: "checkRegisteredAgentAddress",
-			attributes: { address: usAddress() },
-		},
-	};
-}
-
 export function buildDepositAccountRequestForCustomer(customerId: string) {
 	return buildCreateDepositAccountRequest(customerId);
 }
@@ -221,15 +211,6 @@ export function buildUpdateDepositAccountRequest() {
 			attributes: {
 				tags: { ...baseTags(), updated: "true" },
 			},
-		},
-	};
-}
-
-export function buildVerifyAccountRequest(routingNumber: string, accountNumber: string) {
-	return {
-		data: {
-			type: "accountVerify" as const,
-			attributes: { routingNumber, accountNumber },
 		},
 	};
 }
@@ -284,13 +265,17 @@ export function buildReverseFeeRequest(accountId: string, transactionId: string)
 	};
 }
 
+// The spec marks `idempotencyKey` optional on both hold requests, but the
+// sandbox rejects them with a 400 unless it is present. Each call gets a fresh
+// key so that separately-built holds are never collapsed into one another.
 export function buildCreateAccountHoldRequest(accountId: string) {
 	return {
 		data: {
-			type: "createAccountHoldJson" as const,
+			type: "accountHold" as const,
 			attributes: {
 				amount: 500,
 				description: "SDK integration test hold",
+				idempotencyKey: `${TEST_RUN_ID}-hold-${Math.random().toString(36).slice(2, 10)}`,
 			},
 			relationships: {
 				account: { data: { type: "account", id: accountId } },

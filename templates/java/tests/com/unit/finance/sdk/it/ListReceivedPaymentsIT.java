@@ -16,7 +16,7 @@ class ListReceivedPaymentsIT {
 
     ListReceivedPayments200Response response =
         api.listReceivedPayments(
-            "20", null, null, null, null, null, null, null, null, null, null, null, null, null);
+            "20", null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 
     assertNotNull(response.getData());
     assertTrue(response.getData().size() <= 20);

@@ -5,7 +5,7 @@ info:
     name: Proprietary
     url: https://www.unit.co/terms-of-service
   title: Unit API
-  version: 0.4.1
+  version: 0.4.2
 servers:
 - url: https://api.s.unit.sh
 security:
@@ -361,56 +361,6 @@ paths:
       security:
       - bearerAuth: []
       summary: Cancel an application
-      tags:
-      - Applications
-      x-content-type: application/vnd.api+json
-      x-accepts:
-      - application/vnd.api+json
-  /applications/check-registered-agent-address:
-    post:
-      description: Checks if an address is a registered agent address.
-      operationId: checkRegisteredAgentAddress
-      requestBody:
-        content:
-          application/vnd.api+json:
-            schema:
-              $ref: "#/components/schemas/checkRegisteredAgentAddress_request"
-        required: true
-      responses:
-        "200":
-          content:
-            application/vnd.api+json:
-              schema:
-                $ref: "#/components/schemas/checkRegisteredAgentAddress_200_response"
-          description: Whether the supplied address is a registered agent address.
-        "400":
-          content:
-            application/vnd.api+json:
-              schema:
-                $ref: "#/components/schemas/ErrorDocument"
-          description: "Bad request. The request body or query parameters failed validation;\
-            \ `errors[].source.pointer` identifies the offending field."
-        "401":
-          content:
-            application/vnd.api+json:
-              schema:
-                $ref: "#/components/schemas/ErrorDocument"
-          description: "Unauthorized. The bearer token is missing, invalid or expired."
-        "404":
-          content:
-            application/vnd.api+json:
-              schema:
-                $ref: "#/components/schemas/ErrorDocument"
-          description: Not found. No resource matches the supplied identifier.
-        default:
-          content:
-            application/vnd.api+json:
-              schema:
-                $ref: "#/components/schemas/ErrorDocument"
-          description: Error response
-      security:
-      - bearerAuth: []
-      summary: Check a registered agent address
       tags:
       - Applications
       x-content-type: application/vnd.api+json
@@ -888,60 +838,6 @@ paths:
       x-content-type: application/vnd.api+json
       x-accepts:
       - application/vnd.api+json
-  /accounts/verify:
-    post:
-      description: "Verify whether a routing number and account number pair belongs\
-        \ to an account in your organization. A common use case is checking whether\
-        \ a counterparty is an internal Unit account before originating an ACH payment\
-        \ — if a match is found, you can originate a book payment instead."
-      operationId: verifyAccount
-      requestBody:
-        content:
-          application/vnd.api+json:
-            schema:
-              $ref: "#/components/schemas/verifyAccount_request"
-        required: true
-      responses:
-        "200":
-          content:
-            application/vnd.api+json:
-              schema:
-                $ref: "#/components/schemas/verifyAccount_200_response"
-          description: Verification result.
-        "400":
-          content:
-            application/vnd.api+json:
-              schema:
-                $ref: "#/components/schemas/ErrorDocument"
-          description: "Bad request. The request body or query parameters failed validation;\
-            \ `errors[].source.pointer` identifies the offending field."
-        "401":
-          content:
-            application/vnd.api+json:
-              schema:
-                $ref: "#/components/schemas/ErrorDocument"
-          description: "Unauthorized. The bearer token is missing, invalid or expired."
-        "404":
-          content:
-            application/vnd.api+json:
-              schema:
-                $ref: "#/components/schemas/ErrorDocument"
-          description: Not found. No resource matches the supplied identifier.
-        default:
-          content:
-            application/vnd.api+json:
-              schema:
-                $ref: "#/components/schemas/ErrorDocument"
-          description: Error response
-      security:
-      - bearerAuth:
-        - accounts-read
-      summary: Verify an account
-      tags:
-      - Accounts
-      x-content-type: application/vnd.api+json
-      x-accepts:
-      - application/vnd.api+json
   /accounts/{accountId}/close:
     post:
       description: "Closes an account. Closing an account is irreversible and can\
@@ -1079,6 +975,12 @@ paths:
         schema:
           type: string
         style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+        required: false
       responses:
         "200":
           content:
@@ -1117,6 +1019,7 @@ paths:
       summary: Unfreeze an account
       tags:
       - Accounts
+      x-content-type: application/vnd.api+json
       x-accepts:
       - application/vnd.api+json
   /accounts/{accountId}/reopen:
@@ -1131,6 +1034,12 @@ paths:
         schema:
           type: string
         style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+        required: false
       responses:
         "200":
           content:
@@ -1169,6 +1078,7 @@ paths:
       summary: Reopen an account
       tags:
       - Accounts
+      x-content-type: application/vnd.api+json
       x-accepts:
       - application/vnd.api+json
   /accounts/{accountId}/limits:
@@ -1774,6 +1684,59 @@ paths:
       x-content-type: application/vnd.api+json
       x-accepts:
       - application/vnd.api+json
+  /payments/bulk:
+    post:
+      description: "Creates multiple payments in a single asynchronous request. Each\
+        \ element of data is a payment creation payload — ACH, Book, and Wire types\
+        \ may be mixed in the same bulk."
+      operationId: createBulkPayment
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/createBulkPayment_request"
+        required: true
+      responses:
+        "201":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/createBulkPayment_201_response"
+          description: The accepted bulk payment request.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - payments-write
+      summary: Create a bulk payment
+      tags:
+      - Payments
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
   /payments/{paymentId}:
     patch:
       description: "Update a payment. The request body is one of UpdateACHPaymentRequest\
@@ -1848,6 +1811,12 @@ paths:
         schema:
           type: string
         style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+        required: false
       responses:
         "200":
           content:
@@ -1886,6 +1855,7 @@ paths:
       summary: Cancel a payment
       tags:
       - Payments
+      x-content-type: application/vnd.api+json
       x-accepts:
       - application/vnd.api+json
   /payments/{paymentId}/clear:
@@ -1902,6 +1872,12 @@ paths:
         schema:
           type: string
         style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+        required: false
       responses:
         "200":
           content:
@@ -1940,6 +1916,7 @@ paths:
       summary: Clear an ACH debit payment
       tags:
       - Payments
+      x-content-type: application/vnd.api+json
       x-accepts:
       - application/vnd.api+json
   /payments/ach/expected-completion-date:
@@ -2099,7 +2076,7 @@ paths:
           type: string
         style: form
       - description: "Optional. Filter received payments by type. Valid values: Ach,\
-          \ Wire. Defaults to both Ach and Wire if not specified."
+          \ Wire, Realtime. Defaults to Ach, Wire, and Realtime if not specified."
         explode: true
         in: query
         name: "filter[type]"
@@ -2122,7 +2099,17 @@ paths:
         name: sort
         required: false
         schema:
-          default: -createdAt
+          default: createdAt
+          type: string
+        style: form
+      - description: "Optional. A comma-separated list of related resources to include\
+          \ in the response. Related resources include: customer, account. See Getting\
+          \ Related Resources."
+        explode: true
+        in: query
+        name: include
+        required: false
+        schema:
           type: string
         style: form
       responses:
@@ -2228,7 +2215,9 @@ paths:
       x-accepts:
       - application/vnd.api+json
     patch:
-      description: Update a Received Payment.
+      description: "Update a Received Payment. The request body is one of UpdateACHReceivedPaymentRequest\
+        \ or UpdateRealtimeReceivedPaymentRequest, discriminated by data.type (achReceivedPayment,\
+        \ realtimeReceivedPayment)."
       operationId: updateReceivedPayment
       parameters:
       - explode: false
@@ -2746,6 +2735,12 @@ paths:
         schema:
           type: string
         style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+        required: false
       responses:
         "200":
           content:
@@ -2784,6 +2779,7 @@ paths:
       summary: Delete a recurring payment
       tags:
       - Payments
+      x-content-type: application/vnd.api+json
       x-accepts:
       - application/vnd.api+json
     get:
@@ -2851,6 +2847,12 @@ paths:
         schema:
           type: string
         style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+        required: false
       responses:
         "200":
           content:
@@ -2889,6 +2891,7 @@ paths:
       summary: Disable a recurring payment
       tags:
       - Payments
+      x-content-type: application/vnd.api+json
       x-accepts:
       - application/vnd.api+json
   /recurring-payments/{id}/enable:
@@ -2906,6 +2909,12 @@ paths:
         schema:
           type: string
         style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+        required: false
       responses:
         "200":
           content:
@@ -2944,6 +2953,7 @@ paths:
       summary: Enable a recurring payment
       tags:
       - Payments
+      x-content-type: application/vnd.api+json
       x-accepts:
       - application/vnd.api+json
   /wire-drawdowns:
@@ -3461,6 +3471,228 @@ components:
       - phone
       - status
       - title
+      type: object
+    OfficerRequestType:
+      example:
+        fullName:
+          first: Richard
+          last: Hendricks
+        dateOfBirth: 2001-08-10
+        title: CEO
+        ssn: "721074426"
+        email: richard@piedpiper.com
+        phone:
+          countryCode: "1"
+          number: "5555555555"
+        address:
+          street: 5230 Newell Rd
+          city: Palo Alto
+          state: CA
+          postalCode: "94303"
+          country: US
+      properties:
+        fullName:
+          allOf:
+          - $ref: "#/components/schemas/FullNameType"
+          description: Full name of the officer.
+        title:
+          description: "One of CEO, COO, CFO, President, BenefitsAdministrationOfficer,\
+            \ CIO, VP, AVP, Treasurer, Secretary, Controller, Manager, Partner or\
+            \ Member."
+          type: string
+        ssn:
+          description: SSN of the officer (numbers only). One of ssn or passport is
+            required.
+          type: string
+        passport:
+          description: Passport of the officer. One of ssn or passport is required.
+          type: string
+        nationality:
+          description: Required when passport is populated. Two letters representing
+            the officer's nationality.
+          maxLength: 2
+          minLength: 2
+          type: string
+        dateOfBirth:
+          description: Date only (e.g. "2001-08-15").
+          type: string
+        address:
+          allOf:
+          - $ref: "#/components/schemas/AddressType"
+          description: The officer's address.
+        phone:
+          allOf:
+          - $ref: "#/components/schemas/PhoneType"
+          description: The officer's phone number.
+        email:
+          description: The officer's email address.
+          type: string
+        occupation:
+          description: Optional. Occupation of the officer.
+          type: string
+        annualIncome:
+          description: Optional. Annual income of the officer.
+          type: string
+        sourceOfIncome:
+          description: Optional. Source of income of the officer.
+          type: string
+      required:
+      - address
+      - dateOfBirth
+      - email
+      - fullName
+      - phone
+      - title
+      type: object
+    BeneficialOwnerType:
+      example:
+        status: Approved
+        fullName:
+          first: Erlich
+          last: Bachman
+        ssn: "721074426"
+        dateOfBirth: 1990-04-05
+        email: erlich@piedpiper.com
+        phone:
+          countryCode: "1"
+          number: "5555555555"
+        address:
+          street: 20 Ingram St
+          city: Forest Hills
+          state: NY
+          postalCode: "11375"
+          country: US
+        percentage: 60
+      properties:
+        status:
+          description: "One of Approved, Denied or PendingReview."
+          type: string
+        fullName:
+          allOf:
+          - $ref: "#/components/schemas/FullNameType"
+          description: Full name of the beneficial owner.
+        ssn:
+          description: SSN of the beneficial owner (numbers only). One of ssn or passport
+            is required.
+          type: string
+        passport:
+          description: Passport of the beneficial owner. One of ssn or passport is
+            required.
+          type: string
+        nationality:
+          description: Always when Passport is populated and optional when SSN is
+            populated. Two letters representing the beneficial owner's nationality.
+          maxLength: 2
+          minLength: 2
+          type: string
+        dateOfBirth:
+          description: Date only (e.g. "2001-08-15").
+          format: date
+          type: string
+        address:
+          allOf:
+          - $ref: "#/components/schemas/AddressType"
+          description: The beneficial owner's address.
+        phone:
+          allOf:
+          - $ref: "#/components/schemas/PhoneType"
+          description: The beneficial owner's phone number.
+        email:
+          description: The beneficial owner's email address.
+          type: string
+        percentage:
+          description: The percentage of ownership of the beneficial owner.
+          type: integer
+        occupation:
+          allOf:
+          - $ref: "#/components/schemas/OccupationType"
+          description: Optional. Occupation of the beneficial owner.
+        annualIncome:
+          allOf:
+          - $ref: "#/components/schemas/AnnualIncomeType"
+          description: Optional. Annual income of the beneficial owner.
+        sourceOfIncome:
+          allOf:
+          - $ref: "#/components/schemas/SourceOfIncomeType"
+          description: Optional. Source of income of the beneficial owner.
+      required:
+      - address
+      - dateOfBirth
+      - email
+      - fullName
+      - phone
+      - status
+      type: object
+    BeneficialOwnerRequestType:
+      example:
+        fullName:
+          first: Richard
+          last: Hendricks
+        dateOfBirth: 2001-08-10
+        ssn: "123456789"
+        email: richard@piedpiper.com
+        percentage: 75
+        phone:
+          countryCode: "1"
+          number: "5555555555"
+        address:
+          street: 5230 Newell Rd
+          city: Palo Alto
+          state: CA
+          postalCode: "94303"
+          country: US
+      properties:
+        fullName:
+          allOf:
+          - $ref: "#/components/schemas/FullNameType"
+          description: Full name of the beneficial owner.
+        ssn:
+          description: SSN of the beneficial owner (numbers only). One of ssn or passport
+            is required.
+          type: string
+        passport:
+          description: Passport of the beneficial owner. One of ssn or passport is
+            required.
+          type: string
+        nationality:
+          description: Required when passport is populated. Two letters representing
+            the beneficial owner's nationality.
+          maxLength: 2
+          minLength: 2
+          type: string
+        dateOfBirth:
+          description: Date only (e.g. "2001-08-15").
+          type: string
+        address:
+          allOf:
+          - $ref: "#/components/schemas/AddressType"
+          description: The beneficial owner's address.
+        phone:
+          allOf:
+          - $ref: "#/components/schemas/PhoneType"
+          description: The beneficial owner's phone number.
+        email:
+          description: The beneficial owner's email address.
+          type: string
+        percentage:
+          description: The percentage of ownership of the beneficial owner (between
+            25 and 100).
+          type: integer
+        occupation:
+          description: Optional. Occupation of the beneficial owner.
+          type: string
+        annualIncome:
+          description: Optional. Annual income of the beneficial owner.
+          type: string
+        sourceOfIncome:
+          description: Optional. Source of income of the beneficial owner.
+          type: string
+      required:
+      - address
+      - dateOfBirth
+      - email
+      - fullName
+      - phone
       type: object
     FullNameType:
       example:
@@ -3988,30 +4220,6 @@ components:
       required:
       - attributes
       - type
-      type: object
-    CheckRegisteredAgentAddressData:
-      properties:
-        type:
-          enum:
-          - checkRegisteredAgentAddress
-          type: string
-        attributes:
-          $ref: "#/components/schemas/CheckRegisteredAgentAddressData_attributes"
-      required:
-      - attributes
-      - type
-      type: object
-    CheckRegisteredAgentAddressType:
-      description: Represents whether the provided address is a Registered Agent address.
-      example:
-        isRegisteredAgentAddress: true
-      properties:
-        isRegisteredAgentAddress:
-          description: Returns whether the provided address is a Registered Agent
-            address.
-          type: boolean
-      required:
-      - isRegisteredAgentAddress
       type: object
     UpdateBusinessBeneficialOwnerData:
       properties:
@@ -4554,7 +4762,7 @@ components:
       properties:
         type:
           enum:
-          - createAccountHoldJson
+          - accountHold
           type: string
         attributes:
           $ref: "#/components/schemas/CreateAccountHoldData_attributes"
@@ -4573,18 +4781,6 @@ components:
           type: string
         attributes:
           $ref: "#/components/schemas/ReleaseAccountHoldData_attributes"
-      required:
-      - attributes
-      - type
-      type: object
-    VerifyAccountData:
-      properties:
-        type:
-          enum:
-          - accountVerify
-          type: string
-        attributes:
-          $ref: "#/components/schemas/VerifyAccountData_attributes"
       required:
       - attributes
       - type
@@ -4942,6 +5138,70 @@ components:
       - attributes
       - id
       - type
+      type: object
+    RealtimeReceivedPayment:
+      description: '`RealtimeReceivedPayment` is a JSON:API resource.'
+      example:
+        type: realtimeReceivedPayment
+        id: "30176752"
+        attributes:
+          createdAt: 2026-07-10T22:43:34.385Z
+          status: Completed
+          amount: 6911520
+          description: Invoice 4821
+          counterparty:
+            name: WFG NATL TITLE CO OF
+            routingNumber: "121000248"
+            accountNumber: "9876543210"
+          tags: {}
+        relationships:
+          account:
+            data:
+              type: account
+              id: "2150353"
+          customer:
+            data:
+              type: customer
+              id: "1802611"
+          receivePaymentTransaction:
+            data:
+              type: transaction
+              id: "9547"
+      properties:
+        type:
+          enum:
+          - realtimeReceivedPayment
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/RealtimeReceivedPayment_attributes"
+        relationships:
+          $ref: "#/components/schemas/RealtimeReceivedPayment_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    RealTimeCounterpartyType:
+      example:
+        routingNumber: "812345678"
+        accountNumber: "1000000001"
+        name: April Oneil
+      properties:
+        routingNumber:
+          description: Valid 9-digit ABA routing transit number.
+          type: string
+        accountNumber:
+          description: Bank account number.
+          type: string
+        name:
+          description: Name of the person or company that owns the bank account.
+          type: string
+      required:
+      - accountNumber
+      - name
+      - routingNumber
       type: object
     BatchRelease:
       description: '`BatchRelease` is a JSON:API resource.'
@@ -5406,17 +5666,57 @@ components:
       - relationships
       - type
       type: object
-    UpdateReceivedPaymentData:
+    UpdateACHReceivedPaymentData:
       properties:
         type:
           enum:
           - achReceivedPayment
           type: string
         attributes:
-          $ref: "#/components/schemas/UpdateReceivedPaymentData_attributes"
+          $ref: "#/components/schemas/UpdateACHReceivedPaymentData_attributes"
       required:
       - attributes
       - type
+      type: object
+    UpdateACHReceivedPaymentRequest:
+      example:
+        data:
+          type: achReceivedPayment
+          attributes:
+            tags:
+              by: Richard Hendricks
+              id: 23033b64-38f8-4dbc-91a1-313ff0156d02
+      properties:
+        data:
+          $ref: "#/components/schemas/UpdateACHReceivedPaymentData"
+      required:
+      - data
+      type: object
+    UpdateRealtimeReceivedPaymentData:
+      properties:
+        type:
+          enum:
+          - realtimeReceivedPayment
+          type: string
+        attributes:
+          $ref: "#/components/schemas/UpdateACHReceivedPaymentData_attributes"
+      required:
+      - attributes
+      - type
+      type: object
+    UpdateRealtimeReceivedPaymentRequest:
+      example:
+        data:
+          type: realtimeReceivedPayment
+          attributes:
+            tags:
+              by: Richard Hendricks
+              id: 23033b64-38f8-4dbc-91a1-313ff0156d02
+      properties:
+        data:
+          $ref: "#/components/schemas/UpdateRealtimeReceivedPaymentData"
+      required:
+      - data
       type: object
     CreateBatchReleasesData:
       properties:
@@ -5523,228 +5823,6 @@ components:
       required:
       - data
       type: object
-    BeneficialOwnerType:
-      example:
-        status: Approved
-        fullName:
-          first: Erlich
-          last: Bachman
-        ssn: "721074426"
-        dateOfBirth: 1990-04-05
-        email: erlich@piedpiper.com
-        phone:
-          countryCode: "1"
-          number: "5555555555"
-        address:
-          street: 20 Ingram St
-          city: Forest Hills
-          state: NY
-          postalCode: "11375"
-          country: US
-        percentage: 60
-      properties:
-        status:
-          description: "One of Approved, Denied or PendingReview."
-          type: string
-        fullName:
-          allOf:
-          - $ref: "#/components/schemas/FullNameType"
-          description: Full name of the beneficial owner.
-        ssn:
-          description: SSN of the beneficial owner (numbers only). One of ssn or passport
-            is required.
-          type: string
-        passport:
-          description: Passport of the beneficial owner. One of ssn or passport is
-            required.
-          type: string
-        nationality:
-          description: Always when Passport is populated and optional when SSN is
-            populated. Two letters representing the beneficial owner's nationality.
-          maxLength: 2
-          minLength: 2
-          type: string
-        dateOfBirth:
-          description: Date only (e.g. "2001-08-15").
-          format: date
-          type: string
-        address:
-          allOf:
-          - $ref: "#/components/schemas/AddressType"
-          description: The beneficial owner's address.
-        phone:
-          allOf:
-          - $ref: "#/components/schemas/PhoneType"
-          description: The beneficial owner's phone number.
-        email:
-          description: The beneficial owner's email address.
-          type: string
-        percentage:
-          description: The percentage of ownership of the beneficial owner.
-          type: integer
-        occupation:
-          allOf:
-          - $ref: "#/components/schemas/OccupationType"
-          description: Optional. Occupation of the beneficial owner.
-        annualIncome:
-          allOf:
-          - $ref: "#/components/schemas/AnnualIncomeType"
-          description: Optional. Annual income of the beneficial owner.
-        sourceOfIncome:
-          allOf:
-          - $ref: "#/components/schemas/SourceOfIncomeType"
-          description: Optional. Source of income of the beneficial owner.
-      required:
-      - address
-      - dateOfBirth
-      - email
-      - fullName
-      - phone
-      - status
-      type: object
-    OfficerRequestType:
-      example:
-        fullName:
-          first: Richard
-          last: Hendricks
-        dateOfBirth: 2001-08-10
-        title: CEO
-        ssn: "721074426"
-        email: richard@piedpiper.com
-        phone:
-          countryCode: "1"
-          number: "5555555555"
-        address:
-          street: 5230 Newell Rd
-          city: Palo Alto
-          state: CA
-          postalCode: "94303"
-          country: US
-      properties:
-        fullName:
-          allOf:
-          - $ref: "#/components/schemas/FullNameType"
-          description: Full name of the officer.
-        title:
-          description: "One of CEO, COO, CFO, President, BenefitsAdministrationOfficer,\
-            \ CIO, VP, AVP, Treasurer, Secretary, Controller, Manager, Partner or\
-            \ Member."
-          type: string
-        ssn:
-          description: SSN of the officer (numbers only). One of ssn or passport is
-            required.
-          type: string
-        passport:
-          description: Passport of the officer. One of ssn or passport is required.
-          type: string
-        nationality:
-          description: Required when passport is populated. Two letters representing
-            the officer's nationality.
-          maxLength: 2
-          minLength: 2
-          type: string
-        dateOfBirth:
-          description: Date only (e.g. "2001-08-15").
-          type: string
-        address:
-          allOf:
-          - $ref: "#/components/schemas/AddressType"
-          description: The officer's address.
-        phone:
-          allOf:
-          - $ref: "#/components/schemas/PhoneType"
-          description: The officer's phone number.
-        email:
-          description: The officer's email address.
-          type: string
-        occupation:
-          description: Optional. Occupation of the officer.
-          type: string
-        annualIncome:
-          description: Optional. Annual income of the officer.
-          type: string
-        sourceOfIncome:
-          description: Optional. Source of income of the officer.
-          type: string
-      required:
-      - address
-      - dateOfBirth
-      - email
-      - fullName
-      - phone
-      - title
-      type: object
-    BeneficialOwnerRequestType:
-      example:
-        fullName:
-          first: Richard
-          last: Hendricks
-        dateOfBirth: 2001-08-10
-        ssn: "123456789"
-        email: richard@piedpiper.com
-        percentage: 75
-        phone:
-          countryCode: "1"
-          number: "5555555555"
-        address:
-          street: 5230 Newell Rd
-          city: Palo Alto
-          state: CA
-          postalCode: "94303"
-          country: US
-      properties:
-        fullName:
-          allOf:
-          - $ref: "#/components/schemas/FullNameType"
-          description: Full name of the beneficial owner.
-        ssn:
-          description: SSN of the beneficial owner (numbers only). One of ssn or passport
-            is required.
-          type: string
-        passport:
-          description: Passport of the beneficial owner. One of ssn or passport is
-            required.
-          type: string
-        nationality:
-          description: Required when passport is populated. Two letters representing
-            the beneficial owner's nationality.
-          maxLength: 2
-          minLength: 2
-          type: string
-        dateOfBirth:
-          description: Date only (e.g. "2001-08-15").
-          type: string
-        address:
-          allOf:
-          - $ref: "#/components/schemas/AddressType"
-          description: The beneficial owner's address.
-        phone:
-          allOf:
-          - $ref: "#/components/schemas/PhoneType"
-          description: The beneficial owner's phone number.
-        email:
-          description: The beneficial owner's email address.
-          type: string
-        percentage:
-          description: The percentage of ownership of the beneficial owner (between
-            25 and 100).
-          type: integer
-        occupation:
-          description: Optional. Occupation of the beneficial owner.
-          type: string
-        annualIncome:
-          description: Optional. Annual income of the beneficial owner.
-          type: string
-        sourceOfIncome:
-          description: Optional. Source of income of the beneficial owner.
-          type: string
-      required:
-      - address
-      - dateOfBirth
-      - email
-      - fullName
-      - phone
-      type: object
     list_200_response_data_inner:
       discriminator:
         mapping:
@@ -5811,41 +5889,6 @@ components:
           items:
             $ref: "#/components/schemas/ApplicationDocument"
           type: array
-      required:
-      - data
-      type: object
-    checkRegisteredAgentAddress_request:
-      properties:
-        data:
-          $ref: "#/components/schemas/CheckRegisteredAgentAddressData"
-      required:
-      - data
-      type: object
-    checkRegisteredAgentAddress_200_response_data_attributes:
-      properties:
-        isRegisteredAgentAddress:
-          description: Returns whether the provided address is a Registered Agent
-            address.
-          type: boolean
-      required:
-      - isRegisteredAgentAddress
-      type: object
-    checkRegisteredAgentAddress_200_response_data:
-      properties:
-        type:
-          enum:
-          - checkRegisteredAgentAddress
-          type: string
-        attributes:
-          $ref: "#/components/schemas/checkRegisteredAgentAddress_200_response_data_attributes"
-      required:
-      - attributes
-      - type
-      type: object
-    checkRegisteredAgentAddress_200_response:
-      properties:
-        data:
-          $ref: "#/components/schemas/checkRegisteredAgentAddress_200_response_data"
       required:
       - data
       type: object
@@ -5934,43 +5977,6 @@ components:
       - $ref: "#/components/schemas/UpdateDepositAccountRequest"
       - $ref: "#/components/schemas/UpdateCreditAccountRequest"
       - $ref: "#/components/schemas/UpdateWalletRequest"
-    verifyAccount_request:
-      properties:
-        data:
-          $ref: "#/components/schemas/VerifyAccountData"
-      required:
-      - data
-      type: object
-    verifyAccount_200_response_data_account:
-      description: "Present when exists is true. Same shape as GET /accounts/:id.\
-        \ May be any account type (e.g. depositAccount, walletAccount)."
-      discriminator:
-        mapping:
-          depositAccount: "#/components/schemas/DepositAccount"
-          creditAccount: "#/components/schemas/CreditAccount"
-          walletAccount: "#/components/schemas/WalletAccount"
-        propertyName: type
-      oneOf:
-      - $ref: "#/components/schemas/DepositAccount"
-      - $ref: "#/components/schemas/CreditAccount"
-      - $ref: "#/components/schemas/WalletAccount"
-    verifyAccount_200_response_data:
-      properties:
-        exists:
-          description: true when a matching account is found; false otherwise.
-          type: boolean
-        account:
-          $ref: "#/components/schemas/verifyAccount_200_response_data_account"
-      required:
-      - exists
-      type: object
-    verifyAccount_200_response:
-      properties:
-        data:
-          $ref: "#/components/schemas/verifyAccount_200_response_data"
-      required:
-      - data
-      type: object
     closeAccount_request:
       oneOf:
       - $ref: "#/components/schemas/CloseDepositAccountRequest"
@@ -6130,6 +6136,53 @@ components:
       required:
       - data
       type: object
+    createBulkPayment_request_data_inner:
+      oneOf:
+      - $ref: "#/components/schemas/CreateACHPaymentData"
+      - $ref: "#/components/schemas/CreateACHPaymentExistingCounterpartyData"
+      - $ref: "#/components/schemas/CreateACHPaymentPlaidTokenData"
+      - $ref: "#/components/schemas/CreateABookPaymentData"
+      - $ref: "#/components/schemas/CreateAWirePaymentData"
+    createBulkPayment_request:
+      properties:
+        data:
+          description: "Array of payment creation payloads. ACH, Book, and Wire types\
+            \ may be mixed in the same bulk."
+          items:
+            $ref: "#/components/schemas/createBulkPayment_request_data_inner"
+          type: array
+      required:
+      - data
+      type: object
+    createBulkPayment_201_response_data_attributes:
+      properties:
+        bulkId:
+          description: "Identifier of the bulk request, used to track the payments\
+            \ created by it."
+          type: string
+      type: object
+    createBulkPayment_201_response_data:
+      properties:
+        type:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/createBulkPayment_201_response_data_attributes"
+      required:
+      - attributes
+      - type
+      type: object
+    createBulkPayment_201_response:
+      example:
+        data:
+          type: bulkPayments
+          attributes:
+            bulkId: "18"
+      properties:
+        data:
+          $ref: "#/components/schemas/createBulkPayment_201_response_data"
+      required:
+      - data
+      type: object
     updatePayment_request:
       oneOf:
       - $ref: "#/components/schemas/UpdateACHPaymentRequest"
@@ -6195,11 +6248,20 @@ components:
       required:
       - data
       type: object
+    listReceivedPayments_200_response_data_inner:
+      discriminator:
+        mapping:
+          achReceivedPayment: "#/components/schemas/ACHReceivedPayment"
+          realtimeReceivedPayment: "#/components/schemas/RealtimeReceivedPayment"
+        propertyName: type
+      oneOf:
+      - $ref: "#/components/schemas/ACHReceivedPayment"
+      - $ref: "#/components/schemas/RealtimeReceivedPayment"
     listReceivedPayments_200_response:
       properties:
         data:
           items:
-            $ref: "#/components/schemas/ACHReceivedPayment"
+            $ref: "#/components/schemas/listReceivedPayments_200_response_data_inner"
           type: array
         included:
           description: Array of resources requested by the include query parameter.
@@ -6214,7 +6276,7 @@ components:
     getReceivedPayment_200_response:
       properties:
         data:
-          $ref: "#/components/schemas/ACHReceivedPayment"
+          $ref: "#/components/schemas/listReceivedPayments_200_response_data_inner"
         included:
           description: Array of resources requested by the include query parameter.
           items:
@@ -6224,16 +6286,13 @@ components:
       - data
       type: object
     updateReceivedPayment_request:
-      properties:
-        data:
-          $ref: "#/components/schemas/UpdateReceivedPaymentData"
-      required:
-      - data
-      type: object
+      oneOf:
+      - $ref: "#/components/schemas/UpdateACHReceivedPaymentRequest"
+      - $ref: "#/components/schemas/UpdateRealtimeReceivedPaymentRequest"
     updateReceivedPayment_200_response:
       properties:
         data:
-          $ref: "#/components/schemas/ACHReceivedPayment"
+          $ref: "#/components/schemas/listReceivedPayments_200_response_data_inner"
       required:
       - data
       type: object
@@ -7285,15 +7344,6 @@ components:
       required:
       - reason
       type: object
-    CheckRegisteredAgentAddressData_attributes:
-      properties:
-        address:
-          allOf:
-          - $ref: "#/components/schemas/AddressType"
-          description: The address to check. Must be a US address
-      required:
-      - address
-      type: object
     UpdateBusinessBeneficialOwnerData_attributes:
       properties:
         occupation:
@@ -7934,20 +7984,6 @@ components:
       required:
       - amount
       type: object
-    VerifyAccountData_attributes:
-      properties:
-        routingNumber:
-          description: Required. Routing number (exactly 9 digits).
-          example: "051000017"
-          type: string
-        accountNumber:
-          description: Required. Account number (1-17 digits).
-          example: "10000123"
-          type: string
-      required:
-      - accountNumber
-      - routingNumber
-      type: object
     ACHPayment_attributes:
       properties:
         createdAt:
@@ -8253,6 +8289,56 @@ components:
         repayPaymentAdvanceTransaction:
           $ref: "#/components/schemas/Relationship"
         stopPayment:
+          $ref: "#/components/schemas/Relationship"
+      type: object
+    RealtimeReceivedPayment_attributes:
+      properties:
+        createdAt:
+          description: The date the received payment was created. Common to all receive
+            payment types.
+          format: date-time
+          type: string
+        status:
+          description: "The status of the Received Payment. One of Pending, Completed,\
+            \ Returned, Rejected, or TimedOut. See Received Payment Statuses."
+          type: string
+        amount:
+          description: The amount (cents) of the RTP received payment.
+          type: integer
+        description:
+          description: Payment description / remittance information.
+          type: string
+        counterparty:
+          allOf:
+          - $ref: "#/components/schemas/RealTimeCounterpartyType"
+          description: "The party on the other end of the transaction. For RTP received\
+            \ payments, this is always the originator (in ISO20022 terminology this\
+            \ is referred to as the Debtor)."
+        returnReason:
+          description: Present when status is Returned. See RTP return reasons.
+          type: string
+        rejectReason:
+          description: Present when status is Rejected. See RTP reject reasons.
+          type: string
+        tags:
+          additionalProperties: true
+          description: See Tags.
+          type: object
+      required:
+      - amount
+      - counterparty
+      - createdAt
+      - description
+      - status
+      - tags
+      type: object
+    RealtimeReceivedPayment_relationships:
+      properties:
+        account:
+          $ref: "#/components/schemas/Relationship"
+        customer:
+          $ref: "#/components/schemas/Relationship"
+        receivePaymentTransaction:
           $ref: "#/components/schemas/Relationship"
       type: object
     BatchRelease_attributes:
@@ -8810,7 +8896,7 @@ components:
       - amount
       - direction
       type: object
-    UpdateReceivedPaymentData_attributes:
+    UpdateACHReceivedPaymentData_attributes:
       properties:
         tags:
           additionalProperties: true

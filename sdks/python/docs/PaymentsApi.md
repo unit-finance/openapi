@@ -7,6 +7,7 @@ Method | HTTP request | Description
 [**cancel_payment**](PaymentsApi.md#cancel_payment) | **POST** /payments/{paymentId}/cancel | Cancel a payment
 [**clear_ach_debit_payment**](PaymentsApi.md#clear_ach_debit_payment) | **POST** /payments/{paymentId}/clear | Clear an ACH debit payment
 [**create_batch_releases**](PaymentsApi.md#create_batch_releases) | **POST** /batch-releases | Create batch releases
+[**create_bulk_payment**](PaymentsApi.md#create_bulk_payment) | **POST** /payments/bulk | Create a bulk payment
 [**create_payment**](PaymentsApi.md#create_payment) | **POST** /payments | Create a payment
 [**create_recurring_payment**](PaymentsApi.md#create_recurring_payment) | **POST** /recurring-payments | Create a recurring payment
 [**delete_recurring_payment**](PaymentsApi.md#delete_recurring_payment) | **DELETE** /recurring-payments/{id} | Delete a recurring payment
@@ -28,7 +29,7 @@ Method | HTTP request | Description
 
 
 # **cancel_payment**
-> CancelPayment200Response cancel_payment(payment_id)
+> CancelPayment200Response cancel_payment(payment_id, body=body)
 
 Cancel a payment
 
@@ -65,10 +66,11 @@ with unit_finance_sdk.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = unit_finance_sdk.PaymentsApi(api_client)
     payment_id = 'payment_id_example' # str | 
+    body = None # object |  (optional)
 
     try:
         # Cancel a payment
-        api_response = api_instance.cancel_payment(payment_id)
+        api_response = api_instance.cancel_payment(payment_id, body=body)
         print("The response of PaymentsApi->cancel_payment:\n")
         pprint(api_response)
     except Exception as e:
@@ -83,6 +85,7 @@ with unit_finance_sdk.ApiClient(configuration) as api_client:
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **payment_id** | **str**|  | 
+ **body** | **object**|  | [optional] 
 
 ### Return type
 
@@ -94,7 +97,7 @@ Name | Type | Description  | Notes
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/vnd.api+json
  - **Accept**: application/vnd.api+json
 
 ### HTTP response details
@@ -110,7 +113,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **clear_ach_debit_payment**
-> ClearAchDebitPayment200Response clear_ach_debit_payment(payment_id)
+> ClearAchDebitPayment200Response clear_ach_debit_payment(payment_id, body=body)
 
 Clear an ACH debit payment
 
@@ -147,10 +150,11 @@ with unit_finance_sdk.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = unit_finance_sdk.PaymentsApi(api_client)
     payment_id = 'payment_id_example' # str | 
+    body = None # object |  (optional)
 
     try:
         # Clear an ACH debit payment
-        api_response = api_instance.clear_ach_debit_payment(payment_id)
+        api_response = api_instance.clear_ach_debit_payment(payment_id, body=body)
         print("The response of PaymentsApi->clear_ach_debit_payment:\n")
         pprint(api_response)
     except Exception as e:
@@ -165,6 +169,7 @@ with unit_finance_sdk.ApiClient(configuration) as api_client:
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **payment_id** | **str**|  | 
+ **body** | **object**|  | [optional] 
 
 ### Return type
 
@@ -176,7 +181,7 @@ Name | Type | Description  | Notes
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/vnd.api+json
  - **Accept**: application/vnd.api+json
 
 ### HTTP response details
@@ -267,6 +272,89 @@ Name | Type | Description  | Notes
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 **201** | Array of batch release resources. |  -  |
+**400** | Bad request. The request body or query parameters failed validation; &#x60;errors[].source.pointer&#x60; identifies the offending field. |  -  |
+**401** | Unauthorized. The bearer token is missing, invalid or expired. |  -  |
+**404** | Not found. No resource matches the supplied identifier. |  -  |
+**0** | Error response |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **create_bulk_payment**
+> CreateBulkPayment201Response create_bulk_payment(create_bulk_payment_request)
+
+Create a bulk payment
+
+Creates multiple payments in a single asynchronous request. Each element of data is a payment creation payload — ACH, Book, and Wire types may be mixed in the same bulk.
+
+### Example
+
+* Bearer (JWT) Authentication (bearerAuth):
+
+```python
+import unit_finance_sdk
+from unit_finance_sdk.models.create_bulk_payment201_response import CreateBulkPayment201Response
+from unit_finance_sdk.models.create_bulk_payment_request import CreateBulkPaymentRequest
+from unit_finance_sdk.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://api.s.unit.sh
+# See configuration.py for a list of all supported configuration parameters.
+configuration = unit_finance_sdk.Configuration(
+    host = "https://api.s.unit.sh"
+)
+
+# The client must configure the authentication and authorization parameters
+# in accordance with the API server security policy.
+# Examples for each auth method are provided below, use the example that
+# satisfies your auth use case.
+
+# Configure Bearer authorization (JWT): bearerAuth
+configuration = unit_finance_sdk.Configuration(
+    access_token = os.environ["BEARER_TOKEN"]
+)
+
+# Enter a context with an instance of the API client
+with unit_finance_sdk.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = unit_finance_sdk.PaymentsApi(api_client)
+    create_bulk_payment_request = unit_finance_sdk.CreateBulkPaymentRequest() # CreateBulkPaymentRequest | 
+
+    try:
+        # Create a bulk payment
+        api_response = api_instance.create_bulk_payment(create_bulk_payment_request)
+        print("The response of PaymentsApi->create_bulk_payment:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling PaymentsApi->create_bulk_payment: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **create_bulk_payment_request** | [**CreateBulkPaymentRequest**](CreateBulkPaymentRequest.md)|  | 
+
+### Return type
+
+[**CreateBulkPayment201Response**](CreateBulkPayment201Response.md)
+
+### Authorization
+
+[bearerAuth](../README.md#bearerAuth)
+
+### HTTP request headers
+
+ - **Content-Type**: application/vnd.api+json
+ - **Accept**: application/vnd.api+json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**201** | The accepted bulk payment request. |  -  |
 **400** | Bad request. The request body or query parameters failed validation; &#x60;errors[].source.pointer&#x60; identifies the offending field. |  -  |
 **401** | Unauthorized. The bearer token is missing, invalid or expired. |  -  |
 **404** | Not found. No resource matches the supplied identifier. |  -  |
@@ -441,7 +529,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **delete_recurring_payment**
-> CreateRecurringPayment201Response delete_recurring_payment(id)
+> CreateRecurringPayment201Response delete_recurring_payment(id, body=body)
 
 Delete a recurring payment
 
@@ -478,10 +566,11 @@ with unit_finance_sdk.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = unit_finance_sdk.PaymentsApi(api_client)
     id = 'id_example' # str | 
+    body = None # object |  (optional)
 
     try:
         # Delete a recurring payment
-        api_response = api_instance.delete_recurring_payment(id)
+        api_response = api_instance.delete_recurring_payment(id, body=body)
         print("The response of PaymentsApi->delete_recurring_payment:\n")
         pprint(api_response)
     except Exception as e:
@@ -496,6 +585,7 @@ with unit_finance_sdk.ApiClient(configuration) as api_client:
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **id** | **str**|  | 
+ **body** | **object**|  | [optional] 
 
 ### Return type
 
@@ -507,7 +597,7 @@ Name | Type | Description  | Notes
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/vnd.api+json
  - **Accept**: application/vnd.api+json
 
 ### HTTP response details
@@ -523,7 +613,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **disable_recurring_payment**
-> CreateRecurringPayment201Response disable_recurring_payment(id)
+> CreateRecurringPayment201Response disable_recurring_payment(id, body=body)
 
 Disable a recurring payment
 
@@ -560,10 +650,11 @@ with unit_finance_sdk.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = unit_finance_sdk.PaymentsApi(api_client)
     id = 'id_example' # str | 
+    body = None # object |  (optional)
 
     try:
         # Disable a recurring payment
-        api_response = api_instance.disable_recurring_payment(id)
+        api_response = api_instance.disable_recurring_payment(id, body=body)
         print("The response of PaymentsApi->disable_recurring_payment:\n")
         pprint(api_response)
     except Exception as e:
@@ -578,6 +669,7 @@ with unit_finance_sdk.ApiClient(configuration) as api_client:
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **id** | **str**|  | 
+ **body** | **object**|  | [optional] 
 
 ### Return type
 
@@ -589,7 +681,7 @@ Name | Type | Description  | Notes
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/vnd.api+json
  - **Accept**: application/vnd.api+json
 
 ### HTTP response details
@@ -605,7 +697,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **enable_recurring_payment**
-> CreateRecurringPayment201Response enable_recurring_payment(id)
+> CreateRecurringPayment201Response enable_recurring_payment(id, body=body)
 
 Enable a recurring payment
 
@@ -642,10 +734,11 @@ with unit_finance_sdk.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = unit_finance_sdk.PaymentsApi(api_client)
     id = 'id_example' # str | 
+    body = None # object |  (optional)
 
     try:
         # Enable a recurring payment
-        api_response = api_instance.enable_recurring_payment(id)
+        api_response = api_instance.enable_recurring_payment(id, body=body)
         print("The response of PaymentsApi->enable_recurring_payment:\n")
         pprint(api_response)
     except Exception as e:
@@ -660,6 +753,7 @@ with unit_finance_sdk.ApiClient(configuration) as api_client:
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **id** | **str**|  | 
+ **body** | **object**|  | [optional] 
 
 ### Return type
 
@@ -671,7 +765,7 @@ Name | Type | Description  | Notes
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/vnd.api+json
  - **Accept**: application/vnd.api+json
 
 ### HTTP response details
@@ -1184,7 +1278,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **list_received_payments**
-> ListReceivedPayments200Response list_received_payments(page_limit=page_limit, page_offset=page_offset, filter_account_id=filter_account_id, filter_customer_id=filter_customer_id, filter_since=filter_since, filter_until=filter_until, filter_status=filter_status, filter_from_amount=filter_from_amount, filter_to_amount=filter_to_amount, filter_include_completed=filter_include_completed, filter_can_be_reprocessed=filter_can_be_reprocessed, filter_type=filter_type, filter_tags=filter_tags, sort=sort)
+> ListReceivedPayments200Response list_received_payments(page_limit=page_limit, page_offset=page_offset, filter_account_id=filter_account_id, filter_customer_id=filter_customer_id, filter_since=filter_since, filter_until=filter_until, filter_status=filter_status, filter_from_amount=filter_from_amount, filter_to_amount=filter_to_amount, filter_include_completed=filter_include_completed, filter_can_be_reprocessed=filter_can_be_reprocessed, filter_type=filter_type, filter_tags=filter_tags, sort=sort, include=include)
 
 List received payments
 
@@ -1231,13 +1325,14 @@ with unit_finance_sdk.ApiClient(configuration) as api_client:
     filter_to_amount = 'filter_to_amount_example' # str | Optional. Filters the Received Payment that have an amount that is lower or equal to the specified amount (in cents). e.g. 7000 (optional)
     filter_include_completed = 'filter_include_completed_example' # str | Optional. Filter to include ReceivedPayment with Status 'Completed', default False. Can't be stated with filter[status][]. (optional)
     filter_can_be_reprocessed = 'filter_can_be_reprocessed_example' # str | Optional. If set to true, returns only Received Payments that can be reprocessed. If set to false only returns Received Payments that can't be reprocessed. (optional)
-    filter_type = 'filter_type_example' # str | Optional. Filter received payments by type. Valid values: Ach, Wire. Defaults to both Ach and Wire if not specified. (optional)
+    filter_type = 'filter_type_example' # str | Optional. Filter received payments by type. Valid values: Ach, Wire, Realtime. Defaults to Ach, Wire, and Realtime if not specified. (optional)
     filter_tags = 'filter_tags_example' # str | Optional. Filter received payments by Tags. (optional)
-    sort = '-createdAt' # str | Optional. Leave empty or provide sort=createdAt for ascending order. Provide sort=-createdAt (leading minus sign) for descending order. (optional) (default to '-createdAt')
+    sort = 'createdAt' # str | Optional. Leave empty or provide sort=createdAt for ascending order. Provide sort=-createdAt (leading minus sign) for descending order. (optional) (default to 'createdAt')
+    include = 'include_example' # str | Optional. A comma-separated list of related resources to include in the response. Related resources include: customer, account. See Getting Related Resources. (optional)
 
     try:
         # List received payments
-        api_response = api_instance.list_received_payments(page_limit=page_limit, page_offset=page_offset, filter_account_id=filter_account_id, filter_customer_id=filter_customer_id, filter_since=filter_since, filter_until=filter_until, filter_status=filter_status, filter_from_amount=filter_from_amount, filter_to_amount=filter_to_amount, filter_include_completed=filter_include_completed, filter_can_be_reprocessed=filter_can_be_reprocessed, filter_type=filter_type, filter_tags=filter_tags, sort=sort)
+        api_response = api_instance.list_received_payments(page_limit=page_limit, page_offset=page_offset, filter_account_id=filter_account_id, filter_customer_id=filter_customer_id, filter_since=filter_since, filter_until=filter_until, filter_status=filter_status, filter_from_amount=filter_from_amount, filter_to_amount=filter_to_amount, filter_include_completed=filter_include_completed, filter_can_be_reprocessed=filter_can_be_reprocessed, filter_type=filter_type, filter_tags=filter_tags, sort=sort, include=include)
         print("The response of PaymentsApi->list_received_payments:\n")
         pprint(api_response)
     except Exception as e:
@@ -1262,9 +1357,10 @@ Name | Type | Description  | Notes
  **filter_to_amount** | **str**| Optional. Filters the Received Payment that have an amount that is lower or equal to the specified amount (in cents). e.g. 7000 | [optional] 
  **filter_include_completed** | **str**| Optional. Filter to include ReceivedPayment with Status &#39;Completed&#39;, default False. Can&#39;t be stated with filter[status][]. | [optional] 
  **filter_can_be_reprocessed** | **str**| Optional. If set to true, returns only Received Payments that can be reprocessed. If set to false only returns Received Payments that can&#39;t be reprocessed. | [optional] 
- **filter_type** | **str**| Optional. Filter received payments by type. Valid values: Ach, Wire. Defaults to both Ach and Wire if not specified. | [optional] 
+ **filter_type** | **str**| Optional. Filter received payments by type. Valid values: Ach, Wire, Realtime. Defaults to Ach, Wire, and Realtime if not specified. | [optional] 
  **filter_tags** | **str**| Optional. Filter received payments by Tags. | [optional] 
- **sort** | **str**| Optional. Leave empty or provide sort&#x3D;createdAt for ascending order. Provide sort&#x3D;-createdAt (leading minus sign) for descending order. | [optional] [default to &#39;-createdAt&#39;]
+ **sort** | **str**| Optional. Leave empty or provide sort&#x3D;createdAt for ascending order. Provide sort&#x3D;-createdAt (leading minus sign) for descending order. | [optional] [default to &#39;createdAt&#39;]
+ **include** | **str**| Optional. A comma-separated list of related resources to include in the response. Related resources include: customer, account. See Getting Related Resources. | [optional] 
 
 ### Return type
 
@@ -1748,7 +1844,7 @@ Name | Type | Description  | Notes
 
 Update a received payment
 
-Update a Received Payment.
+Update a Received Payment. The request body is one of UpdateACHReceivedPaymentRequest or UpdateRealtimeReceivedPaymentRequest, discriminated by data.type (achReceivedPayment, realtimeReceivedPayment).
 
 ### Example
 

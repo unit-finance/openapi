@@ -20,7 +20,7 @@ class CancelPaymentIT {
             Fixtures.createBookPaymentRequest(shared.accountId, shared.counterpartyAccountId));
     String paymentId = ApiSupport.jsonApiId(created.getData());
 
-    CancelPayment200Response response = api.cancelPayment(paymentId);
+    CancelPayment200Response response = api.cancelPayment(paymentId, null);
 
     assertNotNull(response.getData());
   }

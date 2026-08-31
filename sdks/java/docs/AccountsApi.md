@@ -21,7 +21,6 @@ All URIs are relative to *https://api.s.unit.sh*
 | [**reopenAccount**](AccountsApi.md#reopenAccount) | **POST** /accounts/{accountId}/reopen | Reopen an account |
 | [**unfreezeAccount**](AccountsApi.md#unfreezeAccount) | **POST** /accounts/{accountId}/unfreeze | Unfreeze an account |
 | [**updateAccount**](AccountsApi.md#updateAccount) | **PATCH** /accounts/{accountId} | Update an account |
-| [**verifyAccount**](AccountsApi.md#verifyAccount) | **POST** /accounts/verify | Verify an account |
 
 
 <a id="addAccountOwners"></a>
@@ -1066,7 +1065,7 @@ public class Example {
 
 <a id="reopenAccount"></a>
 # **reopenAccount**
-> ReopenAccount200Response reopenAccount(accountId)
+> ReopenAccount200Response reopenAccount(accountId, body)
 
 Reopen an account
 
@@ -1093,8 +1092,9 @@ public class Example {
 
     AccountsApi apiInstance = new AccountsApi(defaultClient);
     String accountId = "accountId_example"; // String | 
+    Object body = null; // Object | 
     try {
-      ReopenAccount200Response result = apiInstance.reopenAccount(accountId);
+      ReopenAccount200Response result = apiInstance.reopenAccount(accountId, body);
       System.out.println(result);
     } catch (ApiException e) {
       System.err.println("Exception when calling AccountsApi#reopenAccount");
@@ -1112,6 +1112,7 @@ public class Example {
 | Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
 | **accountId** | **String**|  | |
+| **body** | **Object**|  | [optional] |
 
 ### Return type
 
@@ -1123,7 +1124,7 @@ public class Example {
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/vnd.api+json
  - **Accept**: application/vnd.api+json
 
 ### HTTP response details
@@ -1137,7 +1138,7 @@ public class Example {
 
 <a id="unfreezeAccount"></a>
 # **unfreezeAccount**
-> CreateAccount201Response unfreezeAccount(accountId)
+> CreateAccount201Response unfreezeAccount(accountId, body)
 
 Unfreeze an account
 
@@ -1164,8 +1165,9 @@ public class Example {
 
     AccountsApi apiInstance = new AccountsApi(defaultClient);
     String accountId = "accountId_example"; // String | 
+    Object body = null; // Object | 
     try {
-      CreateAccount201Response result = apiInstance.unfreezeAccount(accountId);
+      CreateAccount201Response result = apiInstance.unfreezeAccount(accountId, body);
       System.out.println(result);
     } catch (ApiException e) {
       System.err.println("Exception when calling AccountsApi#unfreezeAccount");
@@ -1183,6 +1185,7 @@ public class Example {
 | Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
 | **accountId** | **String**|  | |
+| **body** | **Object**|  | [optional] |
 
 ### Return type
 
@@ -1194,7 +1197,7 @@ public class Example {
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/vnd.api+json
  - **Accept**: application/vnd.api+json
 
 ### HTTP response details
@@ -1274,77 +1277,6 @@ public class Example {
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 | **200** | The updated account resource. |  -  |
-| **400** | Bad request. The request body or query parameters failed validation; &#x60;errors[].source.pointer&#x60; identifies the offending field. |  -  |
-| **401** | Unauthorized. The bearer token is missing, invalid or expired. |  -  |
-| **404** | Not found. No resource matches the supplied identifier. |  -  |
-| **0** | Error response |  -  |
-
-<a id="verifyAccount"></a>
-# **verifyAccount**
-> VerifyAccount200Response verifyAccount(verifyAccountRequest)
-
-Verify an account
-
-Verify whether a routing number and account number pair belongs to an account in your organization. A common use case is checking whether a counterparty is an internal Unit account before originating an ACH payment — if a match is found, you can originate a book payment instead.
-
-### Example
-```java
-// Import classes:
-import com.unit.finance.sdk.ApiClient;
-import com.unit.finance.sdk.ApiException;
-import com.unit.finance.sdk.Configuration;
-import com.unit.finance.sdk.auth.*;
-import com.unit.finance.sdk.models.*;
-import com.unit.finance.sdk.api.AccountsApi;
-
-public class Example {
-  public static void main(String[] args) {
-    ApiClient defaultClient = Configuration.getDefaultApiClient();
-    defaultClient.setBasePath("https://api.s.unit.sh");
-    
-    // Configure HTTP bearer authorization: bearerAuth
-    HttpBearerAuth bearerAuth = (HttpBearerAuth) defaultClient.getAuthentication("bearerAuth");
-    bearerAuth.setBearerToken("BEARER TOKEN");
-
-    AccountsApi apiInstance = new AccountsApi(defaultClient);
-    VerifyAccountRequest verifyAccountRequest = new VerifyAccountRequest(); // VerifyAccountRequest | 
-    try {
-      VerifyAccount200Response result = apiInstance.verifyAccount(verifyAccountRequest);
-      System.out.println(result);
-    } catch (ApiException e) {
-      System.err.println("Exception when calling AccountsApi#verifyAccount");
-      System.err.println("Status code: " + e.getCode());
-      System.err.println("Reason: " + e.getResponseBody());
-      System.err.println("Response headers: " + e.getResponseHeaders());
-      e.printStackTrace();
-    }
-  }
-}
-```
-
-### Parameters
-
-| Name | Type | Description  | Notes |
-|------------- | ------------- | ------------- | -------------|
-| **verifyAccountRequest** | [**VerifyAccountRequest**](VerifyAccountRequest.md)|  | |
-
-### Return type
-
-[**VerifyAccount200Response**](VerifyAccount200Response.md)
-
-### Authorization
-
-[bearerAuth](../README.md#bearerAuth)
-
-### HTTP request headers
-
- - **Content-Type**: application/vnd.api+json
- - **Accept**: application/vnd.api+json
-
-### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-| **200** | Verification result. |  -  |
 | **400** | Bad request. The request body or query parameters failed validation; &#x60;errors[].source.pointer&#x60; identifies the offending field. |  -  |
 | **401** | Unauthorized. The bearer token is missing, invalid or expired. |  -  |
 | **404** | Not found. No resource matches the supplied identifier. |  -  |

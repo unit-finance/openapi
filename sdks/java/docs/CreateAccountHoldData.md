@@ -17,7 +17,7 @@
 
 | Name | Value |
 |---- | -----|
-| CREATE_ACCOUNT_HOLD_JSON | &quot;createAccountHoldJson&quot; |
+| ACCOUNT_HOLD | &quot;accountHold&quot; |
 
 
 

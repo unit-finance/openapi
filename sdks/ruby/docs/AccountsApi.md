@@ -21,7 +21,6 @@ All URIs are relative to *https://api.s.unit.sh*
 | [**reopen_account**](AccountsApi.md#reopen_account) | **POST** /accounts/{accountId}/reopen | Reopen an account |
 | [**unfreeze_account**](AccountsApi.md#unfreeze_account) | **POST** /accounts/{accountId}/unfreeze | Unfreeze an account |
 | [**update_account**](AccountsApi.md#update_account) | **PATCH** /accounts/{accountId} | Update an account |
-| [**verify_account**](AccountsApi.md#verify_account) | **POST** /accounts/verify | Verify an account |
 
 
 ## add_account_owners
@@ -255,7 +254,7 @@ UnitFinanceSdk.configure do |config|
 end
 
 api_instance = UnitFinanceSdk::AccountsApi.new
-create_account_hold_request = UnitFinanceSdk::CreateAccountHoldRequest.new({data: UnitFinanceSdk::CreateAccountHoldData.new({type: 'createAccountHoldJson', attributes: UnitFinanceSdk::CreateAccountHoldDataAttributes.new({amount: 6000, description: 'Hold reason'}), relationships: UnitFinanceSdk::CreateFeeDataRelationships.new({account: UnitFinanceSdk::Relationship.new})})}) # CreateAccountHoldRequest | 
+create_account_hold_request = UnitFinanceSdk::CreateAccountHoldRequest.new({data: UnitFinanceSdk::CreateAccountHoldData.new({type: 'accountHold', attributes: UnitFinanceSdk::CreateAccountHoldDataAttributes.new({amount: 6000, description: 'Hold reason'}), relationships: UnitFinanceSdk::CreateFeeDataRelationships.new({account: UnitFinanceSdk::Relationship.new})})}) # CreateAccountHoldRequest | 
 
 begin
   # Create an account hold
@@ -1046,7 +1045,7 @@ end
 
 ## reopen_account
 
-> <ReopenAccount200Response> reopen_account(account_id)
+> <ReopenAccount200Response> reopen_account(account_id, opts)
 
 Reopen an account
 
@@ -1065,10 +1064,13 @@ end
 
 api_instance = UnitFinanceSdk::AccountsApi.new
 account_id = 'account_id_example' # String | 
+opts = {
+  body: { ... } # Object | 
+}
 
 begin
   # Reopen an account
-  result = api_instance.reopen_account(account_id)
+  result = api_instance.reopen_account(account_id, opts)
   p result
 rescue UnitFinanceSdk::ApiError => e
   puts "Error when calling AccountsApi->reopen_account: #{e}"
@@ -1079,12 +1081,12 @@ end
 
 This returns an Array which contains the response data, status code and headers.
 
-> <Array(<ReopenAccount200Response>, Integer, Hash)> reopen_account_with_http_info(account_id)
+> <Array(<ReopenAccount200Response>, Integer, Hash)> reopen_account_with_http_info(account_id, opts)
 
 ```ruby
 begin
   # Reopen an account
-  data, status_code, headers = api_instance.reopen_account_with_http_info(account_id)
+  data, status_code, headers = api_instance.reopen_account_with_http_info(account_id, opts)
   p status_code # => 2xx
   p headers # => { ... }
   p data # => <ReopenAccount200Response>
@@ -1098,6 +1100,7 @@ end
 | Name | Type | Description | Notes |
 | ---- | ---- | ----------- | ----- |
 | **account_id** | **String** |  |  |
+| **body** | **Object** |  | [optional] |
 
 ### Return type
 
@@ -1109,13 +1112,13 @@ end
 
 ### HTTP request headers
 
-- **Content-Type**: Not defined
+- **Content-Type**: application/vnd.api+json
 - **Accept**: application/vnd.api+json
 
 
 ## unfreeze_account
 
-> <CreateAccount201Response> unfreeze_account(account_id)
+> <CreateAccount201Response> unfreeze_account(account_id, opts)
 
 Unfreeze an account
 
@@ -1134,10 +1137,13 @@ end
 
 api_instance = UnitFinanceSdk::AccountsApi.new
 account_id = 'account_id_example' # String | 
+opts = {
+  body: { ... } # Object | 
+}
 
 begin
   # Unfreeze an account
-  result = api_instance.unfreeze_account(account_id)
+  result = api_instance.unfreeze_account(account_id, opts)
   p result
 rescue UnitFinanceSdk::ApiError => e
   puts "Error when calling AccountsApi->unfreeze_account: #{e}"
@@ -1148,12 +1154,12 @@ end
 
 This returns an Array which contains the response data, status code and headers.
 
-> <Array(<CreateAccount201Response>, Integer, Hash)> unfreeze_account_with_http_info(account_id)
+> <Array(<CreateAccount201Response>, Integer, Hash)> unfreeze_account_with_http_info(account_id, opts)
 
 ```ruby
 begin
   # Unfreeze an account
-  data, status_code, headers = api_instance.unfreeze_account_with_http_info(account_id)
+  data, status_code, headers = api_instance.unfreeze_account_with_http_info(account_id, opts)
   p status_code # => 2xx
   p headers # => { ... }
   p data # => <CreateAccount201Response>
@@ -1167,6 +1173,7 @@ end
 | Name | Type | Description | Notes |
 | ---- | ---- | ----------- | ----- |
 | **account_id** | **String** |  |  |
+| **body** | **Object** |  | [optional] |
 
 ### Return type
 
@@ -1178,7 +1185,7 @@ end
 
 ### HTTP request headers
 
-- **Content-Type**: Not defined
+- **Content-Type**: application/vnd.api+json
 - **Accept**: application/vnd.api+json
 
 
@@ -1242,75 +1249,6 @@ end
 ### Return type
 
 [**CreateAccount201Response**](CreateAccount201Response.md)
-
-### Authorization
-
-[bearerAuth](../README.md#bearerAuth)
-
-### HTTP request headers
-
-- **Content-Type**: application/vnd.api+json
-- **Accept**: application/vnd.api+json
-
-
-## verify_account
-
-> <VerifyAccount200Response> verify_account(verify_account_request)
-
-Verify an account
-
-Verify whether a routing number and account number pair belongs to an account in your organization. A common use case is checking whether a counterparty is an internal Unit account before originating an ACH payment — if a match is found, you can originate a book payment instead.
-
-### Examples
-
-```ruby
-require 'time'
-require 'unit_finance_sdk'
-# setup authorization
-UnitFinanceSdk.configure do |config|
-  # Configure Bearer authorization (JWT): bearerAuth
-  config.access_token = 'YOUR_BEARER_TOKEN'
-end
-
-api_instance = UnitFinanceSdk::AccountsApi.new
-verify_account_request = UnitFinanceSdk::VerifyAccountRequest.new({data: UnitFinanceSdk::VerifyAccountData.new({type: 'accountVerify', attributes: UnitFinanceSdk::VerifyAccountDataAttributes.new({routing_number: '051000017', account_number: '10000123'})})}) # VerifyAccountRequest | 
-
-begin
-  # Verify an account
-  result = api_instance.verify_account(verify_account_request)
-  p result
-rescue UnitFinanceSdk::ApiError => e
-  puts "Error when calling AccountsApi->verify_account: #{e}"
-end
-```
-
-#### Using the verify_account_with_http_info variant
-
-This returns an Array which contains the response data, status code and headers.
-
-> <Array(<VerifyAccount200Response>, Integer, Hash)> verify_account_with_http_info(verify_account_request)
-
-```ruby
-begin
-  # Verify an account
-  data, status_code, headers = api_instance.verify_account_with_http_info(verify_account_request)
-  p status_code # => 2xx
-  p headers # => { ... }
-  p data # => <VerifyAccount200Response>
-rescue UnitFinanceSdk::ApiError => e
-  puts "Error when calling AccountsApi->verify_account_with_http_info: #{e}"
-end
-```
-
-### Parameters
-
-| Name | Type | Description | Notes |
-| ---- | ---- | ----------- | ----- |
-| **verify_account_request** | [**VerifyAccountRequest**](VerifyAccountRequest.md) |  |  |
-
-### Return type
-
-[**VerifyAccount200Response**](VerifyAccount200Response.md)
 
 ### Authorization
 

@@ -5,7 +5,6 @@ All URIs are relative to *https://api.s.unit.sh*
 |Method | HTTP request | Description|
 |------------- | ------------- | -------------|
 |[**cancelApplication**](#cancelapplication) | **POST** /applications/{id}/cancel | Cancel an application|
-|[**checkRegisteredAgentAddress**](#checkregisteredagentaddress) | **POST** /applications/check-registered-agent-address | Check a registered agent address|
 |[**createApplication**](#createapplication) | **POST** /applications | Create an application|
 |[**getById**](#getbyid) | **GET** /applications/{id} | Get an application|
 |[**list**](#list) | **GET** /applications | List applications|
@@ -64,62 +63,6 @@ const { status, data } = await apiInstance.cancelApplication(
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 |**201** | The canceled application resource. |  -  |
-|**400** | Bad request. The request body or query parameters failed validation; &#x60;errors[].source.pointer&#x60; identifies the offending field. |  -  |
-|**401** | Unauthorized. The bearer token is missing, invalid or expired. |  -  |
-|**404** | Not found. No resource matches the supplied identifier. |  -  |
-|**0** | Error response |  -  |
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-
-# **checkRegisteredAgentAddress**
-> CheckRegisteredAgentAddress200Response checkRegisteredAgentAddress(checkRegisteredAgentAddressRequest)
-
-Checks if an address is a registered agent address.
-
-### Example
-
-```typescript
-import {
-    ApplicationsApi,
-    Configuration,
-    CheckRegisteredAgentAddressRequest
-} from '@unit-finance/unit-node-sdk';
-
-const configuration = new Configuration();
-const apiInstance = new ApplicationsApi(configuration);
-
-let checkRegisteredAgentAddressRequest: CheckRegisteredAgentAddressRequest; //
-
-const { status, data } = await apiInstance.checkRegisteredAgentAddress(
-    checkRegisteredAgentAddressRequest
-);
-```
-
-### Parameters
-
-|Name | Type | Description  | Notes|
-|------------- | ------------- | ------------- | -------------|
-| **checkRegisteredAgentAddressRequest** | **CheckRegisteredAgentAddressRequest**|  | |
-
-
-### Return type
-
-**CheckRegisteredAgentAddress200Response**
-
-### Authorization
-
-[bearerAuth](../README.md#bearerAuth)
-
-### HTTP request headers
-
- - **Content-Type**: application/vnd.api+json
- - **Accept**: application/vnd.api+json
-
-
-### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-|**200** | Whether the supplied address is a registered agent address. |  -  |
 |**400** | Bad request. The request body or query parameters failed validation; &#x60;errors[].source.pointer&#x60; identifies the offending field. |  -  |
 |**401** | Unauthorized. The bearer token is missing, invalid or expired. |  -  |
 |**404** | Not found. No resource matches the supplied identifier. |  -  |

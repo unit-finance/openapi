@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**data** | [**UpdateReceivedPaymentData**](UpdateReceivedPaymentData.md) |  | 
+**data** | [**UpdateRealtimeReceivedPaymentData**](UpdateRealtimeReceivedPaymentData.md) |  | 
 
 ## Example
 

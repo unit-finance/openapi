@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**data** | [**Array&lt;ACHReceivedPayment&gt;**](ACHReceivedPayment.md) |  | [default to undefined]
+**data** | [**Array&lt;ListReceivedPayments200ResponseDataInner&gt;**](ListReceivedPayments200ResponseDataInner.md) |  | [default to undefined]
 **included** | [**Array&lt;DepositAccount&gt;**](DepositAccount.md) | Array of resources requested by the include query parameter. | [optional] [default to undefined]
 **meta** | [**Meta**](Meta.md) |  | [optional] [default to undefined]
 

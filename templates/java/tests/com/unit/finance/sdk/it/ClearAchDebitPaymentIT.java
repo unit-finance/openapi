@@ -23,7 +23,7 @@ class ClearAchDebitPaymentIT {
     assumeTrue(paymentId != null, "no payment available to clear");
 
     try {
-      ClearAchDebitPayment200Response response = api.clearAchDebitPayment(paymentId);
+      ClearAchDebitPayment200Response response = api.clearAchDebitPayment(paymentId, null);
       assertNotNull(response.getData());
     } catch (Exception e) {
       assumeTrue(false, "sandbox has no clearable ACH debit payment: " + e.getMessage());

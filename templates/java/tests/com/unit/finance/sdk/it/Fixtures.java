@@ -11,9 +11,6 @@ import com.unit.finance.sdk.model.CashFlowType;
 import com.unit.finance.sdk.model.CancelApplicationData;
 import com.unit.finance.sdk.model.CancelApplicationDataAttributes;
 import com.unit.finance.sdk.model.CancelApplicationRequest;
-import com.unit.finance.sdk.model.CheckRegisteredAgentAddressData;
-import com.unit.finance.sdk.model.CheckRegisteredAgentAddressDataAttributes;
-import com.unit.finance.sdk.model.CheckRegisteredAgentAddressRequest;
 import com.unit.finance.sdk.model.CloseAccountRequest;
 import com.unit.finance.sdk.model.CloseDepositAccountData;
 import com.unit.finance.sdk.model.CloseDepositAccountDataAttributes;
@@ -99,11 +96,10 @@ import com.unit.finance.sdk.model.UpdateDepositAccountData;
 import com.unit.finance.sdk.model.UpdateDepositAccountDataAttributes;
 import com.unit.finance.sdk.model.UpdateDepositAccountRequest;
 import com.unit.finance.sdk.model.UpdatePaymentRequest;
-import com.unit.finance.sdk.model.UpdateReceivedPaymentData;
+import com.unit.finance.sdk.model.UpdateACHReceivedPaymentData;
+import com.unit.finance.sdk.model.UpdateACHReceivedPaymentDataAttributes;
+import com.unit.finance.sdk.model.UpdateACHReceivedPaymentRequest;
 import com.unit.finance.sdk.model.UpdateReceivedPaymentRequest;
-import com.unit.finance.sdk.model.VerifyAccountData;
-import com.unit.finance.sdk.model.VerifyAccountDataAttributes;
-import com.unit.finance.sdk.model.VerifyAccountRequest;
 import com.unit.finance.sdk.model.AddAccountOwnersRequest;
 import com.unit.finance.sdk.model.RemoveAccountOwnersRequest;
 import java.time.LocalDate;
@@ -114,6 +110,7 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -317,16 +314,6 @@ final class Fixtures {
     return new CancelApplicationRequest().data(data);
   }
 
-  static CheckRegisteredAgentAddressRequest checkRegisteredAgentAddressRequest() {
-    CheckRegisteredAgentAddressDataAttributes attributes =
-        new CheckRegisteredAgentAddressDataAttributes().address(usAddress());
-    CheckRegisteredAgentAddressData data =
-        new CheckRegisteredAgentAddressData()
-            .type(CheckRegisteredAgentAddressData.TypeEnum.CHECK_REGISTERED_AGENT_ADDRESS)
-            .attributes(attributes);
-    return new CheckRegisteredAgentAddressRequest().data(data);
-  }
-
   static Relationship relationship(String type, String id) {
     return new Relationship()
         .data(new RelationshipData(new ResourceIdentifier().type(type).id(id)));
@@ -359,18 +346,6 @@ final class Fixtures {
             .type(UpdateDepositAccountData.TypeEnum.DEPOSIT_ACCOUNT)
             .attributes(attributes);
     return new UpdateAccountRequest(new UpdateDepositAccountRequest().data(data));
-  }
-
-  static VerifyAccountRequest verifyAccountRequest(String routingNumber, String accountNumber) {
-    VerifyAccountDataAttributes attributes =
-        new VerifyAccountDataAttributes()
-            .routingNumber(routingNumber)
-            .accountNumber(accountNumber);
-    VerifyAccountData data =
-        new VerifyAccountData()
-            .type(VerifyAccountData.TypeEnum.ACCOUNT_VERIFY)
-            .attributes(attributes);
-    return new VerifyAccountRequest().data(data);
   }
 
   static CloseAccountRequest closeDepositAccountRequest() {
@@ -426,14 +401,19 @@ final class Fixtures {
     return new ReverseFeeRequest().data(data);
   }
 
+  // The spec marks `idempotencyKey` optional on both hold requests, but the
+  // sandbox rejects them with a 400 unless it is present. Each call gets a
+  // fresh key so that separately-built holds are never collapsed into one
+  // another.
   static CreateAccountHoldRequest createAccountHoldRequest(String accountId) {
     CreateAccountHoldDataAttributes attributes =
         new CreateAccountHoldDataAttributes()
             .amount(500)
-            .description("SDK integration test hold");
+            .description("SDK integration test hold")
+            .idempotencyKey(ApiSupport.TEST_RUN_ID + "-hold-" + UUID.randomUUID());
     CreateAccountHoldData data =
         new CreateAccountHoldData()
-            .type(CreateAccountHoldData.TypeEnum.CREATE_ACCOUNT_HOLD_JSON)
+            .type(CreateAccountHoldData.TypeEnum.ACCOUNT_HOLD)
             .attributes(attributes)
             .relationships(new CreateFeeDataRelationships().account(relationship("account", accountId)));
     return new CreateAccountHoldRequest().data(data);
@@ -511,7 +491,7 @@ final class Fixtures {
             .counterpartyAccount(relationship("account", counterpartyAccountId));
     CreateRecurringCreditBookPaymentData data =
         new CreateRecurringCreditBookPaymentData()
-            .type(CreateRecurringCreditBookPaymentData.TypeEnum.RECURRING_BOOK_PAYMENT)
+            .type(CreateRecurringCreditBookPaymentData.TypeEnum.RECURRING_CREDIT_BOOK_PAYMENT)
             .attributes(attributes)
             .relationships(relationships);
     return new CreateRecurringPaymentRequest(new CreateRecurringCreditBookPaymentRequest().data(data));
@@ -520,13 +500,13 @@ final class Fixtures {
   static UpdateReceivedPaymentRequest updateReceivedPaymentRequest() {
     Map<String, Object> tags = baseTags();
     tags.put("updated", "true");
-    UpdateBookPaymentDataAttributes attributes =
-        new UpdateBookPaymentDataAttributes().tags(tags);
-    UpdateReceivedPaymentData data =
-        new UpdateReceivedPaymentData()
-            .type(UpdateReceivedPaymentData.TypeEnum.ACH_RECEIVED_PAYMENT)
+    UpdateACHReceivedPaymentDataAttributes attributes =
+        new UpdateACHReceivedPaymentDataAttributes().tags(tags);
+    UpdateACHReceivedPaymentData data =
+        new UpdateACHReceivedPaymentData()
+            .type(UpdateACHReceivedPaymentData.TypeEnum.ACH_RECEIVED_PAYMENT)
             .attributes(attributes);
-    return new UpdateReceivedPaymentRequest().data(data);
+    return new UpdateReceivedPaymentRequest(new UpdateACHReceivedPaymentRequest().data(data));
   }
 
   static GenerateCashDepositBarcodeRequest generateCashDepositBarcodeRequest(

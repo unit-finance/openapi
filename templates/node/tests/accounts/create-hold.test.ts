@@ -1,5 +1,5 @@
 import { buildAccountsApi, describeIfToken } from "../helpers/api";
-import { buildCreateAccountHoldRequest } from "../helpers/fixtures";
+import { createAccountHoldOrSkip } from "../helpers/holds";
 import { createDedicatedDepositAccount } from "../helpers/sharedAccount";
 
 describeIfToken("AccountsApi.createAccountHold", () => {
@@ -7,9 +7,9 @@ describeIfToken("AccountsApi.createAccountHold", () => {
 		const api = buildAccountsApi();
 		const account = await createDedicatedDepositAccount();
 
-		const { data, status } = await api.createAccountHold({
-			createAccountHoldRequest: buildCreateAccountHoldRequest(account.id),
-		});
+		const created = await createAccountHoldOrSkip(api, account.id);
+		if (!created) return;
+		const { data, status } = created;
 
 		expect(status).toBe(201);
 		expect(data.data.type).toBe("accountHold");
