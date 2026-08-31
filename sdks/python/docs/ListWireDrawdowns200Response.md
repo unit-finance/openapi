@@ -6,7 +6,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **data** | [**List[WireDrawdown]**](WireDrawdown.md) |  | 
-**included** | **List[Dict[str, object]]** | Array of resources requested by the include query parameter. | [optional] 
+**included** | [**List[DepositAccount]**](DepositAccount.md) | Array of resources requested by the include query parameter. | [optional] 
 **meta** | [**Meta**](Meta.md) |  | [optional] 
 
 ## Example

@@ -369,6 +369,7 @@ Class | Method | HTTP request | Description
  - [UpdatePaymentRequest](docs/UpdatePaymentRequest.md)
  - [UpdateReceivedPayment200Response](docs/UpdateReceivedPayment200Response.md)
  - [UpdateReceivedPaymentData](docs/UpdateReceivedPaymentData.md)
+ - [UpdateReceivedPaymentDataAttributes](docs/UpdateReceivedPaymentDataAttributes.md)
  - [UpdateReceivedPaymentRequest](docs/UpdateReceivedPaymentRequest.md)
  - [UpdateSoleProprietorApplicationData](docs/UpdateSoleProprietorApplicationData.md)
  - [UpdateSoleProprietorApplicationDataAttributes](docs/UpdateSoleProprietorApplicationDataAttributes.md)

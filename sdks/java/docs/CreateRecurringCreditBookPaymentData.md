@@ -17,7 +17,7 @@
 
 | Name | Value |
 |---- | -----|
-| RECURRING_BOOK_PAYMENT | &quot;recurringBookPayment&quot; |
+| RECURRING_CREDIT_BOOK_PAYMENT | &quot;recurringCreditBookPayment&quot; |
 
 
 

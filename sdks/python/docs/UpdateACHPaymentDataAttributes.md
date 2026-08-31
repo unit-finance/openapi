@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**tags** | **Dict[str, object]** | See Updating Tags. | [optional] 
-**clearing_days_override** | **int** | Only supports ACH Payments with direction Debit in status PendingReview or Pending. See Dynamic Clearing Period. | [optional] 
+**tags** | **Dict[str, object]** | See Updating Tags. | 
+**clearing_days_override** | **int** | Only supports ACH Payments with direction Debit in status PendingReview or Pending. See Dynamic Clearing Period. | 
 
 ## Example
 

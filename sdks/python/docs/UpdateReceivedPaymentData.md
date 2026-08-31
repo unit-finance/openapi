@@ -6,7 +6,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **type** | **str** |  | 
-**attributes** | [**UpdateBookPaymentDataAttributes**](UpdateBookPaymentDataAttributes.md) |  | 
+**attributes** | [**UpdateReceivedPaymentDataAttributes**](UpdateReceivedPaymentDataAttributes.md) |  | 
 
 ## Example
 

@@ -6,7 +6,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **data** | [**ACHReceivedPayment**](ACHReceivedPayment.md) |  | 
-**included** | **List[Dict[str, object]]** | Array of resources requested by the include query parameter. | [optional] 
+**included** | [**List[DepositAccount]**](DepositAccount.md) | Array of resources requested by the include query parameter. | [optional] 
 
 ## Example
 

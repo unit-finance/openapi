@@ -1,7 +1,7 @@
 # unit-java-sdk
 
 Unit API
-- API version: 0.4.0
+- API version: 0.4.1
   - Generator version: 7.22.0
 
 JSON:API-compliant banking API.
@@ -438,6 +438,7 @@ Class | Method | HTTP request | Description
  - [UpdatePaymentRequest](docs/UpdatePaymentRequest.md)
  - [UpdateReceivedPayment200Response](docs/UpdateReceivedPayment200Response.md)
  - [UpdateReceivedPaymentData](docs/UpdateReceivedPaymentData.md)
+ - [UpdateReceivedPaymentDataAttributes](docs/UpdateReceivedPaymentDataAttributes.md)
  - [UpdateReceivedPaymentRequest](docs/UpdateReceivedPaymentRequest.md)
  - [UpdateSoleProprietorApplicationData](docs/UpdateSoleProprietorApplicationData.md)
  - [UpdateSoleProprietorApplicationDataAttributes](docs/UpdateSoleProprietorApplicationDataAttributes.md)

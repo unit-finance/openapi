@@ -366,7 +366,7 @@ export function buildCreateRecurringBookPaymentRequest(
 	end.setUTCMonth(end.getUTCMonth() + 3);
 	return {
 		data: {
-			type: "recurringBookPayment" as const,
+			type: "recurringCreditBookPayment" as const,
 			attributes: {
 				amount: 100,
 				description: "SDK integration test recurring payment",

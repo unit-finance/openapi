@@ -7,7 +7,7 @@
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-|**tags** | **Map&lt;String, Object&gt;** | See Updating Tags. |  [optional] |
+|**tags** | **Map&lt;String, Object&gt;** | See Updating Tags. |  |
 
 
 

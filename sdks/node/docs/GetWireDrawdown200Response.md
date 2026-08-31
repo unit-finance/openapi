@@ -6,7 +6,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **data** | [**WireDrawdown**](WireDrawdown.md) |  | [default to undefined]
-**included** | **Array&lt;{ [key: string]: any; }&gt;** | Array of resources requested by the include query parameter. | [optional] [default to undefined]
+**included** | [**Array&lt;DepositAccount&gt;**](DepositAccount.md) | Array of resources requested by the include query parameter. | [optional] [default to undefined]
 
 ## Example
 

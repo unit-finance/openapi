@@ -271,6 +271,7 @@ docs/UpdatePayment200ResponseData.md
 docs/UpdatePaymentRequest.md
 docs/UpdateReceivedPayment200Response.md
 docs/UpdateReceivedPaymentData.md
+docs/UpdateReceivedPaymentDataAttributes.md
 docs/UpdateReceivedPaymentRequest.md
 docs/UpdateSoleProprietorApplicationData.md
 docs/UpdateSoleProprietorApplicationDataAttributes.md
@@ -582,6 +583,7 @@ src/main/java/com/unit/finance/sdk/model/UpdatePayment200ResponseData.java
 src/main/java/com/unit/finance/sdk/model/UpdatePaymentRequest.java
 src/main/java/com/unit/finance/sdk/model/UpdateReceivedPayment200Response.java
 src/main/java/com/unit/finance/sdk/model/UpdateReceivedPaymentData.java
+src/main/java/com/unit/finance/sdk/model/UpdateReceivedPaymentDataAttributes.java
 src/main/java/com/unit/finance/sdk/model/UpdateReceivedPaymentRequest.java
 src/main/java/com/unit/finance/sdk/model/UpdateSoleProprietorApplicationData.java
 src/main/java/com/unit/finance/sdk/model/UpdateSoleProprietorApplicationDataAttributes.java

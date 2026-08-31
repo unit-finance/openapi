@@ -886,9 +886,11 @@ const configuration = new Configuration();
 const apiInstance = new AccountsApi(configuration);
 
 let accountId: string; // (default to undefined)
+let body: object; // (optional)
 
 const { status, data } = await apiInstance.reopenAccount(
-    accountId
+    accountId,
+    body
 );
 ```
 
@@ -896,6 +898,7 @@ const { status, data } = await apiInstance.reopenAccount(
 
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
+| **body** | **object**|  | |
 | **accountId** | [**string**] |  | defaults to undefined|
 
 
@@ -909,7 +912,7 @@ const { status, data } = await apiInstance.reopenAccount(
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/vnd.api+json
  - **Accept**: application/vnd.api+json
 
 
@@ -941,9 +944,11 @@ const configuration = new Configuration();
 const apiInstance = new AccountsApi(configuration);
 
 let accountId: string; // (default to undefined)
+let body: object; // (optional)
 
 const { status, data } = await apiInstance.unfreezeAccount(
-    accountId
+    accountId,
+    body
 );
 ```
 
@@ -951,6 +956,7 @@ const { status, data } = await apiInstance.unfreezeAccount(
 
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
+| **body** | **object**|  | |
 | **accountId** | [**string**] |  | defaults to undefined|
 
 
@@ -964,7 +970,7 @@ const { status, data } = await apiInstance.unfreezeAccount(
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/vnd.api+json
  - **Accept**: application/vnd.api+json
 
 
