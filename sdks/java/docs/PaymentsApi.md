@@ -317,7 +317,7 @@ public class Example {
 
 Create a recurring payment
 
-Originate a recurring payment. The request body is one of CreateRecurringCreditACHPaymentRequest, CreateRecurringCreditBookPaymentRequest, or CreateRecurringDebitACHPaymentRequest, discriminated by data.type (recurringCreditAchPayment, recurringBookPayment, recurringDebitAchPayment).
+Originate a recurring payment. The request body is one of CreateRecurringCreditACHPaymentRequest, CreateRecurringCreditBookPaymentRequest, or CreateRecurringDebitACHPaymentRequest, discriminated by data.type (recurringCreditAchPayment, recurringCreditBookPayment, recurringDebitAchPayment).
 
 ### Example
 ```java

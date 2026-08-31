@@ -274,6 +274,7 @@ docs/UpdatePayment200ResponseData.md
 docs/UpdatePaymentRequest.md
 docs/UpdateReceivedPayment200Response.md
 docs/UpdateReceivedPaymentData.md
+docs/UpdateReceivedPaymentDataAttributes.md
 docs/UpdateReceivedPaymentRequest.md
 docs/UpdateSoleProprietorApplicationData.md
 docs/UpdateSoleProprietorApplicationDataAttributes.md
@@ -571,6 +572,7 @@ lib/unit_finance_sdk/models/update_payment200_response_data.rb
 lib/unit_finance_sdk/models/update_payment_request.rb
 lib/unit_finance_sdk/models/update_received_payment200_response.rb
 lib/unit_finance_sdk/models/update_received_payment_data.rb
+lib/unit_finance_sdk/models/update_received_payment_data_attributes.rb
 lib/unit_finance_sdk/models/update_received_payment_request.rb
 lib/unit_finance_sdk/models/update_sole_proprietor_application_data.rb
 lib/unit_finance_sdk/models/update_sole_proprietor_application_data_attributes.rb

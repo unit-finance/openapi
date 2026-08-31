@@ -7,7 +7,10 @@
  *
  * Resolution order:
  *   1. $SPEC_BUNDLE_PATH  — explicit local file (used in CI when the spec repo
- *      is checked out alongside, or for offline/local dev).
+ *      is checked out alongside, or for offline/local dev). May be set in a
+ *      root `.env` (real environment variables take precedence). Defaults to
+ *      `spec/openapi.bundled.json`; when that default file is absent, resolution
+ *      falls through to the options below instead of erroring.
  *   2. $SPEC_BUNDLE_URL   — explicit URL override.
  *   3. The GitHub release asset for the version pinned in `spec-version.json`
  *      (`https://github.com/<repo>/releases/download/v<version>/<assetName>`).
@@ -23,6 +26,33 @@ import path from "node:path";
 const REPO_ROOT = process.cwd();
 const LOCK_PATH = path.join(REPO_ROOT, "spec-version.json");
 const OUT_PATH = path.join(REPO_ROOT, "spec", "openapi.bundled.json");
+
+/**
+ * Load KEY=VALUE pairs from a root `.env` into `process.env`, without clobbering
+ * variables already set in the real environment (which always win). Keeps the
+ * SPEC_BUNDLE_* overrides configurable for local dev without exporting them in
+ * the shell. Missing file is a no-op.
+ */
+function loadDotEnv(): void {
+	const envPath = path.join(REPO_ROOT, ".env");
+	if (!fs.existsSync(envPath)) return;
+	for (const raw of fs.readFileSync(envPath, "utf8").split(/\r?\n/)) {
+		const line = raw.trim();
+		if (!line || line.startsWith("#")) continue;
+		const eq = line.indexOf("=");
+		if (eq === -1) continue;
+		const key = line.slice(0, eq).trim();
+		if (!key || key in process.env) continue;
+		let value = line.slice(eq + 1).trim();
+		if (
+			(value.startsWith('"') && value.endsWith('"')) ||
+			(value.startsWith("'") && value.endsWith("'"))
+		) {
+			value = value.slice(1, -1);
+		}
+		process.env[key] = value;
+	}
+}
 
 interface SpecLock {
 	repo: string;
@@ -93,10 +123,54 @@ function httpGet(url: string, headers: Headers = {}): Promise<HttpResponse> {
 	});
 }
 
+interface OpenApiOperation {
+	tags?: string[];
+	operationId?: string;
+	requestBody?: unknown;
+}
+
 interface OpenApiDoc {
 	info?: { version?: string };
 	tags?: Array<{ name?: string }>;
-	paths?: Record<string, Record<string, { tags?: string[] }>>;
+	paths?: Record<string, Record<string, OpenApiOperation>>;
+}
+
+/**
+ * HTTP methods that carry a request body. Unit's gateway requires the
+ * `application/vnd.api+json` Content-Type on these even when the body is empty
+ * (e.g. action endpoints like cancel/enable/disable), and returns 415 without
+ * it. openapi-generator's typescript-axios template only emits a Content-Type
+ * header when the operation declares a `requestBody`, so bodyless mutating
+ * operations produce clients that omit it.
+ */
+const BODY_METHODS = new Set(["post", "put", "patch", "delete"]);
+
+/**
+ * Give every mutating operation that lacks a `requestBody` an optional,
+ * empty JSON:API request body. This is a no-op for operations that already
+ * declare one, so it's safe to re-run against an already-patched bundle. The
+ * added body is optional, so generated method signatures stay backward
+ * compatible (callers gain an optional argument, nothing becomes required),
+ * but the generator now emits the Content-Type header these endpoints need.
+ */
+function injectBodylessRequestBodies(doc: OpenApiDoc): string[] {
+	const patched: string[] = [];
+	for (const [route, ops] of Object.entries(doc.paths ?? {})) {
+		for (const [method, op] of Object.entries(ops)) {
+			if (!BODY_METHODS.has(method)) continue;
+			if (!op || typeof op !== "object" || op.requestBody) continue;
+			op.requestBody = {
+				required: false,
+				content: {
+					"application/vnd.api+json": {
+						schema: { type: "object" },
+					},
+				},
+			};
+			patched.push(`${method.toUpperCase()} ${route} (${op.operationId ?? "?"})`);
+		}
+	}
+	return patched;
 }
 
 /**
@@ -161,11 +235,19 @@ function writeOut(buf: Buffer, source: string, expectedVersion?: string): void {
 		);
 		process.exit(1);
 	}
+	const patched = injectBodylessRequestBodies(doc);
+	const out = patched.length ? `${JSON.stringify(doc, null, 2)}\n` : text.endsWith("\n") ? text : `${text}\n`;
 	fs.mkdirSync(path.dirname(OUT_PATH), { recursive: true });
-	fs.writeFileSync(OUT_PATH, text.endsWith("\n") ? text : `${text}\n`, "utf8");
+	fs.writeFileSync(OUT_PATH, out, "utf8");
 	console.log(
 		`[fetch-spec] Wrote ${path.relative(REPO_ROOT, OUT_PATH)} from ${source}`,
 	);
+	if (patched.length) {
+		console.log(
+			`[fetch-spec] Added optional JSON:API request body to ${patched.length} ` +
+				`bodyless mutating operation(s): ${patched.join(", ")}`,
+		);
+	}
 	updateLockSlices(doc);
 }
 
@@ -252,14 +334,20 @@ async function fromRelease(lock: SpecLock): Promise<void> {
 }
 
 async function main(): Promise<void> {
-	const overridePath = process.env.SPEC_BUNDLE_PATH;
-	if (overridePath) {
-		if (!fs.existsSync(overridePath)) {
-			console.error(`[fetch-spec] SPEC_BUNDLE_PATH not found: ${overridePath}`);
-			process.exit(1);
-		}
-		writeOut(fs.readFileSync(overridePath), overridePath);
+	loadDotEnv();
+
+	// SPEC_BUNDLE_PATH defaults to the committed spec bundle. An explicitly
+	// configured path that is missing is a hard error; the default silently
+	// falls through to the URL/release options when the file isn't present yet.
+	const explicitPath = process.env.SPEC_BUNDLE_PATH;
+	const bundlePath = explicitPath ?? OUT_PATH;
+	if (fs.existsSync(bundlePath)) {
+		writeOut(fs.readFileSync(bundlePath), bundlePath);
 		return;
+	}
+	if (explicitPath) {
+		console.error(`[fetch-spec] SPEC_BUNDLE_PATH not found: ${explicitPath}`);
+		process.exit(1);
 	}
 
 	const overrideUrl = process.env.SPEC_BUNDLE_URL;

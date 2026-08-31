@@ -8,7 +8,7 @@
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
 |**type** | [**TypeEnum**](#TypeEnum) |  |  |
-|**attributes** | [**UpdateBookPaymentDataAttributes**](UpdateBookPaymentDataAttributes.md) |  |  |
+|**attributes** | [**UpdateReceivedPaymentDataAttributes**](UpdateReceivedPaymentDataAttributes.md) |  |  |
 
 
 

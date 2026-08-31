@@ -270,6 +270,7 @@ docs/UpdatePayment200ResponseData.md
 docs/UpdatePaymentRequest.md
 docs/UpdateReceivedPayment200Response.md
 docs/UpdateReceivedPaymentData.md
+docs/UpdateReceivedPaymentDataAttributes.md
 docs/UpdateReceivedPaymentRequest.md
 docs/UpdateSoleProprietorApplicationData.md
 docs/UpdateSoleProprietorApplicationDataAttributes.md
@@ -570,6 +571,7 @@ unit_finance_sdk/models/update_payment200_response_data.py
 unit_finance_sdk/models/update_payment_request.py
 unit_finance_sdk/models/update_received_payment200_response.py
 unit_finance_sdk/models/update_received_payment_data.py
+unit_finance_sdk/models/update_received_payment_data_attributes.py
 unit_finance_sdk/models/update_received_payment_request.py
 unit_finance_sdk/models/update_sole_proprietor_application_data.py
 unit_finance_sdk/models/update_sole_proprietor_application_data_attributes.py

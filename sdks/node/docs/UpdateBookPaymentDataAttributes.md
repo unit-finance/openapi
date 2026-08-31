@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**tags** | **{ [key: string]: any; }** | See Updating Tags. | [optional] [default to undefined]
+**tags** | **{ [key: string]: any; }** | See Updating Tags. | [default to undefined]
 
 ## Example
 

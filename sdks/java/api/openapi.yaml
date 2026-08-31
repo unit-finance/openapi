@@ -5,7 +5,7 @@ info:
     name: Proprietary
     url: https://www.unit.co/terms-of-service
   title: Unit API
-  version: 0.4.0
+  version: 0.4.1
 servers:
 - url: https://api.s.unit.sh
 security:
@@ -2682,7 +2682,7 @@ paths:
     post:
       description: "Originate a recurring payment. The request body is one of CreateRecurringCreditACHPaymentRequest,\
         \ CreateRecurringCreditBookPaymentRequest, or CreateRecurringDebitACHPaymentRequest,\
-        \ discriminated by data.type (recurringCreditAchPayment, recurringBookPayment,\
+        \ discriminated by data.type (recurringCreditAchPayment, recurringCreditBookPayment,\
         \ recurringDebitAchPayment)."
       operationId: createRecurringPayment
       requestBody:
@@ -5413,7 +5413,7 @@ components:
           - achReceivedPayment
           type: string
         attributes:
-          $ref: "#/components/schemas/UpdateBookPaymentData_attributes"
+          $ref: "#/components/schemas/UpdateReceivedPaymentData_attributes"
       required:
       - attributes
       - type
@@ -5483,7 +5483,7 @@ components:
       properties:
         type:
           enum:
-          - recurringBookPayment
+          - recurringCreditBookPayment
           type: string
         attributes:
           $ref: "#/components/schemas/CreateRecurringCreditBookPaymentData_attributes"
@@ -6204,8 +6204,7 @@ components:
         included:
           description: Array of resources requested by the include query parameter.
           items:
-            additionalProperties: true
-            type: object
+            $ref: "#/components/schemas/DepositAccount"
           type: array
         meta:
           $ref: "#/components/schemas/Meta"
@@ -6219,8 +6218,7 @@ components:
         included:
           description: Array of resources requested by the include query parameter.
           items:
-            additionalProperties: true
-            type: object
+            $ref: "#/components/schemas/DepositAccount"
           type: array
       required:
       - data
@@ -6323,8 +6321,7 @@ components:
         included:
           description: Array of resources requested by the include query parameter.
           items:
-            additionalProperties: true
-            type: object
+            $ref: "#/components/schemas/DepositAccount"
           type: array
         meta:
           $ref: "#/components/schemas/Meta"
@@ -6338,8 +6335,7 @@ components:
         included:
           description: Array of resources requested by the include query parameter.
           items:
-            additionalProperties: true
-            type: object
+            $ref: "#/components/schemas/DepositAccount"
           type: array
       required:
       - data
@@ -8766,18 +8762,30 @@ components:
         tags:
           additionalProperties: true
           description: See Updating Tags.
+          example:
+            by: null
+            uuid: 83033b64-38f8-4dbc-91a1-313ff0156d02
           type: object
         clearingDaysOverride:
           description: Only supports ACH Payments with direction Debit in status PendingReview
             or Pending. See Dynamic Clearing Period.
+          example: 3
           type: integer
+      required:
+      - clearingDaysOverride
+      - tags
       type: object
     UpdateBookPaymentData_attributes:
       properties:
         tags:
           additionalProperties: true
           description: See Updating Tags.
+          example:
+            by: null
+            uuid: 83033b64-38f8-4dbc-91a1-313ff0156d02
           type: object
+      required:
+      - tags
       type: object
     GetExpectedACHCompletionDateData_attributes:
       properties:
@@ -8801,6 +8809,18 @@ components:
       required:
       - amount
       - direction
+      type: object
+    UpdateReceivedPaymentData_attributes:
+      properties:
+        tags:
+          additionalProperties: true
+          description: See Updating Tags.
+          example:
+            by: Richard Hendricks
+            id: 23033b64-38f8-4dbc-91a1-313ff0156d02
+          type: object
+      required:
+      - tags
       type: object
     CreateBatchReleasesData_attributes:
       properties:

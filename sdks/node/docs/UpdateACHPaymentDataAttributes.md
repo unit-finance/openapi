@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**tags** | **{ [key: string]: any; }** | See Updating Tags. | [optional] [default to undefined]
-**clearingDaysOverride** | **number** | Only supports ACH Payments with direction Debit in status PendingReview or Pending. See Dynamic Clearing Period. | [optional] [default to undefined]
+**tags** | **{ [key: string]: any; }** | See Updating Tags. | [default to undefined]
+**clearingDaysOverride** | **number** | Only supports ACH Payments with direction Debit in status PendingReview or Pending. See Dynamic Clearing Period. | [default to undefined]
 
 ## Example
 

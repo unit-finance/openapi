@@ -43,9 +43,11 @@ const configuration = new Configuration();
 const apiInstance = new PaymentsApi(configuration);
 
 let paymentId: string; // (default to undefined)
+let body: object; // (optional)
 
 const { status, data } = await apiInstance.cancelPayment(
-    paymentId
+    paymentId,
+    body
 );
 ```
 
@@ -53,6 +55,7 @@ const { status, data } = await apiInstance.cancelPayment(
 
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
+| **body** | **object**|  | |
 | **paymentId** | [**string**] |  | defaults to undefined|
 
 
@@ -66,7 +69,7 @@ const { status, data } = await apiInstance.cancelPayment(
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/vnd.api+json
  - **Accept**: application/vnd.api+json
 
 
@@ -98,9 +101,11 @@ const configuration = new Configuration();
 const apiInstance = new PaymentsApi(configuration);
 
 let paymentId: string; // (default to undefined)
+let body: object; // (optional)
 
 const { status, data } = await apiInstance.clearAchDebitPayment(
-    paymentId
+    paymentId,
+    body
 );
 ```
 
@@ -108,6 +113,7 @@ const { status, data } = await apiInstance.clearAchDebitPayment(
 
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
+| **body** | **object**|  | |
 | **paymentId** | [**string**] |  | defaults to undefined|
 
 
@@ -121,7 +127,7 @@ const { status, data } = await apiInstance.clearAchDebitPayment(
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/vnd.api+json
  - **Accept**: application/vnd.api+json
 
 
@@ -251,7 +257,7 @@ const { status, data } = await apiInstance.createPayment(
 # **createRecurringPayment**
 > CreateRecurringPayment201Response createRecurringPayment(createRecurringPaymentRequest)
 
-Originate a recurring payment. The request body is one of CreateRecurringCreditACHPaymentRequest, CreateRecurringCreditBookPaymentRequest, or CreateRecurringDebitACHPaymentRequest, discriminated by data.type (recurringCreditAchPayment, recurringBookPayment, recurringDebitAchPayment).
+Originate a recurring payment. The request body is one of CreateRecurringCreditACHPaymentRequest, CreateRecurringCreditBookPaymentRequest, or CreateRecurringDebitACHPaymentRequest, discriminated by data.type (recurringCreditAchPayment, recurringCreditBookPayment, recurringDebitAchPayment).
 
 ### Example
 
@@ -321,9 +327,11 @@ const configuration = new Configuration();
 const apiInstance = new PaymentsApi(configuration);
 
 let id: string; // (default to undefined)
+let body: object; // (optional)
 
 const { status, data } = await apiInstance.deleteRecurringPayment(
-    id
+    id,
+    body
 );
 ```
 
@@ -331,6 +339,7 @@ const { status, data } = await apiInstance.deleteRecurringPayment(
 
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
+| **body** | **object**|  | |
 | **id** | [**string**] |  | defaults to undefined|
 
 
@@ -344,7 +353,7 @@ const { status, data } = await apiInstance.deleteRecurringPayment(
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/vnd.api+json
  - **Accept**: application/vnd.api+json
 
 
@@ -376,9 +385,11 @@ const configuration = new Configuration();
 const apiInstance = new PaymentsApi(configuration);
 
 let id: string; // (default to undefined)
+let body: object; // (optional)
 
 const { status, data } = await apiInstance.disableRecurringPayment(
-    id
+    id,
+    body
 );
 ```
 
@@ -386,6 +397,7 @@ const { status, data } = await apiInstance.disableRecurringPayment(
 
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
+| **body** | **object**|  | |
 | **id** | [**string**] |  | defaults to undefined|
 
 
@@ -399,7 +411,7 @@ const { status, data } = await apiInstance.disableRecurringPayment(
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/vnd.api+json
  - **Accept**: application/vnd.api+json
 
 
@@ -431,9 +443,11 @@ const configuration = new Configuration();
 const apiInstance = new PaymentsApi(configuration);
 
 let id: string; // (default to undefined)
+let body: object; // (optional)
 
 const { status, data } = await apiInstance.enableRecurringPayment(
-    id
+    id,
+    body
 );
 ```
 
@@ -441,6 +455,7 @@ const { status, data } = await apiInstance.enableRecurringPayment(
 
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
+| **body** | **object**|  | |
 | **id** | [**string**] |  | defaults to undefined|
 
 
@@ -454,7 +469,7 @@ const { status, data } = await apiInstance.enableRecurringPayment(
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/vnd.api+json
  - **Accept**: application/vnd.api+json
 
 

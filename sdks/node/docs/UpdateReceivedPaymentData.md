@@ -6,7 +6,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **type** | **string** |  | [default to undefined]
-**attributes** | [**UpdateBookPaymentDataAttributes**](UpdateBookPaymentDataAttributes.md) |  | [default to undefined]
+**attributes** | [**UpdateReceivedPaymentDataAttributes**](UpdateReceivedPaymentDataAttributes.md) |  | [default to undefined]
 
 ## Example
 

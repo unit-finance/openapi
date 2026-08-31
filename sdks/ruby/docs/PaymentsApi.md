@@ -309,7 +309,7 @@ end
 
 Create a recurring payment
 
-Originate a recurring payment. The request body is one of CreateRecurringCreditACHPaymentRequest, CreateRecurringCreditBookPaymentRequest, or CreateRecurringDebitACHPaymentRequest, discriminated by data.type (recurringCreditAchPayment, recurringBookPayment, recurringDebitAchPayment).
+Originate a recurring payment. The request body is one of CreateRecurringCreditACHPaymentRequest, CreateRecurringCreditBookPaymentRequest, or CreateRecurringDebitACHPaymentRequest, discriminated by data.type (recurringCreditAchPayment, recurringCreditBookPayment, recurringDebitAchPayment).
 
 ### Examples
 
@@ -1439,7 +1439,7 @@ end
 
 api_instance = UnitFinanceSdk::PaymentsApi.new
 payment_id = 'payment_id_example' # String | 
-update_payment_request = UnitFinanceSdk::UpdateACHPaymentRequest.new({data: UnitFinanceSdk::UpdateACHPaymentData.new({type: 'achPayment', attributes: UnitFinanceSdk::UpdateACHPaymentDataAttributes.new})}) # UpdatePaymentRequest | 
+update_payment_request = UnitFinanceSdk::UpdateACHPaymentRequest.new({data: UnitFinanceSdk::UpdateACHPaymentData.new({type: 'achPayment', attributes: UnitFinanceSdk::UpdateACHPaymentDataAttributes.new({tags: { key: 3.56}, clearing_days_override: 3})})}) # UpdatePaymentRequest | 
 
 begin
   # Update a payment
@@ -1510,7 +1510,7 @@ end
 
 api_instance = UnitFinanceSdk::PaymentsApi.new
 id = 'id_example' # String | 
-update_received_payment_request = UnitFinanceSdk::UpdateReceivedPaymentRequest.new({data: UnitFinanceSdk::UpdateReceivedPaymentData.new({type: 'achReceivedPayment', attributes: UnitFinanceSdk::UpdateBookPaymentDataAttributes.new})}) # UpdateReceivedPaymentRequest | 
+update_received_payment_request = UnitFinanceSdk::UpdateReceivedPaymentRequest.new({data: UnitFinanceSdk::UpdateReceivedPaymentData.new({type: 'achReceivedPayment', attributes: UnitFinanceSdk::UpdateReceivedPaymentDataAttributes.new({tags: { key: 3.56}})})}) # UpdateReceivedPaymentRequest | 
 
 begin
   # Update a received payment

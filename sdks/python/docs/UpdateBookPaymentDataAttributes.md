@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**tags** | **Dict[str, object]** | See Updating Tags. | [optional] 
+**tags** | **Dict[str, object]** | See Updating Tags. | 
 
 ## Example
 

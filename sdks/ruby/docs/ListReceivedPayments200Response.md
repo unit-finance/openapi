@@ -5,7 +5,7 @@
 | Name | Type | Description | Notes |
 | ---- | ---- | ----------- | ----- |
 | **data** | [**Array&lt;ACHReceivedPayment&gt;**](ACHReceivedPayment.md) |  |  |
-| **included** | **Array&lt;Hash&lt;String, Object&gt;&gt;** | Array of resources requested by the include query parameter. | [optional] |
+| **included** | [**Array&lt;DepositAccount&gt;**](DepositAccount.md) | Array of resources requested by the include query parameter. | [optional] |
 | **meta** | [**Meta**](Meta.md) |  | [optional] |
 
 ## Example

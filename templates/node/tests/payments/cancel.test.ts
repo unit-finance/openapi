@@ -23,7 +23,8 @@ describeIfToken("PaymentsApi.cancelPayment", () => {
 			expect(data.data.attributes).toBeDefined();
 		} catch (error: unknown) {
 			// Book payments settle immediately in the sandbox; only Pending or
-			// PendingReview ACH/Wire payments can be canceled.
+			// PendingReview ACH/Wire payments can be canceled. The sandbox may also
+			// return 501 when cancellation isn't implemented for the payment type.
 			const status =
 				typeof error === "object" &&
 				error !== null &&
@@ -32,7 +33,12 @@ describeIfToken("PaymentsApi.cancelPayment", () => {
 					"number"
 					? (error as { response: { status: number } }).response.status
 					: undefined;
-			if (status === 409 || status === 422 || status === 400) {
+			if (
+				status === 409 ||
+				status === 422 ||
+				status === 400 ||
+				status === 501
+			) {
 				expect(true).toBe(true);
 				return;
 			}

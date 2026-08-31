@@ -4,7 +4,7 @@
 
 | Name | Type | Description | Notes |
 | ---- | ---- | ----------- | ----- |
-| **tags** | **Hash&lt;String, Object&gt;** | See Updating Tags. | [optional] |
+| **tags** | **Hash&lt;String, Object&gt;** | See Updating Tags. |  |
 
 ## Example
 
@@ -12,7 +12,7 @@
 require 'unit_finance_sdk'
 
 instance = UnitFinanceSdk::UpdateBookPaymentDataAttributes.new(
-  tags: null
+  tags: {&quot;by&quot;:null,&quot;uuid&quot;:&quot;83033b64-38f8-4dbc-91a1-313ff0156d02&quot;}
 )
 ```
 
