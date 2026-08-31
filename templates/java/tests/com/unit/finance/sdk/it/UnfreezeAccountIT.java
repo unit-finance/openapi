@@ -17,7 +17,7 @@ class UnfreezeAccountIT {
     DepositAccount account = SharedAccount.createDedicatedDepositAccount();
     api.freezeAccount(account.getId(), Fixtures.freezeDepositAccountRequest());
 
-    CreateAccount201Response response = api.unfreezeAccount(account.getId());
+    CreateAccount201Response response = api.unfreezeAccount(account.getId(), null);
 
     assertEquals(account.getId(), ApiSupport.jsonApiId(response.getData()));
     assertNotNull(response.getData().getActualInstance());

@@ -1,6 +1,6 @@
 ---
 description: Conventions and guardrails for the SDK integration test suites
-globs: templates/node/tests/**,templates/python/tests/**,templates/ruby/spec/**,templates/java/tests/**
+globs: templates/node/tests/**,templates/python/tests/**,templates/ruby/spec/**,templates/java/tests/**,sdks/**
 alwaysApply: false
 ---
 
@@ -15,6 +15,10 @@ integration tests. They are mirrored into `sdks/<lang>/` by `npm run generate-sd
   `templates/python/tests`, `templates/ruby/spec`, `templates/java/tests`).
 - NEVER edit anything under `sdks/` directly — it is generated and wiped, and a
   CI drift gate fails on manual edits. Run `npm run generate-sdks` to re-mirror.
+  Test failures print the *placed* paths (`sdks/node/tests/...`), so map them
+  back to `templates/` before editing: `sdks/node/tests` -> `templates/node/tests`,
+  `sdks/java/src/test/java` -> `templates/java/tests`, `sdks/python/tests` ->
+  `templates/python/tests`, `sdks/ruby/spec` -> `templates/ruby/spec`.
 - Do not modify the spec, generator config, or the publish/CI workflows.
 
 ## Structure

@@ -33,7 +33,7 @@ def _wait_for_customer_id(application_id: str) -> str:
         created = unwrap(res.data.data)
         relationships = getattr(created, "relationships", None)
         customer = getattr(relationships, "customer", None)
-        customer_data = getattr(customer, "data", None)
+        customer_data = unwrap(getattr(customer, "data", None))
         if customer_data is not None and customer_data.id:
             return customer_data.id
         sleep(1)

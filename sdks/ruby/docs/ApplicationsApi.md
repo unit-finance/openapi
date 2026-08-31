@@ -5,7 +5,6 @@ All URIs are relative to *https://api.s.unit.sh*
 | Method | HTTP request | Description |
 | ------ | ------------ | ----------- |
 | [**cancel_application**](ApplicationsApi.md#cancel_application) | **POST** /applications/{id}/cancel | Cancel an application |
-| [**check_registered_agent_address**](ApplicationsApi.md#check_registered_agent_address) | **POST** /applications/check-registered-agent-address | Check a registered agent address |
 | [**create_application**](ApplicationsApi.md#create_application) | **POST** /applications | Create an application |
 | [**get_by_id**](ApplicationsApi.md#get_by_id) | **GET** /applications/{id} | Get an application |
 | [**list**](ApplicationsApi.md#list) | **GET** /applications | List applications |
@@ -73,75 +72,6 @@ end
 ### Return type
 
 [**CancelApplication201Response**](CancelApplication201Response.md)
-
-### Authorization
-
-[bearerAuth](../README.md#bearerAuth)
-
-### HTTP request headers
-
-- **Content-Type**: application/vnd.api+json
-- **Accept**: application/vnd.api+json
-
-
-## check_registered_agent_address
-
-> <CheckRegisteredAgentAddress200Response> check_registered_agent_address(check_registered_agent_address_request)
-
-Check a registered agent address
-
-Checks if an address is a registered agent address.
-
-### Examples
-
-```ruby
-require 'time'
-require 'unit_finance_sdk'
-# setup authorization
-UnitFinanceSdk.configure do |config|
-  # Configure Bearer authorization (JWT): bearerAuth
-  config.access_token = 'YOUR_BEARER_TOKEN'
-end
-
-api_instance = UnitFinanceSdk::ApplicationsApi.new
-check_registered_agent_address_request = UnitFinanceSdk::CheckRegisteredAgentAddressRequest.new({data: UnitFinanceSdk::CheckRegisteredAgentAddressData.new({type: 'checkRegisteredAgentAddress', attributes: UnitFinanceSdk::CheckRegisteredAgentAddressDataAttributes.new({address: UnitFinanceSdk::AddressType.new({street: 'street_example', city: 'city_example', state: 'state_example', postal_code: 'postal_code_example', country: 'country_example'})})})}) # CheckRegisteredAgentAddressRequest | 
-
-begin
-  # Check a registered agent address
-  result = api_instance.check_registered_agent_address(check_registered_agent_address_request)
-  p result
-rescue UnitFinanceSdk::ApiError => e
-  puts "Error when calling ApplicationsApi->check_registered_agent_address: #{e}"
-end
-```
-
-#### Using the check_registered_agent_address_with_http_info variant
-
-This returns an Array which contains the response data, status code and headers.
-
-> <Array(<CheckRegisteredAgentAddress200Response>, Integer, Hash)> check_registered_agent_address_with_http_info(check_registered_agent_address_request)
-
-```ruby
-begin
-  # Check a registered agent address
-  data, status_code, headers = api_instance.check_registered_agent_address_with_http_info(check_registered_agent_address_request)
-  p status_code # => 2xx
-  p headers # => { ... }
-  p data # => <CheckRegisteredAgentAddress200Response>
-rescue UnitFinanceSdk::ApiError => e
-  puts "Error when calling ApplicationsApi->check_registered_agent_address_with_http_info: #{e}"
-end
-```
-
-### Parameters
-
-| Name | Type | Description | Notes |
-| ---- | ---- | ----------- | ----- |
-| **check_registered_agent_address_request** | [**CheckRegisteredAgentAddressRequest**](CheckRegisteredAgentAddressRequest.md) |  |  |
-
-### Return type
-
-[**CheckRegisteredAgentAddress200Response**](CheckRegisteredAgentAddress200Response.md)
 
 ### Authorization
 

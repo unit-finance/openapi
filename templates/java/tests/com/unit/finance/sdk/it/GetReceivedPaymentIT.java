@@ -18,7 +18,7 @@ class GetReceivedPaymentIT {
 
     ListReceivedPayments200Response list =
         api.listReceivedPayments(
-            "1", null, null, null, null, null, null, null, null, null, null, null, null, null);
+            "1", null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     assumeTrue(list.getData() != null && !list.getData().isEmpty(), "no received payments in sandbox");
     String id = ApiSupport.jsonApiId(list.getData().get(0));
 

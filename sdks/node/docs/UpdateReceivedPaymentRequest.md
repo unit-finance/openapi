@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**data** | [**UpdateReceivedPaymentData**](UpdateReceivedPaymentData.md) |  | [default to undefined]
+**data** | [**UpdateRealtimeReceivedPaymentData**](UpdateRealtimeReceivedPaymentData.md) |  | [default to undefined]
 
 ## Example
 

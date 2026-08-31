@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**data** | [**List[ACHReceivedPayment]**](ACHReceivedPayment.md) |  | 
+**data** | [**List[ListReceivedPayments200ResponseDataInner]**](ListReceivedPayments200ResponseDataInner.md) |  | 
 **included** | [**List[DepositAccount]**](DepositAccount.md) | Array of resources requested by the include query parameter. | [optional] 
 **meta** | [**Meta**](Meta.md) |  | [optional] 
 

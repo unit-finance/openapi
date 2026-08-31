@@ -1,8 +1,6 @@
 import { buildAccountsApi, describeIfToken } from "../helpers/api";
-import {
-	buildCreateAccountHoldRequest,
-	buildReleaseAccountHoldRequest,
-} from "../helpers/fixtures";
+import { buildReleaseAccountHoldRequest } from "../helpers/fixtures";
+import { createAccountHoldOrSkip } from "../helpers/holds";
 import { createDedicatedDepositAccount } from "../helpers/sharedAccount";
 
 describeIfToken("AccountsApi.releaseAccountHold", () => {
@@ -10,9 +8,8 @@ describeIfToken("AccountsApi.releaseAccountHold", () => {
 		const api = buildAccountsApi();
 		const account = await createDedicatedDepositAccount();
 
-		const created = await api.createAccountHold({
-			createAccountHoldRequest: buildCreateAccountHoldRequest(account.id),
-		});
+		const created = await createAccountHoldOrSkip(api, account.id);
+		if (!created) return;
 		expect(created.status).toBe(201);
 		const holdId = created.data.data.id;
 

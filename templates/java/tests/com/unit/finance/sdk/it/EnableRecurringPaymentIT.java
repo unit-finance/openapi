@@ -20,9 +20,9 @@ class EnableRecurringPaymentIT {
             Fixtures.createRecurringBookPaymentRequest(
                 shared.accountId, shared.counterpartyAccountId));
     String id = ApiSupport.jsonApiId(created.getData());
-    api.disableRecurringPayment(id);
+    api.disableRecurringPayment(id, null);
 
-    CreateRecurringPayment201Response response = api.enableRecurringPayment(id);
+    CreateRecurringPayment201Response response = api.enableRecurringPayment(id, null);
 
     assertEquals(id, ApiSupport.jsonApiId(response.getData()));
     assertNotNull(response.getData().getActualInstance());

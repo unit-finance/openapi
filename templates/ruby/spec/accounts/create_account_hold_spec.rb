@@ -1,5 +1,6 @@
 require 'helpers/api'
 require 'helpers/fixtures'
+require 'helpers/holds'
 require 'helpers/shared_account'
 
 RSpec.describe 'create_account_hold', :sandbox do
@@ -7,10 +8,10 @@ RSpec.describe 'create_account_hold', :sandbox do
     shared = Helpers::SharedAccount.get_or_create
     api = Helpers::Api.build_accounts_api
 
-    data, status_code, = api.create_account_hold_with_http_info(
-      Helpers::Fixtures.create_account_hold_request(shared[:account_id])
-    )
+    result = Helpers::Holds.create_or_skip(api, shared[:account_id])
+    skip 'account holds are disabled on this sandbox org' if result.nil?
 
+    data, status_code, = result
     expect(status_code).to eq(201)
     hold = Helpers::Api.unwrap(data.data)
     expect(hold.id).to be_a(String)

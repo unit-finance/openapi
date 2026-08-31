@@ -3,8 +3,8 @@
 Bodies start life as plain dicts (enum fields use their literal wire values).
 How they are then handed to the API depends on the endpoint's request type:
 
-- Concrete request models with no nested ``oneOf`` (``cancel``,
-  ``check-registered-agent-address``): a dict is fine. The generated method is
+- Concrete request models with no nested ``oneOf`` (``cancel``): a dict is
+  fine. The generated method is
   ``@validate_call``-decorated, so pydantic coerces the dict straight into the
   concrete model and it serializes with its ``data`` envelope intact.
 
@@ -250,15 +250,6 @@ def build_update_business_beneficial_owner_request(
     return UpdateBusinessBeneficialOwnerRequest.from_dict(body)
 
 
-def build_check_registered_agent_address_request() -> Dict[str, Any]:
-    return {
-        "data": {
-            "type": "checkRegisteredAgentAddress",
-            "attributes": {"address": _us_address()},
-        },
-    }
-
-
 def _create_deposit_account_dict(customer_id: str) -> Dict[str, Any]:
     return {
         "data": {
@@ -296,21 +287,6 @@ def build_update_deposit_account_request() -> UpdateAccountRequest:
     return UpdateAccountRequest(
         actual_instance=UpdateDepositAccountRequest.from_dict(body)
     )
-
-
-def build_verify_account_request(
-    routing_number: str,
-    account_number: str,
-) -> Dict[str, Any]:
-    return {
-        "data": {
-            "type": "accountVerify",
-            "attributes": {
-                "routingNumber": routing_number,
-                "accountNumber": account_number,
-            },
-        },
-    }
 
 
 def build_close_deposit_account_request() -> CloseAccountRequest:
@@ -368,13 +344,17 @@ def build_reverse_fee_request(fee_id: str) -> Dict[str, Any]:
     }
 
 
+# The spec marks ``idempotencyKey`` optional on both hold requests, but the
+# sandbox rejects them with a 400 unless it is present. Each call gets a fresh
+# key so that separately-built holds are never collapsed into one another.
 def build_create_account_hold_request(account_id: str) -> Dict[str, Any]:
     return {
         "data": {
-            "type": "createAccountHoldJson",
+            "type": "accountHold",
             "attributes": {
                 "amount": 500,
                 "description": "SDK integration test hold",
+                "idempotencyKey": f"{TEST_RUN_ID}-hold-{uuid.uuid4().hex[:8]}",
             },
             "relationships": {
                 "account": {"data": {"type": "account", "id": account_id}},
@@ -383,11 +363,11 @@ def build_create_account_hold_request(account_id: str) -> Dict[str, Any]:
     }
 
 
-def build_release_account_hold_request() -> Dict[str, Any]:
+def build_release_account_hold_request(amount: int = 500) -> Dict[str, Any]:
     return {
         "data": {
-            "type": "releaseAccountHold",
-            "attributes": {},
+            "type": "accountHold",
+            "attributes": {"amount": amount},
         },
     }
 

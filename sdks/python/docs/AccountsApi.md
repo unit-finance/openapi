@@ -21,7 +21,6 @@ Method | HTTP request | Description
 [**reopen_account**](AccountsApi.md#reopen_account) | **POST** /accounts/{accountId}/reopen | Reopen an account
 [**unfreeze_account**](AccountsApi.md#unfreeze_account) | **POST** /accounts/{accountId}/unfreeze | Unfreeze an account
 [**update_account**](AccountsApi.md#update_account) | **PATCH** /accounts/{accountId} | Update an account
-[**verify_account**](AccountsApi.md#verify_account) | **POST** /accounts/verify | Verify an account
 
 
 # **add_account_owners**
@@ -1226,7 +1225,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **reopen_account**
-> ReopenAccount200Response reopen_account(account_id)
+> ReopenAccount200Response reopen_account(account_id, body=body)
 
 Reopen an account
 
@@ -1263,10 +1262,11 @@ with unit_finance_sdk.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = unit_finance_sdk.AccountsApi(api_client)
     account_id = 'account_id_example' # str | 
+    body = None # object |  (optional)
 
     try:
         # Reopen an account
-        api_response = api_instance.reopen_account(account_id)
+        api_response = api_instance.reopen_account(account_id, body=body)
         print("The response of AccountsApi->reopen_account:\n")
         pprint(api_response)
     except Exception as e:
@@ -1281,6 +1281,7 @@ with unit_finance_sdk.ApiClient(configuration) as api_client:
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **account_id** | **str**|  | 
+ **body** | **object**|  | [optional] 
 
 ### Return type
 
@@ -1292,7 +1293,7 @@ Name | Type | Description  | Notes
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/vnd.api+json
  - **Accept**: application/vnd.api+json
 
 ### HTTP response details
@@ -1308,7 +1309,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **unfreeze_account**
-> CreateAccount201Response unfreeze_account(account_id)
+> CreateAccount201Response unfreeze_account(account_id, body=body)
 
 Unfreeze an account
 
@@ -1345,10 +1346,11 @@ with unit_finance_sdk.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = unit_finance_sdk.AccountsApi(api_client)
     account_id = 'account_id_example' # str | 
+    body = None # object |  (optional)
 
     try:
         # Unfreeze an account
-        api_response = api_instance.unfreeze_account(account_id)
+        api_response = api_instance.unfreeze_account(account_id, body=body)
         print("The response of AccountsApi->unfreeze_account:\n")
         pprint(api_response)
     except Exception as e:
@@ -1363,6 +1365,7 @@ with unit_finance_sdk.ApiClient(configuration) as api_client:
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **account_id** | **str**|  | 
+ **body** | **object**|  | [optional] 
 
 ### Return type
 
@@ -1374,7 +1377,7 @@ Name | Type | Description  | Notes
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/vnd.api+json
  - **Accept**: application/vnd.api+json
 
 ### HTTP response details
@@ -1467,89 +1470,6 @@ Name | Type | Description  | Notes
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 **200** | The updated account resource. |  -  |
-**400** | Bad request. The request body or query parameters failed validation; &#x60;errors[].source.pointer&#x60; identifies the offending field. |  -  |
-**401** | Unauthorized. The bearer token is missing, invalid or expired. |  -  |
-**404** | Not found. No resource matches the supplied identifier. |  -  |
-**0** | Error response |  -  |
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-
-# **verify_account**
-> VerifyAccount200Response verify_account(verify_account_request)
-
-Verify an account
-
-Verify whether a routing number and account number pair belongs to an account in your organization. A common use case is checking whether a counterparty is an internal Unit account before originating an ACH payment — if a match is found, you can originate a book payment instead.
-
-### Example
-
-* Bearer (JWT) Authentication (bearerAuth):
-
-```python
-import unit_finance_sdk
-from unit_finance_sdk.models.verify_account200_response import VerifyAccount200Response
-from unit_finance_sdk.models.verify_account_request import VerifyAccountRequest
-from unit_finance_sdk.rest import ApiException
-from pprint import pprint
-
-# Defining the host is optional and defaults to https://api.s.unit.sh
-# See configuration.py for a list of all supported configuration parameters.
-configuration = unit_finance_sdk.Configuration(
-    host = "https://api.s.unit.sh"
-)
-
-# The client must configure the authentication and authorization parameters
-# in accordance with the API server security policy.
-# Examples for each auth method are provided below, use the example that
-# satisfies your auth use case.
-
-# Configure Bearer authorization (JWT): bearerAuth
-configuration = unit_finance_sdk.Configuration(
-    access_token = os.environ["BEARER_TOKEN"]
-)
-
-# Enter a context with an instance of the API client
-with unit_finance_sdk.ApiClient(configuration) as api_client:
-    # Create an instance of the API class
-    api_instance = unit_finance_sdk.AccountsApi(api_client)
-    verify_account_request = unit_finance_sdk.VerifyAccountRequest() # VerifyAccountRequest | 
-
-    try:
-        # Verify an account
-        api_response = api_instance.verify_account(verify_account_request)
-        print("The response of AccountsApi->verify_account:\n")
-        pprint(api_response)
-    except Exception as e:
-        print("Exception when calling AccountsApi->verify_account: %s\n" % e)
-```
-
-
-
-### Parameters
-
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **verify_account_request** | [**VerifyAccountRequest**](VerifyAccountRequest.md)|  | 
-
-### Return type
-
-[**VerifyAccount200Response**](VerifyAccount200Response.md)
-
-### Authorization
-
-[bearerAuth](../README.md#bearerAuth)
-
-### HTTP request headers
-
- - **Content-Type**: application/vnd.api+json
- - **Accept**: application/vnd.api+json
-
-### HTTP response details
-
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-**200** | Verification result. |  -  |
 **400** | Bad request. The request body or query parameters failed validation; &#x60;errors[].source.pointer&#x60; identifies the offending field. |  -  |
 **401** | Unauthorized. The bearer token is missing, invalid or expired. |  -  |
 **404** | Not found. No resource matches the supplied identifier. |  -  |

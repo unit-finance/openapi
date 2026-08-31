@@ -21,7 +21,7 @@ class DisableRecurringPaymentIT {
                 shared.accountId, shared.counterpartyAccountId));
     String id = ApiSupport.jsonApiId(created.getData());
 
-    CreateRecurringPayment201Response response = api.disableRecurringPayment(id);
+    CreateRecurringPayment201Response response = api.disableRecurringPayment(id, null);
 
     assertEquals(id, ApiSupport.jsonApiId(response.getData()));
     assertNotNull(response.getData().getActualInstance());

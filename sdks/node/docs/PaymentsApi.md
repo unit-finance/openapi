@@ -7,6 +7,7 @@ All URIs are relative to *https://api.s.unit.sh*
 |[**cancelPayment**](#cancelpayment) | **POST** /payments/{paymentId}/cancel | Cancel a payment|
 |[**clearAchDebitPayment**](#clearachdebitpayment) | **POST** /payments/{paymentId}/clear | Clear an ACH debit payment|
 |[**createBatchReleases**](#createbatchreleases) | **POST** /batch-releases | Create batch releases|
+|[**createBulkPayment**](#createbulkpayment) | **POST** /payments/bulk | Create a bulk payment|
 |[**createPayment**](#createpayment) | **POST** /payments | Create a payment|
 |[**createRecurringPayment**](#createrecurringpayment) | **POST** /recurring-payments | Create a recurring payment|
 |[**deleteRecurringPayment**](#deleterecurringpayment) | **DELETE** /recurring-payments/{id} | Delete a recurring payment|
@@ -191,6 +192,62 @@ const { status, data } = await apiInstance.createBatchReleases(
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 |**201** | Array of batch release resources. |  -  |
+|**400** | Bad request. The request body or query parameters failed validation; &#x60;errors[].source.pointer&#x60; identifies the offending field. |  -  |
+|**401** | Unauthorized. The bearer token is missing, invalid or expired. |  -  |
+|**404** | Not found. No resource matches the supplied identifier. |  -  |
+|**0** | Error response |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **createBulkPayment**
+> CreateBulkPayment201Response createBulkPayment(createBulkPaymentRequest)
+
+Creates multiple payments in a single asynchronous request. Each element of data is a payment creation payload — ACH, Book, and Wire types may be mixed in the same bulk.
+
+### Example
+
+```typescript
+import {
+    PaymentsApi,
+    Configuration,
+    CreateBulkPaymentRequest
+} from '@unit-finance/unit-node-sdk';
+
+const configuration = new Configuration();
+const apiInstance = new PaymentsApi(configuration);
+
+let createBulkPaymentRequest: CreateBulkPaymentRequest; //
+
+const { status, data } = await apiInstance.createBulkPayment(
+    createBulkPaymentRequest
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **createBulkPaymentRequest** | **CreateBulkPaymentRequest**|  | |
+
+
+### Return type
+
+**CreateBulkPayment201Response**
+
+### Authorization
+
+[bearerAuth](../README.md#bearerAuth)
+
+### HTTP request headers
+
+ - **Content-Type**: application/vnd.api+json
+ - **Accept**: application/vnd.api+json
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**201** | The accepted bulk payment request. |  -  |
 |**400** | Bad request. The request body or query parameters failed validation; &#x60;errors[].source.pointer&#x60; identifies the offending field. |  -  |
 |**401** | Unauthorized. The bearer token is missing, invalid or expired. |  -  |
 |**404** | Not found. No resource matches the supplied identifier. |  -  |
@@ -849,9 +906,10 @@ let filterFromAmount: string; //Optional. Filters the Received Payment that have
 let filterToAmount: string; //Optional. Filters the Received Payment that have an amount that is lower or equal to the specified amount (in cents). e.g. 7000 (optional) (default to undefined)
 let filterIncludeCompleted: string; //Optional. Filter to include ReceivedPayment with Status \'Completed\', default False. Can\'t be stated with filter[status][]. (optional) (default to undefined)
 let filterCanBeReprocessed: string; //Optional. If set to true, returns only Received Payments that can be reprocessed. If set to false only returns Received Payments that can\'t be reprocessed. (optional) (default to undefined)
-let filterType: string; //Optional. Filter received payments by type. Valid values: Ach, Wire. Defaults to both Ach and Wire if not specified. (optional) (default to undefined)
+let filterType: string; //Optional. Filter received payments by type. Valid values: Ach, Wire, Realtime. Defaults to Ach, Wire, and Realtime if not specified. (optional) (default to undefined)
 let filterTags: string; //Optional. Filter received payments by Tags. (optional) (default to undefined)
-let sort: string; //Optional. Leave empty or provide sort=createdAt for ascending order. Provide sort=-createdAt (leading minus sign) for descending order. (optional) (default to '-createdAt')
+let sort: string; //Optional. Leave empty or provide sort=createdAt for ascending order. Provide sort=-createdAt (leading minus sign) for descending order. (optional) (default to 'createdAt')
+let include: string; //Optional. A comma-separated list of related resources to include in the response. Related resources include: customer, account. See Getting Related Resources. (optional) (default to undefined)
 
 const { status, data } = await apiInstance.listReceivedPayments(
     pageLimit,
@@ -867,7 +925,8 @@ const { status, data } = await apiInstance.listReceivedPayments(
     filterCanBeReprocessed,
     filterType,
     filterTags,
-    sort
+    sort,
+    include
 );
 ```
 
@@ -886,9 +945,10 @@ const { status, data } = await apiInstance.listReceivedPayments(
 | **filterToAmount** | [**string**] | Optional. Filters the Received Payment that have an amount that is lower or equal to the specified amount (in cents). e.g. 7000 | (optional) defaults to undefined|
 | **filterIncludeCompleted** | [**string**] | Optional. Filter to include ReceivedPayment with Status \&#39;Completed\&#39;, default False. Can\&#39;t be stated with filter[status][]. | (optional) defaults to undefined|
 | **filterCanBeReprocessed** | [**string**] | Optional. If set to true, returns only Received Payments that can be reprocessed. If set to false only returns Received Payments that can\&#39;t be reprocessed. | (optional) defaults to undefined|
-| **filterType** | [**string**] | Optional. Filter received payments by type. Valid values: Ach, Wire. Defaults to both Ach and Wire if not specified. | (optional) defaults to undefined|
+| **filterType** | [**string**] | Optional. Filter received payments by type. Valid values: Ach, Wire, Realtime. Defaults to Ach, Wire, and Realtime if not specified. | (optional) defaults to undefined|
 | **filterTags** | [**string**] | Optional. Filter received payments by Tags. | (optional) defaults to undefined|
-| **sort** | [**string**] | Optional. Leave empty or provide sort&#x3D;createdAt for ascending order. Provide sort&#x3D;-createdAt (leading minus sign) for descending order. | (optional) defaults to '-createdAt'|
+| **sort** | [**string**] | Optional. Leave empty or provide sort&#x3D;createdAt for ascending order. Provide sort&#x3D;-createdAt (leading minus sign) for descending order. | (optional) defaults to 'createdAt'|
+| **include** | [**string**] | Optional. A comma-separated list of related resources to include in the response. Related resources include: customer, account. See Getting Related Resources. | (optional) defaults to undefined|
 
 
 ### Return type
@@ -1256,7 +1316,7 @@ const { status, data } = await apiInstance.updatePayment(
 # **updateReceivedPayment**
 > UpdateReceivedPayment200Response updateReceivedPayment(updateReceivedPaymentRequest)
 
-Update a Received Payment.
+Update a Received Payment. The request body is one of UpdateACHReceivedPaymentRequest or UpdateRealtimeReceivedPaymentRequest, discriminated by data.type (achReceivedPayment, realtimeReceivedPayment).
 
 ### Example
 

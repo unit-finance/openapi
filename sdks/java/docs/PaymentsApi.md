@@ -7,6 +7,7 @@ All URIs are relative to *https://api.s.unit.sh*
 | [**cancelPayment**](PaymentsApi.md#cancelPayment) | **POST** /payments/{paymentId}/cancel | Cancel a payment |
 | [**clearAchDebitPayment**](PaymentsApi.md#clearAchDebitPayment) | **POST** /payments/{paymentId}/clear | Clear an ACH debit payment |
 | [**createBatchReleases**](PaymentsApi.md#createBatchReleases) | **POST** /batch-releases | Create batch releases |
+| [**createBulkPayment**](PaymentsApi.md#createBulkPayment) | **POST** /payments/bulk | Create a bulk payment |
 | [**createPayment**](PaymentsApi.md#createPayment) | **POST** /payments | Create a payment |
 | [**createRecurringPayment**](PaymentsApi.md#createRecurringPayment) | **POST** /recurring-payments | Create a recurring payment |
 | [**deleteRecurringPayment**](PaymentsApi.md#deleteRecurringPayment) | **DELETE** /recurring-payments/{id} | Delete a recurring payment |
@@ -29,7 +30,7 @@ All URIs are relative to *https://api.s.unit.sh*
 
 <a id="cancelPayment"></a>
 # **cancelPayment**
-> CancelPayment200Response cancelPayment(paymentId)
+> CancelPayment200Response cancelPayment(paymentId, body)
 
 Cancel a payment
 
@@ -56,8 +57,9 @@ public class Example {
 
     PaymentsApi apiInstance = new PaymentsApi(defaultClient);
     String paymentId = "paymentId_example"; // String | 
+    Object body = null; // Object | 
     try {
-      CancelPayment200Response result = apiInstance.cancelPayment(paymentId);
+      CancelPayment200Response result = apiInstance.cancelPayment(paymentId, body);
       System.out.println(result);
     } catch (ApiException e) {
       System.err.println("Exception when calling PaymentsApi#cancelPayment");
@@ -75,6 +77,7 @@ public class Example {
 | Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
 | **paymentId** | **String**|  | |
+| **body** | **Object**|  | [optional] |
 
 ### Return type
 
@@ -86,7 +89,7 @@ public class Example {
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/vnd.api+json
  - **Accept**: application/vnd.api+json
 
 ### HTTP response details
@@ -100,7 +103,7 @@ public class Example {
 
 <a id="clearAchDebitPayment"></a>
 # **clearAchDebitPayment**
-> ClearAchDebitPayment200Response clearAchDebitPayment(paymentId)
+> ClearAchDebitPayment200Response clearAchDebitPayment(paymentId, body)
 
 Clear an ACH debit payment
 
@@ -127,8 +130,9 @@ public class Example {
 
     PaymentsApi apiInstance = new PaymentsApi(defaultClient);
     String paymentId = "paymentId_example"; // String | 
+    Object body = null; // Object | 
     try {
-      ClearAchDebitPayment200Response result = apiInstance.clearAchDebitPayment(paymentId);
+      ClearAchDebitPayment200Response result = apiInstance.clearAchDebitPayment(paymentId, body);
       System.out.println(result);
     } catch (ApiException e) {
       System.err.println("Exception when calling PaymentsApi#clearAchDebitPayment");
@@ -146,6 +150,7 @@ public class Example {
 | Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
 | **paymentId** | **String**|  | |
+| **body** | **Object**|  | [optional] |
 
 ### Return type
 
@@ -157,7 +162,7 @@ public class Example {
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/vnd.api+json
  - **Accept**: application/vnd.api+json
 
 ### HTTP response details
@@ -235,6 +240,77 @@ public class Example {
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 | **201** | Array of batch release resources. |  -  |
+| **400** | Bad request. The request body or query parameters failed validation; &#x60;errors[].source.pointer&#x60; identifies the offending field. |  -  |
+| **401** | Unauthorized. The bearer token is missing, invalid or expired. |  -  |
+| **404** | Not found. No resource matches the supplied identifier. |  -  |
+| **0** | Error response |  -  |
+
+<a id="createBulkPayment"></a>
+# **createBulkPayment**
+> CreateBulkPayment201Response createBulkPayment(createBulkPaymentRequest)
+
+Create a bulk payment
+
+Creates multiple payments in a single asynchronous request. Each element of data is a payment creation payload — ACH, Book, and Wire types may be mixed in the same bulk.
+
+### Example
+```java
+// Import classes:
+import com.unit.finance.sdk.ApiClient;
+import com.unit.finance.sdk.ApiException;
+import com.unit.finance.sdk.Configuration;
+import com.unit.finance.sdk.auth.*;
+import com.unit.finance.sdk.models.*;
+import com.unit.finance.sdk.api.PaymentsApi;
+
+public class Example {
+  public static void main(String[] args) {
+    ApiClient defaultClient = Configuration.getDefaultApiClient();
+    defaultClient.setBasePath("https://api.s.unit.sh");
+    
+    // Configure HTTP bearer authorization: bearerAuth
+    HttpBearerAuth bearerAuth = (HttpBearerAuth) defaultClient.getAuthentication("bearerAuth");
+    bearerAuth.setBearerToken("BEARER TOKEN");
+
+    PaymentsApi apiInstance = new PaymentsApi(defaultClient);
+    CreateBulkPaymentRequest createBulkPaymentRequest = new CreateBulkPaymentRequest(); // CreateBulkPaymentRequest | 
+    try {
+      CreateBulkPayment201Response result = apiInstance.createBulkPayment(createBulkPaymentRequest);
+      System.out.println(result);
+    } catch (ApiException e) {
+      System.err.println("Exception when calling PaymentsApi#createBulkPayment");
+      System.err.println("Status code: " + e.getCode());
+      System.err.println("Reason: " + e.getResponseBody());
+      System.err.println("Response headers: " + e.getResponseHeaders());
+      e.printStackTrace();
+    }
+  }
+}
+```
+
+### Parameters
+
+| Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **createBulkPaymentRequest** | [**CreateBulkPaymentRequest**](CreateBulkPaymentRequest.md)|  | |
+
+### Return type
+
+[**CreateBulkPayment201Response**](CreateBulkPayment201Response.md)
+
+### Authorization
+
+[bearerAuth](../README.md#bearerAuth)
+
+### HTTP request headers
+
+ - **Content-Type**: application/vnd.api+json
+ - **Accept**: application/vnd.api+json
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+| **201** | The accepted bulk payment request. |  -  |
 | **400** | Bad request. The request body or query parameters failed validation; &#x60;errors[].source.pointer&#x60; identifies the offending field. |  -  |
 | **401** | Unauthorized. The bearer token is missing, invalid or expired. |  -  |
 | **404** | Not found. No resource matches the supplied identifier. |  -  |
@@ -384,7 +460,7 @@ public class Example {
 
 <a id="deleteRecurringPayment"></a>
 # **deleteRecurringPayment**
-> CreateRecurringPayment201Response deleteRecurringPayment(id)
+> CreateRecurringPayment201Response deleteRecurringPayment(id, body)
 
 Delete a recurring payment
 
@@ -411,8 +487,9 @@ public class Example {
 
     PaymentsApi apiInstance = new PaymentsApi(defaultClient);
     String id = "id_example"; // String | 
+    Object body = null; // Object | 
     try {
-      CreateRecurringPayment201Response result = apiInstance.deleteRecurringPayment(id);
+      CreateRecurringPayment201Response result = apiInstance.deleteRecurringPayment(id, body);
       System.out.println(result);
     } catch (ApiException e) {
       System.err.println("Exception when calling PaymentsApi#deleteRecurringPayment");
@@ -430,6 +507,7 @@ public class Example {
 | Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
 | **id** | **String**|  | |
+| **body** | **Object**|  | [optional] |
 
 ### Return type
 
@@ -441,7 +519,7 @@ public class Example {
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/vnd.api+json
  - **Accept**: application/vnd.api+json
 
 ### HTTP response details
@@ -455,7 +533,7 @@ public class Example {
 
 <a id="disableRecurringPayment"></a>
 # **disableRecurringPayment**
-> CreateRecurringPayment201Response disableRecurringPayment(id)
+> CreateRecurringPayment201Response disableRecurringPayment(id, body)
 
 Disable a recurring payment
 
@@ -482,8 +560,9 @@ public class Example {
 
     PaymentsApi apiInstance = new PaymentsApi(defaultClient);
     String id = "id_example"; // String | 
+    Object body = null; // Object | 
     try {
-      CreateRecurringPayment201Response result = apiInstance.disableRecurringPayment(id);
+      CreateRecurringPayment201Response result = apiInstance.disableRecurringPayment(id, body);
       System.out.println(result);
     } catch (ApiException e) {
       System.err.println("Exception when calling PaymentsApi#disableRecurringPayment");
@@ -501,6 +580,7 @@ public class Example {
 | Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
 | **id** | **String**|  | |
+| **body** | **Object**|  | [optional] |
 
 ### Return type
 
@@ -512,7 +592,7 @@ public class Example {
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/vnd.api+json
  - **Accept**: application/vnd.api+json
 
 ### HTTP response details
@@ -526,7 +606,7 @@ public class Example {
 
 <a id="enableRecurringPayment"></a>
 # **enableRecurringPayment**
-> CreateRecurringPayment201Response enableRecurringPayment(id)
+> CreateRecurringPayment201Response enableRecurringPayment(id, body)
 
 Enable a recurring payment
 
@@ -553,8 +633,9 @@ public class Example {
 
     PaymentsApi apiInstance = new PaymentsApi(defaultClient);
     String id = "id_example"; // String | 
+    Object body = null; // Object | 
     try {
-      CreateRecurringPayment201Response result = apiInstance.enableRecurringPayment(id);
+      CreateRecurringPayment201Response result = apiInstance.enableRecurringPayment(id, body);
       System.out.println(result);
     } catch (ApiException e) {
       System.err.println("Exception when calling PaymentsApi#enableRecurringPayment");
@@ -572,6 +653,7 @@ public class Example {
 | Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
 | **id** | **String**|  | |
+| **body** | **Object**|  | [optional] |
 
 ### Return type
 
@@ -583,7 +665,7 @@ public class Example {
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/vnd.api+json
  - **Accept**: application/vnd.api+json
 
 ### HTTP response details
@@ -1027,7 +1109,7 @@ public class Example {
 
 <a id="listReceivedPayments"></a>
 # **listReceivedPayments**
-> ListReceivedPayments200Response listReceivedPayments(pageLimit, pageOffset, filterAccountId, filterCustomerId, filterSince, filterUntil, filterStatus, filterFromAmount, filterToAmount, filterIncludeCompleted, filterCanBeReprocessed, filterType, filterTags, sort)
+> ListReceivedPayments200Response listReceivedPayments(pageLimit, pageOffset, filterAccountId, filterCustomerId, filterSince, filterUntil, filterStatus, filterFromAmount, filterToAmount, filterIncludeCompleted, filterCanBeReprocessed, filterType, filterTags, sort, include)
 
 List received payments
 
@@ -1064,11 +1146,12 @@ public class Example {
     String filterToAmount = "filterToAmount_example"; // String | Optional. Filters the Received Payment that have an amount that is lower or equal to the specified amount (in cents). e.g. 7000
     String filterIncludeCompleted = "filterIncludeCompleted_example"; // String | Optional. Filter to include ReceivedPayment with Status 'Completed', default False. Can't be stated with filter[status][].
     String filterCanBeReprocessed = "filterCanBeReprocessed_example"; // String | Optional. If set to true, returns only Received Payments that can be reprocessed. If set to false only returns Received Payments that can't be reprocessed.
-    String filterType = "filterType_example"; // String | Optional. Filter received payments by type. Valid values: Ach, Wire. Defaults to both Ach and Wire if not specified.
+    String filterType = "filterType_example"; // String | Optional. Filter received payments by type. Valid values: Ach, Wire, Realtime. Defaults to Ach, Wire, and Realtime if not specified.
     String filterTags = "filterTags_example"; // String | Optional. Filter received payments by Tags.
-    String sort = "-createdAt"; // String | Optional. Leave empty or provide sort=createdAt for ascending order. Provide sort=-createdAt (leading minus sign) for descending order.
+    String sort = "createdAt"; // String | Optional. Leave empty or provide sort=createdAt for ascending order. Provide sort=-createdAt (leading minus sign) for descending order.
+    String include = "include_example"; // String | Optional. A comma-separated list of related resources to include in the response. Related resources include: customer, account. See Getting Related Resources.
     try {
-      ListReceivedPayments200Response result = apiInstance.listReceivedPayments(pageLimit, pageOffset, filterAccountId, filterCustomerId, filterSince, filterUntil, filterStatus, filterFromAmount, filterToAmount, filterIncludeCompleted, filterCanBeReprocessed, filterType, filterTags, sort);
+      ListReceivedPayments200Response result = apiInstance.listReceivedPayments(pageLimit, pageOffset, filterAccountId, filterCustomerId, filterSince, filterUntil, filterStatus, filterFromAmount, filterToAmount, filterIncludeCompleted, filterCanBeReprocessed, filterType, filterTags, sort, include);
       System.out.println(result);
     } catch (ApiException e) {
       System.err.println("Exception when calling PaymentsApi#listReceivedPayments");
@@ -1096,9 +1179,10 @@ public class Example {
 | **filterToAmount** | **String**| Optional. Filters the Received Payment that have an amount that is lower or equal to the specified amount (in cents). e.g. 7000 | [optional] |
 | **filterIncludeCompleted** | **String**| Optional. Filter to include ReceivedPayment with Status &#39;Completed&#39;, default False. Can&#39;t be stated with filter[status][]. | [optional] |
 | **filterCanBeReprocessed** | **String**| Optional. If set to true, returns only Received Payments that can be reprocessed. If set to false only returns Received Payments that can&#39;t be reprocessed. | [optional] |
-| **filterType** | **String**| Optional. Filter received payments by type. Valid values: Ach, Wire. Defaults to both Ach and Wire if not specified. | [optional] |
+| **filterType** | **String**| Optional. Filter received payments by type. Valid values: Ach, Wire, Realtime. Defaults to Ach, Wire, and Realtime if not specified. | [optional] |
 | **filterTags** | **String**| Optional. Filter received payments by Tags. | [optional] |
-| **sort** | **String**| Optional. Leave empty or provide sort&#x3D;createdAt for ascending order. Provide sort&#x3D;-createdAt (leading minus sign) for descending order. | [optional] [default to -createdAt] |
+| **sort** | **String**| Optional. Leave empty or provide sort&#x3D;createdAt for ascending order. Provide sort&#x3D;-createdAt (leading minus sign) for descending order. | [optional] [default to createdAt] |
+| **include** | **String**| Optional. A comma-separated list of related resources to include in the response. Related resources include: customer, account. See Getting Related Resources. | [optional] |
 
 ### Return type
 
@@ -1523,7 +1607,7 @@ public class Example {
 
 Update a received payment
 
-Update a Received Payment.
+Update a Received Payment. The request body is one of UpdateACHReceivedPaymentRequest or UpdateRealtimeReceivedPaymentRequest, discriminated by data.type (achReceivedPayment, realtimeReceivedPayment).
 
 ### Example
 ```java
