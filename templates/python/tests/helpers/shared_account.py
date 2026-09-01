@@ -97,12 +97,8 @@ def create_dedicated_deposit_account() -> Any:
     return unwrap(res.data.data)
 
 
-def get_or_create_individual_customer_id() -> str:
-    """Return an individual customer id for add/remove-account-owners flows."""
-    global _individual_customer_id
-    if _individual_customer_id is not None:
-        return _individual_customer_id
-
+def create_individual_customer_id() -> str:
+    """Create a fresh individual application and return its customer id."""
     api = build_api()
     res = api.create_application_with_http_info(
         CreateApplicationRequest(
@@ -118,5 +114,32 @@ def get_or_create_individual_customer_id() -> str:
         )
 
     created = unwrap(res.data.data)
-    _individual_customer_id = _wait_for_customer_id(created.id)
+    return _wait_for_customer_id(created.id)
+
+
+def get_or_create_individual_customer_id() -> str:
+    """Return a cached individual customer id for add/remove-account-owners flows."""
+    global _individual_customer_id
+    if _individual_customer_id is None:
+        _individual_customer_id = create_individual_customer_id()
     return _individual_customer_id
+
+
+def create_individual_deposit_account() -> Any:
+    """Create a deposit account owned solely by a fresh individual customer.
+
+    Owner-mutation tests must start from an all-individual account: Unit rejects
+    mixing a business owner (as on the shared business-app account) with
+    individual owners.
+    """
+    customer_id = create_individual_customer_id()
+    api = build_accounts_api()
+    res = api.create_account_with_http_info(
+        build_create_deposit_account_request(customer_id)
+    )
+    if res.status_code != 201:
+        raise RuntimeError(
+            f"Failed to create individual deposit account: expected status 201, "
+            f"got {res.status_code}."
+        )
+    return unwrap(res.data.data)

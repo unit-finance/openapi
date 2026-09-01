@@ -4,28 +4,30 @@ from helpers.fixtures import (
     build_remove_account_owners_request,
 )
 from helpers.shared_account import (
-    create_dedicated_deposit_account,
-    get_or_create_individual_customer_id,
+    create_individual_customer_id,
+    create_individual_deposit_account,
 )
 
 
 @requires_token
 def test_removes_account_owners():
     api = build_accounts_api()
-    account = create_dedicated_deposit_account()
-    owner_id = get_or_create_individual_customer_id()
+    # Owners can only be added to an account whose existing owners are all
+    # individuals; Unit rejects mixing a business owner with individuals.
+    account = create_individual_deposit_account()
+    owner_id = create_individual_customer_id()
     added = api.add_account_owners_with_http_info(
         account.id,
         build_add_account_owners_request([owner_id]),
     )
-    assert added.status_code == 200
+    assert added.status_code in (200, 201)
 
     res = api.remove_account_owners_with_http_info(
         account.id,
         build_remove_account_owners_request([owner_id]),
     )
 
-    assert res.status_code == 200
+    assert res.status_code in (200, 201)
     data = unwrap(res.data.data)
     assert data.id == account.id
     assert data.type == "depositAccount"

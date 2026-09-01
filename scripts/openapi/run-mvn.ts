@@ -108,6 +108,12 @@ async function main(): Promise<void> {
     args.unshift(`-Dmaven.repo.local=${path.join(CACHE_DIR, "repository")}`);
   }
 
+  // Preserve colored output when the wrapper forces color even though our
+  // stdout is a pipe (see run-and-copy.ts).
+  if (process.env.FORCE_COLOR && !args.some((a) => a.startsWith("-Dstyle.color="))) {
+    args.unshift("-Dstyle.color=always");
+  }
+
   const mvn = await resolveMvn();
   const result = spawnSync(mvn, args, { stdio: "inherit", env: process.env });
   if (result.error) {

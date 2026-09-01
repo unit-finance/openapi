@@ -89,7 +89,14 @@ function main(): void {
 
 	console.log("[run-pytest] Running pytest...");
 	const extraArgs = process.argv.slice(2);
-	run(VENV_PYTHON, ["-m", "pytest", TESTS_DIR, ...extraArgs]);
+	// Preserve colored output when the wrapper forces color even though our
+	// stdout is a pipe (see run-and-copy.ts). Only add it if the caller did not
+	// already specify a color mode.
+	const colorArgs =
+		process.env.FORCE_COLOR && !extraArgs.some((a) => a.startsWith("--color"))
+			? ["--color=yes"]
+			: [];
+	run(VENV_PYTHON, ["-m", "pytest", TESTS_DIR, ...colorArgs, ...extraArgs]);
 }
 
 main();

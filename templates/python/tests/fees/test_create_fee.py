@@ -1,5 +1,6 @@
 from helpers.api import build_fees_api, requires_token, unwrap
 from helpers.fixtures import build_create_fee_request
+from helpers.funding import fund_account
 from helpers.shared_account import get_or_create_shared_account
 
 
@@ -7,6 +8,7 @@ from helpers.shared_account import get_or_create_shared_account
 def test_creates_a_fee():
     api = build_fees_api()
     shared = get_or_create_shared_account()
+    fund_account(shared["account_id"], 1000)
     res = api.create_fee_with_http_info(
         build_create_fee_request(shared["account_id"])
     )

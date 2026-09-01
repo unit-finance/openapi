@@ -5,6 +5,13 @@ from helpers.fixtures import build_generate_cash_deposit_barcode_request
 from helpers.shared_account import get_or_create_shared_account
 
 
+# TODO: Re-enable once the payment-related spec/docs fixes land. Listing store
+# locations fails to deserialize: StoreLocationAttributes.phone is modeled as a
+# PhoneType object, but the sandbox returns a bare string. Blocked on an
+# upstream spec fix to the store-location response model.
+@pytest.mark.skip(
+    reason="Blocked on upstream spec fix: StoreLocation.phone response model mismatch."
+)
 @requires_token
 def test_gets_a_cash_deposit_barcode_image():
     api = build_payments_api()
