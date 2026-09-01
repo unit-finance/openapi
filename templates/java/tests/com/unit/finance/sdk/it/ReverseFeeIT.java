@@ -16,6 +16,7 @@ class ReverseFeeIT {
     ApiSupport.assumeToken();
     FeesApi api = ApiSupport.buildFeesApi();
     SharedAccount shared = SharedAccount.get();
+    Funding.fundAccount(shared.accountId, 1000);
 
     CreateFee201Response created =
         api.createFee(Fixtures.createFeeRequest(shared.accountId));

@@ -14,13 +14,15 @@ class AddAccountOwnersIT {
   void addsAccountOwners() throws Exception {
     ApiSupport.assumeToken();
     AccountsApi api = ApiSupport.buildAccountsApi();
-    SharedAccount shared = SharedAccount.get();
-    DepositAccount account = SharedAccount.createDedicatedDepositAccount();
+    // Owners can only be added to an account whose existing owners are all
+    // individuals — Unit rejects mixing a business owner with individuals.
+    DepositAccount account = IndividualCustomer.createIndividualDepositAccount();
+    String ownerCustomerId = IndividualCustomer.createIndividualCustomerId();
 
     AddAccountOwners200Response response =
         api.addAccountOwners(
             account.getId(),
-            Fixtures.addAccountOwnersRequest(Collections.singletonList(shared.customerId)));
+            Fixtures.addAccountOwnersRequest(Collections.singletonList(ownerCustomerId)));
 
     assertNotNull(response.getData());
   }
