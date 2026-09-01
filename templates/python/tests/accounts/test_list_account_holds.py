@@ -1,13 +1,11 @@
 from helpers.api import build_accounts_api, requires_token, unwrap
-from helpers.shared_account import get_or_create_shared_account
 
 
 @requires_token
 def test_lists_account_holds():
     api = build_accounts_api()
-    shared = get_or_create_shared_account()
+    # The account-id filter was removed from the spec; list holds org-wide.
     res = api.list_account_holds_with_http_info(
-        filter_account_id=shared["account_id"],
         page_limit="20",
     )
 

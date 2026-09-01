@@ -28,24 +28,27 @@ How they are then handed to the API depends on the endpoint's request type:
 """
 
 import uuid
-from datetime import date, timedelta
 from typing import Any, Dict, List
 
 from unit_finance_sdk import (
     CloseAccountRequest,
     CloseDepositAccountRequest,
     CreateABookPaymentRequest,
+    CreateAccountHoldRequest,
     CreateAccountRequest,
     CreateACHPaymentRequest,
     CreateApplicationRequest,
     CreateBusinessApplicationRequest,
     CreateDepositAccountRequest,
+    CreateFeeRequest,
     CreateIndividualApplicationRequest,
     CreatePaymentRequest,
     CreateRecurringCreditBookPaymentRequest,
     CreateRecurringPaymentRequest,
     FreezeAccountRequest,
     FreezeDepositAccountRequest,
+    GetExpectedAchCompletionDateRequest,
+    ReverseFeeRequest,
     UpdateAccountRequest,
     UpdateApplicationRequest,
     UpdateBookPaymentRequest,
@@ -293,7 +296,7 @@ def build_close_deposit_account_request() -> CloseAccountRequest:
     body = {
         "data": {
             "type": "depositAccountClose",
-            "attributes": {"reason": "ByOrg"},
+            "attributes": {"reason": "ByCustomer"},
         },
     }
     return CloseAccountRequest(
@@ -304,8 +307,8 @@ def build_close_deposit_account_request() -> CloseAccountRequest:
 def build_freeze_deposit_account_request() -> FreezeAccountRequest:
     body = {
         "data": {
-            "type": "depositAccountFreeze",
-            "attributes": {"reason": "Other"},
+            "type": "accountFreeze",
+            "attributes": {"reason": "Fraud"},
         },
     }
     return FreezeAccountRequest(
@@ -313,8 +316,13 @@ def build_freeze_deposit_account_request() -> FreezeAccountRequest:
     )
 
 
-def build_create_fee_request(account_id: str) -> Dict[str, Any]:
-    return {
+# The ``account``/``fee`` relationships below are the ``RelationshipData``
+# oneOf union. A raw dict handed to a @validate_call method leaves the union
+# member unpopulated (relationship serializes as ``data: null`` -> the API
+# rejects it with "should be object"), so we build the concrete request model
+# via ``from_dict``, which recurses through ``RelationshipData.from_dict``.
+def build_create_fee_request(account_id: str) -> CreateFeeRequest:
+    body = {
         "data": {
             "type": "fee",
             "attributes": {
@@ -327,10 +335,14 @@ def build_create_fee_request(account_id: str) -> Dict[str, Any]:
             },
         },
     }
+    return CreateFeeRequest.from_dict(body)
 
 
-def build_reverse_fee_request(fee_id: str) -> Dict[str, Any]:
-    return {
+def build_reverse_fee_request(
+    account_id: str,
+    transaction_id: str,
+) -> ReverseFeeRequest:
+    body = {
         "data": {
             "type": "feeReversal",
             "attributes": {
@@ -338,17 +350,21 @@ def build_reverse_fee_request(fee_id: str) -> Dict[str, Any]:
                 "tags": _base_tags(),
             },
             "relationships": {
-                "fee": {"data": {"type": "fee", "id": fee_id}},
+                "account": {"data": {"type": "account", "id": account_id}},
+                "transaction": {"data": {"type": "transaction", "id": transaction_id}},
             },
         },
     }
+    return ReverseFeeRequest.from_dict(body)
 
 
 # The spec marks ``idempotencyKey`` optional on both hold requests, but the
 # sandbox rejects them with a 400 unless it is present. Each call gets a fresh
 # key so that separately-built holds are never collapsed into one another.
-def build_create_account_hold_request(account_id: str) -> Dict[str, Any]:
-    return {
+def build_create_account_hold_request(account_id: str) -> CreateAccountHoldRequest:
+    # Built via from_dict for the same oneOf-relationship reason as the fee
+    # fixtures above.
+    body = {
         "data": {
             "type": "accountHold",
             "attributes": {
@@ -361,6 +377,7 @@ def build_create_account_hold_request(account_id: str) -> Dict[str, Any]:
             },
         },
     }
+    return CreateAccountHoldRequest.from_dict(body)
 
 
 def build_release_account_hold_request(amount: int = 500) -> Dict[str, Any]:
@@ -439,8 +456,12 @@ def build_update_book_payment_request() -> UpdatePaymentRequest:
     )
 
 
-def build_get_expected_ach_completion_date_request(account_id: str) -> Dict[str, Any]:
-    return {
+def build_get_expected_ach_completion_date_request(
+    account_id: str,
+) -> GetExpectedAchCompletionDateRequest:
+    # Built via from_dict for the same oneOf-relationship reason as the fee
+    # fixtures above.
+    body = {
         "data": {
             "type": "achExpectedCompletionDate",
             "attributes": {
@@ -452,23 +473,26 @@ def build_get_expected_ach_completion_date_request(account_id: str) -> Dict[str,
             },
         },
     }
+    return GetExpectedAchCompletionDateRequest.from_dict(body)
 
 
 def build_create_recurring_book_payment_request(
     account_id: str,
     counterparty_account_id: str,
 ) -> CreateRecurringPaymentRequest:
-    start = date.today() + timedelta(days=7)
-    end = start + timedelta(days=90)
+    # NOTE: schedule.startTime/endTime are omitted deliberately. The spec marks
+    # them "Date only", but the generator types them as `datetime`, so any value
+    # we set is re-serialized with a time component and the sandbox rejects it
+    # with `should match format "date"`. They are optional, so we leave them out
+    # until the spec types them as a date. (Node sends them because typescript-
+    # axios keeps them as plain strings.)
     body = {
         "data": {
-            "type": "recurringBookPayment",
+            "type": "recurringCreditBookPayment",
             "attributes": {
                 "amount": 100,
                 "description": "SDK integration test recurring payment",
                 "schedule": {
-                    "startTime": start.isoformat(),
-                    "endTime": end.isoformat(),
                     "interval": "Monthly",
                     "dayOfMonth": 15,
                 },

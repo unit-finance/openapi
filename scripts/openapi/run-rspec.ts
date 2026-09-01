@@ -89,7 +89,18 @@ function main(): void {
 
 	console.log("[run-rspec] Running rspec...");
 	const extraArgs = process.argv.slice(2);
-	run(ruby, ["-S", "bundle", "exec", "rspec", "spec", ...extraArgs], SDK_DIR);
+	// Preserve colored output when the wrapper forces color even though our
+	// stdout is a pipe (see run-and-copy.ts).
+	const colorArgs =
+		process.env.FORCE_COLOR &&
+		!extraArgs.some((a) => a === "--force-color" || a === "--no-color")
+			? ["--force-color"]
+			: [];
+	run(
+		ruby,
+		["-S", "bundle", "exec", "rspec", "spec", ...colorArgs, ...extraArgs],
+		SDK_DIR,
+	);
 }
 
 main();
