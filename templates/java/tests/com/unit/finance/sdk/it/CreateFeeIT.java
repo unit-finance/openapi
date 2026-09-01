@@ -15,6 +15,7 @@ class CreateFeeIT {
     ApiSupport.assumeToken();
     FeesApi api = ApiSupport.buildFeesApi();
     SharedAccount shared = SharedAccount.get();
+    Funding.fundAccount(shared.accountId, 1000);
 
     ApiResponse<CreateFee201Response> response =
         api.createFeeWithHttpInfo(Fixtures.createFeeRequest(shared.accountId));

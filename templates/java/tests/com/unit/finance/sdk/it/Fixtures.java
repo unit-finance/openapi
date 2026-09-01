@@ -103,7 +103,6 @@ import com.unit.finance.sdk.model.UpdateReceivedPaymentRequest;
 import com.unit.finance.sdk.model.AddAccountOwnersRequest;
 import com.unit.finance.sdk.model.RemoveAccountOwnersRequest;
 import java.time.LocalDate;
-import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -350,7 +349,7 @@ final class Fixtures {
 
   static CloseAccountRequest closeDepositAccountRequest() {
     CloseDepositAccountDataAttributes attributes =
-        new CloseDepositAccountDataAttributes().reason("ByOrg");
+        new CloseDepositAccountDataAttributes().reason("ByCustomer");
     CloseDepositAccountData data =
         new CloseDepositAccountData()
             .type(CloseDepositAccountData.TypeEnum.DEPOSIT_ACCOUNT_CLOSE)
@@ -360,7 +359,9 @@ final class Fixtures {
 
   static FreezeAccountRequest freezeDepositAccountRequest() {
     FreezeDepositAccountDataAttributes attributes =
-        new FreezeDepositAccountDataAttributes().reason("Other");
+        new FreezeDepositAccountDataAttributes()
+            .reason("Other")
+            .reasonText("SDK integration test freeze");
     FreezeDepositAccountData data =
         new FreezeDepositAccountData()
             .type(FreezeDepositAccountData.TypeEnum.ACCOUNT_FREEZE)
@@ -473,12 +474,17 @@ final class Fixtures {
       String accountId, String counterpartyAccountId) {
     LocalDate start = LocalDate.now(ZoneOffset.UTC).plusDays(7);
     LocalDate end = start.plusMonths(3);
+    // The schedule's startTime/endTime are date-only ("2022-06-29"), but the
+    // generated model types them as OffsetDateTime (spec declares date-time),
+    // which serializes with a time component the sandbox rejects with
+    // `should match format "date"`. Emit the date-only strings through the
+    // additionalProperties escape hatch instead of the typed setters.
     CreateScheduleType schedule =
         new CreateScheduleType()
-            .startTime(start.atStartOfDay().atOffset(ZoneOffset.UTC))
-            .endTime(end.atStartOfDay().atOffset(ZoneOffset.UTC))
             .interval("Monthly")
             .dayOfMonth(15);
+    schedule.putAdditionalProperty("startTime", start.toString());
+    schedule.putAdditionalProperty("endTime", end.toString());
     CreateRecurringCreditBookPaymentDataAttributes attributes =
         new CreateRecurringCreditBookPaymentDataAttributes()
             .amount(100)

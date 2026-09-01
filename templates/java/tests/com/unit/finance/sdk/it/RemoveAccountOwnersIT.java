@@ -14,16 +14,18 @@ class RemoveAccountOwnersIT {
   void removesAccountOwners() throws Exception {
     ApiSupport.assumeToken();
     AccountsApi api = ApiSupport.buildAccountsApi();
-    SharedAccount shared = SharedAccount.get();
-    DepositAccount account = SharedAccount.createDedicatedDepositAccount();
+    // Owners can only be added to an account whose existing owners are all
+    // individuals — Unit rejects mixing a business owner with individuals.
+    DepositAccount account = IndividualCustomer.createIndividualDepositAccount();
+    String ownerCustomerId = IndividualCustomer.createIndividualCustomerId();
     api.addAccountOwners(
         account.getId(),
-        Fixtures.addAccountOwnersRequest(Collections.singletonList(shared.customerId)));
+        Fixtures.addAccountOwnersRequest(Collections.singletonList(ownerCustomerId)));
 
     AddAccountOwners200Response response =
         api.removeAccountOwners(
             account.getId(),
-            Fixtures.removeAccountOwnersRequest(Collections.singletonList(shared.customerId)));
+            Fixtures.removeAccountOwnersRequest(Collections.singletonList(ownerCustomerId)));
 
     assertNotNull(response.getData());
   }
