@@ -213,7 +213,7 @@ module Helpers
       {
         'data' => {
           'type' => 'depositAccountClose',
-          'attributes' => { 'reason' => 'ByOrg' }
+          'attributes' => { 'reason' => 'ByCustomer' }
         }
       }
     end
@@ -221,8 +221,9 @@ module Helpers
     def freeze_deposit_account_request
       {
         'data' => {
-          'type' => 'depositAccountFreeze',
-          'attributes' => { 'reason' => 'Other' }
+          'type' => 'accountFreeze',
+          # `reason: Other` requires an accompanying `reasonText`.
+          'attributes' => { 'reason' => 'Other', 'reasonText' => 'SDK integration test freeze' }
         }
       }
     end
@@ -243,7 +244,10 @@ module Helpers
       }
     end
 
-    def reverse_fee_request(fee_id)
+    # The reversal is anchored to the fee's transaction (the fee id doubles as
+    # the transaction id) and the account it posted to -- not to a `fee`
+    # relationship, which the sandbox rejects as an unexpected field.
+    def reverse_fee_request(account_id, transaction_id)
       {
         'data' => {
           'type' => 'feeReversal',
@@ -252,7 +256,8 @@ module Helpers
             'tags' => base_tags
           },
           'relationships' => {
-            'fee' => { 'data' => { 'type' => 'fee', 'id' => fee_id } }
+            'account' => { 'data' => { 'type' => 'account', 'id' => account_id } },
+            'transaction' => { 'data' => { 'type' => 'transaction', 'id' => transaction_id } }
           }
         }
       }
@@ -337,7 +342,7 @@ module Helpers
       ending = start + (90 * 86_400)
       {
         'data' => {
-          'type' => 'recurringBookPayment',
+          'type' => 'recurringCreditBookPayment',
           'attributes' => {
             'amount' => 100,
             'description' => 'SDK integration test recurring payment',
@@ -347,7 +352,8 @@ module Helpers
               'interval' => 'Monthly',
               'dayOfMonth' => 15
             },
-            'tags' => base_tags
+            'tags' => base_tags,
+            'idempotencyKey' => "#{Helpers::Api::TEST_RUN_ID}-recurring-#{SecureRandom.hex(4)}"
           },
           'relationships' => {
             'account' => { 'data' => { 'type' => 'account', 'id' => account_id } },
@@ -370,16 +376,16 @@ module Helpers
       }
     end
 
-    def generate_cash_deposit_barcode_request(account_id)
+    # The cash-deposit-barcode request carries only a `storeId` (obtained from the
+    # store-locations endpoints) plus customer and account relationships. The
+    # sandbox rejects any extra attributes such as `amount`.
+    def generate_cash_deposit_barcode_request(store_id, customer_id, account_id)
       {
         'data' => {
           'type' => 'cashDepositBarcode',
-          'attributes' => {
-            'amount' => 1000,
-            'description' => 'SDK integration test cash deposit',
-            'tags' => base_tags
-          },
+          'attributes' => { 'storeId' => store_id },
           'relationships' => {
+            'customer' => { 'data' => { 'type' => 'customer', 'id' => customer_id } },
             'account' => { 'data' => { 'type' => 'depositAccount', 'id' => account_id } }
           }
         }
