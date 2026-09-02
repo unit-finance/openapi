@@ -1,11 +1,13 @@
 require 'helpers/api'
 require 'helpers/fixtures'
+require 'helpers/funding'
 require 'helpers/shared_account'
 
 RSpec.describe 'reverse_fee', :sandbox do
   it 'reverses a fee' do
     shared = Helpers::SharedAccount.get_or_create
     fees_api = Helpers::Api.build_fees_api
+    Helpers::Funding.fund_account(shared[:account_id], 1000)
 
     created, create_status, = fees_api.create_fee_with_http_info(
       Helpers::Fixtures.create_fee_request(shared[:account_id])
@@ -14,7 +16,7 @@ RSpec.describe 'reverse_fee', :sandbox do
     fee_id = Helpers::Api.unwrap(created.data).id
 
     data, status_code, = fees_api.reverse_fee_with_http_info(
-      Helpers::Fixtures.reverse_fee_request(fee_id)
+      Helpers::Fixtures.reverse_fee_request(shared[:account_id], fee_id)
     )
 
     expect(status_code).to eq(201)

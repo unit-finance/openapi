@@ -15,10 +15,12 @@
  *      small menu instead of exiting immediately:
  *
  *        (c) - Copy test output with a prompt into buffer
+ *        (r) - Run the tests again
  *        (q) - Quit the test runner
  *
  *      Copying puts the full captured output on the clipboard prefixed with a
  *      ready-to-paste prompt so it can be dropped straight into an agent.
+ *      Re-running spawns the same command afresh and re-captures its output.
  *
  * The child's exit code is always propagated. The menu and clipboard copying
  * are skipped when not attached to a TTY or when running in CI, so automated
@@ -38,33 +40,46 @@ if (!command) {
 
 const interactive = Boolean(process.stdout.isTTY) && !process.env.CI;
 
-const chunks: Buffer[] = [];
+// Output captured from the most recent run; reset each time we (re-)spawn so the
+// clipboard payload always reflects the latest run.
+let chunks: Buffer[] = [];
 
-const child = spawn(command, args, {
-	// Inherit stdin so interactive prompts still work; pipe stdout/stderr so we
-	// can both tee them to our own streams and capture them for the clipboard.
-	stdio: ["inherit", "pipe", "pipe"],
-	env: interactive
-		? {
-				...process.env,
-				// Force colored/formatted output even though the child's stdout is
-				// a pipe rather than a TTY. Covers the ecosystems we run:
-				// FORCE_COLOR -> node/jest/ruff, CLICOLOR_FORCE -> ruby & friends.
-				FORCE_COLOR: process.env.FORCE_COLOR ?? "1",
-				CLICOLOR_FORCE: process.env.CLICOLOR_FORCE ?? "1",
-			}
-		: process.env,
-	shell: false,
-});
+const childEnv = interactive
+	? {
+			...process.env,
+			// Force colored/formatted output even though the child's stdout is
+			// a pipe rather than a TTY. Covers the ecosystems we run:
+			// FORCE_COLOR -> node/jest/ruff, CLICOLOR_FORCE -> ruby & friends.
+			FORCE_COLOR: process.env.FORCE_COLOR ?? "1",
+			CLICOLOR_FORCE: process.env.CLICOLOR_FORCE ?? "1",
+		}
+	: process.env;
 
-child.stdout.on("data", (buf: Buffer) => {
-	process.stdout.write(buf);
-	chunks.push(buf);
-});
-child.stderr.on("data", (buf: Buffer) => {
-	process.stderr.write(buf);
-	chunks.push(buf);
-});
+/** Spawn the command once, teeing and capturing output; resolve with its code. */
+function runChild(): Promise<number> {
+	chunks = [];
+	return new Promise((resolve, reject) => {
+		const child = spawn(command, args, {
+			// Inherit stdin so interactive prompts still work; pipe stdout/stderr
+			// so we can both tee them to our own streams and capture them.
+			stdio: ["inherit", "pipe", "pipe"],
+			env: childEnv,
+			shell: false,
+		});
+
+		child.stdout.on("data", (buf: Buffer) => {
+			process.stdout.write(buf);
+			chunks.push(buf);
+		});
+		child.stderr.on("data", (buf: Buffer) => {
+			process.stderr.write(buf);
+			chunks.push(buf);
+		});
+
+		child.on("close", (code) => resolve(code ?? 1));
+		child.on("error", reject);
+	});
+}
 
 /** Copy text to the clipboard via the platform tool. Best-effort, silent. */
 function copyToClipboard(text: string): boolean {
@@ -102,14 +117,17 @@ function renderMenu(): void {
 		`${DIM}────────────────────────────────────────────${RESET}`,
 		`${BOLD}Test run finished.${RESET} What next?`,
 		`  ${CYAN}(c)${RESET} Copy test output with a prompt into buffer`,
+		`  ${CYAN}(r)${RESET} Run the tests again`,
 		`  ${CYAN}(q)${RESET} Quit the test runner`,
 		`${DIM}────────────────────────────────────────────${RESET}`,
 	];
 	process.stderr.write(`${lines.join("\n")}\n`);
 }
 
-/** Show the post-run menu and resolve once the user chooses to quit. */
-function promptMenu(): Promise<void> {
+type MenuAction = "quit" | "rerun";
+
+/** Show the post-run menu and resolve with the action the user chose. */
+function promptMenu(): Promise<MenuAction> {
 	return new Promise((resolve) => {
 		const stdin = process.stdin;
 		renderMenu();
@@ -125,7 +143,12 @@ function promptMenu(): Promise<void> {
 			// Ctrl-C / Ctrl-D also quit.
 			if (key === "q" || key === "\u0003" || key === "\u0004") {
 				cleanup();
-				resolve();
+				resolve("quit");
+				return;
+			}
+			if (key === "r") {
+				cleanup();
+				resolve("rerun");
 				return;
 			}
 			if (key === "c") {
@@ -150,15 +173,27 @@ function promptMenu(): Promise<void> {
 	});
 }
 
-child.on("close", async (code) => {
-	const exitCode = code ?? 1;
-	if (interactive) {
-		await promptMenu();
-	}
-	process.exit(exitCode);
-});
+async function main(): Promise<never> {
+	for (;;) {
+		let exitCode: number;
+		try {
+			exitCode = await runChild();
+		} catch (err) {
+			const message = err instanceof Error ? err.message : String(err);
+			console.error(`[run-and-copy] Failed to run ${command}: ${message}`);
+			process.exit(1);
+		}
 
-child.on("error", (err) => {
-	console.error(`[run-and-copy] Failed to run ${command}: ${err.message}`);
-	process.exit(1);
-});
+		if (!interactive) {
+			process.exit(exitCode);
+		}
+
+		const action = await promptMenu();
+		if (action === "quit") {
+			process.exit(exitCode);
+		}
+		// action === "rerun": loop and spawn the command again.
+	}
+}
+
+void main();
