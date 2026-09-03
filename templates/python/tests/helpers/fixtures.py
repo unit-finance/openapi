@@ -27,15 +27,28 @@ How they are then handed to the API depends on the endpoint's request type:
   need every required field present, so we pick the variant ourselves.
 """
 
+import calendar
+from datetime import date
 from typing import Any, Dict, List
 
 from unit_finance_sdk import (
+    CreateABookPaymentRequest,
+    CreateAccountRequest,
+    CreateACHPaymentRequest,
     CreateApplicationRequest,
     CreateBusinessApplicationRequest,
+    CreateDepositAccountRequest,
     CreateIndividualApplicationRequest,
+    CreatePaymentRequest,
+    CreateRecurringCreditBookPaymentRequest,
+    CreateRecurringPaymentRequest,
+    UpdateAccountRequest,
     UpdateApplicationRequest,
+    UpdateBookPaymentRequest,
     UpdateBusinessApplicationRequest,
     UpdateBusinessBeneficialOwnerRequest,
+    UpdateDepositAccountRequest,
+    UpdatePaymentRequest,
 )
 
 from .api import TEST_RUN_ID
@@ -238,5 +251,323 @@ def build_check_registered_agent_address_request() -> Dict[str, Any]:
         "data": {
             "type": "checkRegisteredAgentAddress",
             "attributes": {"address": _us_address()},
+        },
+    }
+
+
+# --- Accounts / Fees / Payments fixtures ---
+
+
+def _add_months(value: date, months: int) -> date:
+    month = value.month - 1 + months
+    year = value.year + month // 12
+    month = month % 12 + 1
+    day = min(value.day, calendar.monthrange(year, month)[1])
+    return date(year, month, day)
+
+
+def _sandbox_counterparty() -> Dict[str, str]:
+    return {
+        "routingNumber": "812345678",
+        "accountNumber": "1000000001",
+        "accountType": "Checking",
+        "name": "SDK Test Counterparty",
+    }
+
+
+def _create_deposit_account_dict(customer_id: str) -> Dict[str, Any]:
+    return {
+        "data": {
+            "type": "depositAccount",
+            "attributes": {
+                "depositProduct": "checking",
+                "tags": _base_tags(),
+            },
+            "relationships": {
+                "customer": {
+                    "data": {"type": "customer", "id": customer_id},
+                },
+            },
+        },
+    }
+
+
+def build_create_deposit_account_request(customer_id: str) -> CreateAccountRequest:
+    return CreateAccountRequest(
+        actual_instance=CreateDepositAccountRequest.from_dict(
+            _create_deposit_account_dict(customer_id)
+        )
+    )
+
+
+def build_update_deposit_account_request() -> UpdateAccountRequest:
+    body = {
+        "data": {
+            "type": "depositAccount",
+            "attributes": {
+                "tags": {**_base_tags(), "updated": "true"},
+            },
+        },
+    }
+    return UpdateAccountRequest(
+        actual_instance=UpdateDepositAccountRequest.from_dict(body)
+    )
+
+
+def build_close_deposit_account_request() -> Dict[str, Any]:
+    return {
+        "data": {
+            "type": "depositAccountClose",
+            "attributes": {"reason": "ByCustomer"},
+        },
+    }
+
+
+def build_freeze_deposit_account_request() -> Dict[str, Any]:
+    return {
+        "data": {
+            "type": "accountFreeze",
+            "attributes": {
+                "reason": "Other",
+                "reasonText": "SDK integration test freeze",
+            },
+        },
+    }
+
+
+def build_add_account_owners_request(customer_id: str) -> Dict[str, Any]:
+    return {
+        "data": [{"type": "customer", "id": customer_id}],
+    }
+
+
+def build_create_account_hold_request(account_id: str) -> Dict[str, Any]:
+    return {
+        "data": {
+            "type": "accountHold",
+            "attributes": {
+                "amount": 100,
+                "description": "SDK integration test hold",
+            },
+            "relationships": {
+                "account": {"data": {"type": "account", "id": account_id}},
+            },
+        },
+    }
+
+
+def build_create_fee_request(account_id: str) -> Dict[str, Any]:
+    return {
+        "data": {
+            "type": "fee",
+            "attributes": {
+                "amount": 50,
+                "description": "SDK integration test fee",
+                "tags": _base_tags(),
+            },
+            "relationships": {
+                "account": {"data": {"type": "account", "id": account_id}},
+            },
+        },
+    }
+
+
+def build_reverse_fee_request(account_id: str, transaction_id: str) -> Dict[str, Any]:
+    return {
+        "data": {
+            "type": "feeReversal",
+            "attributes": {"description": "SDK integration test fee reversal"},
+            "relationships": {
+                "account": {"data": {"type": "account", "id": account_id}},
+                "transaction": {"data": {"type": "transaction", "id": transaction_id}},
+            },
+        },
+    }
+
+
+def build_release_account_hold_request(amount: int = 100) -> Dict[str, Any]:
+    return {
+        "data": {
+            "type": "accountHold",
+            "attributes": {"amount": amount},
+        },
+    }
+
+
+def _ach_credit_payment_dict(account_id: str) -> Dict[str, Any]:
+    return {
+        "data": {
+            "type": "achPayment",
+            "attributes": {
+                "amount": 10_000,
+                "direction": "Credit",
+                "description": "SDK test funding",
+                "counterparty": _sandbox_counterparty(),
+                "tags": _base_tags(),
+            },
+            "relationships": {
+                "account": {"data": {"type": "depositAccount", "id": account_id}},
+            },
+        },
+    }
+
+
+def build_ach_credit_payment_request(account_id: str) -> CreatePaymentRequest:
+    return CreatePaymentRequest(
+        actual_instance=CreateACHPaymentRequest.from_dict(
+            _ach_credit_payment_dict(account_id)
+        )
+    )
+
+
+def _ach_debit_payment_dict(account_id: str) -> Dict[str, Any]:
+    return {
+        "data": {
+            "type": "achPayment",
+            "attributes": {
+                "amount": 100,
+                "direction": "Debit",
+                "description": "SDK test debit",
+                "counterparty": _sandbox_counterparty(),
+                "tags": _base_tags(),
+            },
+            "relationships": {
+                "account": {"data": {"type": "depositAccount", "id": account_id}},
+            },
+        },
+    }
+
+
+def build_ach_debit_payment_request(account_id: str) -> CreatePaymentRequest:
+    return CreatePaymentRequest(
+        actual_instance=CreateACHPaymentRequest.from_dict(
+            _ach_debit_payment_dict(account_id)
+        )
+    )
+
+
+def _book_payment_dict(account_id: str, counterparty_account_id: str) -> Dict[str, Any]:
+    return {
+        "data": {
+            "type": "bookPayment",
+            "attributes": {
+                "amount": 100,
+                "description": "SDK book payment",
+                "tags": _base_tags(),
+            },
+            "relationships": {
+                "account": {"data": {"type": "account", "id": account_id}},
+                "counterpartyAccount": {
+                    "data": {"type": "account", "id": counterparty_account_id},
+                },
+            },
+        },
+    }
+
+
+def build_book_payment_request(
+    account_id: str,
+    counterparty_account_id: str,
+) -> CreatePaymentRequest:
+    return CreatePaymentRequest(
+        actual_instance=CreateABookPaymentRequest.from_dict(
+            _book_payment_dict(account_id, counterparty_account_id)
+        )
+    )
+
+
+def build_update_book_payment_request() -> UpdatePaymentRequest:
+    body = {
+        "data": {
+            "type": "bookPayment",
+            "attributes": {"tags": {**_base_tags(), "updated": "true"}},
+        },
+    }
+    return UpdatePaymentRequest(
+        actual_instance=UpdateBookPaymentRequest.from_dict(body)
+    )
+
+
+def build_bulk_payment_request(
+    account_id: str,
+    counterparty_account_id: str,
+) -> Dict[str, Any]:
+    return {
+        "data": [
+            _book_payment_dict(account_id, counterparty_account_id)["data"],
+        ],
+    }
+
+
+def build_expected_ach_completion_date_request(account_id: str) -> Dict[str, Any]:
+    return {
+        "data": {
+            "type": "achExpectedCompletionDate",
+            "attributes": {
+                "direction": "Credit",
+                "amount": 1000,
+            },
+            "relationships": {
+                "account": {"data": {"type": "account", "id": account_id}},
+            },
+        },
+    }
+
+
+def build_update_received_payment_request() -> Dict[str, Any]:
+    return {
+        "data": {
+            "type": "achReceivedPayment",
+            "attributes": {"tags": {**_base_tags(), "updated": "true"}},
+        },
+    }
+
+
+def build_recurring_book_payment_request(
+    account_id: str,
+    counterparty_account_id: str,
+) -> CreateRecurringPaymentRequest:
+    start = _add_months(date.today(), 1)
+    end = _add_months(start, 2)
+    body = {
+        "data": {
+            "type": "recurringCreditBookPayment",
+            "attributes": {
+                "amount": 100,
+                "description": "SDK recurring book",
+                "schedule": {
+                    "interval": "Monthly",
+                    "dayOfMonth": 15,
+                    "startTime": start.isoformat(),
+                    "endTime": end.isoformat(),
+                },
+                "tags": _base_tags(),
+            },
+            "relationships": {
+                "account": {"data": {"type": "account", "id": account_id}},
+                "counterpartyAccount": {
+                    "data": {"type": "account", "id": counterparty_account_id},
+                },
+            },
+        },
+    }
+    return CreateRecurringPaymentRequest(
+        actual_instance=CreateRecurringCreditBookPaymentRequest.from_dict(body)
+    )
+
+
+def build_cash_deposit_barcode_request(
+    customer_id: str,
+    account_id: str,
+    store_id: str,
+) -> Dict[str, Any]:
+    return {
+        "data": {
+            "type": "cashDepositBarcode",
+            "attributes": {"storeId": store_id},
+            "relationships": {
+                "customer": {"data": {"type": "customer", "id": customer_id}},
+                "account": {"data": {"type": "account", "id": account_id}},
+            },
         },
     }

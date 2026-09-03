@@ -1,5 +1,4 @@
 import type {
-	CheckRegisteredAgentAddressRequest,
 	CreateBusinessApplicationRequest,
 	CreateIndividualApplicationRequest,
 	CreateSoleProprietorApplicationRequest,
@@ -7,10 +6,10 @@ import type {
 	UpdateBusinessBeneficialOwnerRequest,
 } from "../..";
 import {
-	BusinessAnnualRevenue,
-	BusinessNumberOfEmployees,
-	SoleProprietorAnnualRevenue,
-	SoleProprietorNumberOfEmployees,
+	BusinessAnnualRevenueType,
+	BusinessNumberOfEmployeesType,
+	SoleProprietorAnnualRevenueType,
+	SoleProprietorNumberOfEmployeesType,
 } from "../..";
 import { TEST_RUN_ID } from "./api";
 
@@ -78,8 +77,8 @@ export function buildBusinessApplicationRequest(): CreateBusinessApplicationRequ
 				contact: businessContact(),
 				officer: officer(),
 				beneficialOwners: beneficialOwners(),
-				annualRevenue: BusinessAnnualRevenue.Between500kAnd1m,
-				numberOfEmployees: BusinessNumberOfEmployees.Between50And100,
+				annualRevenue: BusinessAnnualRevenueType.Between500kAnd1m,
+				numberOfEmployees: BusinessNumberOfEmployeesType.Between50And100,
 				cashFlow: "Predictable",
 				tags: baseTags(),
 			},
@@ -150,8 +149,8 @@ export function buildSoleProprietorApplicationRequest(): CreateSoleProprietorApp
 				ein: "123456789",
 				dba: `Pied Piper SP ${TEST_RUN_ID}`,
 				businessVertical: "TechnologyMediaOrTelecom",
-				annualRevenue: SoleProprietorAnnualRevenue.Between100kAnd200k,
-				numberOfEmployees: SoleProprietorNumberOfEmployees.Between2And5,
+				annualRevenue: SoleProprietorAnnualRevenueType.Between100kAnd200k,
+				numberOfEmployees: SoleProprietorNumberOfEmployeesType.Between2And5,
 				website: "https://www.piedpiper.com",
 				tags: baseTags(),
 			},
@@ -186,11 +185,301 @@ export function buildUpdateBusinessBeneficialOwnerRequest(
 	};
 }
 
-export function buildCheckRegisteredAgentAddressRequest(): CheckRegisteredAgentAddressRequest {
+export function buildCheckRegisteredAgentAddressRequest() {
 	return {
 		data: {
 			type: "checkRegisteredAgentAddress",
 			attributes: { address: usAddress() },
+		},
+	};
+}
+
+// --- Accounts / Fees / Payments fixtures ---
+
+export function buildCreateDepositAccountRequest(customerId: string) {
+	return {
+		data: {
+			type: "depositAccount" as const,
+			attributes: {
+				depositProduct: "checking",
+				tags: baseTags(),
+			},
+			relationships: {
+				customer: {
+					data: { type: "customer", id: customerId },
+				},
+			},
+		},
+	};
+}
+
+export function buildUpdateDepositAccountRequest() {
+	return {
+		data: {
+			type: "depositAccount" as const,
+			attributes: {
+				tags: { ...baseTags(), updated: "true" },
+			},
+		},
+	};
+}
+
+export function buildCloseDepositAccountRequest() {
+	return {
+		data: {
+			type: "depositAccountClose" as const,
+			attributes: { reason: "ByCustomer" },
+		},
+	};
+}
+
+export function buildFreezeDepositAccountRequest() {
+	return {
+		data: {
+			type: "accountFreeze" as const,
+			attributes: { reason: "Other", reasonText: "SDK integration test freeze" },
+		},
+	};
+}
+
+export function buildAddAccountOwnersRequest(customerId: string) {
+	return {
+		data: [{ type: "customer", id: customerId }],
+	};
+}
+
+export function buildCreateAccountHoldRequest(accountId: string) {
+	return {
+		data: {
+			type: "accountHold" as const,
+			attributes: {
+				amount: 100,
+				description: "SDK integration test hold",
+			},
+			relationships: {
+				account: { data: { type: "account", id: accountId } },
+			},
+		},
+	};
+}
+
+export function buildCreateFeeRequest(accountId: string) {
+	return {
+		data: {
+			type: "fee" as const,
+			attributes: {
+				amount: 50,
+				description: "SDK integration test fee",
+				tags: baseTags(),
+			},
+			relationships: {
+				account: { data: { type: "account", id: accountId } },
+			},
+		},
+	};
+}
+
+export function buildReverseFeeRequest(accountId: string, transactionId: string) {
+	return {
+		data: {
+			type: "feeReversal" as const,
+			attributes: { description: "SDK integration test fee reversal" },
+			relationships: {
+				account: { data: { type: "account", id: accountId } },
+				transaction: { data: { type: "transaction", id: transactionId } },
+			},
+		},
+	};
+}
+
+export function buildReleaseAccountHoldRequest(amount = 100) {
+	return {
+		data: {
+			type: "accountHold" as const,
+			attributes: { amount },
+		},
+	};
+}
+
+const sandboxCounterparty = () => ({
+	routingNumber: "812345678",
+	accountNumber: "1000000001",
+	accountType: "Checking" as const,
+	name: "SDK Test Counterparty",
+});
+
+export function buildAchCreditPaymentRequest(accountId: string) {
+	return {
+		data: {
+			type: "achPayment" as const,
+			attributes: {
+				amount: 10_000,
+				direction: "Credit" as const,
+				description: "SDK test funding",
+				counterparty: sandboxCounterparty(),
+				tags: baseTags(),
+			},
+			relationships: {
+				account: { data: { type: "depositAccount", id: accountId } },
+			},
+		},
+	};
+}
+
+export function buildAchDebitPaymentRequest(accountId: string) {
+	return {
+		data: {
+			type: "achPayment" as const,
+			attributes: {
+				amount: 100,
+				direction: "Debit" as const,
+				description: "SDK test debit",
+				counterparty: sandboxCounterparty(),
+				tags: baseTags(),
+			},
+			relationships: {
+				account: { data: { type: "depositAccount", id: accountId } },
+			},
+		},
+	};
+}
+
+export function buildBookPaymentRequest(
+	accountId: string,
+	counterpartyAccountId: string,
+) {
+	return {
+		data: {
+			type: "bookPayment" as const,
+			attributes: {
+				amount: 100,
+				description: "SDK book payment",
+				tags: baseTags(),
+			},
+			relationships: {
+				account: { data: { type: "account", id: accountId } },
+				counterpartyAccount: {
+					data: { type: "account", id: counterpartyAccountId },
+				},
+			},
+		},
+	};
+}
+
+export function buildUpdateBookPaymentRequest() {
+	return {
+		data: {
+			type: "bookPayment" as const,
+			attributes: { tags: { ...baseTags(), updated: "true" } },
+		},
+	};
+}
+
+export function buildBulkPaymentRequest(
+	accountId: string,
+	counterpartyAccountId: string,
+) {
+	return {
+		data: [
+			buildBookPaymentRequest(accountId, counterpartyAccountId).data,
+		],
+	};
+}
+
+export function buildExpectedAchCompletionDateRequest(accountId: string) {
+	return {
+		data: {
+			type: "achExpectedCompletionDate" as const,
+			attributes: {
+				direction: "Credit" as const,
+				amount: 1000,
+			},
+			relationships: {
+				account: { data: { type: "account", id: accountId } },
+			},
+		},
+	};
+}
+
+export function buildUpdateReceivedPaymentRequest() {
+	return {
+		data: {
+			type: "achReceivedPayment" as const,
+			attributes: { tags: { ...baseTags(), updated: "true" } },
+		},
+	};
+}
+
+export function buildRecurringBookPaymentRequest(
+	accountId: string,
+	counterpartyAccountId: string,
+) {
+	const start = new Date();
+	start.setMonth(start.getMonth() + 1);
+	const end = new Date(start);
+	end.setMonth(end.getMonth() + 2);
+	return {
+		data: {
+			type: "recurringCreditBookPayment" as const,
+			attributes: {
+				amount: 100,
+				description: "SDK recurring book",
+				schedule: {
+					interval: "Monthly",
+					dayOfMonth: 15,
+					startTime: start.toISOString().slice(0, 10),
+					endTime: end.toISOString().slice(0, 10),
+				},
+				tags: baseTags(),
+			},
+			relationships: {
+				account: { data: { type: "account", id: accountId } },
+				counterpartyAccount: {
+					data: { type: "account", id: counterpartyAccountId },
+				},
+			},
+		},
+	};
+}
+
+export function buildCreateBatchReleasesRequest(accountId: string) {
+	return {
+		data: {
+			type: "batchRelease" as const,
+			attributes: {
+				amount: 100,
+				description: "SDK batch release",
+				senderName: "SDK Sender",
+				senderAccountNumber: "1234567890",
+				senderAddress: {
+					street: "20 Ingram St",
+					city: "Forest Hills",
+					state: "NY",
+					postalCode: "11375",
+					country: "US",
+				},
+				tags: baseTags(),
+			},
+			relationships: {
+				receiver: { data: { type: "depositAccount", id: accountId } },
+			},
+		},
+	};
+}
+
+export function buildCashDepositBarcodeRequest(
+	customerId: string,
+	accountId: string,
+	storeId: string,
+) {
+	return {
+		data: {
+			type: "cashDepositBarcode" as const,
+			attributes: { storeId },
+			relationships: {
+				customer: { data: { type: "customer", id: customerId } },
+				account: { data: { type: "account", id: accountId } },
+			},
 		},
 	};
 }

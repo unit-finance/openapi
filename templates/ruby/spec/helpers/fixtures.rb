@@ -10,6 +10,8 @@
 # This sidesteps the union-wrapping the Python suite needs, where a raw dict
 # coerces to an empty union.
 
+require 'date'
+
 require_relative 'api'
 
 module Helpers
@@ -183,6 +185,261 @@ module Helpers
         'data' => {
           'type' => 'checkRegisteredAgentAddress',
           'attributes' => { 'address' => US_ADDRESS }
+        }
+      }
+    end
+
+    # --- Accounts / Fees / Payments fixtures ---
+
+    def create_deposit_account_request(customer_id)
+      {
+        'data' => {
+          'type' => 'depositAccount',
+          'attributes' => {
+            'depositProduct' => 'checking',
+            'tags' => base_tags
+          },
+          'relationships' => {
+            'customer' => {
+              'data' => { 'type' => 'customer', 'id' => customer_id }
+            }
+          }
+        }
+      }
+    end
+
+    def update_deposit_account_request
+      {
+        'data' => {
+          'type' => 'depositAccount',
+          'attributes' => {
+            'tags' => base_tags.merge('updated' => 'true')
+          }
+        }
+      }
+    end
+
+    def close_deposit_account_request
+      {
+        'data' => {
+          'type' => 'depositAccountClose',
+          'attributes' => { 'reason' => 'ByCustomer' }
+        }
+      }
+    end
+
+    def freeze_deposit_account_request
+      {
+        'data' => {
+          'type' => 'accountFreeze',
+          'attributes' => {
+            'reason' => 'Other',
+            'reasonText' => 'SDK integration test freeze'
+          }
+        }
+      }
+    end
+
+    def add_account_owners_request(customer_id)
+      {
+        'data' => [{ 'type' => 'customer', 'id' => customer_id }]
+      }
+    end
+
+    def create_account_hold_request(account_id)
+      {
+        'data' => {
+          'type' => 'accountHold',
+          'attributes' => {
+            'amount' => 100,
+            'description' => 'SDK integration test hold'
+          },
+          'relationships' => {
+            'account' => { 'data' => { 'type' => 'account', 'id' => account_id } }
+          }
+        }
+      }
+    end
+
+    def create_fee_request(account_id)
+      {
+        'data' => {
+          'type' => 'fee',
+          'attributes' => {
+            'amount' => 50,
+            'description' => 'SDK integration test fee',
+            'tags' => base_tags
+          },
+          'relationships' => {
+            'account' => { 'data' => { 'type' => 'account', 'id' => account_id } }
+          }
+        }
+      }
+    end
+
+    def reverse_fee_request(account_id, transaction_id)
+      {
+        'data' => {
+          'type' => 'feeReversal',
+          'attributes' => { 'description' => 'SDK integration test fee reversal' },
+          'relationships' => {
+            'account' => { 'data' => { 'type' => 'account', 'id' => account_id } },
+            'transaction' => { 'data' => { 'type' => 'transaction', 'id' => transaction_id } }
+          }
+        }
+      }
+    end
+
+    def release_account_hold_request(amount = 100)
+      {
+        'data' => {
+          'type' => 'accountHold',
+          'attributes' => { 'amount' => amount }
+        }
+      }
+    end
+
+    def sandbox_counterparty
+      {
+        'routingNumber' => '812345678',
+        'accountNumber' => '1000000001',
+        'accountType' => 'Checking',
+        'name' => 'SDK Test Counterparty'
+      }
+    end
+
+    def ach_credit_payment_request(account_id)
+      {
+        'data' => {
+          'type' => 'achPayment',
+          'attributes' => {
+            'amount' => 10_000,
+            'direction' => 'Credit',
+            'description' => 'SDK test funding',
+            'counterparty' => sandbox_counterparty,
+            'tags' => base_tags
+          },
+          'relationships' => {
+            'account' => { 'data' => { 'type' => 'depositAccount', 'id' => account_id } }
+          }
+        }
+      }
+    end
+
+    def ach_debit_payment_request(account_id)
+      {
+        'data' => {
+          'type' => 'achPayment',
+          'attributes' => {
+            'amount' => 100,
+            'direction' => 'Debit',
+            'description' => 'SDK test debit',
+            'counterparty' => sandbox_counterparty,
+            'tags' => base_tags
+          },
+          'relationships' => {
+            'account' => { 'data' => { 'type' => 'depositAccount', 'id' => account_id } }
+          }
+        }
+      }
+    end
+
+    def book_payment_request(account_id, counterparty_account_id)
+      {
+        'data' => {
+          'type' => 'bookPayment',
+          'attributes' => {
+            'amount' => 100,
+            'description' => 'SDK book payment',
+            'tags' => base_tags
+          },
+          'relationships' => {
+            'account' => { 'data' => { 'type' => 'account', 'id' => account_id } },
+            'counterpartyAccount' => {
+              'data' => { 'type' => 'account', 'id' => counterparty_account_id }
+            }
+          }
+        }
+      }
+    end
+
+    def update_book_payment_request
+      {
+        'data' => {
+          'type' => 'bookPayment',
+          'attributes' => { 'tags' => base_tags.merge('updated' => 'true') }
+        }
+      }
+    end
+
+    def bulk_payment_request(account_id, counterparty_account_id)
+      {
+        'data' => [
+          book_payment_request(account_id, counterparty_account_id)['data']
+        ]
+      }
+    end
+
+    def expected_ach_completion_date_request(account_id)
+      {
+        'data' => {
+          'type' => 'achExpectedCompletionDate',
+          'attributes' => {
+            'direction' => 'Credit',
+            'amount' => 1000
+          },
+          'relationships' => {
+            'account' => { 'data' => { 'type' => 'account', 'id' => account_id } }
+          }
+        }
+      }
+    end
+
+    def update_received_payment_request
+      {
+        'data' => {
+          'type' => 'achReceivedPayment',
+          'attributes' => { 'tags' => base_tags.merge('updated' => 'true') }
+        }
+      }
+    end
+
+    def recurring_book_payment_request(account_id, counterparty_account_id)
+      start = Date.today >> 1
+      finish = start >> 2
+      {
+        'data' => {
+          'type' => 'recurringCreditBookPayment',
+          'attributes' => {
+            'amount' => 100,
+            'description' => 'SDK recurring book',
+            'schedule' => {
+              'interval' => 'Monthly',
+              'dayOfMonth' => 15,
+              'startTime' => start.iso8601,
+              'endTime' => finish.iso8601
+            },
+            'tags' => base_tags
+          },
+          'relationships' => {
+            'account' => { 'data' => { 'type' => 'account', 'id' => account_id } },
+            'counterpartyAccount' => {
+              'data' => { 'type' => 'account', 'id' => counterparty_account_id }
+            }
+          }
+        }
+      }
+    end
+
+    def cash_deposit_barcode_request(customer_id, account_id, store_id)
+      {
+        'data' => {
+          'type' => 'cashDepositBarcode',
+          'attributes' => { 'storeId' => store_id },
+          'relationships' => {
+            'customer' => { 'data' => { 'type' => 'customer', 'id' => customer_id } },
+            'account' => { 'data' => { 'type' => 'account', 'id' => account_id } }
+          }
         }
       }
     end
