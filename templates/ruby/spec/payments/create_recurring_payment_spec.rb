@@ -4,12 +4,6 @@ require 'helpers/shared_account'
 
 RSpec.describe 'create_recurring_payment', :sandbox do
   it 'creates a recurring book payment' do
-    # TODO: unskip once the payments schemas are fixed. The request succeeds but
-    # the response fails to deserialize: RecurringCreditBookPaymentAttributes
-    # marks `transactionSummaryOverride` as required (non-nullable) while the
-    # sandbox omits it, so the generated model raises during build_from_hash.
-    skip 'blocked by non-nullable RecurringCreditBookPaymentAttributes.transactionSummaryOverride in the spec'
-
     shared = Helpers::SharedAccount.get_or_create
     api = Helpers::Api.build_payments_api
 

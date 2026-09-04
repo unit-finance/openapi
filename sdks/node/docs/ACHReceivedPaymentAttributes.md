@@ -8,7 +8,7 @@ Name | Type | Description | Notes
 **createdAt** | **string** | The date the transaction was created. Common to all receive payment types. | [default to undefined]
 **status** | **string** | The status of the Received Payment. One of Pending, PendingReview, MarkedForReturn, Advanced, Completed or Returned. See ReceivedPayment Statuses. Common to all received payment types. | [default to undefined]
 **wasAdvanced** | **boolean** | Will be true if the received payment was or is being Advanced (has or has had the status Advanced). Common to all received payment types. | [default to undefined]
-**isAdvanceable** | **boolean** | Will be true if the received payment can be advanced. | [default to undefined]
+**isAdvanceable** | **boolean** | Will be true if the received payment can be advanced. | [optional] [default to undefined]
 **direction** | **string** | The direction in which the funds flow (either Debit or Credit). | [default to undefined]
 **completionDate** | **string** | Shows the date on which the received ACH will be completed (settled or repaid). | [default to undefined]
 **returnReason** | **string** | Optional. The reason if the received payment is Returned. See ACH return reasons. | [optional] [default to undefined]
@@ -23,7 +23,7 @@ Name | Type | Description | Notes
 **secCode** | **string** | Optional. The 3-letter ACH Standard Entry Class (SEC) Code (e.g. WEB, CCD, PPD, etc.). | [optional] [default to undefined]
 **returnCutoffTime** | **string** | Optional. The last time when a reprocess will be accepted. Will be the next banking day 2pm ET. | [optional] [default to undefined]
 **canBeReprocessed** | **boolean** | Optional. If set to true, the Received Payment can be reprocessed until the returnCutoffTime. If empty, the Received Payments can\&#39;t be reprocessed. | [optional] [default to undefined]
-**tags** | **{ [key: string]: any; }** | See Tags. | [default to undefined]
+**tags** | **{ [key: string]: any; }** | See Tags. | [optional] [default to undefined]
 
 ## Example
 

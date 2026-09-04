@@ -13,7 +13,7 @@ Name | Type | Description | Notes
 **status** | **string** | Status of the recurring payment, one of: Active, Completed, Disabled, Deleted. | [default to undefined]
 **numberOfPayments** | **number** | Represents the number of payments that were created by this recurring payment. | [default to undefined]
 **schedule** | [**ScheduleType**](ScheduleType.md) | The schedule of the recurring payment. | [default to undefined]
-**tags** | **{ [key: string]: any; }** | See Tags. | [default to undefined]
+**tags** | **{ [key: string]: any; }** | See Tags. | [optional] [default to undefined]
 
 ## Example
 

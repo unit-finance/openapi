@@ -7,16 +7,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import com.unit.finance.sdk.api.PaymentsApi;
 import com.unit.finance.sdk.model.ListReceivedPayments200Response;
 import com.unit.finance.sdk.model.UpdateReceivedPayment200Response;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 class UpdateReceivedPaymentIT {
 
-  // TODO(payments-slice): re-enable once the received-payment response schemas
-  // are fixed. The generated `oneOf` marks ACHReceivedPayment.isAdvanceable as
-  // required, but the sandbox omits it, so gson can't deserialize the list used
-  // to pick a payment id. Fix in the OpenAPI payments slice.
-  @Disabled("payments-slice: ACHReceivedPayment.isAdvanceable wrongly required; won't deserialize")
   @Test
   void updatesReceivedPaymentTags() throws Exception {
     ApiSupport.assumeToken();

@@ -396,7 +396,10 @@ export function buildGenerateCashDepositBarcodeRequest(
 			attributes: { storeId },
 			relationships: {
 				customer: { data: { type: "customer", id: customerId } },
-				account: { data: { type: "depositAccount", id: accountId } },
+				// The cash-deposit-barcode account relationship must use the
+				// generic "account" resource type; the sandbox rejects
+				// "depositAccount" here with a 400 on /data/relationships/account/data/type.
+				account: { data: { type: "account", id: accountId } },
 			},
 		},
 	};

@@ -11,8 +11,8 @@
 | **status** | **String** | Status of the recurring payment, one of: Active, Completed, Disabled, Deleted. |  |
 | **number_of_payments** | **Integer** | Represents the number of payments that were created by this recurring payment. |  |
 | **schedule** | [**ScheduleType**](ScheduleType.md) | The schedule of the recurring payment. |  |
-| **transaction_summary_override** | **String** | If this field is populated, its contents will be returned as the bookTransaction&#39;s summary field (maximum of 100 characters). |  |
-| **tags** | **Hash&lt;String, Object&gt;** | See Tags. |  |
+| **transaction_summary_override** | **String** | If this field is populated, its contents will be returned as the bookTransaction&#39;s summary field (maximum of 100 characters). | [optional] |
+| **tags** | **Hash&lt;String, Object&gt;** | See Tags. | [optional] |
 
 ## Example
 

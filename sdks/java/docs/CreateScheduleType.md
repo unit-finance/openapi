@@ -7,8 +7,8 @@
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-|**startTime** | **OffsetDateTime** | Optional. Start time of the recurring payment. Date only (e.g. \&quot;2022-06-29\&quot;). |  [optional] |
-|**endTime** | **OffsetDateTime** | Optional. End time of the recurring payment. Date only (e.g. \&quot;2022-10-29\&quot;). |  [optional] |
+|**startTime** | **LocalDate** | Optional. Start time of the recurring payment. Date only (e.g. \&quot;2022-06-29\&quot;). |  [optional] |
+|**endTime** | **LocalDate** | Optional. End time of the recurring payment. Date only (e.g. \&quot;2022-10-29\&quot;). |  [optional] |
 |**interval** | **String** | Interval of the schedule. Can be Monthly or Weekly. |  |
 |**dayOfMonth** | **Integer** | Scheduled day of the month. Required when Monthly interval is specified. Valid values can be between 1-28 or (-5)-(-1). Negative numbers represent relative day to the end of the month. -1 represents the last day of the month. |  [optional] |
 |**dayOfWeek** | **String** | Scheduled day of the week. Required when Weekly interval is specified. Valid values are Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday. |  [optional] |

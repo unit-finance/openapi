@@ -5,16 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.unit.finance.sdk.api.PaymentsApi;
 import com.unit.finance.sdk.model.CreateRecurringPayment201Response;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 class EnableRecurringPaymentIT {
 
-  // TODO(payments-slice): re-enable once the recurring-payment response schemas
-  // are fixed. The generated `oneOf` marks RecurringCreditBookPayment.transactionSummaryOverride
-  // (and RecurringCreditACHPayment.tags) as required, but the sandbox omits them,
-  // so gson can't deserialize an otherwise-valid response. Fix in the OpenAPI payments slice.
-  @Disabled("payments-slice: recurring response fields wrongly required; won't deserialize")
   @Test
   void enablesADisabledRecurringPayment() throws Exception {
     ApiSupport.assumeToken();
