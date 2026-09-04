@@ -368,7 +368,7 @@ module Helpers
     def update_received_payment_request
       {
         'data' => {
-          'type' => 'receivedPayment',
+          'type' => 'achReceivedPayment',
           'attributes' => {
             'tags' => base_tags.merge('updated' => 'true')
           }

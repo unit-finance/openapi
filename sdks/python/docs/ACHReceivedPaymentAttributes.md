@@ -8,9 +8,9 @@ Name | Type | Description | Notes
 **created_at** | **datetime** | The date the transaction was created. Common to all receive payment types. | 
 **status** | **str** | The status of the Received Payment. One of Pending, PendingReview, MarkedForReturn, Advanced, Completed or Returned. See ReceivedPayment Statuses. Common to all received payment types. | 
 **was_advanced** | **bool** | Will be true if the received payment was or is being Advanced (has or has had the status Advanced). Common to all received payment types. | 
-**is_advanceable** | **bool** | Will be true if the received payment can be advanced. | 
+**is_advanceable** | **bool** | Will be true if the received payment can be advanced. | [optional] 
 **direction** | **str** | The direction in which the funds flow (either Debit or Credit). | 
-**completion_date** | **datetime** | Shows the date on which the received ACH will be completed (settled or repaid). | 
+**completion_date** | **date** | Shows the date on which the received ACH will be completed (settled or repaid). | 
 **return_reason** | **str** | Optional. The reason if the received payment is Returned. See ACH return reasons. | [optional] 
 **amount** | **int** | The amount (cents) of the ACH received payment. Common to all received payment types. | 
 **description** | **str** | ACH description (maximum of 10 characters), also known as Company Entry Description. | 
@@ -23,7 +23,7 @@ Name | Type | Description | Notes
 **sec_code** | **str** | Optional. The 3-letter ACH Standard Entry Class (SEC) Code (e.g. WEB, CCD, PPD, etc.). | [optional] 
 **return_cutoff_time** | **datetime** | Optional. The last time when a reprocess will be accepted. Will be the next banking day 2pm ET. | [optional] 
 **can_be_reprocessed** | **bool** | Optional. If set to true, the Received Payment can be reprocessed until the returnCutoffTime. If empty, the Received Payments can&#39;t be reprocessed. | [optional] 
-**tags** | **Dict[str, object]** | See Tags. | 
+**tags** | **Dict[str, object]** | See Tags. | [optional] 
 
 ## Example
 

@@ -5,7 +5,7 @@ info:
     name: Proprietary
     url: https://www.unit.co/terms-of-service
   title: Unit API
-  version: 0.4.2
+  version: 0.4.5
 servers:
 - url: https://api.s.unit.sh
 security:
@@ -4867,12 +4867,12 @@ components:
         startTime:
           description: Optional. Start time of the recurring payment. Date only (e.g.
             "2022-06-29").
-          format: date-time
+          format: date
           type: string
         endTime:
           description: Optional. End time of the recurring payment. Date only (e.g.
             "2022-10-29").
-          format: date-time
+          format: date
           type: string
         interval:
           description: Interval of the schedule. Can be Monthly or Weekly.
@@ -4906,12 +4906,12 @@ components:
       properties:
         startTime:
           description: Start time of the recurring payment. Date only (e.g. "2022-06-29").
-          format: date-time
+          format: date
           type: string
         endTime:
           description: Optional. End time of the recurring payment. Date only (e.g.
             "2022-10-29").
-          format: date-time
+          format: date
           type: string
         interval:
           description: Interval of the schedule. Can be Monthly or Weekly.
@@ -8208,7 +8208,7 @@ components:
         completionDate:
           description: Shows the date on which the received ACH will be completed
             (settled or repaid).
-          format: date-time
+          format: date
           type: string
         returnReason:
           description: Optional. The reason if the received payment is Returned. See
@@ -8270,9 +8270,7 @@ components:
       - createdAt
       - description
       - direction
-      - isAdvanceable
       - status
-      - tags
       - traceNumber
       - wasAdvanced
       type: object
@@ -8330,7 +8328,6 @@ components:
       - createdAt
       - description
       - status
-      - tags
       type: object
     RealtimeReceivedPayment_relationships:
       properties:
@@ -8484,7 +8481,6 @@ components:
       - numberOfPayments
       - schedule
       - status
-      - tags
       - updatedAt
       type: object
     RecurringCreditACHPayment_relationships:
@@ -8542,8 +8538,6 @@ components:
       - numberOfPayments
       - schedule
       - status
-      - tags
-      - transactionSummaryOverride
       - updatedAt
       type: object
     RecurringCreditBookPayment_relationships:

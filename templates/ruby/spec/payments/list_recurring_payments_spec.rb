@@ -2,12 +2,6 @@ require 'helpers/api'
 
 RSpec.describe 'list_recurring_payments', :sandbox do
   it 'returns a JSON:API list with page[limit] 20' do
-    # TODO: unskip once the payments schemas are fixed. The request succeeds but
-    # the response fails to deserialize: RecurringCreditAchPaymentAttributes
-    # marks `tags` as required (non-nullable) while the sandbox omits it, so the
-    # generated model raises during build_from_hash.
-    skip 'blocked by non-nullable RecurringCreditAchPaymentAttributes.tags in the spec'
-
     api = Helpers::Api.build_payments_api
     data, status_code, = api.list_recurring_payments_with_http_info(page_limit: '20')
 

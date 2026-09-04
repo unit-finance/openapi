@@ -12,7 +12,7 @@
 | **status** | **String** | Status of the recurring payment, one of: Active, Completed, Disabled, Deleted. |  |
 | **number_of_payments** | **Integer** | Represents the number of payments that were created by this recurring payment. |  |
 | **schedule** | [**ScheduleType**](ScheduleType.md) | The schedule of the recurring payment. |  |
-| **tags** | **Hash&lt;String, Object&gt;** | See Tags. |  |
+| **tags** | **Hash&lt;String, Object&gt;** | See Tags. | [optional] |
 
 ## Example
 

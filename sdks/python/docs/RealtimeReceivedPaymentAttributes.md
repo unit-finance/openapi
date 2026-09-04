@@ -12,7 +12,7 @@ Name | Type | Description | Notes
 **counterparty** | [**RealTimeCounterpartyType**](RealTimeCounterpartyType.md) | The party on the other end of the transaction. For RTP received payments, this is always the originator (in ISO20022 terminology this is referred to as the Debtor). | 
 **return_reason** | **str** | Present when status is Returned. See RTP return reasons. | [optional] 
 **reject_reason** | **str** | Present when status is Rejected. See RTP reject reasons. | [optional] 
-**tags** | **Dict[str, object]** | See Tags. | 
+**tags** | **Dict[str, object]** | See Tags. | [optional] 
 
 ## Example
 

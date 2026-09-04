@@ -521,7 +521,10 @@ final class Fixtures {
     GenerateBarcodeDataRelationships relationships =
         new GenerateBarcodeDataRelationships()
             .customer(relationship("customer", customerId))
-            .account(relationship("depositAccount", accountId));
+            // The cash-deposit-barcode account relationship must use the generic
+            // "account" resource type; the sandbox rejects "depositAccount" here
+            // with a 400 on /data/relationships/account/data/type.
+            .account(relationship("account", accountId));
     GenerateBarcodeData data =
         new GenerateBarcodeData()
             .type(GenerateBarcodeData.TypeEnum.CASH_DEPOSIT_BARCODE)

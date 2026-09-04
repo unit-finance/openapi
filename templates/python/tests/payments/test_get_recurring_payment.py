@@ -1,16 +1,8 @@
-import pytest
-
 from helpers.api import build_payments_api, requires_token, unwrap
 from helpers.fixtures import build_create_recurring_book_payment_request
 from helpers.shared_account import get_or_create_shared_account
 
 
-# TODO: Re-enable once the payment-related spec/docs fixes land. Blocked on the
-# recurring-payment response model (transactionSummaryOverride required but the
-# API returns null); see test_create_recurring_payment for detail.
-@pytest.mark.skip(
-    reason="Blocked on upstream spec fix: recurring-payment response model."
-)
 @requires_token
 def test_gets_a_recurring_payment_by_id():
     api = build_payments_api()
@@ -29,4 +21,4 @@ def test_gets_a_recurring_payment_by_id():
     assert res.status_code == 200
     data = unwrap(res.data.data)
     assert data.id == recurring_id
-    assert data.type == "recurringBookPayment"
+    assert data.type == "recurringCreditBookPayment"
