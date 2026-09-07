@@ -31,6 +31,13 @@ import com.unit.finance.sdk.model.CreateBulkPaymentRequestDataInner;
 import com.unit.finance.sdk.model.CreateBusinessApplicationData;
 import com.unit.finance.sdk.model.CreateBusinessApplicationDataAttributes;
 import com.unit.finance.sdk.model.CreateBusinessApplicationRequest;
+import com.unit.finance.sdk.model.CreateBusinessCreditCardDataAttributes;
+import com.unit.finance.sdk.model.CreateBusinessDebitCardData;
+import com.unit.finance.sdk.model.CreateBusinessDebitCardRequest;
+import com.unit.finance.sdk.model.CreateBusinessVirtualDebitCardData;
+import com.unit.finance.sdk.model.CreateBusinessVirtualDebitCardDataAttributes;
+import com.unit.finance.sdk.model.CreateBusinessVirtualDebitCardRequest;
+import com.unit.finance.sdk.model.CreateCardRequest;
 import com.unit.finance.sdk.model.CreateDepositAccountData;
 import com.unit.finance.sdk.model.CreateDepositAccountDataAttributes;
 import com.unit.finance.sdk.model.CreateDepositAccountDataRelationships;
@@ -52,6 +59,9 @@ import com.unit.finance.sdk.model.CreateSoleProprietorApplicationData;
 import com.unit.finance.sdk.model.CreateSoleProprietorApplicationDataAttributes;
 import com.unit.finance.sdk.model.CreateSoleProprietorApplicationRequest;
 import com.unit.finance.sdk.model.FreezeAccountRequest;
+import com.unit.finance.sdk.model.FreezeCardData;
+import com.unit.finance.sdk.model.FreezeCardDataAttributes;
+import com.unit.finance.sdk.model.FreezeCardRequest;
 import com.unit.finance.sdk.model.FreezeDepositAccountData;
 import com.unit.finance.sdk.model.FreezeDepositAccountDataAttributes;
 import com.unit.finance.sdk.model.FreezeDepositAccountRequest;
@@ -71,6 +81,9 @@ import com.unit.finance.sdk.model.RelationshipData;
 import com.unit.finance.sdk.model.ReleaseAccountHoldData;
 import com.unit.finance.sdk.model.ReleaseAccountHoldDataAttributes;
 import com.unit.finance.sdk.model.ReleaseAccountHoldRequest;
+import com.unit.finance.sdk.model.ReplaceCardData;
+import com.unit.finance.sdk.model.ReplaceCardDataAttributes;
+import com.unit.finance.sdk.model.ReplaceCardRequest;
 import com.unit.finance.sdk.model.ResourceIdentifier;
 import com.unit.finance.sdk.model.ReverseFeeData;
 import com.unit.finance.sdk.model.ReverseFeeDataAttributes;
@@ -94,6 +107,9 @@ import com.unit.finance.sdk.model.UpdateBusinessBeneficialOwnerData;
 import com.unit.finance.sdk.model.UpdateBusinessBeneficialOwnerDataAttributes;
 import com.unit.finance.sdk.model.UpdateBusinessBeneficialOwnerDataRelationships;
 import com.unit.finance.sdk.model.UpdateBusinessBeneficialOwnerRequest;
+import com.unit.finance.sdk.model.UpdateCardData;
+import com.unit.finance.sdk.model.UpdateCardDataAttributes;
+import com.unit.finance.sdk.model.UpdateCardRequest;
 import com.unit.finance.sdk.model.UpdateDepositAccountData;
 import com.unit.finance.sdk.model.UpdateDepositAccountDataAttributes;
 import com.unit.finance.sdk.model.UpdateDepositAccountRequest;
@@ -553,6 +569,75 @@ final class Fixtures {
             .attributes(attributes)
             .relationships(relationships);
     return new GenerateCashDepositBarcodeRequest().data(data);
+  }
+
+  // A business debit card is a physical card issued against a deposit account.
+  // The card holder's identity mirrors the officer fixture used elsewhere.
+  static CreateCardRequest createBusinessDebitCardRequest(String accountId) {
+    CreateBusinessCreditCardDataAttributes attributes =
+        new CreateBusinessCreditCardDataAttributes()
+            .fullName(fullName())
+            .dateOfBirth(LocalDate.parse("2001-08-15"))
+            .address(usAddress())
+            .phone(usPhone())
+            .email("peter+" + RUN + "@oscorp.com")
+            .ssn("721074426")
+            .tags(baseTags());
+    CreateBusinessDebitCardData data =
+        new CreateBusinessDebitCardData()
+            .type(CreateBusinessDebitCardData.TypeEnum.BUSINESS_DEBIT_CARD)
+            .attributes(attributes)
+            .relationships(new CreateFeeDataRelationships().account(relationship("account", accountId)));
+    return new CreateCardRequest(new CreateBusinessDebitCardRequest().data(data));
+  }
+
+  // A business virtual debit card is issued Active immediately (physical cards
+  // land in Inactive until activated). Operations that require an Active card --
+  // getCardPinStatus, reportCardLost, reportCardStolen -- run against a virtual
+  // card. Virtual cards cannot be replaced (physical only).
+  static CreateCardRequest createBusinessVirtualDebitCardRequest(String accountId) {
+    CreateBusinessVirtualDebitCardDataAttributes attributes =
+        new CreateBusinessVirtualDebitCardDataAttributes()
+            .fullName(fullName())
+            .dateOfBirth(LocalDate.parse("2001-08-15"))
+            .address(usAddress())
+            .phone(usPhone())
+            .email("peter+" + RUN + "@oscorp.com")
+            .ssn("721074426")
+            .tags(baseTags());
+    CreateBusinessVirtualDebitCardData data =
+        new CreateBusinessVirtualDebitCardData()
+            .type(CreateBusinessVirtualDebitCardData.TypeEnum.BUSINESS_VIRTUAL_DEBIT_CARD)
+            .attributes(attributes)
+            .relationships(new CreateFeeDataRelationships().account(relationship("account", accountId)));
+    return new CreateCardRequest(new CreateBusinessVirtualDebitCardRequest().data(data));
+  }
+
+  // UpdateCardDataAttributes only exposes card-holder contact fields (tags are
+  // not updatable on a card), so the update touches the card holder's phone.
+  static UpdateCardRequest updateCardRequest() {
+    UpdateCardDataAttributes attributes =
+        new UpdateCardDataAttributes().phone(new PhoneType().countryCode("1").number("5555555556"));
+    UpdateCardData data =
+        new UpdateCardData()
+            .type(UpdateCardData.TypeEnum.BUSINESS_DEBIT_CARD)
+            .attributes(attributes);
+    return new UpdateCardRequest().data(data);
+  }
+
+  static FreezeCardRequest freezeCardRequest() {
+    FreezeCardDataAttributes attributes =
+        new FreezeCardDataAttributes().reason("SDK integration test freeze");
+    FreezeCardData data =
+        new FreezeCardData().type(FreezeCardData.TypeEnum.FREEZE_CARD).attributes(attributes);
+    return new FreezeCardRequest().data(data);
+  }
+
+  static ReplaceCardRequest replaceCardRequest() {
+    ReplaceCardDataAttributes attributes = new ReplaceCardDataAttributes().shippingAddress(usAddress());
+    ReplaceCardData data =
+        new ReplaceCardData().type(ReplaceCardData.TypeEnum.REPLACE_CARD).attributes(attributes);
+    return new ReplaceCardRequest().data(data);
   }
 
   static AddAccountOwnersRequest addAccountOwnersRequest(List<String> customerIds) {
