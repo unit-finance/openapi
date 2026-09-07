@@ -1,7 +1,10 @@
 name: Regenerate SDKs on spec release
 on:
-  repository_dispatch:
-    types: [spec-released]
+  # TEMPORARILY DISABLED: automatic spec-release regeneration is turned off.
+  # Re-enable by uncommenting the `repository_dispatch:` trigger below. Until
+  # then this workflow only runs via manual `workflow_dispatch`.
+  # repository_dispatch:
+  #   types: [spec-released]
   workflow_dispatch:
     inputs:
       spec_version:
