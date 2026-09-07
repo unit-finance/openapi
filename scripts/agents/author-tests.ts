@@ -26,6 +26,11 @@
  *   2  the run started but ended in error
  *
  * Usage: `tsx scripts/agents/author-tests.ts [--report <file>] [--model <id>]`
+ *
+ * Offline mode: pass `--print-prompt` to write the exact prompt the agent would
+ * receive to stdout and exit, without a Cursor API key, network, or the SDK.
+ * Use it to author the tests manually (paste into a chat/agent). Exits 0 when
+ * there are gaps (prompt printed) or when there are none (nothing to do).
  */
 
 import fs from "node:fs";
@@ -104,6 +109,10 @@ function arg(flag: string): string | undefined {
 	return i !== -1 ? process.argv[i + 1] : undefined;
 }
 
+function hasFlag(flag: string): boolean {
+	return process.argv.includes(flag);
+}
+
 function readReport(reportPath: string): CoverageReport {
 	if (!fs.existsSync(reportPath)) {
 		console.error(
@@ -113,6 +122,46 @@ function readReport(reportPath: string): CoverageReport {
 		process.exit(1);
 	}
 	return JSON.parse(fs.readFileSync(reportPath, "utf8")) as CoverageReport;
+}
+
+/**
+ * Print a readable, per-language breakdown of the coverage gaps to stderr. Kept
+ * on stderr so it stays visible in the terminal even when stdout (the prompt) is
+ * piped to the clipboard or a file.
+ */
+function printGapSummary(report: CoverageReport): void {
+	const byLang: Record<Lang, OperationCoverage[]> = { node: [], java: [], python: [], ruby: [] };
+	for (const gap of report.gaps) {
+		for (const lang of gap.missingLanguages) byLang[lang].push(gap);
+	}
+
+	const rule = "─".repeat(64);
+	const opCount = report.gaps.length;
+	const langCount = (Object.keys(byLang) as Lang[]).filter((l) => byLang[l].length > 0).length;
+
+	console.error("");
+	console.error(rule);
+	console.error(
+		`  Coverage gaps: ${opCount} operation(s) across ${langCount} language(s)`,
+	);
+	console.error(`  (out of ${report.totalOperations} total operations)`);
+	console.error(rule);
+
+	for (const lang of Object.keys(byLang) as Lang[]) {
+		const gaps = byLang[lang];
+		if (gaps.length === 0) continue;
+		console.error("");
+		console.error(`  ${lang.toUpperCase()}  (${gaps.length} needed)  →  ${LANG_INFO[lang].testDir}`);
+		for (const g of gaps) {
+			console.error(`    • ${g.operationId.padEnd(32)} ${g.method.toUpperCase().padEnd(6)} ${g.path}  [${g.tag}]`);
+		}
+	}
+
+	console.error("");
+	console.error(rule);
+	console.error("  Full prompt written to stdout (copied to clipboard via author-tests-local).");
+	console.error(rule);
+	console.error("");
 }
 
 function buildPrompt(report: CoverageReport): string {
@@ -263,6 +312,17 @@ async function main(): Promise<void> {
 		console.error("[author-tests] no coverage gaps; nothing to do.");
 		return;
 	}
+
+	// Offline escape hatch: print the exact prompt the agent would receive and
+	// exit, so it can be pasted into a chat/agent manually without a Cursor API
+	// key, network access, or the SDK. Diagnostics go to stderr; the prompt
+	// itself goes to stdout so it can be piped/redirected cleanly.
+	if (hasFlag("--print-prompt")) {
+		printGapSummary(report);
+		process.stdout.write(`${buildPrompt(report)}\n`);
+		return;
+	}
+
 	if (!apiKey) {
 		console.error("[author-tests] CURSOR_API_KEY is not set; cannot start the agent.");
 		process.exit(1);
