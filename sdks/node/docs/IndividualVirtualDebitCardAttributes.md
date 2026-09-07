@@ -1,0 +1,30 @@
+# IndividualVirtualDebitCardAttributes
+
+
+## Properties
+
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**createdAt** | **string** | The date the resource was created. | [default to undefined]
+**updatedAt** | **string** | The date the resource was updated. | [optional] [default to undefined]
+**last4Digits** | **string** | Last 4 digits of the debit card. | [default to undefined]
+**expirationDate** | **string** | Card expiration date, formatted YYYY-MM, e.g \&quot;2020-05\&quot;. | [default to undefined]
+**bin** | **string** | 9-digit Bank Identification Number (BIN). | [default to undefined]
+**status** | **string** | Status of the card, one of: Active, Inactive, Stolen, Lost, Frozen, ClosedByCustomer, SuspectedFraud. | [default to undefined]
+
+## Example
+
+```typescript
+import { IndividualVirtualDebitCardAttributes } from '@unit-finance/unit-node-sdk';
+
+const instance: IndividualVirtualDebitCardAttributes = {
+    createdAt,
+    updatedAt,
+    last4Digits,
+    expirationDate,
+    bin,
+    status,
+};
+```
+
+[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

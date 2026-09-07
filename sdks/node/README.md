@@ -74,6 +74,18 @@ Class | Method | HTTP request | Description
 *ApplicationsApi* | [**list**](docs/ApplicationsApi.md#list) | **GET** /applications | List applications
 *ApplicationsApi* | [**updateApplication**](docs/ApplicationsApi.md#updateapplication) | **PATCH** /applications/{id} | Update an application
 *ApplicationsApi* | [**updateBusinessBeneficialOwner**](docs/ApplicationsApi.md#updatebusinessbeneficialowner) | **PATCH** /beneficial-owner/{id} | Update a business beneficial owner
+*CardsApi* | [**closeCard**](docs/CardsApi.md#closecard) | **POST** /cards/{cardId}/close | Close a card
+*CardsApi* | [**createCard**](docs/CardsApi.md#createcard) | **POST** /cards | Create a card
+*CardsApi* | [**freezeCard**](docs/CardsApi.md#freezecard) | **POST** /cards/{cardId}/freeze | Freeze a card
+*CardsApi* | [**getCard**](docs/CardsApi.md#getcard) | **GET** /cards/{cardId} | Get a card
+*CardsApi* | [**getCardLimits**](docs/CardsApi.md#getcardlimits) | **GET** /cards/{cardId}/limits | Get card limits
+*CardsApi* | [**getCardPinStatus**](docs/CardsApi.md#getcardpinstatus) | **GET** /cards/{cardId}/secure-data/pin/status | Get card PIN status
+*CardsApi* | [**listCards**](docs/CardsApi.md#listcards) | **GET** /cards | List cards
+*CardsApi* | [**replaceCard**](docs/CardsApi.md#replacecard) | **POST** /cards/{cardId}/replace | Replace a card
+*CardsApi* | [**reportCardLost**](docs/CardsApi.md#reportcardlost) | **POST** /cards/{cardId}/report-lost | Report card lost
+*CardsApi* | [**reportCardStolen**](docs/CardsApi.md#reportcardstolen) | **POST** /cards/{cardId}/report-stolen | Report card stolen
+*CardsApi* | [**unfreezeCard**](docs/CardsApi.md#unfreezecard) | **POST** /cards/{cardId}/unfreeze | Unfreeze a card
+*CardsApi* | [**updateCard**](docs/CardsApi.md#updatecard) | **PATCH** /cards/{cardId} | Update a card
 *FeesApi* | [**createFee**](docs/FeesApi.md#createfee) | **POST** /fees | Create a fee
 *FeesApi* | [**reverseFee**](docs/FeesApi.md#reversefee) | **POST** /fees/reverse | Reverse a fee
 *PaymentsApi* | [**cancelPayment**](docs/PaymentsApi.md#cancelpayment) | **POST** /payments/{paymentId}/cancel | Cancel a payment
@@ -135,8 +147,14 @@ Class | Method | HTTP request | Description
  - [BusinessApplicationAttributes](docs/BusinessApplicationAttributes.md)
  - [BusinessApplicationRelationships](docs/BusinessApplicationRelationships.md)
  - [BusinessContactType](docs/BusinessContactType.md)
+ - [BusinessCreditCard](docs/BusinessCreditCard.md)
+ - [BusinessDebitCard](docs/BusinessDebitCard.md)
+ - [BusinessDebitCardAttributes](docs/BusinessDebitCardAttributes.md)
  - [BusinessNumberOfEmployeesType](docs/BusinessNumberOfEmployeesType.md)
  - [BusinessVerticalType](docs/BusinessVerticalType.md)
+ - [BusinessVirtualCreditCard](docs/BusinessVirtualCreditCard.md)
+ - [BusinessVirtualDebitCard](docs/BusinessVirtualDebitCard.md)
+ - [BusinessVirtualDebitCardAttributes](docs/BusinessVirtualDebitCardAttributes.md)
  - [CancelApplication201Response](docs/CancelApplication201Response.md)
  - [CancelApplicationData](docs/CancelApplicationData.md)
  - [CancelApplicationDataAttributes](docs/CancelApplicationDataAttributes.md)
@@ -149,6 +167,7 @@ Class | Method | HTTP request | Description
  - [CashFlowType](docs/CashFlowType.md)
  - [ClearAchDebitPayment200Response](docs/ClearAchDebitPayment200Response.md)
  - [CloseAccountRequest](docs/CloseAccountRequest.md)
+ - [CloseCard200Response](docs/CloseCard200Response.md)
  - [CloseCreditAccountData](docs/CloseCreditAccountData.md)
  - [CloseCreditAccountDataAttributes](docs/CloseCreditAccountDataAttributes.md)
  - [CloseCreditAccountRequest](docs/CloseCreditAccountRequest.md)
@@ -198,6 +217,20 @@ Class | Method | HTTP request | Description
  - [CreateBusinessApplicationData](docs/CreateBusinessApplicationData.md)
  - [CreateBusinessApplicationDataAttributes](docs/CreateBusinessApplicationDataAttributes.md)
  - [CreateBusinessApplicationRequest](docs/CreateBusinessApplicationRequest.md)
+ - [CreateBusinessCreditCardData](docs/CreateBusinessCreditCardData.md)
+ - [CreateBusinessCreditCardDataAttributes](docs/CreateBusinessCreditCardDataAttributes.md)
+ - [CreateBusinessCreditCardRequest](docs/CreateBusinessCreditCardRequest.md)
+ - [CreateBusinessDebitCardData](docs/CreateBusinessDebitCardData.md)
+ - [CreateBusinessDebitCardRequest](docs/CreateBusinessDebitCardRequest.md)
+ - [CreateBusinessVirtualCreditCardData](docs/CreateBusinessVirtualCreditCardData.md)
+ - [CreateBusinessVirtualCreditCardDataAttributes](docs/CreateBusinessVirtualCreditCardDataAttributes.md)
+ - [CreateBusinessVirtualCreditCardRequest](docs/CreateBusinessVirtualCreditCardRequest.md)
+ - [CreateBusinessVirtualDebitCardData](docs/CreateBusinessVirtualDebitCardData.md)
+ - [CreateBusinessVirtualDebitCardDataAttributes](docs/CreateBusinessVirtualDebitCardDataAttributes.md)
+ - [CreateBusinessVirtualDebitCardRequest](docs/CreateBusinessVirtualDebitCardRequest.md)
+ - [CreateCard201Response](docs/CreateCard201Response.md)
+ - [CreateCard201ResponseData](docs/CreateCard201ResponseData.md)
+ - [CreateCardRequest](docs/CreateCardRequest.md)
  - [CreateCreditAccountData](docs/CreateCreditAccountData.md)
  - [CreateCreditAccountDataAttributes](docs/CreateCreditAccountDataAttributes.md)
  - [CreateCreditAccountRequest](docs/CreateCreditAccountRequest.md)
@@ -213,6 +246,12 @@ Class | Method | HTTP request | Description
  - [CreateIndividualApplicationData](docs/CreateIndividualApplicationData.md)
  - [CreateIndividualApplicationDataAttributes](docs/CreateIndividualApplicationDataAttributes.md)
  - [CreateIndividualApplicationRequest](docs/CreateIndividualApplicationRequest.md)
+ - [CreateIndividualDebitCardData](docs/CreateIndividualDebitCardData.md)
+ - [CreateIndividualDebitCardDataAttributes](docs/CreateIndividualDebitCardDataAttributes.md)
+ - [CreateIndividualDebitCardRequest](docs/CreateIndividualDebitCardRequest.md)
+ - [CreateIndividualVirtualDebitCardData](docs/CreateIndividualVirtualDebitCardData.md)
+ - [CreateIndividualVirtualDebitCardDataAttributes](docs/CreateIndividualVirtualDebitCardDataAttributes.md)
+ - [CreateIndividualVirtualDebitCardRequest](docs/CreateIndividualVirtualDebitCardRequest.md)
  - [CreatePayment201Response](docs/CreatePayment201Response.md)
  - [CreatePayment201ResponseData](docs/CreatePayment201ResponseData.md)
  - [CreatePaymentRequest](docs/CreatePaymentRequest.md)
@@ -251,6 +290,9 @@ Class | Method | HTTP request | Description
  - [FeeReversalAttributes](docs/FeeReversalAttributes.md)
  - [FeeReversalRelationships](docs/FeeReversalRelationships.md)
  - [FreezeAccountRequest](docs/FreezeAccountRequest.md)
+ - [FreezeCardData](docs/FreezeCardData.md)
+ - [FreezeCardDataAttributes](docs/FreezeCardDataAttributes.md)
+ - [FreezeCardRequest](docs/FreezeCardRequest.md)
  - [FreezeCreditAccountData](docs/FreezeCreditAccountData.md)
  - [FreezeCreditAccountRequest](docs/FreezeCreditAccountRequest.md)
  - [FreezeDepositAccountData](docs/FreezeDepositAccountData.md)
@@ -271,6 +313,8 @@ Class | Method | HTTP request | Description
  - [GetAvailableDepositProducts200Response](docs/GetAvailableDepositProducts200Response.md)
  - [GetAvailableDepositProducts200ResponseDataInner](docs/GetAvailableDepositProducts200ResponseDataInner.md)
  - [GetAvailableDepositProducts200ResponseDataInnerAttributes](docs/GetAvailableDepositProducts200ResponseDataInnerAttributes.md)
+ - [GetCard200Response](docs/GetCard200Response.md)
+ - [GetCardPinStatus200Response](docs/GetCardPinStatus200Response.md)
  - [GetExpectedACHCompletionDateData](docs/GetExpectedACHCompletionDateData.md)
  - [GetExpectedACHCompletionDateDataAttributes](docs/GetExpectedACHCompletionDateDataAttributes.md)
  - [GetExpectedAchCompletionDate200Response](docs/GetExpectedAchCompletionDate200Response.md)
@@ -281,12 +325,18 @@ Class | Method | HTTP request | Description
  - [IndividualApplication](docs/IndividualApplication.md)
  - [IndividualApplicationAttributes](docs/IndividualApplicationAttributes.md)
  - [IndividualApplicationRelationships](docs/IndividualApplicationRelationships.md)
+ - [IndividualDebitCard](docs/IndividualDebitCard.md)
+ - [IndividualDebitCardAttributes](docs/IndividualDebitCardAttributes.md)
+ - [IndividualVirtualDebitCard](docs/IndividualVirtualDebitCard.md)
+ - [IndividualVirtualDebitCardAttributes](docs/IndividualVirtualDebitCardAttributes.md)
  - [IndustryType](docs/IndustryType.md)
  - [List200Response](docs/List200Response.md)
  - [List200ResponseDataInner](docs/List200ResponseDataInner.md)
  - [ListAccountHolds200Response](docs/ListAccountHolds200Response.md)
  - [ListAccounts200Response](docs/ListAccounts200Response.md)
  - [ListAccounts200ResponseDataInner](docs/ListAccounts200ResponseDataInner.md)
+ - [ListCards200Response](docs/ListCards200Response.md)
+ - [ListCards200ResponseDataInner](docs/ListCards200ResponseDataInner.md)
  - [ListReceivedPayments200Response](docs/ListReceivedPayments200Response.md)
  - [ListReceivedPayments200ResponseDataInner](docs/ListReceivedPayments200ResponseDataInner.md)
  - [ListRecurringPayments200Response](docs/ListRecurringPayments200Response.md)
@@ -300,6 +350,8 @@ Class | Method | HTTP request | Description
  - [OfficerRequestType](docs/OfficerRequestType.md)
  - [OfficerType](docs/OfficerType.md)
  - [PhoneType](docs/PhoneType.md)
+ - [PinStatus](docs/PinStatus.md)
+ - [PinStatusAttributes](docs/PinStatusAttributes.md)
  - [RealTimeCounterpartyType](docs/RealTimeCounterpartyType.md)
  - [RealtimeReceivedPayment](docs/RealtimeReceivedPayment.md)
  - [RealtimeReceivedPaymentAttributes](docs/RealtimeReceivedPaymentAttributes.md)
@@ -319,6 +371,11 @@ Class | Method | HTTP request | Description
  - [RemoveAccountOwnersRequest](docs/RemoveAccountOwnersRequest.md)
  - [ReopenAccount200Response](docs/ReopenAccount200Response.md)
  - [ReopenAccount200ResponseData](docs/ReopenAccount200ResponseData.md)
+ - [ReplaceCard200Response](docs/ReplaceCard200Response.md)
+ - [ReplaceCard200ResponseData](docs/ReplaceCard200ResponseData.md)
+ - [ReplaceCardData](docs/ReplaceCardData.md)
+ - [ReplaceCardDataAttributes](docs/ReplaceCardDataAttributes.md)
+ - [ReplaceCardRequest](docs/ReplaceCardRequest.md)
  - [RequestedProductType](docs/RequestedProductType.md)
  - [ResourceIdentifier](docs/ResourceIdentifier.md)
  - [ReverseFee201Response](docs/ReverseFee201Response.md)
@@ -360,6 +417,11 @@ Class | Method | HTTP request | Description
  - [UpdateBusinessOfficerData](docs/UpdateBusinessOfficerData.md)
  - [UpdateBusinessOfficerDataAttributes](docs/UpdateBusinessOfficerDataAttributes.md)
  - [UpdateBusinessOfficerRequest](docs/UpdateBusinessOfficerRequest.md)
+ - [UpdateCard200Response](docs/UpdateCard200Response.md)
+ - [UpdateCard200ResponseData](docs/UpdateCard200ResponseData.md)
+ - [UpdateCardData](docs/UpdateCardData.md)
+ - [UpdateCardDataAttributes](docs/UpdateCardDataAttributes.md)
+ - [UpdateCardRequest](docs/UpdateCardRequest.md)
  - [UpdateCreditAccountData](docs/UpdateCreditAccountData.md)
  - [UpdateCreditAccountDataAttributes](docs/UpdateCreditAccountDataAttributes.md)
  - [UpdateCreditAccountRequest](docs/UpdateCreditAccountRequest.md)
