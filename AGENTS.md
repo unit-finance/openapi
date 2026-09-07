@@ -40,6 +40,44 @@ manifests (`templates/java/pom-dependencies.xml`) are source of truth too.
 - `spec-version.json` — `slices` is derived by `fetch-spec`; don't edit by hand.
 - `test-coverage-report.json` — written by `npm run test-coverage`.
 
+## Generating tests
+
+Integration tests are authored from a coverage report, not by hand-crawling the
+spec. The pipeline (driven by `scripts/agents/author-tests.ts`, runnable via
+`npm run author-tests`, and invoked automatically after spec regeneration) is:
+
+1. `npm run test-coverage` walks the spec and writes `test-coverage-report.json`,
+   flagging every operation that lacks a test in each language.
+2. `npm run author-tests` reads that report and drives a Cursor SDK agent to
+   write or repair the missing tests. If the report has no gaps it is a no-op.
+   Requires `$CURSOR_API_KEY`; `$UNIT_SANDBOX_TOKEN` is optional (when unset the
+   suites self-skip and the run still exits 0).
+
+To author the tests yourself instead of driving the SDK agent, run
+`npm run author-tests-local` (macOS). It runs step 1, then builds the exact
+prompt (no API key, network, or SDK needed) and copies it to your clipboard so
+you can paste it straight into a chat/agent. It is a no-op when there are no
+gaps. (`npm run author-tests -- --print-prompt` prints the prompt to stdout from
+an existing report without refreshing coverage or copying.)
+
+Whether the agent or you are authoring, the rules are the same (see the full
+conventions in `.cursor/rules/integration-tests.mdc` and each tree's `README.md`):
+
+- Only create or edit tests under `templates/<lang>/` — never under `sdks/`
+  (see the drift-gate rule above). Re-mirror with `npm run generate-sdks`.
+- One test file per operation, named to match the existing files in that tree,
+  reusing the shared `helpers/` for API construction, fixtures, and shared app.
+- Gate every suite on the sandbox token so it self-skips when
+  `UNIT_SANDBOX_TOKEN` is unset: node `describeIfToken`, python `@requires_token`,
+  java `ApiSupport.assumeToken()`, ruby `:sandbox` tagging.
+- Assert structural correctness only (HTTP status, JSON:API envelope shape,
+  `data.type`, `data.id`, expected attribute keys) — not approval/decision
+  states, which depend on sandbox magic SSNs we don't control.
+- Tag any resources created in the sandbox with `tags.testRun` for traceability.
+- Validate cheaply per language: `npm run generate-sdk:<lang>` +
+  `npm run place-<lang>-tests`, then that language's runner
+  (`npm run test:sdk:<lang>`). Run `npm run generate-sdks` once at the end.
+
 ## When the spec version changes
 
 Bumping the spec regenerates the SDKs, which can remove operations, rename

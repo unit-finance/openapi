@@ -5,7 +5,7 @@ info:
     name: Proprietary
     url: https://www.unit.co/terms-of-service
   title: Unit API
-  version: 0.4.5
+  version: 0.5.0
 servers:
 - url: https://api.s.unit.sh
 security:
@@ -21,6 +21,9 @@ tags:
 - description: "ACH, book, and wire payments, received payments, recurring payments,\
     \ batch releases, cash deposits, and wire drawdowns."
   name: Payments
+- description: "Debit and credit cards, their creation, lifecycle actions, limits,\
+    \ and PIN status."
+  name: Cards
 paths:
   /applications:
     get:
@@ -3169,6 +3172,768 @@ paths:
       x-content-type: application/vnd.api+json
       x-accepts:
       - application/vnd.api+json
+  /cards:
+    get:
+      description: List cards. Filtering and paging can be applied.
+      operationId: listCards
+      parameters:
+      - description: Optional. Maximum number of resources that will be returned.
+          Maximum is 1000 resources. See Pagination. Sent as a numeric string (query
+          parameters are strings in HTTP).
+        explode: true
+        in: query
+        name: "page[limit]"
+        required: false
+        schema:
+          default: "100"
+          pattern: "^[0-9]+$"
+          type: string
+        style: form
+      - description: Optional. Number of resources to skip. See Pagination. Sent as
+          a numeric string (query parameters are strings in HTTP).
+        explode: true
+        in: query
+        name: "page[offset]"
+        required: false
+        schema:
+          default: "0"
+          pattern: "^[0-9]+$"
+          type: string
+        style: form
+      - description: Optional. Filters the results by the specified account id.
+        explode: true
+        in: query
+        name: "filter[accountId]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filters the results by the specified customer id.
+        explode: true
+        in: query
+        name: "filter[customerId]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filter Cards by Tags.
+        explode: true
+        in: query
+        name: "filter[tags]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: "Optional. Filter cards by Card Status. Usage example: *filter[status][0]=Stolen&filter[status][1]=Lost*"
+        explode: true
+        in: query
+        name: "filter[status][]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: "Optional. A comma-separated list of related resources to include\
+          \ in the response. Related resources include: customer, account. See Getting\
+          \ Related Resources"
+        explode: true
+        in: query
+        name: include
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. sort=createdAt for ascending order or sort=-createdAt
+          (leading minus sign) for descending order.
+        explode: true
+        in: query
+        name: sort
+        required: false
+        schema:
+          default: createdAt
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/listCards_200_response"
+          description: "A page of card resources, optionally filtered and sorted."
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - cards
+      summary: List cards
+      tags:
+      - Cards
+      x-accepts:
+      - application/vnd.api+json
+    post:
+      description: |-
+        Create a card. Variants:
+        - **CreateBusinessCreditCard**
+        - **CreateBusinessDebitCard**
+        - **CreateBusinessVirtualCreditCard**
+        - **CreateBusinessVirtualDebitCard**
+        - **CreateIndividualDebitCard**
+        - **CreateIndividualVirtualDebitCard**
+      operationId: createCard
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/createCard_request"
+        required: true
+      responses:
+        "201":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/createCard_201_response"
+          description: "The created card resource, distinguished by the `type` field."
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - cards-write
+      summary: Create a card
+      tags:
+      - Cards
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /cards/{cardId}:
+    get:
+      description: Get a card resource by id.
+      operationId: getCard
+      parameters:
+      - explode: false
+        in: path
+        name: cardId
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: "Optional. A comma-separated list of related resources to include\
+          \ in the response. Related resources include: customer, account. See Getting\
+          \ Related Resources"
+        explode: true
+        in: query
+        name: include
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/getCard_200_response"
+          description: "The requested card resource, distinguished by the `type` field."
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - cards
+      summary: Get a card
+      tags:
+      - Cards
+      x-accepts:
+      - application/vnd.api+json
+    patch:
+      description: Update a debit card.
+      operationId: updateCard
+      parameters:
+      - explode: false
+        in: path
+        name: cardId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/updateCard_request"
+        required: true
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/updateCard_200_response"
+          description: "The updated card resource, distinguished by the `type` field."
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - cards-write
+      summary: Update a card
+      tags:
+      - Cards
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /cards/{cardId}/limits:
+    get:
+      description: Get the limits of a card.
+      operationId: getCardLimits
+      parameters:
+      - explode: false
+        in: path
+        name: cardId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/getAccountLimits_200_response"
+          description: The card limits resource.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      summary: Get card limits
+      tags:
+      - Cards
+      x-accepts:
+      - application/vnd.api+json
+  /cards/{cardId}/secure-data/pin/status:
+    get:
+      description: Gets the PIN status for the specified card.
+      operationId: getCardPinStatus
+      parameters:
+      - explode: false
+        in: path
+        name: cardId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/getCardPinStatus_200_response"
+          description: The PIN status resource.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - cards
+      - bearerAuth:
+        - cards-sensitive
+      summary: Get card PIN status
+      tags:
+      - Cards
+      x-accepts:
+      - application/vnd.api+json
+  /cards/{cardId}/close:
+    post:
+      description: Close a card.
+      operationId: closeCard
+      parameters:
+      - explode: false
+        in: path
+        name: cardId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+        required: false
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/closeCard_200_response"
+          description: "The closed card resource, distinguished by the `type` field."
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - cards-write
+      summary: Close a card
+      tags:
+      - Cards
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /cards/{cardId}/freeze:
+    post:
+      description: Freeze a card (temporarily block a card).
+      operationId: freezeCard
+      parameters:
+      - explode: false
+        in: path
+        name: cardId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/freezeCard_request"
+        required: true
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/closeCard_200_response"
+          description: "The frozen card resource, distinguished by the `type` field."
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - cards-write
+      summary: Freeze a card
+      tags:
+      - Cards
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /cards/{cardId}/replace:
+    post:
+      description: "Creates and ships a replacement physical debit card to an individual\
+        \ or business card holder. The replacement card has the same card number,\
+        \ expiration date and PIN as the original card, and does not require additional\
+        \ activation."
+      operationId: replaceCard
+      parameters:
+      - explode: false
+        in: path
+        name: cardId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/replaceCard_request"
+        required: true
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/replaceCard_200_response"
+          description: "The replacement card resource, distinguished by the `type`\
+            \ field."
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - cards-sensitive-write
+      - bearerAuth:
+        - cards-write
+      summary: Replace a card
+      tags:
+      - Cards
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /cards/{cardId}/report-lost:
+    post:
+      description: Report card as lost.
+      operationId: reportCardLost
+      parameters:
+      - explode: false
+        in: path
+        name: cardId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+        required: false
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/closeCard_200_response"
+          description: "The card resource marked as lost, distinguished by the `type`\
+            \ field."
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - cards-write
+      summary: Report card lost
+      tags:
+      - Cards
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /cards/{cardId}/report-stolen:
+    post:
+      description: Report card as stolen.
+      operationId: reportCardStolen
+      parameters:
+      - explode: false
+        in: path
+        name: cardId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+        required: false
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/closeCard_200_response"
+          description: "The card resource marked as stolen, distinguished by the `type`\
+            \ field."
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - cards-write
+      summary: Report card stolen
+      tags:
+      - Cards
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /cards/{cardId}/unfreeze:
+    post:
+      description: Unfreeze a frozen card.
+      operationId: unfreezeCard
+      parameters:
+      - explode: false
+        in: path
+        name: cardId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+        required: false
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/closeCard_200_response"
+          description: "The unfrozen card resource, distinguished by the `type` field."
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - cards-write
+      summary: Unfreeze a card
+      tags:
+      - Cards
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
 components:
   responses:
     BadRequest:
@@ -5823,6 +6588,433 @@ components:
       required:
       - data
       type: object
+    CreateBusinessCreditCardData:
+      properties:
+        type:
+          enum:
+          - businessCreditCard
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CreateBusinessCreditCardData_attributes"
+        relationships:
+          $ref: "#/components/schemas/CreateFeeData_relationships"
+      required:
+      - attributes
+      - relationships
+      - type
+      type: object
+    CreateBusinessCreditCardRequest:
+      properties:
+        data:
+          $ref: "#/components/schemas/CreateBusinessCreditCardData"
+      required:
+      - data
+      type: object
+    CreateBusinessDebitCardData:
+      properties:
+        type:
+          enum:
+          - businessDebitCard
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CreateBusinessCreditCardData_attributes"
+        relationships:
+          $ref: "#/components/schemas/CreateFeeData_relationships"
+      required:
+      - attributes
+      - relationships
+      - type
+      type: object
+    CreateBusinessDebitCardRequest:
+      properties:
+        data:
+          $ref: "#/components/schemas/CreateBusinessDebitCardData"
+      required:
+      - data
+      type: object
+    CreateBusinessVirtualCreditCardData:
+      properties:
+        type:
+          enum:
+          - businessVirtualCreditCard
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CreateBusinessVirtualCreditCardData_attributes"
+        relationships:
+          $ref: "#/components/schemas/CreateFeeData_relationships"
+      required:
+      - attributes
+      - relationships
+      - type
+      type: object
+    CreateBusinessVirtualCreditCardRequest:
+      properties:
+        data:
+          $ref: "#/components/schemas/CreateBusinessVirtualCreditCardData"
+      required:
+      - data
+      type: object
+    CreateBusinessVirtualDebitCardData:
+      properties:
+        type:
+          enum:
+          - businessVirtualDebitCard
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CreateBusinessVirtualDebitCardData_attributes"
+        relationships:
+          $ref: "#/components/schemas/CreateFeeData_relationships"
+      required:
+      - attributes
+      - relationships
+      - type
+      type: object
+    CreateBusinessVirtualDebitCardRequest:
+      properties:
+        data:
+          $ref: "#/components/schemas/CreateBusinessVirtualDebitCardData"
+      required:
+      - data
+      type: object
+    CreateIndividualDebitCardData:
+      properties:
+        type:
+          enum:
+          - individualDebitCard
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CreateIndividualDebitCardData_attributes"
+        relationships:
+          $ref: "#/components/schemas/CreateFeeData_relationships"
+      required:
+      - attributes
+      - relationships
+      - type
+      type: object
+    CreateIndividualDebitCardRequest:
+      properties:
+        data:
+          $ref: "#/components/schemas/CreateIndividualDebitCardData"
+      required:
+      - data
+      type: object
+    CreateIndividualVirtualDebitCardData:
+      properties:
+        type:
+          enum:
+          - individualVirtualDebitCard
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CreateIndividualVirtualDebitCardData_attributes"
+        relationships:
+          $ref: "#/components/schemas/CreateFeeData_relationships"
+      required:
+      - attributes
+      - relationships
+      - type
+      type: object
+    CreateIndividualVirtualDebitCardRequest:
+      properties:
+        data:
+          $ref: "#/components/schemas/CreateIndividualVirtualDebitCardData"
+      required:
+      - data
+      type: object
+    UpdateCardData:
+      properties:
+        type:
+          enum:
+          - businessDebitCard
+          type: string
+        attributes:
+          $ref: "#/components/schemas/UpdateCardData_attributes"
+      required:
+      - attributes
+      - type
+      type: object
+    FreezeCardData:
+      properties:
+        type:
+          enum:
+          - freezeCard
+          type: string
+        attributes:
+          $ref: "#/components/schemas/FreezeCardData_attributes"
+      required:
+      - attributes
+      - type
+      type: object
+    ReplaceCardData:
+      properties:
+        type:
+          enum:
+          - replaceCard
+          type: string
+        attributes:
+          $ref: "#/components/schemas/ReplaceCardData_attributes"
+      required:
+      - attributes
+      - type
+      type: object
+    BusinessCreditCard:
+      description: '`BusinessCreditCard` is a JSON:API resource returned by the Create
+        Business Credit Card operation.'
+      properties:
+        type:
+          enum:
+          - businessCreditCard
+          type: string
+        id:
+          type: string
+        attributes:
+          additionalProperties: true
+          description: Attributes of the business credit card.
+          type: object
+        relationships:
+          $ref: "#/components/schemas/CashDepositBarcode_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+      x-todo: "pre-generation source missing: no resources/BusinessCreditCard.json\
+        \ in the docs export. Only the JSON:API type literal (businessCreditCard)\
+        \ is known, from the CreateBusinessCreditCard request. Attributes are left\
+        \ open (additionalProperties: true) until the docs pipeline emits this resource."
+    BusinessDebitCard:
+      description: "`BusinessDebitCard` is a JSON:API resource, top-level fields:"
+      example:
+        type: businessDebitCard
+        id: "9"
+        attributes:
+          createdAt: 2020-05-13T09:42:21.857Z
+          last4Digits: "2074"
+          expirationDate: 2022-05
+          bin: "123456789"
+          shippingAddress:
+            street: 5230 Newell Rd
+            street2: null
+            city: Palo Alto
+            state: CA
+            postalCode: "94303"
+            country: US
+          address:
+            street: 5230 Newell Rd
+            street2: null
+            city: Palo Alto
+            state: CA
+            postalCode: "94303"
+            country: US
+          fullName:
+            first: Richard
+            last: Hendricks
+          phone:
+            countryCode: "1"
+            number: "1555555578"
+          email: richard@piedpiper.com
+          dateOfBirth: 2001-08-10
+          ssn: "123456789"
+          status: Active
+        relationships:
+          account:
+            data:
+              type: depositAccount
+              id: "1"
+          customer:
+            data:
+              type: businessCustomer
+              id: "1"
+      properties:
+        type:
+          enum:
+          - businessDebitCard
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/BusinessDebitCard_attributes"
+        relationships:
+          $ref: "#/components/schemas/CashDepositBarcode_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    BusinessVirtualCreditCard:
+      description: '`BusinessVirtualCreditCard` is a JSON:API resource returned by
+        the Create Business Virtual Credit Card operation.'
+      properties:
+        type:
+          enum:
+          - businessVirtualCreditCard
+          type: string
+        id:
+          type: string
+        attributes:
+          additionalProperties: true
+          description: Attributes of the business virtual credit card.
+          type: object
+        relationships:
+          $ref: "#/components/schemas/CashDepositBarcode_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+      x-todo: "pre-generation source missing: no resources/BusinessVirtualCreditCard.json\
+        \ in the docs export. Only the JSON:API type literal (businessVirtualCreditCard)\
+        \ is known, from the CreateBusinessVirtualCreditCard request. Attributes are\
+        \ left open (additionalProperties: true) until the docs pipeline emits this\
+        \ resource."
+    BusinessVirtualDebitCard:
+      description: "`BusinessVirtualDebitCard` is a JSON:API resource, top-level fields:"
+      example:
+        type: businessVirtualDebitCard
+        id: "9"
+        attributes:
+          createdAt: 2020-05-13T09:42:21.857Z
+          last4Digits: "2074"
+          expirationDate: 2022-05
+          bin: "123456789"
+          address:
+            street: 5230 Newell Rd
+            street2: null
+            city: Palo Alto
+            state: CA
+            postalCode: "94303"
+            country: US
+          fullName:
+            first: Richard
+            last: Hendricks
+          phone:
+            countryCode: "1"
+            number: "1555555578"
+          email: richard@piedpiper.com
+          dateOfBirth: 2001-08-10
+          ssn: "123456789"
+          status: Active
+        relationships:
+          account:
+            data:
+              type: depositAccount
+              id: "1"
+          customer:
+            data:
+              type: businessCustomer
+              id: "1"
+      properties:
+        type:
+          enum:
+          - businessVirtualDebitCard
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/BusinessVirtualDebitCard_attributes"
+        relationships:
+          $ref: "#/components/schemas/CashDepositBarcode_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    IndividualDebitCard:
+      description: "`IndividualDebitCard` is a JSON:API resource, top-level fields:"
+      example:
+        type: individualDebitCard
+        id: "8"
+        attributes:
+          createdAt: 2020-05-13T09:07:47.645Z
+          last4Digits: "1234"
+          expirationDate: 2022-05
+          bin: "123456789"
+          shippingAddress:
+            street: 5230 Newell Rd
+            street2: null
+            city: Palo Alto
+            state: CA
+            postalCode: "94303"
+            country: US
+          status: Active
+        relationships:
+          account:
+            data:
+              type: depositAccount
+              id: "2"
+          customer:
+            data:
+              type: individualCustomer
+              id: "2"
+      properties:
+        type:
+          enum:
+          - individualDebitCard
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/IndividualDebitCard_attributes"
+        relationships:
+          $ref: "#/components/schemas/CashDepositBarcode_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    IndividualVirtualDebitCard:
+      description: "`IndividualVirtualDebitCard` is a JSON:API resource, top-level\
+        \ fields:"
+      example:
+        type: individualVirtualDebitCard
+        id: "8"
+        attributes:
+          createdAt: 2020-05-13T09:07:47.645Z
+          last4Digits: "1234"
+          expirationDate: 2022-05
+          bin: "123456789"
+          status: Active
+        relationships:
+          account:
+            data:
+              type: depositAccount
+              id: "2"
+          customer:
+            data:
+              type: individualCustomer
+              id: "2"
+      properties:
+        type:
+          enum:
+          - individualVirtualDebitCard
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/IndividualVirtualDebitCard_attributes"
+        relationships:
+          $ref: "#/components/schemas/CashDepositBarcode_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    PinStatus:
+      description: "`PinStatus` is a JSON:API resource, top-level fields:"
+      example:
+        type: pinStatus
+        attributes:
+          status: NotSet
+      properties:
+        type:
+          enum:
+          - pinStatus
+          type: string
+        attributes:
+          $ref: "#/components/schemas/PinStatus_attributes"
+      required:
+      - attributes
+      - type
+      type: object
     list_200_response_data_inner:
       discriminator:
         mapping:
@@ -6410,6 +7602,146 @@ components:
       properties:
         data:
           $ref: "#/components/schemas/WireDrawdown"
+      required:
+      - data
+      type: object
+    listCards_200_response_data_inner:
+      discriminator:
+        mapping:
+          individualDebitCard: "#/components/schemas/IndividualDebitCard"
+          businessDebitCard: "#/components/schemas/BusinessDebitCard"
+          individualVirtualDebitCard: "#/components/schemas/IndividualVirtualDebitCard"
+          businessVirtualDebitCard: "#/components/schemas/BusinessVirtualDebitCard"
+        propertyName: type
+      oneOf:
+      - $ref: "#/components/schemas/IndividualDebitCard"
+      - $ref: "#/components/schemas/BusinessDebitCard"
+      - $ref: "#/components/schemas/IndividualVirtualDebitCard"
+      - $ref: "#/components/schemas/BusinessVirtualDebitCard"
+    listCards_200_response:
+      properties:
+        data:
+          items:
+            $ref: "#/components/schemas/listCards_200_response_data_inner"
+          type: array
+        included:
+          items:
+            $ref: "#/components/schemas/DepositAccount"
+          type: array
+      required:
+      - data
+      type: object
+    createCard_request:
+      oneOf:
+      - $ref: "#/components/schemas/CreateBusinessCreditCardRequest"
+      - $ref: "#/components/schemas/CreateBusinessDebitCardRequest"
+      - $ref: "#/components/schemas/CreateBusinessVirtualCreditCardRequest"
+      - $ref: "#/components/schemas/CreateBusinessVirtualDebitCardRequest"
+      - $ref: "#/components/schemas/CreateIndividualDebitCardRequest"
+      - $ref: "#/components/schemas/CreateIndividualVirtualDebitCardRequest"
+    createCard_201_response_data:
+      discriminator:
+        mapping:
+          businessCreditCard: "#/components/schemas/BusinessCreditCard"
+          businessDebitCard: "#/components/schemas/BusinessDebitCard"
+          businessVirtualCreditCard: "#/components/schemas/BusinessVirtualCreditCard"
+          businessVirtualDebitCard: "#/components/schemas/BusinessVirtualDebitCard"
+          individualDebitCard: "#/components/schemas/IndividualDebitCard"
+          individualVirtualDebitCard: "#/components/schemas/IndividualVirtualDebitCard"
+        propertyName: type
+      oneOf:
+      - $ref: "#/components/schemas/BusinessCreditCard"
+      - $ref: "#/components/schemas/BusinessDebitCard"
+      - $ref: "#/components/schemas/BusinessVirtualCreditCard"
+      - $ref: "#/components/schemas/BusinessVirtualDebitCard"
+      - $ref: "#/components/schemas/IndividualDebitCard"
+      - $ref: "#/components/schemas/IndividualVirtualDebitCard"
+    createCard_201_response:
+      properties:
+        data:
+          $ref: "#/components/schemas/createCard_201_response_data"
+      required:
+      - data
+      type: object
+    getCard_200_response:
+      properties:
+        data:
+          $ref: "#/components/schemas/listCards_200_response_data_inner"
+        included:
+          items:
+            $ref: "#/components/schemas/DepositAccount"
+          type: array
+      required:
+      - data
+      type: object
+    updateCard_request:
+      properties:
+        data:
+          $ref: "#/components/schemas/UpdateCardData"
+      required:
+      - data
+      type: object
+    updateCard_200_response_data:
+      discriminator:
+        mapping:
+          individualDebitCard: "#/components/schemas/IndividualDebitCard"
+          businessDebitCard: "#/components/schemas/BusinessDebitCard"
+          businessVirtualDebitCard: "#/components/schemas/BusinessVirtualDebitCard"
+          individualVirtualDebitCard: "#/components/schemas/IndividualVirtualDebitCard"
+        propertyName: type
+      oneOf:
+      - $ref: "#/components/schemas/IndividualDebitCard"
+      - $ref: "#/components/schemas/BusinessDebitCard"
+      - $ref: "#/components/schemas/BusinessVirtualDebitCard"
+      - $ref: "#/components/schemas/IndividualVirtualDebitCard"
+    updateCard_200_response:
+      properties:
+        data:
+          $ref: "#/components/schemas/updateCard_200_response_data"
+      required:
+      - data
+      type: object
+    getCardPinStatus_200_response:
+      properties:
+        data:
+          $ref: "#/components/schemas/PinStatus"
+      required:
+      - data
+      type: object
+    closeCard_200_response:
+      properties:
+        data:
+          $ref: "#/components/schemas/listCards_200_response_data_inner"
+      required:
+      - data
+      type: object
+    freezeCard_request:
+      properties:
+        data:
+          $ref: "#/components/schemas/FreezeCardData"
+      required:
+      - data
+      type: object
+    replaceCard_request:
+      properties:
+        data:
+          $ref: "#/components/schemas/ReplaceCardData"
+      required:
+      - data
+      type: object
+    replaceCard_200_response_data:
+      discriminator:
+        mapping:
+          individualDebitCard: "#/components/schemas/IndividualDebitCard"
+          businessDebitCard: "#/components/schemas/BusinessDebitCard"
+        propertyName: type
+      oneOf:
+      - $ref: "#/components/schemas/IndividualDebitCard"
+      - $ref: "#/components/schemas/BusinessDebitCard"
+    replaceCard_200_response:
+      properties:
+        data:
+          $ref: "#/components/schemas/replaceCard_200_response_data"
       required:
       - data
       type: object
@@ -9083,6 +10415,544 @@ components:
       - amount
       - description
       - schedule
+      type: object
+    CreateBusinessCreditCardData_attributes:
+      properties:
+        fullName:
+          allOf:
+          - $ref: "#/components/schemas/FullNameType"
+          description: Full name of the card holder.
+        dateOfBirth:
+          description: Date of birth of the card holder (e.g. "2001-08-15").
+          example: 2001-08-10
+          format: date
+          type: string
+        address:
+          allOf:
+          - $ref: "#/components/schemas/AddressType"
+          description: Address of the card holder.
+        shippingAddress:
+          allOf:
+          - $ref: "#/components/schemas/AddressType"
+          description: "Address to ship the card to. If not specified, card holder\
+            \ address is used."
+        phone:
+          allOf:
+          - $ref: "#/components/schemas/PhoneType"
+          description: Phone of the card holder.
+        email:
+          description: Email address of the card holder.
+          example: richard@piedpiper.com
+          type: string
+        design:
+          description: You may omit if you only have one card design. Please contact
+            Unit if you need multiple card designs.
+          type: string
+        additionalEmbossedText:
+          description: "Optional, up to 21 characters. Use for a second cardholder\
+            \ name, company name, or other data to be embossed on a card."
+          type: string
+        idempotencyKey:
+          description: See Idempotency.
+          example: 3a1a33be-4e12-4603-9ed0-820922389fb8
+          type: string
+        tags:
+          additionalProperties: true
+          description: See Tags.
+          type: object
+        limits:
+          additionalProperties: true
+          description: See Limits (cents).
+          example:
+            dailyWithdrawal: 50000
+            dailyPurchase: 50000
+            monthlyWithdrawal: 500000
+            monthlyPurchase: 700000
+          type: object
+        printOnlyBusinessName:
+          description: "Optional, default is false. Print the business name on the\
+            \ card instead of the card holder's name."
+          type: boolean
+        expiryDate:
+          description: Expiration date of the card in one of the formats MM/yy or
+            yyyy-MM or yy-MM (e.g. "03/27"). Must be between 3 to 5 years. Default
+            is 4 years.
+          type: string
+        ssn:
+          description: Optional. SSN (or ITIN) of the individual (numbers only). Either
+            an ssn or passport is required. It is optional to provide only last 4
+            SSN digits.
+          type: string
+        passport:
+          description: Passport number of the individual. Valid only for non-US persons.
+          type: string
+        nationality:
+          description: Required if a passport is used as the main ID. Two letters
+            representing the individual nationality. (e.g. "US").
+          maxLength: 2
+          minLength: 2
+          type: string
+      required:
+      - address
+      - dateOfBirth
+      - email
+      - fullName
+      - phone
+      type: object
+    CreateBusinessVirtualCreditCardData_attributes:
+      properties:
+        fullName:
+          allOf:
+          - $ref: "#/components/schemas/FullNameType"
+          description: Full name of the card holder.
+        dateOfBirth:
+          description: Date of birth of the card holder (e.g. "2001-08-15").
+          example: 2001-08-10
+          format: date
+          type: string
+        address:
+          allOf:
+          - $ref: "#/components/schemas/AddressType"
+          description: Address of the card holder.
+        phone:
+          allOf:
+          - $ref: "#/components/schemas/PhoneType"
+          description: Phone of the card holder.
+        email:
+          description: Email address of the card holder.
+          example: richard@piedpiper.com
+          type: string
+        idempotencyKey:
+          description: See Idempotency.
+          example: 3a1a33be-4e12-4603-9ed0-820922389fb10
+          type: string
+        tags:
+          additionalProperties: true
+          description: See Tags.
+          type: object
+        limits:
+          additionalProperties: true
+          description: See Limits (cents).
+          type: object
+        expiryDate:
+          description: Expiration date of the card in one of the formats MM/yy or
+            yyyy-MM or yy-MM (e.g. "03/27"). Must be between 3 to 5 years. Default
+            is 4 years.
+          type: string
+        ssn:
+          description: Optional. SSN (or ITIN) of the individual (numbers only). Either
+            an ssn or passport is required. It is optional to provide only last 4
+            SSN digits.
+          type: string
+        passport:
+          description: Passport number of the individual. Valid only for non-US persons.
+          type: string
+        nationality:
+          description: Required if a passport is used as the main ID. Two letters
+            representing the individual nationality. (e.g. "US").
+          maxLength: 2
+          minLength: 2
+          type: string
+      required:
+      - address
+      - dateOfBirth
+      - email
+      - fullName
+      - phone
+      type: object
+    CreateBusinessVirtualDebitCardData_attributes:
+      properties:
+        fullName:
+          allOf:
+          - $ref: "#/components/schemas/FullNameType"
+          description: Full name of the card holder.
+        dateOfBirth:
+          description: Date of birth of the card holder (e.g. "2001-08-15").
+          example: 2001-08-10
+          format: date
+          type: string
+        address:
+          allOf:
+          - $ref: "#/components/schemas/AddressType"
+          description: Address of the card holder.
+        phone:
+          allOf:
+          - $ref: "#/components/schemas/PhoneType"
+          description: Phone of the card holder.
+        email:
+          description: Email address of the card holder.
+          example: richard@piedpiper.com
+          type: string
+        idempotencyKey:
+          description: See Idempotency.
+          example: 3a1a33be-4e12-4603-9ed0-820922389fb8
+          type: string
+        tags:
+          additionalProperties: true
+          description: See Tags.
+          type: object
+        limits:
+          additionalProperties: true
+          description: See Limits (cents).
+          example:
+            dailyWithdrawal: 50000
+            dailyPurchase: 50000
+            monthlyWithdrawal: 500000
+            monthlyPurchase: 700000
+          type: object
+        expiryDate:
+          description: Expiration date of the card in one of the formats MM/yy or
+            yyyy-MM or yy-MM (e.g. "03/27"). Must be between 3 to 5 years. Default
+            is 4 years.
+          type: string
+        ssn:
+          description: Optional. SSN (or ITIN) of the individual (numbers only). Either
+            an ssn or passport is required. It is optional to provide only last 4
+            SSN digits.
+          type: string
+        passport:
+          description: Passport number of the individual. Valid only for non-US persons.
+          type: string
+        nationality:
+          description: Required if a passport is used as the main ID. Two letters
+            representing the individual nationality. (e.g. "US").
+          maxLength: 2
+          minLength: 2
+          type: string
+      required:
+      - address
+      - dateOfBirth
+      - email
+      - fullName
+      - phone
+      type: object
+    CreateIndividualDebitCardData_attributes:
+      properties:
+        shippingAddress:
+          allOf:
+          - $ref: "#/components/schemas/AddressType"
+          description: "Address to ship the card to. If not specified, the individual\
+            \ address is used."
+        design:
+          description: You may omit if you only have one card design. Please contact
+            Unit if you need multiple card designs.
+          type: string
+        additionalEmbossedText:
+          description: "Optional, up to 21 characters. Use for a second cardholder\
+            \ name, company name, or other data to be embossed on a card."
+          type: string
+        idempotencyKey:
+          description: See Idempotency.
+          example: 3a1a33be-4e12-4603-9ed0-820922389fb8
+          type: string
+        tags:
+          additionalProperties: true
+          description: See Tags.
+          type: object
+        limits:
+          additionalProperties: true
+          description: See Limits (cents).
+          example:
+            dailyWithdrawal: 50000
+            dailyPurchase: 50000
+            monthlyWithdrawal: 500000
+            monthlyPurchase: 700000
+          type: object
+        printOnlyBusinessName:
+          description: "Optional, default is false. Print the business name on the\
+            \ card instead of the card holder's name. Available only for Sole Proprietorship\
+            \ typed customers that have a DBA property."
+          type: boolean
+        expiryDate:
+          description: Expiration date of the card in one of the formats MM/yy or
+            yyyy-MM or yy-MM (e.g. "03/27"). Must be between 3 to 5 years. Default
+            is 4 years.
+          type: string
+      type: object
+    CreateIndividualVirtualDebitCardData_attributes:
+      properties:
+        idempotencyKey:
+          description: See Idempotency.
+          example: 3a1a33be-4e12-4603-9ed0-820922389fb8
+          type: string
+        tags:
+          additionalProperties: true
+          description: See Tags.
+          type: object
+        limits:
+          additionalProperties: true
+          description: See Limits (cents).
+          example:
+            dailyWithdrawal: 50000
+            dailyPurchase: 50000
+            monthlyWithdrawal: 500000
+            monthlyPurchase: 700000
+          type: object
+        expiryDate:
+          description: Expiration date of the card in one of the formats MM/yy or
+            yyyy-MM or yy-MM (e.g. "03/27"). Must be between 3 to 5 years. Default
+            is 4 years.
+          type: string
+      type: object
+    UpdateCardData_attributes:
+      properties:
+        shippingAddress:
+          allOf:
+          - $ref: "#/components/schemas/AddressType"
+          description: Address to ship the card to.
+        address:
+          allOf:
+          - $ref: "#/components/schemas/AddressType"
+          description: Address of the card holder.
+        email:
+          description: Email address of the card holder.
+          example: richard@piedpiper.com
+          type: string
+        phone:
+          allOf:
+          - $ref: "#/components/schemas/PhoneType"
+          description: Phone of the card holder.
+        dateOfBirth:
+          description: Date of birth of the card holder (e.g. "2001-08-15").
+          example: 2001-08-10
+          format: date
+          type: string
+      type: object
+    FreezeCardData_attributes:
+      properties:
+        reason:
+          description: The freeze reason in free text.
+          example: Card is frozen by customer request
+          type: string
+      type: object
+    ReplaceCardData_attributes:
+      properties:
+        shippingAddress:
+          allOf:
+          - $ref: "#/components/schemas/AddressType"
+          description: "Temporary address to ship the replacement card to. If not\
+            \ specified, the address provided during card creation is reused. This\
+            \ will now effect the default shippingAddress."
+      type: object
+    BusinessDebitCard_attributes:
+      properties:
+        createdAt:
+          description: The date the resource was created.
+          format: date-time
+          type: string
+        updatedAt:
+          description: The date the resource was updated.
+          format: date-time
+          type: string
+        last4Digits:
+          description: Last 4 digits of the debit card.
+          type: string
+        expirationDate:
+          description: "Card expiration date, formatted YYYY-MM, e.g \"2020-05\"."
+          type: string
+        shippingAddress:
+          allOf:
+          - $ref: "#/components/schemas/AddressType"
+          description: "Shipping address, if specified."
+        ssn:
+          description: "SSN of the card holder (numbers only), if specified during\
+            \ card creation."
+          type: string
+        passport:
+          description: "Passport number of the card holder, if specified during card\
+            \ creation."
+          type: string
+        nationality:
+          description: Required if a passport is used as the main ID and optional
+            when ssn is used. Two letters representing the card holder nationality.
+            (e.g. "US").
+          maxLength: 2
+          minLength: 2
+          type: string
+        fullName:
+          allOf:
+          - $ref: "#/components/schemas/FullNameType"
+          description: Full name of the card holder.
+        dateOfBirth:
+          description: Date of birth of the card holder (e.g. "2001-08-15").
+          format: date
+          type: string
+        address:
+          allOf:
+          - $ref: "#/components/schemas/AddressType"
+          description: Address of the card holder.
+        bin:
+          description: 9-digit Bank Identification Number (BIN).
+          type: string
+        phone:
+          allOf:
+          - $ref: "#/components/schemas/PhoneType"
+          description: Phone of the card holder.
+        email:
+          description: Email address of the card holder.
+          type: string
+        status:
+          description: "Status of the card, one of: Active, Inactive, Stolen, Lost,\
+            \ Frozen, ClosedByCustomer, SuspectedFraud."
+          type: string
+        design:
+          description: "Card design, if specified."
+          type: string
+      required:
+      - address
+      - bin
+      - createdAt
+      - dateOfBirth
+      - email
+      - expirationDate
+      - fullName
+      - last4Digits
+      - phone
+      - status
+      type: object
+    BusinessVirtualDebitCard_attributes:
+      properties:
+        createdAt:
+          description: The date the resource was created.
+          format: date-time
+          type: string
+        updatedAt:
+          description: The date the resource was updated.
+          format: date-time
+          type: string
+        last4Digits:
+          description: Last 4 digits of the debit card.
+          type: string
+        expirationDate:
+          description: "Card expiration date, formatted YYYY-MM, e.g \"2020-05\"."
+          type: string
+        ssn:
+          description: "SSN of the card holder (numbers only), if specified during\
+            \ card creation."
+          type: string
+        passport:
+          description: "Passport number of the card holder, if specified during card\
+            \ creation."
+          type: string
+        nationality:
+          description: Required if a passport is used as the main ID and optional
+            when ssn is used. Two letters representing the card holder nationality.
+            (e.g. "US").
+          maxLength: 2
+          minLength: 2
+          type: string
+        fullName:
+          allOf:
+          - $ref: "#/components/schemas/FullNameType"
+          description: Full name of the card holder.
+        dateOfBirth:
+          description: Date of birth of the card holder (e.g. "2001-08-15").
+          format: date
+          type: string
+        address:
+          allOf:
+          - $ref: "#/components/schemas/AddressType"
+          description: Address of the card holder.
+        bin:
+          description: 9-digit Bank Identification Number (BIN).
+          type: string
+        phone:
+          allOf:
+          - $ref: "#/components/schemas/PhoneType"
+          description: Phone of the card holder.
+        email:
+          description: Email address of the card holder.
+          type: string
+        status:
+          description: "Status of the card, one of: Active, Inactive, Stolen, Lost,\
+            \ Frozen, ClosedByCustomer, SuspectedFraud."
+          type: string
+      required:
+      - address
+      - bin
+      - createdAt
+      - dateOfBirth
+      - email
+      - expirationDate
+      - fullName
+      - last4Digits
+      - phone
+      - status
+      type: object
+    IndividualDebitCard_attributes:
+      properties:
+        createdAt:
+          description: The date the resource was created.
+          format: date-time
+          type: string
+        updatedAt:
+          description: The date the resource was updated.
+          format: date-time
+          type: string
+        last4Digits:
+          description: Last 4 digits of the debit card.
+          type: string
+        expirationDate:
+          description: "Card expiration date, formatted YYYY-MM, e.g \"2020-05\"."
+          type: string
+        shippingAddress:
+          allOf:
+          - $ref: "#/components/schemas/AddressType"
+          description: "Shipping address, if specified."
+        bin:
+          description: 9-digit Bank Identification Number (BIN).
+          type: string
+        status:
+          description: "Status of the card, one of: Active, Inactive, Stolen, Lost,\
+            \ Frozen, ClosedByCustomer, SuspectedFraud."
+          type: string
+        design:
+          description: "Card design, if specified."
+          type: string
+      required:
+      - bin
+      - createdAt
+      - expirationDate
+      - last4Digits
+      - status
+      type: object
+    IndividualVirtualDebitCard_attributes:
+      properties:
+        createdAt:
+          description: The date the resource was created.
+          format: date-time
+          type: string
+        updatedAt:
+          description: The date the resource was updated.
+          format: date-time
+          type: string
+        last4Digits:
+          description: Last 4 digits of the debit card.
+          type: string
+        expirationDate:
+          description: "Card expiration date, formatted YYYY-MM, e.g \"2020-05\"."
+          type: string
+        bin:
+          description: 9-digit Bank Identification Number (BIN).
+          type: string
+        status:
+          description: "Status of the card, one of: Active, Inactive, Stolen, Lost,\
+            \ Frozen, ClosedByCustomer, SuspectedFraud."
+          type: string
+      required:
+      - bin
+      - createdAt
+      - expirationDate
+      - last4Digits
+      - status
+      type: object
+    PinStatus_attributes:
+      properties:
+        status:
+          description: "Status of the PIN, either Set or NotSet."
+          type: string
+      required:
+      - status
       type: object
   securitySchemes:
     bearerAuth:
