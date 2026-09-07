@@ -315,6 +315,15 @@ export function buildCreateBookPaymentRequest(
 	};
 }
 
+export function buildCreateBulkPaymentRequest(
+	accountId: string,
+	counterpartyAccountId: string,
+) {
+	return {
+		data: [buildCreateBookPaymentRequest(accountId, counterpartyAccountId).data],
+	};
+}
+
 export function buildUpdateBookPaymentRequest() {
 	return {
 		data: {
