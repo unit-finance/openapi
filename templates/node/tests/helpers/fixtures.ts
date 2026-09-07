@@ -1,5 +1,4 @@
 import type {
-	CheckRegisteredAgentAddressRequest,
 	CreateBusinessApplicationRequest,
 	CreateIndividualApplicationRequest,
 	CreateSoleProprietorApplicationRequest,
@@ -7,10 +6,10 @@ import type {
 	UpdateBusinessBeneficialOwnerRequest,
 } from "../..";
 import {
-	BusinessAnnualRevenue,
-	BusinessNumberOfEmployees,
-	SoleProprietorAnnualRevenue,
-	SoleProprietorNumberOfEmployees,
+	BusinessAnnualRevenueType,
+	BusinessNumberOfEmployeesType,
+	SoleProprietorAnnualRevenueType,
+	SoleProprietorNumberOfEmployeesType,
 } from "../..";
 import { TEST_RUN_ID } from "./api";
 
@@ -78,8 +77,8 @@ export function buildBusinessApplicationRequest(): CreateBusinessApplicationRequ
 				contact: businessContact(),
 				officer: officer(),
 				beneficialOwners: beneficialOwners(),
-				annualRevenue: BusinessAnnualRevenue.Between500kAnd1m,
-				numberOfEmployees: BusinessNumberOfEmployees.Between50And100,
+				annualRevenue: BusinessAnnualRevenueType.Between500kAnd1m,
+				numberOfEmployees: BusinessNumberOfEmployeesType.Between50And100,
 				cashFlow: "Predictable",
 				tags: baseTags(),
 			},
@@ -150,8 +149,8 @@ export function buildSoleProprietorApplicationRequest(): CreateSoleProprietorApp
 				ein: "123456789",
 				dba: `Pied Piper SP ${TEST_RUN_ID}`,
 				businessVertical: "TechnologyMediaOrTelecom",
-				annualRevenue: SoleProprietorAnnualRevenue.Between100kAnd200k,
-				numberOfEmployees: SoleProprietorNumberOfEmployees.Between2And5,
+				annualRevenue: SoleProprietorAnnualRevenueType.Between100kAnd200k,
+				numberOfEmployees: SoleProprietorNumberOfEmployeesType.Between2And5,
 				website: "https://www.piedpiper.com",
 				tags: baseTags(),
 			},
@@ -186,11 +185,234 @@ export function buildUpdateBusinessBeneficialOwnerRequest(
 	};
 }
 
-export function buildCheckRegisteredAgentAddressRequest(): CheckRegisteredAgentAddressRequest {
+export function buildDepositAccountRequestForCustomer(customerId: string) {
+	return buildCreateDepositAccountRequest(customerId);
+}
+
+export function buildCreateDepositAccountRequest(customerId: string) {
 	return {
 		data: {
-			type: "checkRegisteredAgentAddress",
-			attributes: { address: usAddress() },
+			type: "depositAccount" as const,
+			attributes: {
+				depositProduct: "checking",
+				tags: baseTags(),
+			},
+			relationships: {
+				customer: { data: { type: "customer", id: customerId } },
+			},
 		},
+	};
+}
+
+export function buildUpdateDepositAccountRequest() {
+	return {
+		data: {
+			type: "depositAccount" as const,
+			attributes: {
+				tags: { ...baseTags(), updated: "true" },
+			},
+		},
+	};
+}
+
+export function buildCloseDepositAccountRequest() {
+	return {
+		data: {
+			type: "depositAccountClose" as const,
+			attributes: { reason: "ByCustomer" },
+		},
+	};
+}
+
+export function buildFreezeDepositAccountRequest() {
+	return {
+		data: {
+			type: "accountFreeze" as const,
+			attributes: { reason: "Other", reasonText: "SDK integration test freeze" },
+		},
+	};
+}
+
+export function buildCreateFeeRequest(accountId: string) {
+	return {
+		data: {
+			type: "fee" as const,
+			attributes: {
+				amount: 100,
+				description: "SDK integration test fee",
+				tags: baseTags(),
+			},
+			relationships: {
+				account: { data: { type: "account", id: accountId } },
+			},
+		},
+	};
+}
+
+export function buildReverseFeeRequest(accountId: string, transactionId: string) {
+	return {
+		data: {
+			type: "feeReversal" as const,
+			attributes: {
+				description: "SDK integration test fee reversal",
+				tags: baseTags(),
+			},
+			relationships: {
+				account: { data: { type: "account", id: accountId } },
+				transaction: { data: { type: "transaction", id: transactionId } },
+			},
+		},
+	};
+}
+
+// The spec marks `idempotencyKey` optional on both hold requests, but the
+// sandbox rejects them with a 400 unless it is present. Each call gets a fresh
+// key so that separately-built holds are never collapsed into one another.
+export function buildCreateAccountHoldRequest(accountId: string) {
+	return {
+		data: {
+			type: "accountHold" as const,
+			attributes: {
+				amount: 500,
+				description: "SDK integration test hold",
+				idempotencyKey: `${TEST_RUN_ID}-hold-${Math.random().toString(36).slice(2, 10)}`,
+			},
+			relationships: {
+				account: { data: { type: "account", id: accountId } },
+			},
+		},
+	};
+}
+
+export function buildReleaseAccountHoldRequest(amount = 500) {
+	return {
+		data: {
+			type: "accountHold" as const,
+			attributes: { amount },
+		},
+	};
+}
+
+export function buildCreateBookPaymentRequest(
+	accountId: string,
+	counterpartyAccountId: string,
+) {
+	return {
+		data: {
+			type: "bookPayment" as const,
+			attributes: {
+				amount: 100,
+				description: "SDK integration test book payment",
+				tags: baseTags(),
+			},
+			relationships: {
+				account: { data: { type: "account", id: accountId } },
+				counterpartyAccount: {
+					data: { type: "account", id: counterpartyAccountId },
+				},
+			},
+		},
+	};
+}
+
+export function buildUpdateBookPaymentRequest() {
+	return {
+		data: {
+			type: "bookPayment" as const,
+			attributes: {
+				tags: { ...baseTags(), updated: "true" },
+			},
+		},
+	};
+}
+
+export function buildGetExpectedAchCompletionDateRequest(accountId: string) {
+	return {
+		data: {
+			type: "achExpectedCompletionDate" as const,
+			attributes: {
+				direction: "Credit" as const,
+				amount: 1000,
+			},
+			relationships: {
+				account: { data: { type: "account", id: accountId } },
+			},
+		},
+	};
+}
+
+export function buildCreateRecurringBookPaymentRequest(
+	accountId: string,
+	counterpartyAccountId: string,
+) {
+	const start = new Date();
+	start.setUTCDate(start.getUTCDate() + 7);
+	const end = new Date(start);
+	end.setUTCMonth(end.getUTCMonth() + 3);
+	return {
+		data: {
+			type: "recurringCreditBookPayment" as const,
+			attributes: {
+				amount: 100,
+				description: "SDK integration test recurring payment",
+				schedule: {
+					startTime: start.toISOString().slice(0, 10),
+					endTime: end.toISOString().slice(0, 10),
+					interval: "Monthly",
+					dayOfMonth: 15,
+				},
+				tags: baseTags(),
+				idempotencyKey: `${TEST_RUN_ID}-recurring`,
+			},
+			relationships: {
+				account: { data: { type: "account", id: accountId } },
+				counterpartyAccount: {
+					data: { type: "account", id: counterpartyAccountId },
+				},
+			},
+		},
+	};
+}
+
+export function buildUpdateReceivedPaymentRequest() {
+	return {
+		data: {
+			type: "achReceivedPayment" as const,
+			attributes: {
+				tags: { ...baseTags(), updated: "true" },
+			},
+		},
+	};
+}
+
+export function buildGenerateCashDepositBarcodeRequest(
+	storeId: string,
+	customerId: string,
+	accountId: string,
+) {
+	return {
+		data: {
+			type: "cashDepositBarcode" as const,
+			attributes: { storeId },
+			relationships: {
+				customer: { data: { type: "customer", id: customerId } },
+				// The cash-deposit-barcode account relationship must use the
+				// generic "account" resource type; the sandbox rejects
+				// "depositAccount" here with a 400 on /data/relationships/account/data/type.
+				account: { data: { type: "account", id: accountId } },
+			},
+		},
+	};
+}
+
+export function buildAddAccountOwnersRequest(customerIds: string[]) {
+	return {
+		data: customerIds.map((id) => ({ type: "customer", id })),
+	};
+}
+
+export function buildRemoveAccountOwnersRequest(customerIds: string[]) {
+	return {
+		data: customerIds.map((id) => ({ type: "customer", id })),
 	};
 }

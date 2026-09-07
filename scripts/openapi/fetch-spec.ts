@@ -7,13 +7,17 @@
  *
  * Resolution order:
  *   1. $SPEC_BUNDLE_PATH  — explicit local file (used in CI when the spec repo
- *      is checked out alongside, or for offline/local dev).
+ *      is checked out alongside, or for offline/local dev). May be set in a
+ *      root `.env` (real environment variables take precedence). Defaults to
+ *      `spec/openapi.bundled.json`; when that default file is absent, resolution
+ *      falls through to the options below instead of erroring.
  *   2. $SPEC_BUNDLE_URL   — explicit URL override.
- *   3. A gitignored local drop file at `spec/local/<assetName>` — the no-token
- *      local flow: download the release asset from GitHub's UI once, drop it
- *      there, and `npm run generate-sdks` uses it without needing a token.
- *   4. The GitHub release asset for the version pinned in `spec-version.json`
+ *   3. The GitHub release asset for the version pinned in `spec-version.json`
  *      (`https://github.com/<repo>/releases/download/v<version>/<assetName>`).
+ *
+ * Options 1 and 2 bypass the pin, so the pinned `version` is synced back from
+ * the materialized spec's `info.version`; option 3 instead validates that the
+ * two already agree.
  *
  * The downloaded/copied file is git-ignored: it is a derived artifact, fully
  * reproducible from `spec-version.json`. Bumping `spec-version.json` and
@@ -26,8 +30,33 @@ import path from "node:path";
 const REPO_ROOT = process.cwd();
 const LOCK_PATH = path.join(REPO_ROOT, "spec-version.json");
 const OUT_PATH = path.join(REPO_ROOT, "spec", "openapi.bundled.json");
-/** Gitignored folder for a manually-dropped spec bundle (no-token local flow). */
-const LOCAL_DIR = path.join(REPO_ROOT, "spec", "local");
+
+/**
+ * Load KEY=VALUE pairs from a root `.env` into `process.env`, without clobbering
+ * variables already set in the real environment (which always win). Keeps the
+ * SPEC_BUNDLE_* overrides configurable for local dev without exporting them in
+ * the shell. Missing file is a no-op.
+ */
+function loadDotEnv(): void {
+	const envPath = path.join(REPO_ROOT, ".env");
+	if (!fs.existsSync(envPath)) return;
+	for (const raw of fs.readFileSync(envPath, "utf8").split(/\r?\n/)) {
+		const line = raw.trim();
+		if (!line || line.startsWith("#")) continue;
+		const eq = line.indexOf("=");
+		if (eq === -1) continue;
+		const key = line.slice(0, eq).trim();
+		if (!key || key in process.env) continue;
+		let value = line.slice(eq + 1).trim();
+		if (
+			(value.startsWith('"') && value.endsWith('"')) ||
+			(value.startsWith("'") && value.endsWith("'"))
+		) {
+			value = value.slice(1, -1);
+		}
+		process.env[key] = value;
+	}
+}
 
 interface SpecLock {
 	repo: string;
@@ -98,10 +127,54 @@ function httpGet(url: string, headers: Headers = {}): Promise<HttpResponse> {
 	});
 }
 
+interface OpenApiOperation {
+	tags?: string[];
+	operationId?: string;
+	requestBody?: unknown;
+}
+
 interface OpenApiDoc {
 	info?: { version?: string };
 	tags?: Array<{ name?: string }>;
-	paths?: Record<string, Record<string, { tags?: string[] }>>;
+	paths?: Record<string, Record<string, OpenApiOperation>>;
+}
+
+/**
+ * HTTP methods that carry a request body. Unit's gateway requires the
+ * `application/vnd.api+json` Content-Type on these even when the body is empty
+ * (e.g. action endpoints like cancel/enable/disable), and returns 415 without
+ * it. openapi-generator's typescript-axios template only emits a Content-Type
+ * header when the operation declares a `requestBody`, so bodyless mutating
+ * operations produce clients that omit it.
+ */
+const BODY_METHODS = new Set(["post", "put", "patch", "delete"]);
+
+/**
+ * Give every mutating operation that lacks a `requestBody` an optional,
+ * empty JSON:API request body. This is a no-op for operations that already
+ * declare one, so it's safe to re-run against an already-patched bundle. The
+ * added body is optional, so generated method signatures stay backward
+ * compatible (callers gain an optional argument, nothing becomes required),
+ * but the generator now emits the Content-Type header these endpoints need.
+ */
+function injectBodylessRequestBodies(doc: OpenApiDoc): string[] {
+	const patched: string[] = [];
+	for (const [route, ops] of Object.entries(doc.paths ?? {})) {
+		for (const [method, op] of Object.entries(ops)) {
+			if (!BODY_METHODS.has(method)) continue;
+			if (!op || typeof op !== "object" || op.requestBody) continue;
+			op.requestBody = {
+				required: false,
+				content: {
+					"application/vnd.api+json": {
+						schema: { type: "object" },
+					},
+				},
+			};
+			patched.push(`${method.toUpperCase()} ${route} (${op.operationId ?? "?"})`);
+		}
+	}
+	return patched;
 }
 
 /**
@@ -126,21 +199,42 @@ function extractSlices(doc: OpenApiDoc): string[] {
 }
 
 /**
- * Persist the spec's slices back into spec-version.json, preserving the file's
- * other fields, ordering, and formatting. Keeps the recorded slices in lockstep
- * with the spec the SDKs are actually generated from.
+ * Persist the materialized spec's slices — and, when the spec was not resolved
+ * from the pinned release, its `info.version` — back into spec-version.json,
+ * preserving the file's other fields, ordering, and formatting.
+ *
+ * The release path already validated the pin against `info.version`, so there
+ * is nothing to sync there. The local-file and URL paths bypass that pin
+ * entirely, and the version recorded here is what every `prepare-*-sdk` step
+ * stamps onto the generated packages: without this the SDKs get published under
+ * whatever version the pin happened to be left at.
  */
-function updateLockSlices(doc: OpenApiDoc): void {
+function updateLock(doc: OpenApiDoc, syncVersion: boolean): void {
 	const slices = extractSlices(doc);
 	const lock = JSON.parse(fs.readFileSync(LOCK_PATH, "utf8")) as Record<
 		string,
 		unknown
 	>;
 	lock.slices = slices;
+
+	const specVersion = doc.info?.version?.replace(/^v/, "");
+	let versionNote = "";
+	if (syncVersion && specVersion && specVersion !== lock.version) {
+		if (!/^\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)*$/.test(specVersion)) {
+			console.error(
+				`[fetch-spec] Spec info.version "${specVersion}" is not a valid semver ` +
+					"version, so it cannot be recorded in spec-version.json.",
+			);
+			process.exit(1);
+		}
+		versionNote = `, version ${String(lock.version)} -> ${specVersion}`;
+		lock.version = specVersion;
+	}
+
 	fs.writeFileSync(LOCK_PATH, `${JSON.stringify(lock, null, 2)}\n`, "utf8");
 	console.log(
 		`[fetch-spec] Recorded slices in ${path.relative(REPO_ROOT, LOCK_PATH)}: ` +
-			`${slices.join(", ") || "(none)"}`,
+			`${slices.join(", ") || "(none)"}${versionNote}`,
 	);
 }
 
@@ -166,12 +260,20 @@ function writeOut(buf: Buffer, source: string, expectedVersion?: string): void {
 		);
 		process.exit(1);
 	}
+	const patched = injectBodylessRequestBodies(doc);
+	const out = patched.length ? `${JSON.stringify(doc, null, 2)}\n` : text.endsWith("\n") ? text : `${text}\n`;
 	fs.mkdirSync(path.dirname(OUT_PATH), { recursive: true });
-	fs.writeFileSync(OUT_PATH, text.endsWith("\n") ? text : `${text}\n`, "utf8");
+	fs.writeFileSync(OUT_PATH, out, "utf8");
 	console.log(
 		`[fetch-spec] Wrote ${path.relative(REPO_ROOT, OUT_PATH)} from ${source}`,
 	);
-	updateLockSlices(doc);
+	if (patched.length) {
+		console.log(
+			`[fetch-spec] Added optional JSON:API request body to ${patched.length} ` +
+				`bodyless mutating operation(s): ${patched.join(", ")}`,
+		);
+	}
+	updateLock(doc, expectedVersion === undefined);
 }
 
 async function fromUrl(url: string): Promise<void> {
@@ -199,7 +301,21 @@ async function fromRelease(lock: SpecLock): Promise<void> {
 		console.log(`[fetch-spec] Downloading spec from ${url}`);
 		const res = await httpGet(url);
 		if (res.statusCode !== 200) {
-			throw new Error(`GET ${url} -> HTTP ${res.statusCode}`);
+			const lines = [
+				`GET ${url} -> HTTP ${res.statusCode}`,
+				"",
+				`The release asset could not be downloaded anonymously (${lock.repo} is`,
+				"likely private, and no token was provided).",
+				"",
+				"To run locally, pick one of:",
+				"",
+				`  1. Set SPEC_REPO_TOKEN (a token with Contents: read on ${lock.repo}),`,
+				"     then re-run.",
+				"",
+				"  2. Point SPEC_BUNDLE_PATH (local file) or SPEC_BUNDLE_URL at a spec",
+				"     directly.",
+			];
+			throw new Error(lines.join("\n"));
 		}
 		writeOut(res.body, url, lock.version);
 		return;
@@ -243,14 +359,20 @@ async function fromRelease(lock: SpecLock): Promise<void> {
 }
 
 async function main(): Promise<void> {
-	const overridePath = process.env.SPEC_BUNDLE_PATH;
-	if (overridePath) {
-		if (!fs.existsSync(overridePath)) {
-			console.error(`[fetch-spec] SPEC_BUNDLE_PATH not found: ${overridePath}`);
-			process.exit(1);
-		}
-		writeOut(fs.readFileSync(overridePath), overridePath);
+	loadDotEnv();
+
+	// SPEC_BUNDLE_PATH defaults to the committed spec bundle. An explicitly
+	// configured path that is missing is a hard error; the default silently
+	// falls through to the URL/release options when the file isn't present yet.
+	const explicitPath = process.env.SPEC_BUNDLE_PATH;
+	const bundlePath = explicitPath ?? OUT_PATH;
+	if (fs.existsSync(bundlePath)) {
+		writeOut(fs.readFileSync(bundlePath), bundlePath);
 		return;
+	}
+	if (explicitPath) {
+		console.error(`[fetch-spec] SPEC_BUNDLE_PATH not found: ${explicitPath}`);
+		process.exit(1);
 	}
 
 	const overrideUrl = process.env.SPEC_BUNDLE_URL;
@@ -259,20 +381,7 @@ async function main(): Promise<void> {
 		return;
 	}
 
-	const lock = readLock();
-
-	// No-token local flow: if a bundle for the pinned version has been dropped
-	// into the gitignored spec/local/ folder, use it instead of hitting GitHub.
-	const localPath = path.join(LOCAL_DIR, lock.assetName);
-	if (fs.existsSync(localPath)) {
-		console.log(
-			`[fetch-spec] Using local spec ${path.relative(REPO_ROOT, localPath)}`,
-		);
-		writeOut(fs.readFileSync(localPath), localPath, lock.version);
-		return;
-	}
-
-	await fromRelease(lock);
+	await fromRelease(readLock());
 }
 
 main().catch((err) => {

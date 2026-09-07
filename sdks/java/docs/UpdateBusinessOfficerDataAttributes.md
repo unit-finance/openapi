@@ -7,9 +7,9 @@
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-|**officerOccupation** | **Occupation** | Optional. Occupation of the officer. |  [optional] |
-|**officerAnnualIncome** | **AnnualIncome** | Optional. Annual income of the officer. |  [optional] |
-|**officerSourceOfIncome** | **SourceOfIncome** | Optional. Source of income of the officer. |  [optional] |
+|**officerOccupation** | **OccupationType** | Optional. Occupation of the officer. |  [optional] |
+|**officerAnnualIncome** | **AnnualIncomeType** | Optional. Annual income of the officer. |  [optional] |
+|**officerSourceOfIncome** | **SourceOfIncomeType** | Optional. Source of income of the officer. |  [optional] |
 
 
 

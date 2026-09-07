@@ -1,6 +1,6 @@
 {
   "name": "@unit-finance/unit-node-sdk",
-  "version": "0.1.0",
+  "version": "0.4.5",
   "description": "Node.js SDK for the Unit banking API. Auto-generated from the unit-openapi spec.",
   "license": "MPL-2.0",
   "main": "./dist/index.js",
@@ -13,6 +13,8 @@
     "README.md"
   ],
   "scripts": {
+    "clean": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\"",
+    "prebuild": "npm run clean",
     "build": "tsc && tsc -p tsconfig.esm.json",
     "prepare": "npm run build"
   },

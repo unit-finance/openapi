@@ -6,7 +6,14 @@ import time
 from typing import Any
 
 import pytest
-from unit_finance_sdk import ApiClient, ApplicationsApi, Configuration
+from unit_finance_sdk import (
+    AccountsApi,
+    ApiClient,
+    ApplicationsApi,
+    Configuration,
+    FeesApi,
+    PaymentsApi,
+)
 
 TOKEN = os.environ.get("UNIT_SANDBOX_TOKEN")
 BASE_PATH = os.environ.get("UNIT_SANDBOX_BASE_URL", "https://api.s.unit.sh")
@@ -23,19 +30,37 @@ requires_token = pytest.mark.skipif(
 TEST_RUN_ID = f"sdk-python-{int(time.time() * 1000):x}-{secrets.token_hex(3)}"
 
 
-def build_api() -> ApplicationsApi:
-    """Construct an ``ApplicationsApi`` bound to the sandbox.
-
-    Raises if the bearer token is missing — but every test gates on
-    ``requires_token`` so this branch is never reached when it is unset.
-    """
+def _configuration() -> Configuration:
     if not TOKEN:
         raise RuntimeError(
             "UNIT_SANDBOX_TOKEN is required to talk to the sandbox; set it in .env or the shell.",
         )
-    return ApplicationsApi(
-        ApiClient(Configuration(access_token=TOKEN, host=BASE_PATH)),
-    )
+    return Configuration(access_token=TOKEN, host=BASE_PATH)
+
+
+def build_api() -> ApplicationsApi:
+    """Construct an ``ApplicationsApi`` bound to the sandbox."""
+    return ApplicationsApi(ApiClient(_configuration()))
+
+
+def build_accounts_api() -> AccountsApi:
+    """Construct an ``AccountsApi`` bound to the sandbox."""
+    return AccountsApi(ApiClient(_configuration()))
+
+
+def build_fees_api() -> FeesApi:
+    """Construct a ``FeesApi`` bound to the sandbox."""
+    return FeesApi(ApiClient(_configuration()))
+
+
+def build_payments_api() -> PaymentsApi:
+    """Construct a ``PaymentsApi`` bound to the sandbox."""
+    return PaymentsApi(ApiClient(_configuration()))
+
+
+def sleep(seconds: float) -> None:
+    """Block for ``seconds`` (mirrors Node's ``sleep`` helper)."""
+    time.sleep(seconds)
 
 
 def unwrap(obj: Any) -> Any:

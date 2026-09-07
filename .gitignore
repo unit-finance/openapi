@@ -3,9 +3,6 @@ node_modules/
 # Derived spec artifact (reproducible from spec-version.json via `npm run fetch-spec`)
 spec/openapi.bundled.json
 
-# Manually-dropped spec bundle for the no-token local flow (see fetch-spec.ts)
-spec/local/
-
 # Derived coverage report (reproducible via `npm run test-coverage`)
 test-coverage-report.json
 

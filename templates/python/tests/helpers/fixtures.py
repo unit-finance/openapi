@@ -3,8 +3,8 @@
 Bodies start life as plain dicts (enum fields use their literal wire values).
 How they are then handed to the API depends on the endpoint's request type:
 
-- Concrete request models with no nested ``oneOf`` (``cancel``,
-  ``check-registered-agent-address``): a dict is fine. The generated method is
+- Concrete request models with no nested ``oneOf`` (``cancel``): a dict is
+  fine. The generated method is
   ``@validate_call``-decorated, so pydantic coerces the dict straight into the
   concrete model and it serializes with its ``data`` envelope intact.
 
@@ -27,15 +27,35 @@ How they are then handed to the API depends on the endpoint's request type:
   need every required field present, so we pick the variant ourselves.
 """
 
+import uuid
 from typing import Any, Dict, List
 
 from unit_finance_sdk import (
+    CloseAccountRequest,
+    CloseDepositAccountRequest,
+    CreateABookPaymentRequest,
+    CreateAccountHoldRequest,
+    CreateAccountRequest,
+    CreateACHPaymentRequest,
     CreateApplicationRequest,
     CreateBusinessApplicationRequest,
+    CreateDepositAccountRequest,
+    CreateFeeRequest,
     CreateIndividualApplicationRequest,
+    CreatePaymentRequest,
+    CreateRecurringCreditBookPaymentRequest,
+    CreateRecurringPaymentRequest,
+    FreezeAccountRequest,
+    FreezeDepositAccountRequest,
+    GetExpectedAchCompletionDateRequest,
+    ReverseFeeRequest,
+    UpdateAccountRequest,
     UpdateApplicationRequest,
+    UpdateBookPaymentRequest,
     UpdateBusinessApplicationRequest,
     UpdateBusinessBeneficialOwnerRequest,
+    UpdateDepositAccountRequest,
+    UpdatePaymentRequest,
 )
 
 from .api import TEST_RUN_ID
@@ -233,10 +253,325 @@ def build_update_business_beneficial_owner_request(
     return UpdateBusinessBeneficialOwnerRequest.from_dict(body)
 
 
-def build_check_registered_agent_address_request() -> Dict[str, Any]:
+def _create_deposit_account_dict(customer_id: str) -> Dict[str, Any]:
     return {
         "data": {
-            "type": "checkRegisteredAgentAddress",
-            "attributes": {"address": _us_address()},
+            "type": "depositAccount",
+            "attributes": {
+                "depositProduct": "checking",
+                "tags": _base_tags(),
+            },
+            "relationships": {
+                "customer": {"data": {"type": "customer", "id": customer_id}},
+            },
         },
+    }
+
+
+def build_deposit_account_request_for_customer(customer_id: str) -> CreateAccountRequest:
+    return CreateAccountRequest(
+        actual_instance=CreateDepositAccountRequest.from_dict(
+            _create_deposit_account_dict(customer_id)
+        )
+    )
+
+
+def build_create_deposit_account_request(customer_id: str) -> CreateAccountRequest:
+    return build_deposit_account_request_for_customer(customer_id)
+
+
+def build_update_deposit_account_request() -> UpdateAccountRequest:
+    body = {
+        "data": {
+            "type": "depositAccount",
+            "attributes": {"tags": {**_base_tags(), "updated": "true"}},
+        },
+    }
+    return UpdateAccountRequest(
+        actual_instance=UpdateDepositAccountRequest.from_dict(body)
+    )
+
+
+def build_close_deposit_account_request() -> CloseAccountRequest:
+    body = {
+        "data": {
+            "type": "depositAccountClose",
+            "attributes": {"reason": "ByCustomer"},
+        },
+    }
+    return CloseAccountRequest(
+        actual_instance=CloseDepositAccountRequest.from_dict(body)
+    )
+
+
+def build_freeze_deposit_account_request() -> FreezeAccountRequest:
+    body = {
+        "data": {
+            "type": "accountFreeze",
+            "attributes": {"reason": "Fraud"},
+        },
+    }
+    return FreezeAccountRequest(
+        actual_instance=FreezeDepositAccountRequest.from_dict(body)
+    )
+
+
+# The ``account``/``fee`` relationships below are the ``RelationshipData``
+# oneOf union. A raw dict handed to a @validate_call method leaves the union
+# member unpopulated (relationship serializes as ``data: null`` -> the API
+# rejects it with "should be object"), so we build the concrete request model
+# via ``from_dict``, which recurses through ``RelationshipData.from_dict``.
+def build_create_fee_request(account_id: str) -> CreateFeeRequest:
+    body = {
+        "data": {
+            "type": "fee",
+            "attributes": {
+                "amount": 100,
+                "description": "SDK integration test fee",
+                "tags": _base_tags(),
+            },
+            "relationships": {
+                "account": {"data": {"type": "account", "id": account_id}},
+            },
+        },
+    }
+    return CreateFeeRequest.from_dict(body)
+
+
+def build_reverse_fee_request(
+    account_id: str,
+    transaction_id: str,
+) -> ReverseFeeRequest:
+    body = {
+        "data": {
+            "type": "feeReversal",
+            "attributes": {
+                "description": "SDK integration test fee reversal",
+                "tags": _base_tags(),
+            },
+            "relationships": {
+                "account": {"data": {"type": "account", "id": account_id}},
+                "transaction": {"data": {"type": "transaction", "id": transaction_id}},
+            },
+        },
+    }
+    return ReverseFeeRequest.from_dict(body)
+
+
+# The spec marks ``idempotencyKey`` optional on both hold requests, but the
+# sandbox rejects them with a 400 unless it is present. Each call gets a fresh
+# key so that separately-built holds are never collapsed into one another.
+def build_create_account_hold_request(account_id: str) -> CreateAccountHoldRequest:
+    # Built via from_dict for the same oneOf-relationship reason as the fee
+    # fixtures above.
+    body = {
+        "data": {
+            "type": "accountHold",
+            "attributes": {
+                "amount": 500,
+                "description": "SDK integration test hold",
+                "idempotencyKey": f"{TEST_RUN_ID}-hold-{uuid.uuid4().hex[:8]}",
+            },
+            "relationships": {
+                "account": {"data": {"type": "account", "id": account_id}},
+            },
+        },
+    }
+    return CreateAccountHoldRequest.from_dict(body)
+
+
+def build_release_account_hold_request(amount: int = 500) -> Dict[str, Any]:
+    return {
+        "data": {
+            "type": "accountHold",
+            "attributes": {"amount": amount},
+        },
+    }
+
+
+def build_create_book_payment_request(
+    account_id: str,
+    counterparty_account_id: str,
+) -> CreatePaymentRequest:
+    body = {
+        "data": {
+            "type": "bookPayment",
+            "attributes": {
+                "amount": 100,
+                "description": "SDK integration test book payment",
+                "tags": _base_tags(),
+            },
+            "relationships": {
+                "account": {"data": {"type": "account", "id": account_id}},
+                "counterpartyAccount": {
+                    "data": {"type": "account", "id": counterparty_account_id},
+                },
+            },
+        },
+    }
+    return CreatePaymentRequest(
+        actual_instance=CreateABookPaymentRequest.from_dict(body)
+    )
+
+
+def build_create_ach_payment_request(
+    account_id: str,
+    *,
+    direction: str = "Credit",
+) -> CreatePaymentRequest:
+    body = {
+        "data": {
+            "type": "achPayment",
+            "attributes": {
+                "amount": 1000,
+                "direction": direction,
+                "description": "SDK test",
+                "counterparty": {
+                    "routingNumber": "812345678",
+                    "accountNumber": "12345569",
+                    "accountType": "Checking",
+                    "name": "Jane Doe",
+                },
+                "tags": _base_tags(),
+            },
+            "relationships": {
+                "account": {"data": {"type": "account", "id": account_id}},
+            },
+        },
+    }
+    return CreatePaymentRequest(
+        actual_instance=CreateACHPaymentRequest.from_dict(body)
+    )
+
+
+def build_update_book_payment_request() -> UpdatePaymentRequest:
+    body = {
+        "data": {
+            "type": "bookPayment",
+            "attributes": {"tags": {**_base_tags(), "updated": "true"}},
+        },
+    }
+    return UpdatePaymentRequest(
+        actual_instance=UpdateBookPaymentRequest.from_dict(body)
+    )
+
+
+def build_get_expected_ach_completion_date_request(
+    account_id: str,
+) -> GetExpectedAchCompletionDateRequest:
+    # Built via from_dict for the same oneOf-relationship reason as the fee
+    # fixtures above.
+    body = {
+        "data": {
+            "type": "achExpectedCompletionDate",
+            "attributes": {
+                "direction": "Credit",
+                "amount": 1000,
+            },
+            "relationships": {
+                "account": {"data": {"type": "account", "id": account_id}},
+            },
+        },
+    }
+    return GetExpectedAchCompletionDateRequest.from_dict(body)
+
+
+def build_create_recurring_book_payment_request(
+    account_id: str,
+    counterparty_account_id: str,
+) -> CreateRecurringPaymentRequest:
+    # NOTE: schedule.startTime/endTime are omitted deliberately. The spec marks
+    # them "Date only", but the generator types them as `datetime`, so any value
+    # we set is re-serialized with a time component and the sandbox rejects it
+    # with `should match format "date"`. They are optional, so we leave them out
+    # until the spec types them as a date. (Node sends them because typescript-
+    # axios keeps them as plain strings.)
+    body = {
+        "data": {
+            "type": "recurringCreditBookPayment",
+            "attributes": {
+                "amount": 100,
+                "description": "SDK integration test recurring payment",
+                "schedule": {
+                    "interval": "Monthly",
+                    "dayOfMonth": 15,
+                },
+                "tags": _base_tags(),
+            },
+            "relationships": {
+                "account": {"data": {"type": "account", "id": account_id}},
+                "counterpartyAccount": {
+                    "data": {"type": "account", "id": counterparty_account_id},
+                },
+            },
+        },
+    }
+    return CreateRecurringPaymentRequest(
+        actual_instance=CreateRecurringCreditBookPaymentRequest.from_dict(body)
+    )
+
+
+def build_update_received_payment_request() -> Dict[str, Any]:
+    return {
+        "data": {
+            "type": "receivedPayment",
+            "attributes": {"tags": {**_base_tags(), "updated": "true"}},
+        },
+    }
+
+
+def build_generate_cash_deposit_barcode_request(
+    account_id: str,
+    customer_id: str,
+    store_id: str,
+) -> Dict[str, Any]:
+    return {
+        "data": {
+            "type": "cashDepositBarcode",
+            "attributes": {"storeId": store_id},
+            "relationships": {
+                "customer": {"data": {"type": "customer", "id": customer_id}},
+                "account": {"data": {"type": "depositAccount", "id": account_id}},
+            },
+        },
+    }
+
+
+def build_create_batch_releases_request() -> Dict[str, Any]:
+    return {
+        "data": {
+            "type": "batchRelease",
+            "attributes": {
+                "amount": 100,
+                "description": "SDK integration test batch release",
+                "senderName": "SDK Test Sender",
+                "senderAddress": _us_address(),
+                "senderAccountNumber": "12345678901234567",
+                "tags": _base_tags(),
+            },
+        },
+    }
+
+
+def build_send_drawdown_payment_request() -> Dict[str, Any]:
+    return {
+        "data": {
+            "type": "sendWireDrawdown",
+            "attributes": {
+                "idempotencyKey": str(uuid.uuid4()),
+                "tags": _base_tags(),
+            },
+        },
+    }
+
+
+def build_add_account_owners_request(customer_ids: List[str]) -> Dict[str, Any]:
+    return {
+        "data": [{"type": "customer", "id": customer_id} for customer_id in customer_ids],
+    }
+
+
+def build_remove_account_owners_request(customer_ids: List[str]) -> Dict[str, Any]:
+    return {
+        "data": [{"type": "customer", "id": customer_id} for customer_id in customer_ids],
     }

@@ -59,7 +59,6 @@ One file per operation in `applications/`:
 | `update_application` (UpdateBusiness variant) | `applications/test_update.py` |
 | `update_business_beneficial_owner` | `applications/test_update_beneficial_owner.py` |
 | `cancel_application` | `applications/test_cancel.py` |
-| `check_registered_agent_address` | `applications/test_check_registered_agent_address.py` |
 
 Tests assert structural correctness (HTTP status, JSON:API envelope shape,
 `data.type`, `data.id`, expected attribute keys) rather than specific
