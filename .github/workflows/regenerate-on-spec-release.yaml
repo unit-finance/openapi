@@ -77,16 +77,26 @@ jobs:
       # Fail loudly if the Cursor SDK local-runtime platform package (an optional
       # dependency, auto-selected by os/cpu) did not install, instead of surfacing
       # later as an opaque agent startup error.
+      # TEMPORARILY DISABLED: automatic test generation is turned off. Re-enable
+      # by removing the `false &&` guard here and on the authoring step below.
       - name: Verify Cursor SDK local runtime is available
-        if: steps.coverage.outputs.has_gaps == 'true' && env.CURSOR_API_KEY != ''
+        if: false && steps.coverage.outputs.has_gaps == 'true' && env.CURSOR_API_KEY != ''
         run: node -e "require.resolve('@cursor/sdk-linux-x64/package.json')"
 
       # When new/changed operations lack coverage, let a Cursor agent author or
       # repair the tests under templates/<lang>/. Skipped automatically when
       # there are no gaps or CURSOR_API_KEY is unset. The agent's template edits
       # (and the re-mirrored sdks/) are picked up by the PR step below.
+      # TEMPORARILY DISABLED: automatic test generation is turned off. Re-enable
+      # by removing the `false &&` guard below.
       - name: Author missing tests with Cursor agent
-        if: steps.coverage.outputs.has_gaps == 'true' && env.CURSOR_API_KEY != ''
+        id: author
+        if: false && steps.coverage.outputs.has_gaps == 'true' && env.CURSOR_API_KEY != ''
+        # Test authoring is best-effort: if it fails (or times out) we still want
+        # the regeneration PR to open, just without the new tests. The failure is
+        # surfaced via the step outcome, which flips the PR to draft and adds a
+        # note to its body below.
+        continue-on-error: true
         # Backstop on top of the script's own AGENT_TIMEOUT_MINUTES (default 20):
         # if the run wedges and never returns, the step still fails fast instead
         # of burning the job's 6h default.
@@ -105,6 +115,17 @@ jobs:
             npm run author-tests
           fi
 
+      # If authoring failed it may have left partial edits under templates/ (and
+      # re-mirrored sdks/). Discard those so the draft PR contains only the clean
+      # regeneration: restore tracked files, drop any files the agent added, then
+      # re-mirror sdks/ deterministically from the (already bumped) spec.
+      - name: Discard partial test changes on authoring failure
+        if: steps.author.outcome == 'failure'
+        run: |
+          git checkout -- templates sdks
+          git clean -fd templates sdks
+          npm run generate-sdks
+
       - name: Open regeneration PR
         uses: peter-evans/create-pull-request@v7
         with:
@@ -114,6 +135,9 @@ jobs:
           # repo with Contents + Pull requests: read & write.
           token: ${{ secrets.SDK_BOT_TOKEN }}
           branch: spec/regenerate-${{ steps.ver.outputs.version }}
+          # Open as a draft when test authoring failed, so the PR is clearly not
+          # ready to merge until the missing tests are written by hand.
+          draft: ${{ steps.author.outcome == 'failure' }}
           title: "Regenerate SDKs for spec ${{ steps.ver.outputs.version }}"
           commit-message: "chore: regenerate SDKs for unit-openapi ${{ steps.ver.outputs.version }}"
           body: |
@@ -125,6 +149,7 @@ jobs:
               When non-zero (and `CURSOR_API_KEY` is configured), a Cursor agent
               authored/updated the integration tests under `templates/<lang>/`;
               review those changes with extra care.
+            ${{ steps.author.outcome == 'failure' && '- :warning: **Test authoring failed** — this PR was opened as a *draft* without the newly generated tests. Review the failed `Author missing tests with Cursor agent` step, then write/repair the missing tests under `templates/<lang>/` before marking ready for review.' || '' }}
 
             Merging this PR is step 3 of the pipeline; merging to `main` (and tagging)
             triggers the publish workflows (step 4).
