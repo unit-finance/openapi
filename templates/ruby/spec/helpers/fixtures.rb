@@ -10,6 +10,7 @@
 # This sidesteps the union-wrapping the Python suite needs, where a raw dict
 # coerces to an empty union.
 
+require 'securerandom'
 require_relative 'api'
 
 module Helpers
@@ -178,11 +179,255 @@ module Helpers
       }
     end
 
-    def check_registered_agent_address_request
+    def deposit_account_request_for_customer(customer_id)
+      create_deposit_account_request(customer_id)
+    end
+
+    def create_deposit_account_request(customer_id)
       {
         'data' => {
-          'type' => 'checkRegisteredAgentAddress',
-          'attributes' => { 'address' => US_ADDRESS }
+          'type' => 'depositAccount',
+          'attributes' => {
+            'depositProduct' => 'checking',
+            'tags' => base_tags
+          },
+          'relationships' => {
+            'customer' => { 'data' => { 'type' => 'customer', 'id' => customer_id } }
+          }
+        }
+      }
+    end
+
+    def update_deposit_account_request
+      {
+        'data' => {
+          'type' => 'depositAccount',
+          'attributes' => {
+            'tags' => base_tags.merge('updated' => 'true')
+          }
+        }
+      }
+    end
+
+    def close_deposit_account_request
+      {
+        'data' => {
+          'type' => 'depositAccountClose',
+          'attributes' => { 'reason' => 'ByCustomer' }
+        }
+      }
+    end
+
+    def freeze_deposit_account_request
+      {
+        'data' => {
+          'type' => 'accountFreeze',
+          # `reason: Other` requires an accompanying `reasonText`.
+          'attributes' => { 'reason' => 'Other', 'reasonText' => 'SDK integration test freeze' }
+        }
+      }
+    end
+
+    def create_fee_request(account_id)
+      {
+        'data' => {
+          'type' => 'fee',
+          'attributes' => {
+            'amount' => 100,
+            'description' => 'SDK integration test fee',
+            'tags' => base_tags
+          },
+          'relationships' => {
+            'account' => { 'data' => { 'type' => 'account', 'id' => account_id } }
+          }
+        }
+      }
+    end
+
+    # The reversal is anchored to the fee's transaction (the fee id doubles as
+    # the transaction id) and the account it posted to -- not to a `fee`
+    # relationship, which the sandbox rejects as an unexpected field.
+    def reverse_fee_request(account_id, transaction_id)
+      {
+        'data' => {
+          'type' => 'feeReversal',
+          'attributes' => {
+            'description' => 'SDK integration test fee reversal',
+            'tags' => base_tags
+          },
+          'relationships' => {
+            'account' => { 'data' => { 'type' => 'account', 'id' => account_id } },
+            'transaction' => { 'data' => { 'type' => 'transaction', 'id' => transaction_id } }
+          }
+        }
+      }
+    end
+
+    # The spec marks `idempotencyKey` optional on both hold requests, but the
+    # sandbox rejects them with a 400 unless it is present. Each call gets a
+    # fresh key so that separately-built holds are never collapsed into one
+    # another.
+    def create_account_hold_request(account_id)
+      {
+        'data' => {
+          'type' => 'accountHold',
+          'attributes' => {
+            'amount' => 500,
+            'description' => 'SDK integration test hold',
+            'idempotencyKey' => "#{Helpers::Api::TEST_RUN_ID}-hold-#{SecureRandom.hex(4)}"
+          },
+          'relationships' => {
+            'account' => { 'data' => { 'type' => 'account', 'id' => account_id } }
+          }
+        }
+      }
+    end
+
+    def release_account_hold_request(amount = 500)
+      {
+        'data' => {
+          'type' => 'accountHold',
+          'attributes' => { 'amount' => amount }
+        }
+      }
+    end
+
+    def create_book_payment_request(account_id, counterparty_account_id)
+      {
+        'data' => {
+          'type' => 'bookPayment',
+          'attributes' => {
+            'amount' => 100,
+            'description' => 'SDK integration test book payment',
+            'tags' => base_tags
+          },
+          'relationships' => {
+            'account' => { 'data' => { 'type' => 'account', 'id' => account_id } },
+            'counterpartyAccount' => {
+              'data' => { 'type' => 'account', 'id' => counterparty_account_id }
+            }
+          }
+        }
+      }
+    end
+
+    def update_book_payment_request
+      {
+        'data' => {
+          'type' => 'bookPayment',
+          'attributes' => {
+            'tags' => base_tags.merge('updated' => 'true')
+          }
+        }
+      }
+    end
+
+    def get_expected_ach_completion_date_request(account_id)
+      {
+        'data' => {
+          'type' => 'achExpectedCompletionDate',
+          'attributes' => {
+            'direction' => 'Credit',
+            'amount' => 1000
+          },
+          'relationships' => {
+            'account' => { 'data' => { 'type' => 'account', 'id' => account_id } }
+          }
+        }
+      }
+    end
+
+    def create_recurring_book_payment_request(account_id, counterparty_account_id)
+      start = Time.now.utc + (7 * 86_400)
+      ending = start + (90 * 86_400)
+      {
+        'data' => {
+          'type' => 'recurringCreditBookPayment',
+          'attributes' => {
+            'amount' => 100,
+            'description' => 'SDK integration test recurring payment',
+            'schedule' => {
+              'startTime' => start.strftime('%Y-%m-%d'),
+              'endTime' => ending.strftime('%Y-%m-%d'),
+              'interval' => 'Monthly',
+              'dayOfMonth' => 15
+            },
+            'tags' => base_tags,
+            'idempotencyKey' => "#{Helpers::Api::TEST_RUN_ID}-recurring-#{SecureRandom.hex(4)}"
+          },
+          'relationships' => {
+            'account' => { 'data' => { 'type' => 'account', 'id' => account_id } },
+            'counterpartyAccount' => {
+              'data' => { 'type' => 'account', 'id' => counterparty_account_id }
+            }
+          }
+        }
+      }
+    end
+
+    def update_received_payment_request
+      {
+        'data' => {
+          'type' => 'achReceivedPayment',
+          'attributes' => {
+            'tags' => base_tags.merge('updated' => 'true')
+          }
+        }
+      }
+    end
+
+    # The cash-deposit-barcode request carries only a `storeId` (obtained from the
+    # store-locations endpoints) plus customer and account relationships. The
+    # sandbox rejects any extra attributes such as `amount`.
+    def generate_cash_deposit_barcode_request(store_id, customer_id, account_id)
+      {
+        'data' => {
+          'type' => 'cashDepositBarcode',
+          'attributes' => { 'storeId' => store_id },
+          'relationships' => {
+            'customer' => { 'data' => { 'type' => 'customer', 'id' => customer_id } },
+            'account' => { 'data' => { 'type' => 'depositAccount', 'id' => account_id } }
+          }
+        }
+      }
+    end
+
+    def add_account_owners_request(customer_ids)
+      {
+        'data' => customer_ids.map { |id| { 'type' => 'customer', 'id' => id } }
+      }
+    end
+
+    def remove_account_owners_request(customer_ids)
+      {
+        'data' => customer_ids.map { |id| { 'type' => 'customer', 'id' => id } }
+      }
+    end
+
+    def create_batch_releases_request
+      {
+        'data' => {
+          'type' => 'batchRelease',
+          'attributes' => {
+            'amount' => 100,
+            'description' => 'SDK integration test batch release',
+            'senderName' => 'Peter Parker',
+            'senderAddress' => US_ADDRESS,
+            'senderAccountNumber' => '12345678901234567',
+            'tags' => base_tags
+          }
+        }
+      }
+    end
+
+    def send_drawdown_payment_request
+      {
+        'data' => {
+          'type' => 'sendWireDrawdown',
+          'attributes' => {
+            'idempotencyKey' => SecureRandom.uuid,
+            'tags' => base_tags
+          }
         }
       }
     end

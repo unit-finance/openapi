@@ -3,7 +3,11 @@ package com.unit.finance.sdk.it;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import com.unit.finance.sdk.ApiClient;
+import com.unit.finance.sdk.api.AccountsApi;
 import com.unit.finance.sdk.api.ApplicationsApi;
+import com.unit.finance.sdk.api.FeesApi;
+import com.unit.finance.sdk.api.PaymentsApi;
+import com.unit.finance.sdk.model.AbstractOpenApiSchema;
 import com.unit.finance.sdk.model.BusinessApplication;
 import com.unit.finance.sdk.model.IndividualApplication;
 import com.unit.finance.sdk.model.List200ResponseDataInner;
@@ -84,8 +88,7 @@ final class ApiSupport {
     return Dotenv.configure().directory(dir).ignoreIfMissing().load();
   }
 
-  /** Construct an {@code ApplicationsApi} bound to the sandbox. */
-  static ApplicationsApi buildApi() {
+  static ApiClient buildApiClient() {
     if (!hasToken()) {
       throw new IllegalStateException(
           "UNIT_SANDBOX_TOKEN is required to talk to the sandbox; set it in the shell.");
@@ -99,7 +102,32 @@ final class ApiSupport {
     client.setConnectTimeout(30_000);
     client.setReadTimeout(60_000);
     client.setWriteTimeout(60_000);
-    return new ApplicationsApi(client);
+    return client;
+  }
+
+  /** Construct an {@code ApplicationsApi} bound to the sandbox. */
+  static ApplicationsApi buildApi() {
+    return new ApplicationsApi(buildApiClient());
+  }
+
+  /** Construct an {@code AccountsApi} bound to the sandbox. */
+  static AccountsApi buildAccountsApi() {
+    return new AccountsApi(buildApiClient());
+  }
+
+  /** Construct a {@code FeesApi} bound to the sandbox. */
+  static FeesApi buildFeesApi() {
+    return new FeesApi(buildApiClient());
+  }
+
+  /** Construct a {@code PaymentsApi} bound to the sandbox. */
+  static PaymentsApi buildPaymentsApi() {
+    return new PaymentsApi(buildApiClient());
+  }
+
+  /** Block the current thread for sandbox polling (mirrors Node {@code sleep}). */
+  static void sleep(long ms) throws InterruptedException {
+    Thread.sleep(ms);
   }
 
   /**
@@ -108,25 +136,63 @@ final class ApiSupport {
    * {@code type} discriminator regardless of which variant matched.
    */
   static String resourceType(List200ResponseDataInner data) {
-    Object actual = data.getActualInstance();
+    return jsonApiType(data);
+  }
+
+  /** Resolve the {@code id} of a {@link List200ResponseDataInner} wrapper. */
+  static String resourceId(List200ResponseDataInner data) {
+    return jsonApiId(data);
+  }
+
+  /**
+   * Resolve the JSON:API {@code type} of any resource or {@code oneOf} wrapper
+   * ({@code DepositAccount}, {@code Fee}, {@code BookPayment}, etc.).
+   */
+  static String jsonApiType(Object resource) {
+    Object actual = unwrap(resource);
     if (actual instanceof BusinessApplication) {
       return ((BusinessApplication) actual).getType().getValue();
     }
     if (actual instanceof IndividualApplication) {
       return ((IndividualApplication) actual).getType().getValue();
     }
+    if (actual == null) {
+      return null;
+    }
+    try {
+      Object type = actual.getClass().getMethod("getType").invoke(actual);
+      if (type != null) {
+        return (String) type.getClass().getMethod("getValue").invoke(type);
+      }
+    } catch (ReflectiveOperationException ignored) {
+      // fall through
+    }
     return null;
   }
 
-  /** Resolve the {@code id} of a {@link List200ResponseDataInner} wrapper. */
-  static String resourceId(List200ResponseDataInner data) {
-    Object actual = data.getActualInstance();
+  /** Resolve the JSON:API {@code id} of any resource or {@code oneOf} wrapper. */
+  static String jsonApiId(Object resource) {
+    Object actual = unwrap(resource);
     if (actual instanceof BusinessApplication) {
       return ((BusinessApplication) actual).getId();
     }
     if (actual instanceof IndividualApplication) {
       return ((IndividualApplication) actual).getId();
     }
-    return null;
+    if (actual == null) {
+      return null;
+    }
+    try {
+      return (String) actual.getClass().getMethod("getId").invoke(actual);
+    } catch (ReflectiveOperationException ignored) {
+      return null;
+    }
+  }
+
+  private static Object unwrap(Object resource) {
+    if (resource instanceof AbstractOpenApiSchema) {
+      return ((AbstractOpenApiSchema) resource).getActualInstance();
+    }
+    return resource;
   }
 }

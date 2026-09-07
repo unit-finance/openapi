@@ -5,9 +5,9 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**officer_occupation** | [**Occupation**](Occupation.md) | Optional. Occupation of the officer. | [optional] [default to undefined]
-**officer_annualIncome** | [**AnnualIncome**](AnnualIncome.md) | Optional. Annual income of the officer. | [optional] [default to undefined]
-**officer_sourceOfIncome** | [**SourceOfIncome**](SourceOfIncome.md) | Optional. Source of income of the officer. | [optional] [default to undefined]
+**officer_occupation** | [**OccupationType**](OccupationType.md) | Optional. Occupation of the officer. | [optional] [default to undefined]
+**officer_annualIncome** | [**AnnualIncomeType**](AnnualIncomeType.md) | Optional. Annual income of the officer. | [optional] [default to undefined]
+**officer_sourceOfIncome** | [**SourceOfIncomeType**](SourceOfIncomeType.md) | Optional. Source of income of the officer. | [optional] [default to undefined]
 
 ## Example
 

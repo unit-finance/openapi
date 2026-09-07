@@ -1,25 +1,39 @@
-import { ApplicationsApi, Configuration } from "../..";
+import {
+	AccountsApi,
+	ApplicationsApi,
+	Configuration,
+	FeesApi,
+	PaymentsApi,
+} from "../..";
 
 export const TOKEN = process.env.UNIT_SANDBOX_TOKEN;
 export const BASE_PATH =
 	process.env.UNIT_SANDBOX_BASE_URL ?? "https://api.s.unit.sh";
 
-/**
- * Construct an `ApplicationsApi` bound to the sandbox.
- *
- * Throws if the bearer token is missing — but every test file gates its
- * `describe` on `describeIfToken` so we never reach this branch when the
- * token is unset.
- */
-export function buildApi(): ApplicationsApi {
+function configuration(): Configuration {
 	if (!TOKEN) {
 		throw new Error(
 			"UNIT_SANDBOX_TOKEN is required to talk to the sandbox; set it in .env or the shell.",
 		);
 	}
-	return new ApplicationsApi(
-		new Configuration({ accessToken: TOKEN, basePath: BASE_PATH }),
-	);
+	return new Configuration({ accessToken: TOKEN, basePath: BASE_PATH });
+}
+
+/** Construct an `ApplicationsApi` bound to the sandbox. */
+export function buildApi(): ApplicationsApi {
+	return new ApplicationsApi(configuration());
+}
+
+export function buildAccountsApi(): AccountsApi {
+	return new AccountsApi(configuration());
+}
+
+export function buildFeesApi(): FeesApi {
+	return new FeesApi(configuration());
+}
+
+export function buildPaymentsApi(): PaymentsApi {
+	return new PaymentsApi(configuration());
 }
 
 /**
@@ -30,8 +44,12 @@ export function buildApi(): ApplicationsApi {
  */
 export const describeIfToken: typeof describe = TOKEN ? describe : describe.skip;
 
-/** Stable id for this jest run; used in created applications' tags so they
+/** Stable id for this jest run; used in created resources' tags so they
  * can be filtered out of the sandbox later. */
 export const TEST_RUN_ID = `sdk-node-${Date.now().toString(36)}-${Math.random()
 	.toString(36)
 	.slice(2, 8)}`;
+
+export function sleep(ms: number): Promise<void> {
+	return new Promise((resolve) => setTimeout(resolve, ms));
+}
