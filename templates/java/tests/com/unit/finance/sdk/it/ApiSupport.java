@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import com.unit.finance.sdk.ApiClient;
 import com.unit.finance.sdk.api.AccountsApi;
 import com.unit.finance.sdk.api.ApplicationsApi;
+import com.unit.finance.sdk.api.CardsApi;
 import com.unit.finance.sdk.api.FeesApi;
 import com.unit.finance.sdk.api.PaymentsApi;
 import com.unit.finance.sdk.model.AbstractOpenApiSchema;
@@ -123,6 +124,11 @@ final class ApiSupport {
   /** Construct a {@code PaymentsApi} bound to the sandbox. */
   static PaymentsApi buildPaymentsApi() {
     return new PaymentsApi(buildApiClient());
+  }
+
+  /** Construct a {@code CardsApi} bound to the sandbox. */
+  static CardsApi buildCardsApi() {
+    return new CardsApi(buildApiClient());
   }
 
   /** Block the current thread for sandbox polling (mirrors Node {@code sleep}). */

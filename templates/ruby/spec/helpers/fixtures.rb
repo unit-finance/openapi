@@ -413,6 +413,76 @@ module Helpers
       }
     end
 
+    def card_holder
+      {
+        'fullName' => FULL_NAME,
+        'dateOfBirth' => '2001-08-15',
+        'address' => US_ADDRESS,
+        'phone' => US_PHONE,
+        'email' => "peter+#{Helpers::Api::TEST_RUN_ID}@oscorp.com",
+        'ssn' => DEFAULT_OFFICER_SSN,
+        'tags' => base_tags
+      }
+    end
+
+    # A business debit card is a physical card issued against a deposit account.
+    def create_business_debit_card_request(account_id)
+      {
+        'data' => {
+          'type' => 'businessDebitCard',
+          'attributes' => card_holder,
+          'relationships' => {
+            'account' => { 'data' => { 'type' => 'account', 'id' => account_id } }
+          }
+        }
+      }
+    end
+
+    # A business virtual debit card is issued Active immediately (physical cards
+    # land in `Inactive` until activated). Operations that require an Active card
+    # -- get_card_pin_status, report_card_lost, report_card_stolen -- run against
+    # a virtual card. Virtual cards cannot be replaced (physical only).
+    def create_business_virtual_debit_card_request(account_id)
+      {
+        'data' => {
+          'type' => 'businessVirtualDebitCard',
+          'attributes' => card_holder,
+          'relationships' => {
+            'account' => { 'data' => { 'type' => 'account', 'id' => account_id } }
+          }
+        }
+      }
+    end
+
+    # UpdateCardDataAttributes only exposes card-holder contact fields (tags are
+    # not updatable on a card), so the update touches the card holder's phone.
+    def update_card_request
+      {
+        'data' => {
+          'type' => 'businessDebitCard',
+          'attributes' => { 'phone' => { 'countryCode' => '1', 'number' => '5555555556' } }
+        }
+      }
+    end
+
+    def freeze_card_request
+      {
+        'data' => {
+          'type' => 'freezeCard',
+          'attributes' => { 'reason' => 'SDK integration test freeze' }
+        }
+      }
+    end
+
+    def replace_card_request
+      {
+        'data' => {
+          'type' => 'replaceCard',
+          'attributes' => { 'shippingAddress' => US_ADDRESS }
+        }
+      }
+    end
+
     def add_account_owners_request(customer_ids)
       {
         'data' => customer_ids.map { |id| { 'type' => 'customer', 'id' => id } }
