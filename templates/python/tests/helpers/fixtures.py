@@ -38,7 +38,11 @@ from unit_finance_sdk import (
     CreateAccountRequest,
     CreateACHPaymentRequest,
     CreateApplicationRequest,
+    CreateBulkPaymentRequest,
     CreateBusinessApplicationRequest,
+    CreateBusinessDebitCardRequest,
+    CreateBusinessVirtualDebitCardRequest,
+    CreateCardRequest,
     CreateDepositAccountRequest,
     CreateFeeRequest,
     CreateIndividualApplicationRequest,
@@ -46,14 +50,17 @@ from unit_finance_sdk import (
     CreateRecurringCreditBookPaymentRequest,
     CreateRecurringPaymentRequest,
     FreezeAccountRequest,
+    FreezeCardRequest,
     FreezeDepositAccountRequest,
     GetExpectedAchCompletionDateRequest,
+    ReplaceCardRequest,
     ReverseFeeRequest,
     UpdateAccountRequest,
     UpdateApplicationRequest,
     UpdateBookPaymentRequest,
     UpdateBusinessApplicationRequest,
     UpdateBusinessBeneficialOwnerRequest,
+    UpdateCardRequest,
     UpdateDepositAccountRequest,
     UpdatePaymentRequest,
 )
@@ -414,6 +421,31 @@ def build_create_book_payment_request(
     )
 
 
+def build_create_bulk_payment_request(
+    account_id: str,
+    counterparty_account_id: str,
+) -> CreateBulkPaymentRequest:
+    body = {
+        "data": [
+            {
+                "type": "bookPayment",
+                "attributes": {
+                    "amount": 100,
+                    "description": "SDK integration test book payment",
+                    "tags": _base_tags(),
+                },
+                "relationships": {
+                    "account": {"data": {"type": "account", "id": account_id}},
+                    "counterpartyAccount": {
+                        "data": {"type": "account", "id": counterparty_account_id},
+                    },
+                },
+            },
+        ],
+    }
+    return CreateBulkPaymentRequest.from_dict(body)
+
+
 def build_create_ach_payment_request(
     account_id: str,
     *,
@@ -563,6 +595,89 @@ def build_send_drawdown_payment_request() -> Dict[str, Any]:
             },
         },
     }
+
+
+def _card_holder() -> Dict[str, Any]:
+    return {
+        "fullName": _full_name(),
+        "dateOfBirth": "2001-08-15",
+        "address": _us_address(),
+        "phone": _us_phone(),
+        "email": f"peter+{TEST_RUN_ID}@oscorp.com",
+        "ssn": "721074426",
+        "tags": _base_tags(),
+    }
+
+
+# A business debit card is a physical card issued against a deposit account.
+# Built via from_dict for the same oneOf-relationship reason as the fee
+# fixtures above (data.relationships.account is the RelationshipData union).
+def build_create_business_debit_card_request(account_id: str) -> CreateCardRequest:
+    body = {
+        "data": {
+            "type": "businessDebitCard",
+            "attributes": _card_holder(),
+            "relationships": {
+                "account": {"data": {"type": "account", "id": account_id}},
+            },
+        },
+    }
+    return CreateCardRequest(
+        actual_instance=CreateBusinessDebitCardRequest.from_dict(body)
+    )
+
+
+# A business virtual debit card is issued Active immediately (physical cards
+# land in `Inactive` until activated). Operations that require an Active card
+# -- get_card_pin_status, report_card_lost, report_card_stolen -- therefore run
+# against a virtual card. Virtual cards cannot be replaced (physical only).
+def build_create_business_virtual_debit_card_request(
+    account_id: str,
+) -> CreateCardRequest:
+    body = {
+        "data": {
+            "type": "businessVirtualDebitCard",
+            "attributes": _card_holder(),
+            "relationships": {
+                "account": {"data": {"type": "account", "id": account_id}},
+            },
+        },
+    }
+    return CreateCardRequest(
+        actual_instance=CreateBusinessVirtualDebitCardRequest.from_dict(body)
+    )
+
+
+# UpdateCardDataAttributes only exposes card-holder contact fields (tags are
+# not updatable on a card), so the update touches the card holder's phone.
+def build_update_card_request() -> UpdateCardRequest:
+    body = {
+        "data": {
+            "type": "businessDebitCard",
+            "attributes": {"phone": {"countryCode": "1", "number": "5555555556"}},
+        },
+    }
+    return UpdateCardRequest.from_dict(body)
+
+
+def build_freeze_card_request() -> FreezeCardRequest:
+    body = {
+        "data": {
+            "type": "freezeCard",
+            "attributes": {"reason": "SDK integration test freeze"},
+        },
+    }
+    return FreezeCardRequest.from_dict(body)
+
+
+def build_replace_card_request() -> ReplaceCardRequest:
+    body = {
+        "data": {
+            "type": "replaceCard",
+            "attributes": {"shippingAddress": _us_address()},
+        },
+    }
+    return ReplaceCardRequest.from_dict(body)
 
 
 def build_add_account_owners_request(customer_ids: List[str]) -> Dict[str, Any]:

@@ -1,9 +1,14 @@
 import type {
 	CreateBusinessApplicationRequest,
+	CreateBusinessDebitCardRequest,
+	CreateBusinessVirtualDebitCardRequest,
 	CreateIndividualApplicationRequest,
 	CreateSoleProprietorApplicationRequest,
+	FreezeCardRequest,
+	ReplaceCardRequest,
 	UpdateBusinessApplicationRequest,
 	UpdateBusinessBeneficialOwnerRequest,
+	UpdateCardRequest,
 } from "../..";
 import {
 	BusinessAnnualRevenueType,
@@ -315,6 +320,15 @@ export function buildCreateBookPaymentRequest(
 	};
 }
 
+export function buildCreateBulkPaymentRequest(
+	accountId: string,
+	counterpartyAccountId: string,
+) {
+	return {
+		data: [buildCreateBookPaymentRequest(accountId, counterpartyAccountId).data],
+	};
+}
+
 export function buildUpdateBookPaymentRequest() {
 	return {
 		data: {
@@ -401,6 +415,90 @@ export function buildGenerateCashDepositBarcodeRequest(
 				// "depositAccount" here with a 400 on /data/relationships/account/data/type.
 				account: { data: { type: "account", id: accountId } },
 			},
+		},
+	};
+}
+
+// A business debit card is a physical card issued against a deposit account.
+// The card holder's identity mirrors the officer fixture used elsewhere.
+// Physical debit cards support the full lifecycle (freeze, close, replace,
+// report lost/stolen, limits, PIN status, update), so a single variant covers
+// every Cards operation.
+export function buildCreateBusinessDebitCardRequest(
+	accountId: string,
+): CreateBusinessDebitCardRequest {
+	return {
+		data: {
+			type: "businessDebitCard",
+			attributes: {
+				fullName: fullName(),
+				dateOfBirth: "2001-08-15",
+				address: usAddress(),
+				phone: usPhone(),
+				email: `peter+${TEST_RUN_ID}@oscorp.com`,
+				ssn: "721074426",
+				tags: baseTags(),
+			},
+			relationships: {
+				account: { data: { type: "account", id: accountId } },
+			},
+		},
+	};
+}
+
+// A business virtual debit card is issued Active immediately (physical cards
+// land in `Inactive` until activated). Operations that require an Active card
+// -- `getCardPinStatus`, `reportCardLost`, `reportCardStolen` -- therefore run
+// against a virtual card. Virtual cards cannot be replaced (physical only).
+export function buildCreateBusinessVirtualDebitCardRequest(
+	accountId: string,
+): CreateBusinessVirtualDebitCardRequest {
+	return {
+		data: {
+			type: "businessVirtualDebitCard",
+			attributes: {
+				fullName: fullName(),
+				dateOfBirth: "2001-08-15",
+				address: usAddress(),
+				phone: usPhone(),
+				email: `peter+${TEST_RUN_ID}@oscorp.com`,
+				ssn: "721074426",
+				tags: baseTags(),
+			},
+			relationships: {
+				account: { data: { type: "account", id: accountId } },
+			},
+		},
+	};
+}
+
+// UpdateCardDataAttributes only exposes card-holder contact fields (tags are
+// not updatable on a card), so the update touches the card holder's phone.
+export function buildUpdateCardRequest(): UpdateCardRequest {
+	return {
+		data: {
+			type: "businessDebitCard",
+			attributes: {
+				phone: { countryCode: "1", number: "5555555556" },
+			},
+		},
+	};
+}
+
+export function buildFreezeCardRequest(): FreezeCardRequest {
+	return {
+		data: {
+			type: "freezeCard",
+			attributes: { reason: "SDK integration test freeze" },
+		},
+	};
+}
+
+export function buildReplaceCardRequest(): ReplaceCardRequest {
+	return {
+		data: {
+			type: "replaceCard",
+			attributes: { shippingAddress: usAddress() },
 		},
 	};
 }

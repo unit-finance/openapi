@@ -48,6 +48,10 @@ module Helpers
       UnitFinanceSdk::PaymentsApi.new(UnitFinanceSdk::ApiClient.new(configuration))
     end
 
+    def build_cards_api
+      UnitFinanceSdk::CardsApi.new(UnitFinanceSdk::ApiClient.new(configuration))
+    end
+
     def sleep(seconds)
       Kernel.sleep(seconds)
     end
