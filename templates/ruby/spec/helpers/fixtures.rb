@@ -311,6 +311,27 @@ module Helpers
       }
     end
 
+    def create_bulk_payment_request(account_id, counterparty_account_id)
+      {
+        'data' => [
+          {
+            'type' => 'bookPayment',
+            'attributes' => {
+              'amount' => 100,
+              'description' => 'SDK integration test book payment',
+              'tags' => base_tags
+            },
+            'relationships' => {
+              'account' => { 'data' => { 'type' => 'account', 'id' => account_id } },
+              'counterpartyAccount' => {
+                'data' => { 'type' => 'account', 'id' => counterparty_account_id }
+              }
+            }
+          }
+        ]
+      }
+    end
+
     def update_book_payment_request
       {
         'data' => {

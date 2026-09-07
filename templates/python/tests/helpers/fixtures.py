@@ -38,6 +38,7 @@ from unit_finance_sdk import (
     CreateAccountRequest,
     CreateACHPaymentRequest,
     CreateApplicationRequest,
+    CreateBulkPaymentRequest,
     CreateBusinessApplicationRequest,
     CreateDepositAccountRequest,
     CreateFeeRequest,
@@ -412,6 +413,31 @@ def build_create_book_payment_request(
     return CreatePaymentRequest(
         actual_instance=CreateABookPaymentRequest.from_dict(body)
     )
+
+
+def build_create_bulk_payment_request(
+    account_id: str,
+    counterparty_account_id: str,
+) -> CreateBulkPaymentRequest:
+    body = {
+        "data": [
+            {
+                "type": "bookPayment",
+                "attributes": {
+                    "amount": 100,
+                    "description": "SDK integration test book payment",
+                    "tags": _base_tags(),
+                },
+                "relationships": {
+                    "account": {"data": {"type": "account", "id": account_id}},
+                    "counterpartyAccount": {
+                        "data": {"type": "account", "id": counterparty_account_id},
+                    },
+                },
+            },
+        ],
+    }
+    return CreateBulkPaymentRequest.from_dict(body)
 
 
 def build_create_ach_payment_request(

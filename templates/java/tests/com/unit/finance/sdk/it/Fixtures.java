@@ -26,6 +26,8 @@ import com.unit.finance.sdk.model.CreateAccountRequest;
 import com.unit.finance.sdk.model.CreateBatchReleasesData;
 import com.unit.finance.sdk.model.CreateBatchReleasesDataAttributes;
 import com.unit.finance.sdk.model.CreateBatchReleasesRequest;
+import com.unit.finance.sdk.model.CreateBulkPaymentRequest;
+import com.unit.finance.sdk.model.CreateBulkPaymentRequestDataInner;
 import com.unit.finance.sdk.model.CreateBusinessApplicationData;
 import com.unit.finance.sdk.model.CreateBusinessApplicationDataAttributes;
 import com.unit.finance.sdk.model.CreateBusinessApplicationRequest;
@@ -446,6 +448,26 @@ final class Fixtures {
             .attributes(attributes)
             .relationships(relationships);
     return new CreatePaymentRequest(new CreateABookPaymentRequest().data(data));
+  }
+
+  static CreateBulkPaymentRequest createBulkPaymentRequest(
+      String accountId, String counterpartyAccountId) {
+    CreateABookPaymentDataAttributes attributes =
+        new CreateABookPaymentDataAttributes()
+            .amount(100)
+            .description("SDK integration test book payment")
+            .tags(baseTags());
+    CreateABookPaymentDataRelationships relationships =
+        new CreateABookPaymentDataRelationships()
+            .account(relationship("account", accountId))
+            .counterpartyAccount(relationship("account", counterpartyAccountId));
+    CreateABookPaymentData data =
+        new CreateABookPaymentData()
+            .type(CreateABookPaymentData.TypeEnum.BOOK_PAYMENT)
+            .attributes(attributes)
+            .relationships(relationships);
+    return new CreateBulkPaymentRequest()
+        .addDataItem(new CreateBulkPaymentRequestDataInner(data));
   }
 
   static UpdatePaymentRequest updateBookPaymentRequest() {
