@@ -1,0 +1,28 @@
+# UnitFinanceSdk::PurchaseTransactionRelationships
+
+## Properties
+
+| Name | Type | Description | Notes |
+| ---- | ---- | ----------- | ----- |
+| **account** | [**Relationship**](Relationship.md) |  | [optional] |
+| **customer** | [**Relationship**](Relationship.md) |  | [optional] |
+| **customers** | [**Relationship**](Relationship.md) |  | [optional] |
+| **card** | [**Relationship**](Relationship.md) |  | [optional] |
+| **authorization** | [**Relationship**](Relationship.md) |  | [optional] |
+| **authorization_request** | [**Relationship**](Relationship.md) |  | [optional] |
+
+## Example
+
+```ruby
+require 'unit_finance_sdk'
+
+instance = UnitFinanceSdk::PurchaseTransactionRelationships.new(
+  account: null,
+  customer: null,
+  customers: null,
+  card: null,
+  authorization: null,
+  authorization_request: null
+)
+```
+
