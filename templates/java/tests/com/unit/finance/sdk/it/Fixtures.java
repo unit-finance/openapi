@@ -100,6 +100,9 @@ import com.unit.finance.sdk.model.UpdateApplicationRequest;
 import com.unit.finance.sdk.model.UpdateBookPaymentData;
 import com.unit.finance.sdk.model.UpdateBookPaymentDataAttributes;
 import com.unit.finance.sdk.model.UpdateBookPaymentRequest;
+import com.unit.finance.sdk.model.UpdateBookTransactionData;
+import com.unit.finance.sdk.model.UpdateBookTransactionDataAttributes;
+import com.unit.finance.sdk.model.UpdateBookTransactionRequest;
 import com.unit.finance.sdk.model.UpdateBusinessApplicationData;
 import com.unit.finance.sdk.model.UpdateBusinessApplicationDataAttributes;
 import com.unit.finance.sdk.model.UpdateBusinessApplicationRequest;
@@ -114,6 +117,10 @@ import com.unit.finance.sdk.model.UpdateDepositAccountData;
 import com.unit.finance.sdk.model.UpdateDepositAccountDataAttributes;
 import com.unit.finance.sdk.model.UpdateDepositAccountRequest;
 import com.unit.finance.sdk.model.UpdatePaymentRequest;
+import com.unit.finance.sdk.model.UpdateTagsData;
+import com.unit.finance.sdk.model.UpdateTagsDataAttributes;
+import com.unit.finance.sdk.model.UpdateTagsRequest;
+import com.unit.finance.sdk.model.UpdateTransactionRequest;
 import com.unit.finance.sdk.model.UpdateACHReceivedPaymentData;
 import com.unit.finance.sdk.model.UpdateACHReceivedPaymentDataAttributes;
 import com.unit.finance.sdk.model.UpdateACHReceivedPaymentRequest;
@@ -495,6 +502,36 @@ final class Fixtures {
             .type(UpdateBookPaymentData.TypeEnum.BOOK_PAYMENT)
             .attributes(attributes);
     return new UpdatePaymentRequest(new UpdateBookPaymentRequest().data(data));
+  }
+
+  // PATCH /accounts/{accountId}/transactions/{transactionId} accepts a generic
+  // tags-update envelope (type `transaction`) regardless of the underlying
+  // transaction variant, so a single builder covers every transaction kind.
+  static UpdateTagsRequest updateTransactionTagsRequest() {
+    Map<String, Object> tags = baseTags();
+    tags.put("updated", "true");
+    UpdateTagsDataAttributes attributes = new UpdateTagsDataAttributes().tags(tags);
+    UpdateTagsData data =
+        new UpdateTagsData().type(UpdateTagsData.TypeEnum.TRANSACTION).attributes(attributes);
+    return new UpdateTagsRequest().data(data);
+  }
+
+  // PATCH /transactions/{transactionId} is discriminated by data.type; the
+  // bookTransaction variant requires the owning account relationship alongside
+  // the updatable summary/tags attributes.
+  static UpdateTransactionRequest updateBookTransactionRequest(String accountId) {
+    Map<String, Object> tags = baseTags();
+    tags.put("updated", "true");
+    UpdateBookTransactionDataAttributes attributes =
+        new UpdateBookTransactionDataAttributes()
+            .summary("SDK integration test book transaction update")
+            .tags(tags);
+    UpdateBookTransactionData data =
+        new UpdateBookTransactionData()
+            .type(UpdateBookTransactionData.TypeEnum.BOOK_TRANSACTION)
+            .attributes(attributes)
+            .relationships(new CreateFeeDataRelationships().account(relationship("account", accountId)));
+    return new UpdateTransactionRequest(new UpdateBookTransactionRequest().data(data));
   }
 
   static GetExpectedAchCompletionDateRequest getExpectedAchCompletionDateRequest(String accountId) {
