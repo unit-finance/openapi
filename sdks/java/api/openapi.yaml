@@ -5,7 +5,7 @@ info:
     name: Proprietary
     url: https://www.unit.co/terms-of-service
   title: Unit API
-  version: 0.5.0
+  version: 0.6.0
 servers:
 - url: https://api.s.unit.sh
 security:
@@ -24,6 +24,9 @@ tags:
 - description: "Debit and credit cards, their creation, lifecycle actions, limits,\
     \ and PIN status."
   name: Cards
+- description: "Transactions recorded on deposit and credit accounts, across every\
+    \ Unit transaction type."
+  name: Transactions
 paths:
   /applications:
     get:
@@ -3934,6 +3937,340 @@ paths:
       x-content-type: application/vnd.api+json
       x-accepts:
       - application/vnd.api+json
+  /transactions:
+    get:
+      description: List transaction resources. Filtering and sorting can be applied.
+        Paging is available only when filtering by customer id or account id.
+      operationId: listTransactions
+      parameters:
+      - description: Optional. Maximum number of resources that will be returned.
+          Maximum is 1000 resources. See Pagination.
+        explode: true
+        in: query
+        name: "page[limit]"
+        required: false
+        schema:
+          default: "100"
+          type: string
+        style: form
+      - description: Optional. Number of resources to skip. See Pagination.
+        explode: true
+        in: query
+        name: "page[offset]"
+        required: false
+        schema:
+          default: "0"
+          type: string
+        style: form
+      - description: Optional. Filters the results by the specified account id.
+        explode: true
+        in: query
+        name: "filter[accountId]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: "Optional. Filters the results by the specified account ids.\
+          \ Usage example: *filter[accountIds][0]=10000&filter[accountIds][1]=10001*"
+        explode: true
+        in: query
+        name: "filter[accountIds][]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filters the results by the specified customer id.
+        explode: true
+        in: query
+        name: "filter[customerId]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. search term according to the Full-Text Search Rules.
+        explode: true
+        in: query
+        name: "filter[query]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filter Transactions by Tags.
+        explode: true
+        in: query
+        name: "filter[tags]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filters the Transactions that occurred *after* the
+          specified date. e.g. 2020-01-13T16:01:19.346Z
+        explode: true
+        in: query
+        name: "filter[since]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filters the Transactions that occurred *before* the
+          specified date. e.g. 2020-01-02T20:06:23.486Z
+        explode: true
+        in: query
+        name: "filter[until]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filters the results by the specified card id.
+        explode: true
+        in: query
+        name: "filter[cardId]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: "Optional. Filter Transactions by Transaction type. Possible\
+          \ values include: OriginatedAch, ReceivedAch, ReturnedAch, DishonoredAch,\
+          \ Book, Purchase, Atm, Fee, Reversal, CardTransaction, BatchRelease, Wire,\
+          \ ReturnedWire, Dispute, Adjustment, Interest, Reward, CheckDeposit, ReturnedCheckDeposit,\
+          \ PaymentCanceled, CustomerRepayment. Usage example: *filter[type][0]=OriginatedAch&filter[type][1]=ReceivedAch*"
+        explode: true
+        in: query
+        name: "filter[type][]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filters the Transactions that have an amount that is
+          *higher or equal to* the specified amount (in cents). e.g. 5000
+        explode: true
+        in: query
+        name: "filter[fromAmount]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filters the Transactions that have an amount that is
+          *lower or equal to* the specified amount (in cents). e.g. 7000
+        explode: true
+        in: query
+        name: "filter[toAmount]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: "Optional. Filter Transactions by direction (Debit, Credit).\
+          \ Usage example: *filter[direction][0]=Debit*"
+        explode: true
+        in: query
+        name: "filter[direction][]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filter Fee type Transactions.
+        explode: true
+        in: query
+        name: "filter[excludeFees]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: "Optional. Filter Transactions by account type (deposit, credit)."
+        explode: true
+        in: query
+        name: "filter[accountType]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Leave empty or provide sort=createdAt for ascending
+          order. Provide sort=-createdAt (leading minus sign) for descending order.
+        explode: true
+        in: query
+        name: sort
+        required: false
+        schema:
+          default: createdAt
+          type: string
+        style: form
+      - description: "Optional. A comma-separated list of related resources to include\
+          \ in the response. Related resources include: customer, account. See Getting\
+          \ Related Resources"
+        explode: true
+        in: query
+        name: include
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/listTransactions_200_response"
+          description: Array of transaction resources.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error
+      security:
+      - bearerAuth:
+        - transactions
+      summary: List transactions
+      tags:
+      - Transactions
+      x-accepts:
+      - application/vnd.api+json
+  /transactions/{transactionId}:
+    patch:
+      description: "Update a transaction. The request body is one of UpdateBookTransactionRequest\
+        \ (bookTransaction) or UpdateChargebackTransactionRequest (chargebackTransaction),\
+        \ discriminated by data.type."
+      operationId: updateTransaction
+      parameters:
+      - explode: false
+        in: path
+        name: transactionId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/updateTransaction_request"
+        required: true
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/updateTransaction_200_response"
+          description: A Transaction resource.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error
+      security:
+      - bearerAuth:
+        - transactions-write
+      summary: Update a transaction
+      tags:
+      - Transactions
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /accounts/{accountId}/transactions/{transactionId}:
+    get:
+      description: Get a transaction by transaction id and account id.
+      operationId: getTransaction
+      parameters:
+      - explode: false
+        in: path
+        name: accountId
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: transactionId
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: Optional. Filters the result by the specified customer id.
+        explode: true
+        in: query
+        name: "filter[customerId]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: "Optional. A comma-separated list of related resources to include\
+          \ in the response. Related resources include: customer, account. See Getting\
+          \ Related Resources"
+        explode: true
+        in: query
+        name: include
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/getTransaction_200_response"
+          description: A Transaction resource.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error
+      security:
+      - bearerAuth:
+        - transactions
+      summary: Get a transaction
+      tags:
+      - Transactions
+      x-accepts:
+      - application/vnd.api+json
+    patch:
+      description: Update Tags Transaction.
+      operationId: updateTransactionTags
+      parameters:
+      - explode: false
+        in: path
+        name: accountId
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: transactionId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/UpdateTagsRequest"
+        required: true
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/updateTransaction_200_response"
+          description: A Transaction resource.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error
+      security:
+      - bearerAuth:
+        - transactions-write
+      summary: Update transaction tags
+      tags:
+      - Transactions
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
 components:
   responses:
     BadRequest:
@@ -7015,6 +7352,1789 @@ components:
       - attributes
       - type
       type: object
+    CurrencyConversionType:
+      example:
+        originalCurrency: EUR
+        amountInOriginalCurrency: 5000
+        fxRate: "1.164"
+      properties:
+        originalCurrency:
+          description: ISO 4217 currency code of original currency.
+          type: string
+        amountInOriginalCurrency:
+          description: The amount in original currency in 'cents' (i.e. 50 euros will
+            be written 5000)
+          type: number
+        fxRate:
+          description: The conversion rate for the currency conversion to USD.
+          type: string
+      required:
+      - amountInOriginalCurrency
+      - originalCurrency
+      type: object
+    RichMerchantDataType:
+      example:
+        name: 7-Eleven
+        website: 7-eleven.com
+        logo: https://v1.spadeapi.com/logos/verified/7eleven.png?size=large
+        phone: ""
+        categories:
+        - name: Retail
+          icon: https://static.v2.spadeapi.com/categories/7bfa3240804440309d0f050b7509f509/light.png
+        address:
+          city: Orlando
+          state: FL
+          country: USA
+      properties:
+        name:
+          description: Name of the merchant.
+          type: string
+        website:
+          description: URL of the merchant's website.
+          type: string
+        logo:
+          description: URL of the merchant's logo.
+          type: string
+        phone:
+          description: Phone number of the merchant.
+          type: string
+        categories:
+          description: Array of categories the merchant belongs to (from the least
+            specific to the most specific).
+          items:
+            $ref: "#/components/schemas/RichMerchantDataType_categories_inner"
+          type: array
+        address:
+          $ref: "#/components/schemas/RichMerchantDataType_address"
+        coordinates:
+          allOf:
+          - $ref: "#/components/schemas/CoordinatesType"
+          description: "Coordinates (latitude, longitude) of the merchant."
+        facilitators:
+          description: The transaction facilitators.
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+      required:
+      - name
+      type: object
+    Transaction:
+      description: "A Transaction resource. One of the Unit transaction types, discriminated\
+        \ by the JSON:API type literal."
+      discriminator:
+        mapping:
+          accountLowBalanceClosureTransaction: "#/components/schemas/AccountLowBalanceClosureTransaction"
+          adjustmentTransaction: "#/components/schemas/AdjustmentTransaction"
+          atmTransaction: "#/components/schemas/ATMTransaction"
+          bookTransaction: "#/components/schemas/BookTransaction"
+          cardReversalTransaction: "#/components/schemas/CardReversalTransaction"
+          cardTransaction: "#/components/schemas/CardTransaction"
+          cashDepositTransaction: "#/components/schemas/CashDepositTransaction"
+          chargebackTransaction: "#/components/schemas/ChargebackTransaction"
+          checkDepositTransaction: "#/components/schemas/CheckDepositTransaction"
+          checkPaymentTransaction: "#/components/schemas/CheckPaymentTransaction"
+          dishonoredAchTransaction: "#/components/schemas/DishonoredACHTransaction"
+          disputeTransaction: "#/components/schemas/DisputeTransaction"
+          feeReversalTransaction: "#/components/schemas/FeeReversalTransaction"
+          feeTransaction: "#/components/schemas/FeeTransaction"
+          interestShareTransaction: "#/components/schemas/InterestShareTransaction"
+          interestTransaction: "#/components/schemas/InterestTransaction"
+          negativeBalanceCoverageTransaction: "#/components/schemas/NegativeBalanceCoverageTransaction"
+          originatedAchTransaction: "#/components/schemas/OriginatedACHTransaction"
+          paymentAdvanceTransaction: "#/components/schemas/PaymentAdvanceTransaction"
+          paymentCanceledTransaction: "#/components/schemas/PaymentCanceledTransaction"
+          purchaseTransaction: "#/components/schemas/PurchaseTransaction"
+          pushToCardReversalTransaction: "#/components/schemas/PushToCardReversalTransaction"
+          pushToCardTransaction: "#/components/schemas/PushToCardTransaction"
+          receivedAchTransaction: "#/components/schemas/ReceivedACHTransaction"
+          releaseTransaction: "#/components/schemas/ReleaseTransaction"
+          repaidPaymentAdvanceTransaction: "#/components/schemas/RepaidPaymentAdvanceTransaction"
+          returnedAchTransaction: "#/components/schemas/ReturnedACHTransaction"
+          returnedCheckDepositTransaction: "#/components/schemas/ReturnedCheckDepositTransaction"
+          returnedCheckPaymentTransaction: "#/components/schemas/ReturnedCheckPaymentTransaction"
+          returnedReceivedAchTransaction: "#/components/schemas/ReturnedReceivedACHTransaction"
+          returnedWireTransaction: "#/components/schemas/ReturnedWireTransaction"
+          rewardTransaction: "#/components/schemas/RewardTransaction"
+          wireTransaction: "#/components/schemas/WireTransaction"
+          writeOffTransaction: "#/components/schemas/WriteOffTransaction"
+        propertyName: type
+      oneOf:
+      - $ref: "#/components/schemas/AccountLowBalanceClosureTransaction"
+      - $ref: "#/components/schemas/AdjustmentTransaction"
+      - $ref: "#/components/schemas/ATMTransaction"
+      - $ref: "#/components/schemas/BookTransaction"
+      - $ref: "#/components/schemas/CardReversalTransaction"
+      - $ref: "#/components/schemas/CardTransaction"
+      - $ref: "#/components/schemas/CashDepositTransaction"
+      - $ref: "#/components/schemas/ChargebackTransaction"
+      - $ref: "#/components/schemas/CheckDepositTransaction"
+      - $ref: "#/components/schemas/CheckPaymentTransaction"
+      - $ref: "#/components/schemas/DishonoredACHTransaction"
+      - $ref: "#/components/schemas/DisputeTransaction"
+      - $ref: "#/components/schemas/FeeReversalTransaction"
+      - $ref: "#/components/schemas/FeeTransaction"
+      - $ref: "#/components/schemas/InterestShareTransaction"
+      - $ref: "#/components/schemas/InterestTransaction"
+      - $ref: "#/components/schemas/NegativeBalanceCoverageTransaction"
+      - $ref: "#/components/schemas/OriginatedACHTransaction"
+      - $ref: "#/components/schemas/PaymentAdvanceTransaction"
+      - $ref: "#/components/schemas/PaymentCanceledTransaction"
+      - $ref: "#/components/schemas/PurchaseTransaction"
+      - $ref: "#/components/schemas/PushToCardReversalTransaction"
+      - $ref: "#/components/schemas/PushToCardTransaction"
+      - $ref: "#/components/schemas/ReceivedACHTransaction"
+      - $ref: "#/components/schemas/ReleaseTransaction"
+      - $ref: "#/components/schemas/RepaidPaymentAdvanceTransaction"
+      - $ref: "#/components/schemas/ReturnedACHTransaction"
+      - $ref: "#/components/schemas/ReturnedCheckDepositTransaction"
+      - $ref: "#/components/schemas/ReturnedCheckPaymentTransaction"
+      - $ref: "#/components/schemas/ReturnedReceivedACHTransaction"
+      - $ref: "#/components/schemas/ReturnedWireTransaction"
+      - $ref: "#/components/schemas/RewardTransaction"
+      - $ref: "#/components/schemas/WireTransaction"
+      - $ref: "#/components/schemas/WriteOffTransaction"
+    AccountLowBalanceClosureTransaction:
+      description: An `accountLowBalanceClosureTransaction` represents account low
+        balance closure transaction.
+      example:
+        data:
+          type: accountLowBalanceClosureTransaction
+          id: "53"
+          attributes:
+            createdAt: 2022-04-06T10:46:34.371Z
+            receiverCounterparty:
+              name: Unit Finance Inc.
+              routingNumber: "091311229"
+              accountNumber: "864800000000"
+              accountType: Checking
+            amount: 800
+            direction: Credit
+            balance: 113000
+            summary: Account Low Balance Closure
+            tags:
+              customer_type: vip
+          relationships:
+            account:
+              data:
+                type: account
+                id: "10001"
+            customer:
+              data:
+                type: customer
+                id: "10000"
+            customers:
+              data:
+              - type: customer
+                id: "10000"
+            org:
+              data:
+                type: org
+                id: "1"
+            receiverAccount:
+              data:
+                type: account
+                id: "10000"
+      properties:
+        type:
+          enum:
+          - accountLowBalanceClosureTransaction
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/AccountLowBalanceClosureTransaction_attributes"
+        relationships:
+          $ref: "#/components/schemas/AccountLowBalanceClosureTransaction_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    AdjustmentTransaction:
+      description: "`AdjustmentTransaction` is a JSON:API resource, top-level fields:"
+      example:
+        type: adjustmentTransaction
+        id: "215"
+        attributes:
+          createdAt: 2021-04-12T16:08:39.040Z
+          amount: 5000
+          direction: Debit
+          balance: 3124000
+          summary: "correction of transaction #200"
+          description: "correction of transaction #200"
+        relationships:
+          account:
+            data:
+              type: account
+              id: "10001"
+          customer:
+            data:
+              type: customer
+              id: "10000"
+      properties:
+        type:
+          enum:
+          - adjustmentTransaction
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/AdjustmentTransaction_attributes"
+        relationships:
+          $ref: "#/components/schemas/Fee_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    ATMTransaction:
+      description: "`AtmTransaction` is a JSON:API resource, top-level fields:"
+      example:
+        type: atmTransaction
+        id: "1432"
+        attributes:
+          createdAt: 2020-07-05T15:49:36.864Z
+          direction: Credit
+          amount: 10000
+          balance: 12000
+          summary: ATM deposit
+          cardLast4Digits: "2282"
+          atmName: First National Bank
+          atmLocation: "Masontown, PA 15461"
+          surcharge: 10
+          cardNetwork: Allpoint
+          grossInterchange: "200.00"
+          cardDecisionSource: Org
+        relationships:
+          account:
+            data:
+              type: depositAccount
+              id: "1000"
+          customer:
+            data:
+              type: customer
+              id: "3"
+          card:
+            data:
+              type: card
+              id: "11"
+      properties:
+        type:
+          enum:
+          - atmTransaction
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/ATMTransaction_attributes"
+        relationships:
+          $ref: "#/components/schemas/ATMTransaction_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    BookTransaction:
+      description: "`BookTransaction` is a JSON:API resource, top-level fields:"
+      example:
+        type: bookTransaction
+        id: "9547"
+        attributes:
+          createdAt: 2020-07-05T15:49:36.864Z
+          direction: Credit
+          amount: 1000
+          balance: 12000
+          summary: "Counterparty: Jane Smith | Description: Gift"
+          counterparty:
+            name: Jane Smith
+            routingNumber: "812345678"
+            accountNumber: "10039"
+            accountType: Checking
+        relationships:
+          account:
+            data:
+              type: depositAccount
+              id: "10035"
+          customer:
+            data:
+              type: customer
+              id: "5"
+          counterpartyAccount:
+            data:
+              type: account
+              id: "10036"
+          counterpartyCustomer:
+            data:
+              type: customer
+              id: "7"
+          payment:
+            data:
+              type: payment
+              id: "10000"
+      properties:
+        type:
+          enum:
+          - bookTransaction
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/BookTransaction_attributes"
+        relationships:
+          $ref: "#/components/schemas/BookTransaction_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    CardReversalTransaction:
+      description: "`CardReversalTransaction` is a JSON:API resource, top-level fields:"
+      example:
+        type: cardReversalTransaction
+        id: "401"
+        attributes:
+          createdAt: 2020-09-14T12:41:43.360Z
+          direction: Debit
+          amount: 10
+          balance: 89980
+          summary: "Reversal for transaction #400"
+          cardLast4Digits: "2282"
+        relationships:
+          account:
+            data:
+              type: account
+              id: "10001"
+          customer:
+            data:
+              type: customer
+              id: "1001"
+          relatedTransaction:
+            data:
+              type: transaction
+              id: "400"
+          card:
+            data:
+              type: card
+              id: "11"
+      properties:
+        type:
+          enum:
+          - cardReversalTransaction
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CardReversalTransaction_attributes"
+        relationships:
+          $ref: "#/components/schemas/CardReversalTransaction_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    CardTransaction:
+      description: "A transaction that represents various card transactions that are\
+        \ not Purchase or ATM transactions. Most commonly, these transactions represent\
+        \ peer-to-peer payments (e.g. Venmo, CashApp) and gig economy employee payouts\
+        \ (ride sharing, deliveries, etc)."
+      example:
+        type: cardTransaction
+        id: "410"
+        attributes:
+          createdAt: 2020-09-20T12:41:43.360Z
+          direction: Debit
+          amount: 10
+          balance: 89480
+          summary: Card transaction details
+          cardLast4Digits: "2282"
+          merchant:
+            name: Europcar Mobility Group
+            type: 3381
+            category: EUROP CAR
+            location: "Cupertino, CA"
+            id: "029859000085093"
+          recurring: false
+          interchange: "2.43"
+          grossInterchange: "200.00"
+          paymentMethod: Contactless
+          digitalWallet: Apple
+          cardVerificationData:
+            verificationMethod: CVV2
+          cardNetwork: Visa
+          cardDecisionSource: Org
+        relationships:
+          account:
+            data:
+              type: account
+              id: "10001"
+          customer:
+            data:
+              type: customer
+              id: "1001"
+          card:
+            data:
+              type: card
+              id: "11"
+      properties:
+        type:
+          enum:
+          - cardTransaction
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CardTransaction_attributes"
+        relationships:
+          $ref: "#/components/schemas/CardTransaction_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    CashDepositTransaction:
+      description: "`CashDepositTransaction` is a JSON:API resource, top-level fields:"
+      example:
+        type: cashDepositTransaction
+        id: "1523"
+        attributes:
+          createdAt: 2020-07-05T15:49:36.864Z
+          direction: Credit
+          amount: 10000
+          balance: 12000
+          summary: Cash deposit at Walgreens | Via card ending with 1234
+        relationships:
+          account:
+            data:
+              type: depositAccount
+              id: "1000"
+          customer:
+            data:
+              type: customer
+              id: "3"
+      properties:
+        type:
+          enum:
+          - cashDepositTransaction
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CashDepositTransaction_attributes"
+        relationships:
+          $ref: "#/components/schemas/AccountEndOfDay_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    ChargebackTransaction:
+      description: '`chargebackTransaction` is a type of transaction that is generated
+        when a Chargeback request is initiated.'
+      example:
+        type: chargebackTransaction
+        id: "9547"
+        attributes:
+          createdAt: 2020-07-05T15:49:36.864Z
+          direction: Debit
+          amount: 1000
+          balance: 12000
+          summary: "Chargeback for dispute #1337"
+          counterparty:
+            name: Jane Smith
+            routingNumber: "812345678"
+            accountNumber: "10039"
+            accountType: Checking
+          tags:
+            internalId: abc1345
+        relationships:
+          account:
+            data:
+              type: account
+              id: "10035"
+          customer:
+            data:
+              type: customer
+              id: "10000"
+          customers:
+            data:
+            - type: customer
+              id: "10000"
+          counterpartyAccount:
+            data:
+              type: account
+              id: "10036"
+          chargeback:
+            data:
+              type: chargeback
+              id: "10530"
+      properties:
+        type:
+          enum:
+          - chargebackTransaction
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/ChargebackTransaction_attributes"
+        relationships:
+          $ref: "#/components/schemas/ChargebackTransaction_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    CheckDepositTransaction:
+      description: "`CheckDepositTransaction` is a JSON:API resource, top-level fields:"
+      example:
+        data:
+          type: checkDepositTransaction
+          id: "264"
+          attributes:
+            createdAt: 2021-06-06T07:21:51.467Z
+            amount: 200
+            direction: Credit
+            balance: 371600
+            summary: Check deposit
+          relationships:
+            account:
+              data:
+                type: account
+                id: "10001"
+            customer:
+              data:
+                type: customer
+                id: "10000"
+            checkDeposit:
+              data:
+                type: checkDeposit
+                id: "122"
+      properties:
+        type:
+          enum:
+          - checkDepositTransaction
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CheckDepositTransaction_attributes"
+        relationships:
+          $ref: "#/components/schemas/CheckDepositTransaction_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    CheckPaymentTransaction:
+      description: "`CheckPaymentTransaction` is a JSON:API resource, top-level fields:"
+      example:
+        type: checkPaymentTransaction
+        id: "7"
+        attributes:
+          createdAt: 2023-02-21T11:40:55.442Z
+          amount: 299991
+          direction: Debit
+          balance: -1
+          summary: Check Payment | 0322
+        relationships:
+          account:
+            data:
+              type: account
+              id: "10002"
+          customer:
+            data:
+              type: customer
+              id: "10005"
+          customers:
+            data:
+            - type: customer
+              id: "10005"
+          checkPayment:
+            data:
+              type: checkPayment
+              id: "5"
+      properties:
+        type:
+          enum:
+          - checkPaymentTransaction
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CheckDepositTransaction_attributes"
+        relationships:
+          $ref: "#/components/schemas/CheckPaymentTransaction_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    DishonoredACHTransaction:
+      description: "A dishonored ACH transaction is a relatively uncommon transaction\
+        \ type, that happens when Unit attempts to return a received ACH, but the\
+        \ originating bank decides not to return the funds. This typically happens\
+        \ when the return is not in compliance with the NACHA rules (e.g. 3 days after\
+        \ the payment took place when the network rules define a maximum of 2 days)."
+      example:
+        type: dishonoredAchTransaction
+        id: "423"
+        attributes:
+          createdAt: 2021-03-11T12:24:51.360Z
+          direction: Debit
+          amount: 61000
+          balance: 0
+          summary: "Company: Unit Inc | Description: Payment from Unit Inc."
+          description: Payment from Unit Inc.
+          companyName: Unit Inc
+          counterpartyRoutingNumber: "812345678"
+          traceNumber: "021214860002342"
+          secCode: WEB
+        relationships:
+          account:
+            data:
+              type: account
+              id: "1"
+          customer:
+            data:
+              type: customer
+              id: "3"
+      properties:
+        type:
+          enum:
+          - dishonoredAchTransaction
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/DishonoredACHTransaction_attributes"
+        relationships:
+          $ref: "#/components/schemas/AccountEndOfDay_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    DisputeTransaction:
+      description: "`DisputeTransaction` is a JSON:API resource, top-level fields:"
+      example:
+        type: disputeTransaction
+        id: "226"
+        attributes:
+          createdAt: 2021-04-19T12:44:08.055Z
+          amount: 2500
+          direction: Credit
+          balance: 550000
+          summary: Dispute 119 | Provisional Credit
+          reason: ProvisionalCredit
+        relationships:
+          account:
+            data:
+              type: account
+              id: "10001"
+          customer:
+            data:
+              type: customer
+              id: "10000"
+          disputedTransaction:
+            data:
+              type: transaction
+              id: "6"
+      properties:
+        type:
+          enum:
+          - disputeTransaction
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/DisputeTransaction_attributes"
+        relationships:
+          $ref: "#/components/schemas/DisputeTransaction_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    FeeReversalTransaction:
+      description: "`FeeReversalTransaction` is a JSON:API resource, top-level fields:"
+      example:
+        data:
+          type: feeReversalTransaction
+          id: "265"
+          attributes:
+            createdAt: 2021-06-06T07:23:30.101Z
+            amount: 200
+            direction: Debit
+            balance: 3716500
+            summary: "Reversal fee transaction for #122 | Moves Card Replacement Fee"
+          relationships:
+            account:
+              data:
+                type: account
+                id: "10001"
+            customer:
+              data:
+                type: customer
+                id: "10000"
+            relatedTransaction:
+              data:
+                type: transaction
+                id: "122"
+      properties:
+        type:
+          enum:
+          - feeReversalTransaction
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CheckDepositTransaction_attributes"
+        relationships:
+          $ref: "#/components/schemas/FeeReversalTransaction_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    FeeTransaction:
+      description: "`FeeTransaction` is a JSON:API resource, top-level fields:"
+      example:
+        type: feeTransaction
+        id: "388"
+        attributes:
+          createdAt: 2020-09-08T12:41:43.360Z
+          direction: Debit
+          amount: 10
+          balance: 89980
+          summary: "Payment fee for transaction #4"
+        relationships:
+          account:
+            data:
+              type: account
+              id: "10001"
+          customer:
+            data:
+              type: customer
+              id: "3"
+          relatedTransaction:
+            data:
+              type: transaction
+              id: "4"
+      properties:
+        type:
+          enum:
+          - feeTransaction
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CheckDepositTransaction_attributes"
+        relationships:
+          $ref: "#/components/schemas/FeeReversalTransaction_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    InterestShareTransaction:
+      description: "`interestShareTransaction` is a JSON:API resource, top-level fields:"
+      example:
+        data:
+          type: interestShareTransaction
+          id: "12345"
+          attributes:
+            createdAt: 2021-09-01T04:08:33.250Z
+            amount: 1
+            direction: Credit
+            balance: 7
+            summary: Interest Share August 2021
+          relationships:
+            account:
+              data:
+                type: account
+                id: "1"
+            customer:
+              data:
+                type: customer
+                id: "24"
+            customers:
+              data:
+              - type: customer
+                id: "24"
+            org:
+              data:
+                type: org
+                id: "1"
+      properties:
+        type:
+          enum:
+          - interestShareTransaction
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CheckDepositTransaction_attributes"
+        relationships:
+          $ref: "#/components/schemas/InterestShareTransaction_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    InterestTransaction:
+      description: "`InterestTransaction` is a JSON:API resource, top-level fields:"
+      example:
+        type: interestTransaction
+        id: "9547"
+        attributes:
+          createdAt: 2020-07-05T15:49:36.864Z
+          direction: Credit
+          amount: 1000
+          balance: 12000
+          summary: Interest March 2020
+        relationships:
+          account:
+            data:
+              type: depositAccount
+              id: "10035"
+          customer:
+            data:
+              type: customer
+              id: "5"
+      properties:
+        type:
+          enum:
+          - interestTransaction
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CheckDepositTransaction_attributes"
+        relationships:
+          $ref: "#/components/schemas/AccountEndOfDay_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    NegativeBalanceCoverageTransaction:
+      description: "`negativeBalanceCoverageTransaction` is a JSON:API resource, top-level\
+        \ fields:"
+      example:
+        type: negativeBalanceCoverageTransaction
+        id: "97"
+        attributes:
+          createdAt: 2022-07-18T13:56:05.385Z
+          amount: 2005
+          direction: Credit
+          balance: 0
+          summary: Negative balance coverage of account 10014
+        relationships:
+          account:
+            data:
+              type: account
+              id: "10014"
+          customer:
+            data:
+              type: customer
+              id: "10009"
+          customers:
+            data:
+            - type: customer
+              id: "10009"
+      properties:
+        type:
+          enum:
+          - negativeBalanceCoverageTransaction
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CheckDepositTransaction_attributes"
+        relationships:
+          $ref: "#/components/schemas/AccountEndOfDay_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    OriginatedACHTransaction:
+      description: "`OriginatedAchTransaction` is a JSON:API resource, top-level fields:"
+      example:
+        type: originatedAchTransaction
+        id: "1"
+        attributes:
+          createdAt: 2020-09-06T07:51:02.570Z
+          direction: Credit
+          amount: 10000
+          balance: 10000
+          summary: Unit Inc | Initial account funding
+          description: Funding
+          addenda: Initial account funding
+          counterparty:
+            name: Unit Inc
+            routingNumber: "812345678"
+            accountNumber: "1"
+            accountType: Checking
+          secCode: WEB
+          traceNumber: "812345670000123"
+        relationships:
+          account:
+            data:
+              type: account
+              id: "10001"
+          customer:
+            data:
+              type: customer
+              id: "3"
+          payment:
+            data:
+              type: payment
+              id: "5"
+      properties:
+        type:
+          enum:
+          - originatedAchTransaction
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/OriginatedACHTransaction_attributes"
+        relationships:
+          $ref: "#/components/schemas/OriginatedACHTransaction_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    PaymentAdvanceTransaction:
+      description: "`PaymentAdvanceTransaction` is a JSON:API resource, top-level\
+        \ fields:"
+      example:
+        type: paymentAdvanceTransaction
+        id: "226"
+        attributes:
+          createdAt: 2021-04-19T12:44:08.055Z
+          amount: 2500
+          direction: Debit
+          balance: 550000
+          summary: Advance for ReceivedPayment with id 6
+          tags:
+            trackingId: 106a75e9-de77-4e25-9561-faffe59d7814
+        relationships:
+          account:
+            data:
+              type: account
+              id: "10001"
+          customer:
+            data:
+              type: customer
+              id: "10000"
+            receivedPayment:
+              data:
+                type: receivedPayment
+                id: "6"
+      properties:
+        type:
+          enum:
+          - paymentAdvanceTransaction
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/PaymentAdvanceTransaction_attributes"
+        relationships:
+          $ref: "#/components/schemas/PaymentAdvanceTransaction_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    PaymentCanceledTransaction:
+      description: The transaction represents an originated ACH that has been canceled
+        by its originator prior to its transmission to the ACH network.
+      example:
+        type: paymentCanceledTransaction
+        id: "185"
+        attributes:
+          createdAt: 2022-02-02T13:11:22.404Z
+          amount: 7000
+          direction: Credit
+          balance: 1702108
+          summary: "Cancellation of: 184  |  Payment Id: 18"
+        relationships:
+          account:
+            data:
+              type: account
+              id: "10002"
+          customer:
+            data:
+              type: customer
+              id: "10001"
+          customers:
+            data:
+            - type: customer
+              id: "10001"
+          relatedTransaction:
+            data:
+              type: transaction
+              id: "184"
+      properties:
+        type:
+          enum:
+          - paymentCanceledTransaction
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CheckDepositTransaction_attributes"
+        relationships:
+          $ref: "#/components/schemas/PaymentCanceledTransaction_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    PurchaseTransaction:
+      description: "`PurchaseTransaction` is a JSON:API resource, top-level fields:"
+      example:
+        type: purchaseTransaction
+        id: "51"
+        attributes:
+          createdAt: 2020-09-08T12:41:43.360Z
+          direction: Debit
+          amount: 2500
+          balance: 10523
+          summary: Car rental
+          cardLast4Digits: "2282"
+          merchant:
+            name: Europcar Mobility Group
+            type: 3381
+            category: EUROP CAR
+            location: "Cupertino, CA"
+            id: "029859000085093"
+          coordinates:
+            longitude: -77.0364
+            latitude: 38.8951
+          recurring: false
+          interchange: "2.43"
+          grossInterchange: "200.00"
+          ecommerce: false
+          cardPresent: true
+          paymentMethod: Contactless
+          digitalWallet: Apple
+          cardVerificationData:
+            verificationMethod: CVV2
+          cardNetwork: Visa
+          cardDecisionSource: Org
+        relationships:
+          account:
+            data:
+              type: account
+              id: "10001"
+          customer:
+            data:
+              type: customer
+              id: "3"
+          card:
+            data:
+              type: card
+              id: "11"
+          authorization:
+            data:
+              type: authorization
+              id: "40"
+      properties:
+        type:
+          enum:
+          - purchaseTransaction
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/PurchaseTransaction_attributes"
+        relationships:
+          $ref: "#/components/schemas/PurchaseTransaction_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    PushToCardReversalTransaction:
+      description: "`PushToCardReversalTransaction` is a JSON:API resource, top-level\
+        \ fields:"
+      example:
+        data:
+          type: pushToCardReversalTransaction
+          id: "7"
+          attributes:
+            createdAt: 2023-05-22T08:04:43.692Z
+            amount: 500005
+            direction: Credit
+            balance: 1499947
+            summary: "Push to card transaction reversal for original transaction #6\
+              \ | My Unit Account to Card Routine #900-5"
+            tags: {}
+          relationships:
+            account:
+              data:
+                type: account
+                id: "10003"
+            customer:
+              data:
+                type: customer
+                id: "10003"
+            customers:
+              data:
+              - type: customer
+                id: "10003"
+            org:
+              data:
+                type: org
+                id: "1"
+            payment:
+              data:
+                type: payment
+                id: "1005"
+            originalTransaction:
+              data:
+                type: originalTransaction
+                id: "6"
+      properties:
+        type:
+          enum:
+          - pushToCardReversalTransaction
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CashDepositTransaction_attributes"
+        relationships:
+          $ref: "#/components/schemas/PushToCardReversalTransaction_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    PushToCardTransaction:
+      description: "`PushToCardTransaction` is a JSON:API resource, top-level fields:"
+      example:
+        data:
+          type: pushToCardTransaction
+          id: "777"
+          attributes:
+            createdAt: 2023-03-23T13:56:04.200Z
+            amount: 501
+            direction: Debit
+            balance: 10619
+            summary: "My Unit Account to Card Routine #2"
+            tags: {}
+          relationships:
+            account:
+              data:
+                type: account
+                id: "42"
+            customer:
+              data:
+                type: customer
+                id: "28"
+            customers:
+              data:
+              - type: customer
+                id: "19"
+            org:
+              data:
+                type: org
+                id: "1"
+            payment:
+              data:
+                type: payment
+                id: "68"
+      properties:
+        type:
+          enum:
+          - pushToCardTransaction
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CashDepositTransaction_attributes"
+        relationships:
+          $ref: "#/components/schemas/PushToCardTransaction_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    ReceivedACHTransaction:
+      description: "`ReceivedAchTransaction` is a JSON:API resource, top-level fields:"
+      example:
+        type: receivedAchTransaction
+        id: "4"
+        attributes:
+          createdAt: 2020-09-08T12:41:43.360Z
+          direction: Debit
+          amount: 80000
+          balance: 90000
+          summary: "Company: Unit Inc | Description: Payment from Unit Inc."
+          description: Payment from Unit Inc.
+          companyName: Unit Inc
+          counterpartyRoutingNumber: "812345678"
+          traceNumber: "021214860002342"
+          secCode: WEB
+        relationships:
+          account:
+            data:
+              type: account
+              id: "1"
+          customer:
+            data:
+              type: customer
+              id: "3"
+      properties:
+        type:
+          enum:
+          - receivedAchTransaction
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/ReceivedACHTransaction_attributes"
+        relationships:
+          $ref: "#/components/schemas/AccountEndOfDay_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    ReleaseTransaction:
+      description: "`ReleaseTransaction` is a JSON:API resource, top-level fields:"
+      example:
+        type: releaseTransaction
+        id: "258"
+        attributes:
+          createdAt: 2020-12-08T15:38:07.394Z
+          senderName: Richard Hendricks
+          senderAddress:
+            street: 5230 Newell Rd
+            city: Palo Alto
+            state: CA
+            postalCode: "94303"
+            country: US
+          senderAccountNumber: "123456798"
+          counterparty:
+            name: BatchAccount15
+            routingNumber: "812345678"
+            accountNumber: "1000000096"
+            accountType: Checking
+          amount: 1000
+          direction: Credit
+          description: First Payment
+          balance: 1000
+          summary: First Payment  |  Richard Hendricks
+        relationships:
+          account:
+            data:
+              type: account
+              id: "10097"
+      properties:
+        type:
+          enum:
+          - releaseTransaction
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/ReleaseTransaction_attributes"
+        relationships:
+          $ref: "#/components/schemas/Fee_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    RepaidPaymentAdvanceTransaction:
+      description: "`RepaidPaymentAdvanceTransaction` is a JSON:API resource, top-level\
+        \ fields:"
+      example:
+        type: repaidPaymentAdvanceTransaction
+        id: "226"
+        attributes:
+          createdAt: 2021-04-19T12:44:08.055Z
+          amount: 2500
+          direction: Credit
+          balance: 550000
+          summary: Repayment for Advance Transaction with id 101 of ReceivedPayment
+            with id 6
+          tags:
+            trackingId: 106a75e9-de77-4e25-9561-faffe59d7814
+        relationships:
+          account:
+            data:
+              type: account
+              id: "10001"
+          customer:
+            data:
+              type: customer
+              id: "10000"
+            receivedPayment:
+              data:
+                type: receivedPayment
+                id: "6"
+            paymentAdvanceTransaction:
+              data:
+                type: transaction
+                id: "101"
+      properties:
+        type:
+          enum:
+          - repaidPaymentAdvanceTransaction
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/RepaidPaymentAdvanceTransaction_attributes"
+        relationships:
+          $ref: "#/components/schemas/RepaidPaymentAdvanceTransaction_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    ReturnedACHTransaction:
+      description: "`ReturnedAchTransaction` is a JSON:API resource, top-level fields:"
+      example:
+        type: returnedAchTransaction
+        id: "4"
+        attributes:
+          createdAt: 2020-09-08T12:41:43.360Z
+          direction: Debit
+          amount: 1000
+          balance: 9000
+          summary: "Return due to: NoAccount | Counterparty: Unit Inc"
+          companyName: Unit Inc
+          counterpartyName: Unit Inc
+          counterpartyRoutingNumber: "812345678"
+          reason: NoAccount
+        relationships:
+          account:
+            data:
+              type: account
+              id: "1"
+          customer:
+            data:
+              type: customer
+              id: "3"
+          payment:
+            data:
+              type: payment
+              id: "1"
+      properties:
+        type:
+          enum:
+          - returnedAchTransaction
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/ReturnedACHTransaction_attributes"
+        relationships:
+          $ref: "#/components/schemas/ReturnedACHTransaction_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    ReturnedCheckDepositTransaction:
+      description: "`ReturnedCheckDepositTransaction` is a JSON:API resource, top-level\
+        \ fields:"
+      example:
+        data:
+          type: returnedCheckDepositTransaction
+          id: "265"
+          attributes:
+            createdAt: 2021-06-06T07:23:30.101Z
+            amount: 200
+            direction: Debit
+            balance: 3716500
+            summary: "Returned due to: Insufficient Funds  |  Check deposit"
+            reason: Insufficient Funds
+          relationships:
+            account:
+              data:
+                type: account
+                id: "10001"
+            customer:
+              data:
+                type: customer
+                id: "10000"
+            checkDeposit:
+              data:
+                type: checkDeposit
+                id: "122"
+      properties:
+        type:
+          enum:
+          - returnedCheckDepositTransaction
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/ReturnedCheckDepositTransaction_attributes"
+        relationships:
+          $ref: "#/components/schemas/CheckDepositTransaction_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    ReturnedCheckPaymentTransaction:
+      description: "`ReturnedCheckPaymentTransaction` is a JSON:API resource, top-level\
+        \ fields:"
+      example:
+        type: returnedCheckPaymentTransaction
+        id: "8"
+        attributes:
+          createdAt: 2023-02-21T11:40:55.442Z
+          amount: 299991
+          direction: Credit
+          balance: 299990
+          summary: "Returned Check Payment transaction #7 due to: Stop Payment"
+          returnReason: StopPayment
+        relationships:
+          account:
+            data:
+              type: account
+              id: "10002"
+          customer:
+            data:
+              type: customer
+              id: "10005"
+          customers:
+            data:
+            - type: customer
+              id: "10005"
+          checkPayment:
+            data:
+              type: checkPayment
+              id: "5"
+          returned:
+            data:
+              type: transaction
+              id: "7"
+      properties:
+        type:
+          enum:
+          - returnedCheckPaymentTransaction
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/ReturnedCheckPaymentTransaction_attributes"
+        relationships:
+          $ref: "#/components/schemas/CheckPaymentTransaction_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    ReturnedReceivedACHTransaction:
+      description: "The transaction represents a received ACH that has been returned,\
+        \ automatically by Unit (e.g insufficient funds), by a dispute, or manually\
+        \ via a Return Received ACH."
+      example:
+        type: returnedReceivedAchTransaction
+        id: "4"
+        attributes:
+          createdAt: 2020-09-08T12:41:43.360Z
+          direction: Debit
+          amount: 1000
+          balance: 500
+          summary: "Returned received ACH transaction #55 due to: Account has insufficient\
+            \ funds"
+          companyName: John Doe
+          reason: InsufficientFunds
+        relationships:
+          account:
+            data:
+              type: account
+              id: "1"
+          customer:
+            data:
+              type: customer
+              id: "3"
+          returned:
+            data:
+              type: transaction
+              id: "55"
+      properties:
+        type:
+          enum:
+          - returnedReceivedAchTransaction
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/ReturnedReceivedACHTransaction_attributes"
+        relationships:
+          $ref: "#/components/schemas/ReturnedReceivedACHTransaction_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    ReturnedWireTransaction:
+      description: "`ReturnedWireTransaction` is a JSON:API resource, top-level fields:"
+      example:
+        data:
+          type: returnedWireTransaction
+          id: "265"
+          attributes:
+            createdAt: 2021-06-06T07:23:30.101Z
+            amount: 200
+            direction: Debit
+            balance: 3716500
+            summary: "Returned due to: NAMEMISSMATCH |  420 E Polk St., Phoenix, AZ\
+              \ -Part Commission"
+            reason: Insufficient Funds
+            imad: "123456"
+            omad: "654321"
+          relationships:
+            account:
+              data:
+                type: account
+                id: "10001"
+            customer:
+              data:
+                type: customer
+                id: "10000"
+            payment:
+              data:
+                type: payment
+                id: "122"
+      properties:
+        type:
+          enum:
+          - returnedWireTransaction
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/ReturnedWireTransaction_attributes"
+        relationships:
+          $ref: "#/components/schemas/ReturnedACHTransaction_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    RewardTransaction:
+      description: A `rewardTransaction` represents a successful reward creation.
+      example:
+        data:
+          type: rewardTransaction
+          id: "51"
+          attributes:
+            createdAt: 2022-04-05T10:46:34.371Z
+            receiverCounterparty:
+              name: Unit Finance Inc.
+              routingNumber: "091311229"
+              accountNumber: "864800000000"
+              accountType: Checking
+            amount: 800
+            direction: Credit
+            balance: 113000
+            summary: My Reward 8
+            tags:
+              customer_type: vip
+          relationships:
+            account:
+              data:
+                type: account
+                id: "10001"
+            customer:
+              data:
+                type: customer
+                id: "10000"
+            customers:
+              data:
+              - type: customer
+                id: "10000"
+            org:
+              data:
+                type: org
+                id: "1"
+            reward:
+              data:
+                type: reward
+                id: "1"
+            receiverAccount:
+              data:
+                type: account
+                id: "10000"
+      properties:
+        type:
+          enum:
+          - rewardTransaction
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/RewardTransaction_attributes"
+        relationships:
+          $ref: "#/components/schemas/RewardTransaction_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    WireTransaction:
+      description: "`WireTransaction` is a JSON:API resource, top-level fields:"
+      example:
+        type: wireTransaction
+        id: "9547"
+        attributes:
+          createdAt: 2020-07-05T15:49:36.864Z
+          direction: Credit
+          amount: 1000
+          balance: 12000
+          summary: Wire to Jane Smith
+          imadOmad:
+            imad: "123456"
+            omad: "654321"
+          counterparty:
+            name: Jane Smith
+            routingNumber: "812345678"
+            accountNumber: "10039"
+            accountType: Checking
+        relationships:
+          account:
+            data:
+              type: depositAccount
+              id: "10035"
+          customer:
+            data:
+              type: customer
+              id: "5"
+      properties:
+        type:
+          enum:
+          - wireTransaction
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/WireTransaction_attributes"
+        relationships:
+          $ref: "#/components/schemas/AccountEndOfDay_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    WriteOffTransaction:
+      description: "`writeOffTransaction` is a JSON:API resource, top-level fields:"
+      example:
+        type: writeOffTransaction
+        id: "98"
+        attributes:
+          createdAt: 2023-08-15T14:23:45.385Z
+          amount: 3500
+          direction: Credit
+          balance: 0
+          summary: Write off for account 10014
+        relationships:
+          account:
+            data:
+              type: account
+              id: "10014"
+          customer:
+            data:
+              type: customer
+              id: "10009"
+          customers:
+            data:
+            - type: customer
+              id: "10009"
+      properties:
+        type:
+          enum:
+          - writeOffTransaction
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CheckDepositTransaction_attributes"
+        relationships:
+          $ref: "#/components/schemas/AccountEndOfDay_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    UpdateBookTransactionData:
+      properties:
+        type:
+          enum:
+          - bookTransaction
+          type: string
+        attributes:
+          $ref: "#/components/schemas/UpdateBookTransactionData_attributes"
+        relationships:
+          $ref: "#/components/schemas/CreateFeeData_relationships"
+      required:
+      - attributes
+      - relationships
+      - type
+      type: object
+    UpdateBookTransactionRequest:
+      properties:
+        data:
+          $ref: "#/components/schemas/UpdateBookTransactionData"
+      required:
+      - data
+      type: object
+    UpdateChargebackTransactionData:
+      properties:
+        type:
+          enum:
+          - chargebackTransaction
+          type: string
+        attributes:
+          $ref: "#/components/schemas/UpdateChargebackTransactionData_attributes"
+        relationships:
+          $ref: "#/components/schemas/CreateFeeData_relationships"
+      required:
+      - attributes
+      - relationships
+      - type
+      type: object
+    UpdateChargebackTransactionRequest:
+      properties:
+        data:
+          $ref: "#/components/schemas/UpdateChargebackTransactionData"
+      required:
+      - data
+      type: object
+    UpdateTagsData:
+      properties:
+        type:
+          enum:
+          - transaction
+          type: string
+        attributes:
+          $ref: "#/components/schemas/UpdateTagsData_attributes"
+      required:
+      - attributes
+      - type
+      type: object
+    UpdateTagsRequest:
+      properties:
+        data:
+          $ref: "#/components/schemas/UpdateTagsData"
+      required:
+      - data
+      type: object
     list_200_response_data_inner:
       discriminator:
         mapping:
@@ -7742,6 +9862,55 @@ components:
       properties:
         data:
           $ref: "#/components/schemas/replaceCard_200_response_data"
+      required:
+      - data
+      type: object
+    listTransactions_200_response_included_inner:
+      discriminator:
+        mapping:
+          depositAccount: "#/components/schemas/DepositAccount"
+          creditAccount: "#/components/schemas/CreditAccount"
+        propertyName: type
+      oneOf:
+      - $ref: "#/components/schemas/DepositAccount"
+      - $ref: "#/components/schemas/CreditAccount"
+    listTransactions_200_response:
+      properties:
+        data:
+          description: Array of transaction resources.
+          items:
+            $ref: "#/components/schemas/Transaction"
+          type: array
+        included:
+          description: Array of resources requested by the include query parameter.
+          items:
+            $ref: "#/components/schemas/listTransactions_200_response_included_inner"
+          type: array
+        meta:
+          $ref: "#/components/schemas/Meta"
+      required:
+      - data
+      type: object
+    updateTransaction_request:
+      oneOf:
+      - $ref: "#/components/schemas/UpdateBookTransactionRequest"
+      - $ref: "#/components/schemas/UpdateChargebackTransactionRequest"
+    updateTransaction_200_response:
+      properties:
+        data:
+          $ref: "#/components/schemas/Transaction"
+      required:
+      - data
+      type: object
+    getTransaction_200_response:
+      properties:
+        data:
+          $ref: "#/components/schemas/Transaction"
+        included:
+          description: Array of resources requested by the include query parameter.
+          items:
+            $ref: "#/components/schemas/listTransactions_200_response_included_inner"
+          type: array
       required:
       - data
       type: object
@@ -10953,6 +13122,1538 @@ components:
           type: string
       required:
       - status
+      type: object
+    RichMerchantDataType_categories_inner:
+      properties:
+        name:
+          type: string
+        icon:
+          type: string
+      type: object
+    RichMerchantDataType_address:
+      description: Address of the merchant.
+      properties:
+        street:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        country:
+          type: string
+      type: object
+    AccountLowBalanceClosureTransaction_attributes:
+      properties:
+        createdAt:
+          description: The date the transaction was created. Common to all transaction
+            types.
+          format: date-time
+          type: string
+        direction:
+          description: The direction in which the funds flow. Common to all transaction
+            types.
+          type: string
+        amount:
+          description: The amount (cents) of the transaction. Common to all transaction
+            types.
+          type: integer
+        balance:
+          description: The account balance (cents) after the transaction. Common to
+            all transaction types.
+          type: integer
+        summary:
+          description: Summary of the transaction. Common to all transaction types.
+          type: string
+        receiverCounterparty:
+          allOf:
+          - $ref: "#/components/schemas/CounterpartyType"
+          description: The receiving party of the transaction.
+        tags:
+          additionalProperties: true
+          description: See Tags. Inherited from the payment tags (see Tag Inheritance).
+          type: object
+      required:
+      - amount
+      - balance
+      - createdAt
+      - direction
+      - receiverCounterparty
+      - summary
+      - tags
+      type: object
+    AccountLowBalanceClosureTransaction_relationships:
+      properties:
+        account:
+          $ref: "#/components/schemas/Relationship"
+        customer:
+          $ref: "#/components/schemas/Relationship"
+        customers:
+          $ref: "#/components/schemas/Relationship"
+        receiverAccount:
+          $ref: "#/components/schemas/Relationship"
+      type: object
+    AdjustmentTransaction_attributes:
+      properties:
+        createdAt:
+          description: The date the transaction was created. Common to all transaction
+            types.
+          format: date-time
+          type: string
+        direction:
+          description: The direction in which the funds flow. Common to all transaction
+            types.
+          type: string
+        amount:
+          description: The amount (cents) of the transaction. Common to all transaction
+            types.
+          type: integer
+        balance:
+          description: The account balance (cents) after the transaction. Common to
+            all transaction types.
+          type: integer
+        summary:
+          description: Summary of the transaction. Common to all transaction types.
+          type: string
+        description:
+          description: Description of the transaction.
+          type: string
+        tags:
+          additionalProperties: true
+          description: See Tags.
+          type: object
+      required:
+      - amount
+      - balance
+      - createdAt
+      - description
+      - direction
+      - summary
+      - tags
+      type: object
+    ATMTransaction_attributes:
+      properties:
+        createdAt:
+          description: The date the transaction was created. Common to all transaction
+            types.
+          format: date-time
+          type: string
+        direction:
+          description: The direction in which the funds flow. Common to all transaction
+            types.
+          type: string
+        amount:
+          description: "The amount (cents) of the transaction, including the surcharge\
+            \ fee. Common to all transaction types."
+          type: integer
+        balance:
+          description: The account balance (cents) after the transaction. Common to
+            all transaction types.
+          type: integer
+        summary:
+          description: Summary of the transaction. Common to all transaction types.
+          type: string
+        cardLast4Digits:
+          description: The last 4 digits of the debit card involved in the transaction.
+          type: string
+        atmName:
+          description: The name of the ATM.
+          type: string
+        atmLocation:
+          description: "The location (city, state, etc.) of the ATM."
+          type: string
+        surcharge:
+          description: The surcharge fee (cents) for the transaction.
+          type: number
+        interchange:
+          description: "The interchange share for this transaction. Calculated at\
+            \ the end of each day, see the transaction.updated event."
+          type: string
+        grossInterchange:
+          description: The gross interchange share for this transaction.
+          type: string
+        cardNetwork:
+          description: "The card network used, one of: Visa, Interlink, Accel, Allpoint,\
+            \ Other."
+          type: string
+        tags:
+          additionalProperties: true
+          description: See Tags.
+          type: object
+        currencyConversion:
+          allOf:
+          - $ref: "#/components/schemas/CurrencyConversionType"
+          description: When original currency for transaction is not USD.
+        cardDecisionSource:
+          description: "Who made the final card authorization decision. See Understanding\
+            \ authorization decisions. One of Org, Unit, Network, TimeoutApprove,\
+            \ TimeoutDecline, DefaultApprove, InternalError, IssuerStandIn."
+          type: string
+      required:
+      - amount
+      - atmName
+      - balance
+      - cardLast4Digits
+      - createdAt
+      - direction
+      - summary
+      - surcharge
+      - tags
+      type: object
+    ATMTransaction_relationships:
+      properties:
+        account:
+          $ref: "#/components/schemas/Relationship"
+        customer:
+          $ref: "#/components/schemas/Relationship"
+        customers:
+          $ref: "#/components/schemas/Relationship"
+        card:
+          $ref: "#/components/schemas/Relationship"
+      type: object
+    BookTransaction_attributes:
+      properties:
+        createdAt:
+          description: The date the transaction was created. Common to all transaction
+            types.
+          format: date-time
+          type: string
+        direction:
+          description: The direction in which the funds flow. Common to all transaction
+            types.
+          type: string
+        amount:
+          description: The amount (cents) of the transaction. Common to all transaction
+            types.
+          type: integer
+        balance:
+          description: The account balance (cents) after the transaction. Common to
+            all transaction types.
+          type: integer
+        summary:
+          description: Summary of the transaction. Common to all transaction types.
+          type: string
+        counterparty:
+          allOf:
+          - $ref: "#/components/schemas/CounterpartyType"
+          description: The party on the other end of the transaction.
+        tags:
+          additionalProperties: true
+          description: See Tags. Inherited from the payment tags (see Tag Inheritance).
+          type: object
+      required:
+      - amount
+      - balance
+      - counterparty
+      - createdAt
+      - direction
+      - summary
+      - tags
+      type: object
+    BookTransaction_relationships:
+      properties:
+        account:
+          $ref: "#/components/schemas/Relationship"
+        customer:
+          $ref: "#/components/schemas/Relationship"
+        customers:
+          $ref: "#/components/schemas/Relationship"
+        counterpartyAccount:
+          $ref: "#/components/schemas/Relationship"
+        counterpartyCustomer:
+          $ref: "#/components/schemas/Relationship"
+        payment:
+          $ref: "#/components/schemas/Relationship"
+        recurringPayment:
+          $ref: "#/components/schemas/Relationship"
+      type: object
+    CardReversalTransaction_attributes:
+      properties:
+        createdAt:
+          description: The date the transaction was created. Common to all transaction
+            types.
+          format: date-time
+          type: string
+        direction:
+          description: The direction in which the funds flow. Common to all transaction
+            types.
+          type: string
+        amount:
+          description: The amount (cents) of the transaction. Common to all transaction
+            types.
+          type: integer
+        balance:
+          description: The account balance (cents) after the transaction. Common to
+            all transaction types.
+          type: integer
+        summary:
+          description: Summary of the transaction. Common to all transaction types.
+          type: string
+        cardLast4Digits:
+          description: The last 4 digits of the debit card involved in the transaction.
+          type: string
+        tags:
+          additionalProperties: true
+          description: See Tags.
+          type: object
+      required:
+      - amount
+      - balance
+      - cardLast4Digits
+      - createdAt
+      - direction
+      - summary
+      - tags
+      type: object
+    CardReversalTransaction_relationships:
+      properties:
+        account:
+          $ref: "#/components/schemas/Relationship"
+        customer:
+          $ref: "#/components/schemas/Relationship"
+        customers:
+          $ref: "#/components/schemas/Relationship"
+        relatedTransaction:
+          $ref: "#/components/schemas/Relationship"
+        card:
+          $ref: "#/components/schemas/Relationship"
+      type: object
+    CardTransaction_attributes_merchant:
+      properties:
+        name:
+          description: The name of the merchant.
+          type: string
+        type:
+          description: The 4-digit ISO 18245 merchant category code (MCC).
+          type: integer
+        category:
+          description: "The merchant category, described by the MCC code (see this\
+            \ reference for the list of category descriptions)."
+          type: string
+        location:
+          description: "The location (city, state, etc.) of the merchant."
+          type: string
+        id:
+          description: The unique network merchant identifier.
+          type: string
+      type: object
+    CardTransaction_attributes_cardVerificationData:
+      properties:
+        verificationMethod:
+          description: "The verification method used, one of: Address, CVV2, AddressAndCVV2."
+          type: string
+      type: object
+    CardTransaction_attributes:
+      properties:
+        createdAt:
+          description: The date the transaction was created. Common to all transaction
+            types.
+          format: date-time
+          type: string
+        direction:
+          description: The direction in which the funds flow. Common to all transaction
+            types.
+          type: string
+        amount:
+          description: The amount (cents) of the transaction. Common to all transaction
+            types.
+          type: integer
+        balance:
+          description: The account balance (cents) after the transaction. Common to
+            all transaction types.
+          type: integer
+        summary:
+          description: Summary of the transaction. Common to all transaction types.
+          type: string
+        cardLast4Digits:
+          description: The last 4 digits of the debit card involved in the transaction.
+          type: string
+        recurring:
+          description: Indicates whether the transaction is recurring.
+          type: boolean
+        interchange:
+          description: "The interchange share for this transaction. Calculated at\
+            \ the end of each day, see the transaction.updated event."
+          type: string
+        grossInterchange:
+          description: The gross interchange share for this transaction.
+          type: string
+        paymentMethod:
+          description: "The payment method used, one of: Manual, Swipe, Contactless,\
+            \ ChipAndPin, Stored, Other."
+          type: string
+        digitalWallet:
+          description: "The type of digital wallet used, one of: Google, Apple, Other."
+          type: string
+        cardNetwork:
+          description: "The card network used, one of: Visa, Interlink, Accel, Allpoint,\
+            \ Other."
+          type: string
+        richMerchantData:
+          allOf:
+          - $ref: "#/components/schemas/RichMerchantDataType"
+          description: Full merchant information.
+        tags:
+          additionalProperties: true
+          description: See Tags.
+          type: object
+        currencyConversion:
+          allOf:
+          - $ref: "#/components/schemas/CurrencyConversionType"
+          description: When original currency for transaction is not USD.
+        cardDecisionSource:
+          description: "Who made the final card authorization decision. See Understanding\
+            \ authorization decisions. One of Org, Unit, Network, TimeoutApprove,\
+            \ TimeoutDecline, DefaultApprove, InternalError, IssuerStandIn."
+          type: string
+        merchant:
+          $ref: "#/components/schemas/CardTransaction_attributes_merchant"
+        cardVerificationData:
+          $ref: "#/components/schemas/CardTransaction_attributes_cardVerificationData"
+      required:
+      - amount
+      - balance
+      - cardLast4Digits
+      - createdAt
+      - direction
+      - summary
+      - tags
+      type: object
+    CardTransaction_relationships:
+      properties:
+        account:
+          $ref: "#/components/schemas/Relationship"
+        customer:
+          $ref: "#/components/schemas/Relationship"
+        customers:
+          $ref: "#/components/schemas/Relationship"
+        authorization:
+          $ref: "#/components/schemas/Relationship"
+        card:
+          $ref: "#/components/schemas/Relationship"
+      type: object
+    CashDepositTransaction_attributes:
+      properties:
+        createdAt:
+          description: The date the transaction was created. Common to all transaction
+            types.
+          format: date-time
+          type: string
+        direction:
+          description: The direction in which the funds flow. Common to all transaction
+            types.
+          type: string
+        amount:
+          description: The amount (cents) of the transaction. Common to all transaction
+            types.
+          type: integer
+        balance:
+          description: The account balance (cents) after the transaction. Common to
+            all transaction types.
+          type: integer
+        summary:
+          description: Summary of the transaction. Common to all transaction types.
+          type: string
+        tags:
+          additionalProperties: true
+          description: See Tags. Inherited from the payment tags (see Tag Inheritance).
+          type: object
+      required:
+      - amount
+      - balance
+      - createdAt
+      - direction
+      - summary
+      - tags
+      type: object
+    ChargebackTransaction_attributes:
+      properties:
+        createdAt:
+          description: The date the transaction was created. Common to all transaction
+            types.
+          format: date-time
+          type: string
+        direction:
+          description: The direction in which the funds flow. Common to all transaction
+            types.
+          type: string
+        amount:
+          description: The amount (cents) of the transaction. Common to all transaction
+            types.
+          type: integer
+        balance:
+          description: The account balance (cents) after the transaction. Common to
+            all transaction types.
+          type: integer
+        summary:
+          description: "Summary of the transaction. Common to all transaction types,\
+            \ this will be the description of the chargeback."
+          type: string
+        counterparty:
+          allOf:
+          - $ref: "#/components/schemas/CounterpartyType"
+          description: The party on the other end of the transaction.
+        tags:
+          additionalProperties: true
+          description: See Tags. Inherited from the payment tags (see Tag Inheritance).
+          type: object
+      required:
+      - amount
+      - balance
+      - counterparty
+      - createdAt
+      - direction
+      - summary
+      - tags
+      type: object
+    ChargebackTransaction_relationships:
+      properties:
+        account:
+          $ref: "#/components/schemas/Relationship"
+        customer:
+          $ref: "#/components/schemas/Relationship"
+        customers:
+          $ref: "#/components/schemas/Relationship"
+        counterpartyAccount:
+          $ref: "#/components/schemas/Relationship"
+        chargeback:
+          $ref: "#/components/schemas/Relationship"
+      type: object
+    CheckDepositTransaction_attributes:
+      properties:
+        createdAt:
+          description: The date the transaction was created. Common to all transaction
+            types.
+          format: date-time
+          type: string
+        direction:
+          description: The direction in which the funds flow. Common to all transaction
+            types.
+          type: string
+        amount:
+          description: The amount (cents) of the transaction. Common to all transaction
+            types.
+          type: integer
+        balance:
+          description: The account balance (cents) after the transaction. Common to
+            all transaction types.
+          type: integer
+        summary:
+          description: Summary of the transaction. Common to all transaction types.
+          type: string
+        tags:
+          additionalProperties: true
+          description: See Tags.
+          type: object
+      required:
+      - amount
+      - balance
+      - createdAt
+      - direction
+      - summary
+      - tags
+      type: object
+    CheckDepositTransaction_relationships:
+      properties:
+        account:
+          $ref: "#/components/schemas/Relationship"
+        customer:
+          $ref: "#/components/schemas/Relationship"
+        customers:
+          $ref: "#/components/schemas/Relationship"
+        checkDeposit:
+          $ref: "#/components/schemas/Relationship"
+      type: object
+    CheckPaymentTransaction_relationships:
+      properties:
+        account:
+          $ref: "#/components/schemas/Relationship"
+        customer:
+          $ref: "#/components/schemas/Relationship"
+        customers:
+          $ref: "#/components/schemas/Relationship"
+        checkPayment:
+          $ref: "#/components/schemas/Relationship"
+      type: object
+    DishonoredACHTransaction_attributes:
+      properties:
+        createdAt:
+          description: The date the transaction was created. Common to all transaction
+            types.
+          format: date-time
+          type: string
+        direction:
+          description: The direction in which the funds flow. Common to all transaction
+            types.
+          type: string
+        amount:
+          description: The amount (cents) of the transaction. Common to all transaction
+            types.
+          type: integer
+        balance:
+          description: The account balance (cents) after the transaction. Common to
+            all transaction types.
+          type: integer
+        summary:
+          description: Summary of the transaction. Common to all transaction types.
+          type: string
+        description:
+          description: Transaction description.
+          type: string
+        companyName:
+          description: The name by which the originator is known to the receiver.
+          type: string
+        counterpartyRoutingNumber:
+          description: The routing number of the party that originated the ACH payment.
+          type: string
+        traceNumber:
+          description: The ACH Trace Number.
+          type: string
+        reason:
+          description: The reason for the dishonored return.
+          type: string
+        secCode:
+          description: "The 3-letter ACH Standard Entry Class (SEC) Code (e.g. WEB,\
+            \ CCD, PPD, etc.)."
+          type: string
+        tags:
+          additionalProperties: true
+          description: See Tags.
+          type: object
+      required:
+      - amount
+      - balance
+      - companyName
+      - counterpartyRoutingNumber
+      - createdAt
+      - description
+      - direction
+      - reason
+      - summary
+      - tags
+      - traceNumber
+      type: object
+    DisputeTransaction_attributes:
+      properties:
+        createdAt:
+          description: The date the transaction was created. Common to all transaction
+            types.
+          format: date-time
+          type: string
+        direction:
+          description: The direction in which the funds flow. Common to all transaction
+            types.
+          type: string
+        amount:
+          description: The amount (cents) of the transaction. Common to all transaction
+            types.
+          type: integer
+        balance:
+          description: The account balance (cents) after the transaction. Common to
+            all transaction types.
+          type: integer
+        disputeId:
+          description: Unique ID of the dispute that is related to the transaction.
+          type: string
+        summary:
+          description: Summary of the transaction. Common to all transaction types.
+          type: string
+        reason:
+          description: "The reason for the dispute transaction, one of: ProvisionalCredit,\
+            \ ProvisionalCreditReversalDenied, ProvisionalCreditReversalResolved,\
+            \ FinalCredit."
+          type: string
+        tags:
+          additionalProperties: true
+          description: See Tags.
+          type: object
+      required:
+      - amount
+      - balance
+      - createdAt
+      - direction
+      - disputeId
+      - reason
+      - summary
+      - tags
+      type: object
+    DisputeTransaction_relationships:
+      properties:
+        account:
+          $ref: "#/components/schemas/Relationship"
+        customer:
+          $ref: "#/components/schemas/Relationship"
+        customers:
+          $ref: "#/components/schemas/Relationship"
+        disputedTransaction:
+          $ref: "#/components/schemas/Relationship"
+      type: object
+    FeeReversalTransaction_relationships:
+      properties:
+        account:
+          $ref: "#/components/schemas/Relationship"
+        customer:
+          $ref: "#/components/schemas/Relationship"
+        customers:
+          $ref: "#/components/schemas/Relationship"
+        relatedTransaction:
+          $ref: "#/components/schemas/Relationship"
+      type: object
+    InterestShareTransaction_relationships:
+      properties:
+        account:
+          $ref: "#/components/schemas/Relationship"
+        customer:
+          $ref: "#/components/schemas/Relationship"
+        customers:
+          $ref: "#/components/schemas/Relationship"
+        org:
+          $ref: "#/components/schemas/Relationship"
+      type: object
+    OriginatedACHTransaction_attributes:
+      properties:
+        createdAt:
+          description: The date the transaction was created. Common to all transaction
+            types.
+          format: date-time
+          type: string
+        direction:
+          description: The direction in which the funds flow. Common to all transaction
+            types.
+          type: string
+        amount:
+          description: The amount (cents) of the transaction. Common to all transaction
+            types.
+          type: integer
+        balance:
+          description: The account balance (cents) after the transaction. Common to
+            all transaction types.
+          type: integer
+        summary:
+          description: Summary of the transaction. Common to all transaction types.
+          type: string
+        description:
+          description: Transaction description.
+          type: string
+        addenda:
+          description: "Optional, additional transaction description."
+          type: string
+        counterparty:
+          allOf:
+          - $ref: "#/components/schemas/CounterpartyType"
+          description: The party on the other end of the transaction.
+        secCode:
+          description: "The 3-letter ACH Standard Entry Class (SEC) Code. One of WEB,\
+            \ CCD, PPD."
+          type: string
+        traceNumber:
+          description: The 15-digit ACH Trace Number identifies the transaction within
+            the ACH file after transmission.
+          type: string
+        tags:
+          additionalProperties: true
+          description: See Tags. Inherited from the payment tags (see Tag Inheritance).
+          type: object
+      required:
+      - addenda
+      - amount
+      - balance
+      - counterparty
+      - createdAt
+      - description
+      - direction
+      - secCode
+      - summary
+      - tags
+      type: object
+    OriginatedACHTransaction_relationships:
+      properties:
+        account:
+          $ref: "#/components/schemas/Relationship"
+        customer:
+          $ref: "#/components/schemas/Relationship"
+        customers:
+          $ref: "#/components/schemas/Relationship"
+        payment:
+          $ref: "#/components/schemas/Relationship"
+        recurringPayment:
+          $ref: "#/components/schemas/Relationship"
+      type: object
+    PaymentAdvanceTransaction_attributes:
+      properties:
+        createdAt:
+          description: The date the transaction was created. Common to all transaction
+            types.
+          format: date-time
+          type: string
+        direction:
+          description: The direction in which the funds flow. Common to all transaction
+            types. The value is always Debit.
+          type: string
+        amount:
+          description: The amount (cents) of the transaction. Common to all transaction
+            types.
+          type: integer
+        balance:
+          description: The account balance (cents) after the transaction. Common to
+            all transaction types.
+          type: integer
+        summary:
+          description: Summary of the transaction. Common to all transaction types.
+          type: string
+        tags:
+          additionalProperties: true
+          description: See Tags.
+          type: object
+      required:
+      - amount
+      - balance
+      - createdAt
+      - direction
+      - summary
+      - tags
+      type: object
+    PaymentAdvanceTransaction_relationships:
+      properties:
+        account:
+          $ref: "#/components/schemas/Relationship"
+        customer:
+          $ref: "#/components/schemas/Relationship"
+        receivedPayment:
+          $ref: "#/components/schemas/Relationship"
+      type: object
+    PaymentCanceledTransaction_relationships:
+      properties:
+        account:
+          $ref: "#/components/schemas/Relationship"
+        customer:
+          $ref: "#/components/schemas/Relationship"
+        customers:
+          $ref: "#/components/schemas/Relationship"
+        org:
+          $ref: "#/components/schemas/Relationship"
+        relatedTransaction:
+          $ref: "#/components/schemas/Relationship"
+      type: object
+    PurchaseTransaction_attributes_merchant:
+      properties:
+        name:
+          description: The name of the merchant.
+          type: string
+        type:
+          description: The 4-digit ISO 18245 merchant category code (MCC).
+          type: integer
+        category:
+          description: "The merchant category, described by the MCC code (see this\
+            \ reference for the list of category descriptions)."
+          type: string
+        location:
+          description: "The location (city, state, etc.) of the merchant."
+          type: string
+        id:
+          description: The unique network merchant identifier.
+          type: string
+      required:
+      - category
+      - name
+      - type
+      type: object
+    PurchaseTransaction_attributes:
+      properties:
+        createdAt:
+          description: The date the transaction was created. Common to all transaction
+            types.
+          format: date-time
+          type: string
+        direction:
+          description: The direction in which the funds flow. Common to all transaction
+            types.
+          type: string
+        amount:
+          description: The amount (cents) of the transaction. Common to all transaction
+            types.
+          type: integer
+        balance:
+          description: The account balance (cents) after the transaction. Common to
+            all transaction types.
+          type: integer
+        summary:
+          description: Summary of the transaction. Common to all transaction types.
+          type: string
+        cardLast4Digits:
+          description: The last 4 digits of the debit card involved in the transaction.
+          type: string
+        coordinates:
+          allOf:
+          - $ref: "#/components/schemas/CoordinatesType"
+          description: "Coordinates (latitude, longitude) of where the purchase took\
+            \ place."
+        recurring:
+          description: Indicates whether the transaction is recurring.
+          type: boolean
+        interchange:
+          description: "The interchange share for this transaction. Calculated at\
+            \ the end of each day, see the transaction.updated event."
+          type: string
+        grossInterchange:
+          description: The gross interchange share for this transaction.
+          type: string
+        ecommerce:
+          description: Indicates whether the transaction was created over an electronic
+            network (primarily the internet).
+          type: boolean
+        cardPresent:
+          description: Indicates whether the card was present when the transaction
+            was created.
+          type: boolean
+        paymentMethod:
+          description: "The payment method used, one of: Manual, Swipe, Contactless,\
+            \ ChipAndPin, Stored, Other."
+          type: string
+        digitalWallet:
+          description: "The type of digital wallet used, one of: Google, Apple, Other."
+          type: string
+        cardNetwork:
+          description: "The card network used, one of: Visa, Interlink, Accel, Allpoint,\
+            \ Other."
+          type: string
+        tags:
+          additionalProperties: true
+          description: See Tags. Inherited from the authorization request tags (see
+            Tag Inheritance).
+          type: object
+        cashWithdrawalAmount:
+          description: Cash withdrawal amount
+          type: integer
+        richMerchantData:
+          allOf:
+          - $ref: "#/components/schemas/RichMerchantDataType"
+          description: Full merchant information. See Transaction Enrichment.
+        currencyConversion:
+          allOf:
+          - $ref: "#/components/schemas/CurrencyConversionType"
+          description: When original currency for transaction is not USD.
+        cardDecisionSource:
+          description: "Who made the final card authorization decision. See Understanding\
+            \ authorization decisions. One of Org, Unit, Network, TimeoutApprove,\
+            \ TimeoutDecline, DefaultApprove, InternalError, IssuerStandIn."
+          type: string
+        merchant:
+          $ref: "#/components/schemas/PurchaseTransaction_attributes_merchant"
+        cardVerificationData:
+          $ref: "#/components/schemas/CardTransaction_attributes_cardVerificationData"
+      required:
+      - amount
+      - balance
+      - cardLast4Digits
+      - cardPresent
+      - createdAt
+      - direction
+      - ecommerce
+      - recurring
+      - summary
+      - tags
+      type: object
+    PurchaseTransaction_relationships:
+      properties:
+        account:
+          $ref: "#/components/schemas/Relationship"
+        customer:
+          $ref: "#/components/schemas/Relationship"
+        customers:
+          $ref: "#/components/schemas/Relationship"
+        card:
+          $ref: "#/components/schemas/Relationship"
+        authorization:
+          $ref: "#/components/schemas/Relationship"
+        authorizationRequest:
+          $ref: "#/components/schemas/Relationship"
+      type: object
+    PushToCardReversalTransaction_relationships:
+      properties:
+        account:
+          $ref: "#/components/schemas/Relationship"
+        customer:
+          $ref: "#/components/schemas/Relationship"
+        customers:
+          $ref: "#/components/schemas/Relationship"
+        payment:
+          $ref: "#/components/schemas/Relationship"
+        org:
+          $ref: "#/components/schemas/Relationship"
+        originalTransaction:
+          $ref: "#/components/schemas/Relationship"
+      type: object
+    PushToCardTransaction_relationships:
+      properties:
+        account:
+          $ref: "#/components/schemas/Relationship"
+        customer:
+          $ref: "#/components/schemas/Relationship"
+        customers:
+          $ref: "#/components/schemas/Relationship"
+        payment:
+          $ref: "#/components/schemas/Relationship"
+        org:
+          $ref: "#/components/schemas/Relationship"
+      type: object
+    ReceivedACHTransaction_attributes:
+      properties:
+        createdAt:
+          description: The date the transaction was created. Common to all transaction
+            types.
+          format: date-time
+          type: string
+        direction:
+          description: The direction in which the funds flow. Common to all transaction
+            types.
+          type: string
+        amount:
+          description: The amount (cents) of the transaction. Common to all transaction
+            types.
+          type: integer
+        balance:
+          description: The account balance (cents) after the transaction. Common to
+            all transaction types.
+          type: integer
+        summary:
+          description: Summary of the transaction. Common to all transaction types.
+          type: string
+        description:
+          description: Transaction description.
+          type: string
+        addenda:
+          description: Additional transaction description (maximum of 50 characters).
+          type: string
+        companyName:
+          description: The name by which the originator is known to the receiver.
+          type: string
+        counterpartyRoutingNumber:
+          description: The routing number of the party that originated the ACH payment.
+          type: string
+        traceNumber:
+          description: The ACH Trace Number.
+          type: string
+        secCode:
+          description: "The 3-letter ACH Standard Entry Class (SEC) Code (e.g. WEB,\
+            \ CCD, PPD, etc.)."
+          type: string
+        tags:
+          additionalProperties: true
+          description: See Tags.
+          type: object
+      required:
+      - amount
+      - balance
+      - companyName
+      - counterpartyRoutingNumber
+      - createdAt
+      - description
+      - direction
+      - summary
+      - tags
+      - traceNumber
+      type: object
+    ReleaseTransaction_attributes:
+      properties:
+        createdAt:
+          description: The date the transaction was created. Common to all transaction
+            types.
+          format: date-time
+          type: string
+        senderName:
+          description: Name of the sender.
+          type: string
+        senderAddress:
+          allOf:
+          - $ref: "#/components/schemas/AddressType"
+          description: Address of the sender.
+        senderAccountNumber:
+          description: "Unique identifier to monitor for similar sending accounts,\
+            \ could be the BIN + last four digits of the card number OR a unique identifier\
+            \ generated by you for the sender."
+          type: string
+        counterparty:
+          allOf:
+          - $ref: "#/components/schemas/CounterpartyType"
+          description: The party who is releasing the funds
+        amount:
+          description: The amount (cents) of the transaction. Common to all transaction
+            types.
+          type: integer
+        direction:
+          description: The direction in which the funds flow. Common to all transaction
+            types. The value is always Credit.
+          type: string
+        description:
+          description: Description of the payment.
+          type: string
+        balance:
+          description: The account balance (cents) after the transaction. Common to
+            all transaction types.
+          type: integer
+        summary:
+          description: Summary of the transaction. Common to all transaction types.
+          type: string
+        tags:
+          additionalProperties: true
+          description: See Tags.
+          type: object
+      required:
+      - amount
+      - balance
+      - counterparty
+      - createdAt
+      - description
+      - direction
+      - senderAccountNumber
+      - senderAddress
+      - senderName
+      - summary
+      - tags
+      type: object
+    RepaidPaymentAdvanceTransaction_attributes:
+      properties:
+        createdAt:
+          description: The date the transaction was created. Common to all transaction
+            types.
+          format: date-time
+          type: string
+        direction:
+          description: The direction in which the funds flow. Common to all transaction
+            types. The value is always Credit.
+          type: string
+        amount:
+          description: The amount (cents) of the transaction. Common to all transaction
+            types.
+          type: integer
+        balance:
+          description: The account balance (cents) after the transaction. Common to
+            all transaction types.
+          type: integer
+        summary:
+          description: Summary of the transaction. Common to all transaction types.
+          type: string
+        tags:
+          additionalProperties: true
+          description: See Tags.
+          type: object
+      required:
+      - amount
+      - balance
+      - createdAt
+      - direction
+      - summary
+      - tags
+      type: object
+    RepaidPaymentAdvanceTransaction_relationships:
+      properties:
+        account:
+          $ref: "#/components/schemas/Relationship"
+        customer:
+          $ref: "#/components/schemas/Relationship"
+        receivedPayment:
+          $ref: "#/components/schemas/Relationship"
+        paymentAdvanceTransaction:
+          $ref: "#/components/schemas/Relationship"
+      type: object
+    ReturnedACHTransaction_attributes:
+      properties:
+        createdAt:
+          description: The date the transaction was created. Common to all transaction
+            types.
+          format: date-time
+          type: string
+        direction:
+          description: The direction in which the funds flow. Common to all transaction
+            types.
+          type: string
+        amount:
+          description: The amount (cents) of the transaction. Common to all transaction
+            types.
+          type: integer
+        balance:
+          description: The account balance (cents) after the transaction. Common to
+            all transaction types.
+          type: integer
+        summary:
+          description: Summary of the transaction. Common to all transaction types.
+          type: string
+        companyName:
+          description: The name by which the originator is known to the receiver.
+          type: string
+        counterpartyName:
+          description: The name of the party that originated the ACH payment.
+          type: string
+        counterpartyRoutingNumber:
+          description: The routing number of the party that originated the ACH payment.
+          type: string
+        reason:
+          description: The reason for the transaction return. See ACH return reasons.
+          type: string
+        tags:
+          additionalProperties: true
+          description: See Tags.
+          type: object
+      required:
+      - amount
+      - balance
+      - companyName
+      - counterpartyName
+      - counterpartyRoutingNumber
+      - createdAt
+      - direction
+      - reason
+      - summary
+      - tags
+      type: object
+    ReturnedACHTransaction_relationships:
+      properties:
+        account:
+          $ref: "#/components/schemas/Relationship"
+        customer:
+          $ref: "#/components/schemas/Relationship"
+        customers:
+          $ref: "#/components/schemas/Relationship"
+        payment:
+          $ref: "#/components/schemas/Relationship"
+      type: object
+    ReturnedCheckDepositTransaction_attributes:
+      properties:
+        createdAt:
+          description: The date the transaction was created. Common to all transaction
+            types.
+          format: date-time
+          type: string
+        direction:
+          description: The direction in which the funds flow. Common to all transaction
+            types.
+          type: string
+        amount:
+          description: The amount (cents) of the transaction. Common to all transaction
+            types.
+          type: integer
+        balance:
+          description: The account balance (cents) after the transaction. Common to
+            all transaction types.
+          type: integer
+        summary:
+          description: Summary of the transaction. Common to all transaction types.
+          type: string
+        reason:
+          description: The reason for the transaction return.
+          type: string
+        tags:
+          additionalProperties: true
+          description: See Tags.
+          type: object
+      required:
+      - amount
+      - balance
+      - createdAt
+      - direction
+      - reason
+      - summary
+      - tags
+      type: object
+    ReturnedCheckPaymentTransaction_attributes:
+      properties:
+        createdAt:
+          description: The date the transaction was created. Common to all transaction
+            types.
+          format: date-time
+          type: string
+        direction:
+          description: The direction in which the funds flow. Common to all transaction
+            types.
+          type: string
+        amount:
+          description: The amount (cents) of the transaction. Common to all transaction
+            types.
+          type: integer
+        balance:
+          description: The account balance (cents) after the transaction. Common to
+            all transaction types.
+          type: integer
+        summary:
+          description: Summary of the transaction. Common to all transaction types.
+          type: string
+        returnReason:
+          description: The reason for the transaction return. This is a replacement
+            to the deprecated reason attribute.
+          type: string
+        tags:
+          additionalProperties: true
+          description: See Tags.
+          type: object
+      required:
+      - amount
+      - balance
+      - createdAt
+      - direction
+      - returnReason
+      - summary
+      - tags
+      type: object
+    ReturnedReceivedACHTransaction_attributes:
+      properties:
+        createdAt:
+          description: The date the transaction was created. Common to all transaction
+            types.
+          format: date-time
+          type: string
+        direction:
+          description: The direction in which the funds flow. Common to all transaction
+            types.
+          type: string
+        amount:
+          description: The amount (cents) of the transaction. Common to all transaction
+            types.
+          type: integer
+        balance:
+          description: The account balance (cents) after the transaction. Common to
+            all transaction types.
+          type: integer
+        summary:
+          description: Summary of the transaction. Common to all transaction types.
+          type: string
+        companyName:
+          description: The name by which the originator is known to the receiver.
+          type: string
+        reason:
+          description: The reason for the transaction return. See ACH return reasons.
+          type: string
+        tags:
+          additionalProperties: true
+          description: See Tags.
+          type: object
+      required:
+      - amount
+      - balance
+      - companyName
+      - createdAt
+      - direction
+      - reason
+      - summary
+      - tags
+      type: object
+    ReturnedReceivedACHTransaction_relationships:
+      properties:
+        account:
+          $ref: "#/components/schemas/Relationship"
+        customer:
+          $ref: "#/components/schemas/Relationship"
+        customers:
+          $ref: "#/components/schemas/Relationship"
+        returned:
+          $ref: "#/components/schemas/Relationship"
+      type: object
+    ReturnedWireTransaction_attributes:
+      properties:
+        createdAt:
+          description: The date the transaction was created. Common to all transaction
+            types.
+          format: date-time
+          type: string
+        direction:
+          description: The direction in which the funds flow. Common to all transaction
+            types.
+          type: string
+        amount:
+          description: The amount (cents) of the transaction. Common to all transaction
+            types.
+          type: integer
+        balance:
+          description: The account balance (cents) after the transaction. Common to
+            all transaction types.
+          type: integer
+        summary:
+          description: Summary of the transaction. Common to all transaction types.
+          type: string
+        reason:
+          description: The reason for the return.
+          type: string
+        imad:
+          description: Input Message Accountability Data. It's a unique number given
+            to each FedWire payment in case of payment has been sent and fully processed.
+          type: string
+        omad:
+          description: Output Message Accountability Data. It's a unique number given
+            to each FedWire payment in case of payment has been sent and fully processed.
+          type: string
+        tags:
+          additionalProperties: true
+          description: See Tags.
+          type: object
+      required:
+      - amount
+      - balance
+      - createdAt
+      - direction
+      - imad
+      - reason
+      - summary
+      - tags
+      type: object
+    RewardTransaction_attributes:
+      properties:
+        createdAt:
+          description: The date the transaction was created. Common to all transaction
+            types.
+          format: date-time
+          type: string
+        direction:
+          description: The direction in which the funds flow. Common to all transaction
+            types.
+          type: string
+        amount:
+          description: The amount (cents) of the transaction. Common to all transaction
+            types.
+          type: integer
+        balance:
+          description: The account balance (cents) after the transaction. Common to
+            all transaction types.
+          type: integer
+        summary:
+          description: "Summary of the transaction. Common to all transaction types,\
+            \ this will be the description of the reward."
+          type: string
+        receiverCounterparty:
+          allOf:
+          - $ref: "#/components/schemas/CounterpartyType"
+          description: The receiving party of the transaction. Available only when
+            the receiving party is a Deposit Account.
+        tags:
+          additionalProperties: true
+          description: See Tags. Inherited from the payment tags (see Tag Inheritance).
+          type: object
+      required:
+      - amount
+      - balance
+      - createdAt
+      - direction
+      - summary
+      - tags
+      type: object
+    RewardTransaction_relationships:
+      properties:
+        account:
+          $ref: "#/components/schemas/Relationship"
+        customer:
+          $ref: "#/components/schemas/Relationship"
+        customers:
+          $ref: "#/components/schemas/Relationship"
+        reward:
+          $ref: "#/components/schemas/Relationship"
+        receiverAccount:
+          $ref: "#/components/schemas/Relationship"
+      type: object
+    WireTransaction_attributes:
+      properties:
+        createdAt:
+          description: The date the transaction was created. Common to all transaction
+            types.
+          format: date-time
+          type: string
+        direction:
+          description: The direction in which the funds flow. Common to all transaction
+            types.
+          type: string
+        amount:
+          description: The amount (cents) of the transaction. Common to all transaction
+            types.
+          type: integer
+        balance:
+          description: The account balance (cents) after the transaction. Common to
+            all transaction types.
+          type: integer
+        summary:
+          description: Summary of the transaction. Common to all transaction types.
+          type: string
+        imadOmad:
+          additionalProperties: true
+          description: (Conditional) IMAD/OMAD - Input/Output Message Accountability
+            Data. It's a unique number given to each FedWire payment in case of payment
+            has been sent and fully processed.
+          type: object
+        counterparty:
+          allOf:
+          - $ref: "#/components/schemas/CounterpartyType"
+          description: "The party on the other end of the transaction, either the\
+            \ beneficiary or the originator."
+        description:
+          description: Description of the transaction as entered by the originator.
+          type: string
+        originatorToBeneficiaryInformation:
+          description: "Originator To Beneficiary Information, multi-line string delimited\
+            \ by \\n."
+          type: string
+        senderReference:
+          description: Sender reference.
+          type: string
+        referenceForBeneficiary:
+          description: Reference for the Beneficiary.
+          type: string
+        beneficiaryInformation:
+          description: "Beneficiary Information, multi-line string delimited by \\\
+            n."
+          type: string
+        beneficiaryAdviceInformation:
+          description: "Beneficiary Advice Information, multi-line string delimited\
+            \ by \\n."
+          type: string
+        tags:
+          additionalProperties: true
+          description: See Tags.
+          type: object
+      required:
+      - amount
+      - balance
+      - beneficiaryAdviceInformation
+      - beneficiaryInformation
+      - counterparty
+      - createdAt
+      - direction
+      - imadOmad
+      - originatorToBeneficiaryInformation
+      - referenceForBeneficiary
+      - senderReference
+      - summary
+      - tags
+      type: object
+    UpdateBookTransactionData_attributes:
+      properties:
+        summary:
+          description: Summary of the transaction.
+          example: "Counterparty: Unit Inc | Description: Funding"
+          type: string
+        tags:
+          additionalProperties: true
+          description: See Updating Tags.
+          example:
+            trackUserId: "1234"
+          type: object
+      type: object
+    UpdateChargebackTransactionData_attributes:
+      properties:
+        summary:
+          description: Summary of the transaction.
+          example: "Description: Funding"
+          type: string
+        tags:
+          additionalProperties: true
+          description: See Updating Tags.
+          example:
+            trackUserId: "1234"
+          type: object
+      type: object
+    UpdateTagsData_attributes:
+      properties:
+        tags:
+          additionalProperties: true
+          description: See Updating Tags.
+          example:
+            trackUserId: "1234"
+          type: object
       type: object
   securitySchemes:
     bearerAuth:

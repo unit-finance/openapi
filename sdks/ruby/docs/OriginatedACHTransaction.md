@@ -1,0 +1,24 @@
+# UnitFinanceSdk::OriginatedACHTransaction
+
+## Properties
+
+| Name | Type | Description | Notes |
+| ---- | ---- | ----------- | ----- |
+| **type** | **String** |  |  |
+| **id** | **String** |  |  |
+| **attributes** | [**OriginatedACHTransactionAttributes**](OriginatedACHTransactionAttributes.md) |  |  |
+| **relationships** | [**OriginatedACHTransactionRelationships**](OriginatedACHTransactionRelationships.md) |  | [optional] |
+
+## Example
+
+```ruby
+require 'unit_finance_sdk'
+
+instance = UnitFinanceSdk::OriginatedACHTransaction.new(
+  type: null,
+  id: null,
+  attributes: null,
+  relationships: null
+)
+```
+

@@ -483,6 +483,36 @@ module Helpers
       }
     end
 
+    # PATCH /accounts/{accountId}/transactions/{transactionId} accepts a generic
+    # tags-update envelope (`type: transaction`) regardless of the underlying
+    # transaction variant, so a single builder covers every transaction kind.
+    def update_transaction_tags_request
+      {
+        'data' => {
+          'type' => 'transaction',
+          'attributes' => { 'tags' => base_tags.merge('updated' => 'true') }
+        }
+      }
+    end
+
+    # PATCH /transactions/{transactionId} is discriminated by `data.type`; the
+    # bookTransaction variant requires the owning account relationship alongside
+    # the updatable summary/tags attributes.
+    def update_book_transaction_request(account_id)
+      {
+        'data' => {
+          'type' => 'bookTransaction',
+          'attributes' => {
+            'summary' => 'SDK integration test book transaction update',
+            'tags' => base_tags.merge('updated' => 'true')
+          },
+          'relationships' => {
+            'account' => { 'data' => { 'type' => 'account', 'id' => account_id } }
+          }
+        }
+      }
+    end
+
     def add_account_owners_request(customer_ids)
       {
         'data' => customer_ids.map { |id| { 'type' => 'customer', 'id' => id } }

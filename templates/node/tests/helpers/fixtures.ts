@@ -503,6 +503,38 @@ export function buildReplaceCardRequest(): ReplaceCardRequest {
 	};
 }
 
+// PATCH /accounts/{accountId}/transactions/{transactionId} accepts a generic
+// tags-update envelope (`type: "transaction"`) regardless of the underlying
+// transaction variant, so a single builder covers every transaction kind.
+export function buildUpdateTransactionTagsRequest() {
+	return {
+		data: {
+			type: "transaction" as const,
+			attributes: {
+				tags: { ...baseTags(), updated: "true" },
+			},
+		},
+	};
+}
+
+// PATCH /transactions/{transactionId} is discriminated by data.type; the
+// bookTransaction variant requires the owning account relationship alongside
+// the updatable summary/tags attributes.
+export function buildUpdateBookTransactionRequest(accountId: string) {
+	return {
+		data: {
+			type: "bookTransaction" as const,
+			attributes: {
+				summary: "SDK integration test book transaction update",
+				tags: { ...baseTags(), updated: "true" },
+			},
+			relationships: {
+				account: { data: { type: "account", id: accountId } },
+			},
+		},
+	};
+}
+
 export function buildAddAccountOwnersRequest(customerIds: string[]) {
 	return {
 		data: customerIds.map((id) => ({ type: "customer", id })),

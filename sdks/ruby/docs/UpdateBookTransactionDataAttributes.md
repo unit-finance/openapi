@@ -1,0 +1,20 @@
+# UnitFinanceSdk::UpdateBookTransactionDataAttributes
+
+## Properties
+
+| Name | Type | Description | Notes |
+| ---- | ---- | ----------- | ----- |
+| **summary** | **String** | Summary of the transaction. | [optional] |
+| **tags** | **Hash&lt;String, Object&gt;** | See Updating Tags. | [optional] |
+
+## Example
+
+```ruby
+require 'unit_finance_sdk'
+
+instance = UnitFinanceSdk::UpdateBookTransactionDataAttributes.new(
+  summary: Counterparty: Unit Inc | Description: Funding,
+  tags: {&quot;trackUserId&quot;:&quot;1234&quot;}
+)
+```
+

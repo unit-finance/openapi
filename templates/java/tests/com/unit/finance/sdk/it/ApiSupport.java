@@ -8,6 +8,7 @@ import com.unit.finance.sdk.api.ApplicationsApi;
 import com.unit.finance.sdk.api.CardsApi;
 import com.unit.finance.sdk.api.FeesApi;
 import com.unit.finance.sdk.api.PaymentsApi;
+import com.unit.finance.sdk.api.TransactionsApi;
 import com.unit.finance.sdk.model.AbstractOpenApiSchema;
 import com.unit.finance.sdk.model.BusinessApplication;
 import com.unit.finance.sdk.model.IndividualApplication;
@@ -129,6 +130,11 @@ final class ApiSupport {
   /** Construct a {@code CardsApi} bound to the sandbox. */
   static CardsApi buildCardsApi() {
     return new CardsApi(buildApiClient());
+  }
+
+  /** Construct a {@code TransactionsApi} bound to the sandbox. */
+  static TransactionsApi buildTransactionsApi() {
+    return new TransactionsApi(buildApiClient());
   }
 
   /** Block the current thread for sandbox polling (mirrors Node {@code sleep}). */

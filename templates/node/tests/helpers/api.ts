@@ -5,6 +5,7 @@ import {
 	Configuration,
 	FeesApi,
 	PaymentsApi,
+	TransactionsApi,
 } from "../..";
 
 export const TOKEN = process.env.UNIT_SANDBOX_TOKEN;
@@ -39,6 +40,10 @@ export function buildPaymentsApi(): PaymentsApi {
 
 export function buildCardsApi(): CardsApi {
 	return new CardsApi(configuration());
+}
+
+export function buildTransactionsApi(): TransactionsApi {
+	return new TransactionsApi(configuration());
 }
 
 /**
