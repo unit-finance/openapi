@@ -5,7 +5,7 @@ info:
     name: Proprietary
     url: https://www.unit.co/terms-of-service
   title: Unit API
-  version: 0.6.0
+  version: 0.7.0
 servers:
 - url: https://api.s.unit.sh
 security:
@@ -27,6 +27,9 @@ tags:
 - description: "Transactions recorded on deposit and credit accounts, across every\
     \ Unit transaction type."
   name: Transactions
+- description: "Business, individual, and business wallet customers, their officers,\
+    \ and archival."
+  name: Customers
 paths:
   /applications:
     get:
@@ -4268,6 +4271,418 @@ paths:
       summary: Update transaction tags
       tags:
       - Transactions
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /customers:
+    get:
+      description: List customer resources. Paging can be applied.
+      operationId: listCustomers
+      parameters:
+      - description: Optional. Maximum number of resources that will be returned.
+          Maximum is 1000 resources. See Pagination.
+        explode: true
+        in: query
+        name: "page[limit]"
+        required: false
+        schema:
+          default: "100"
+          pattern: "^[0-9]+$"
+          type: string
+        style: form
+      - description: Optional. Number of resources to skip. See Pagination.
+        explode: true
+        in: query
+        name: "page[offset]"
+        required: false
+        schema:
+          default: "0"
+          pattern: "^[0-9]+$"
+          type: string
+        style: form
+      - description: Optional. Search term according to the Full-Text Search Rules.
+        explode: true
+        in: query
+        name: "filter[query]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filter customers by email address (case sensitive).
+        explode: true
+        in: query
+        name: "filter[email]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filter Customers by Tags.
+        explode: true
+        in: query
+        name: "filter[tags]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: "Optional. Filter customers by status (Active, Archived). Usage\
+          \ example: *filter[status][0]=Active"
+        explode: true
+        in: query
+        name: "filter[status][]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. sort=createdAt for ascending order or sort=-createdAt
+          (leading minus sign) for descending order.
+        explode: true
+        in: query
+        name: sort
+        required: false
+        schema:
+          default: -createdAt
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/listCustomers_200_response"
+          description: "A page of customer resources, each a business or individual\
+            \ customer, indicated by the `type` field."
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - customers
+      summary: List customers
+      tags:
+      - Customers
+      x-accepts:
+      - application/vnd.api+json
+    post:
+      description: Create a business wallet customer.
+      operationId: createBusinessWalletCustomer
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/createBusinessWalletCustomer_request"
+        required: true
+      responses:
+        "201":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/createBusinessWalletCustomer_201_response"
+          description: The created business wallet customer resource.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - customers-write
+      summary: Create a business wallet customer
+      tags:
+      - Customers
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /customers/{customerId}:
+    get:
+      description: Get a customer resource by id.
+      operationId: getCustomer
+      parameters:
+      - explode: false
+        in: path
+        name: customerId
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: "Optional. A comma-separated list of related resources to include\
+          \ in the response. Related resource include: authorizedUser. See Getting\
+          \ Related Resources"
+        explode: true
+        in: query
+        name: include
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/getCustomer_200_response"
+          description: "The requested customer resource - a business or individual\
+            \ customer, indicated by the `type` field."
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - customers
+      summary: Get a customer
+      tags:
+      - Customers
+      x-accepts:
+      - application/vnd.api+json
+    patch:
+      description: |-
+        Update a customer. The Customer Updated webhook event will be fired. Variants:
+        - **UpdateBusinessCustomer**
+        - **UpdateIndividualCustomer**
+      operationId: updateCustomer
+      parameters:
+      - explode: false
+        in: path
+        name: customerId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/updateCustomer_request"
+        required: true
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/updateCustomer_200_response"
+          description: "The updated customer resource - a business or individual customer,\
+            \ indicated by the `type` field."
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - customers-write
+      summary: Update a customer
+      tags:
+      - Customers
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /customers/{customerId}/archive:
+    post:
+      description: Archive a customer. The Customer Archived webhook event will be
+        fired.
+      operationId: archiveCustomer
+      parameters:
+      - explode: false
+        in: path
+        name: customerId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/archiveCustomer_request"
+        required: true
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/updateCustomer_200_response"
+          description: "The archived customer resource - a business or individual\
+            \ customer, indicated by the `type` field."
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - customers-write
+      summary: Archive a customer
+      tags:
+      - Customers
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /customers/{customerId}/officers/{officerId}:
+    patch:
+      description: Update an officer of a business customer.
+      operationId: updateBusinessCustomerOfficer
+      parameters:
+      - explode: false
+        in: path
+        name: customerId
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: officerId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/updateBusinessCustomerOfficer_request"
+        required: true
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/updateBusinessCustomerOfficer_200_response"
+          description: The updated officer resource.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - customers-write
+      summary: Update a business customer officer
+      tags:
+      - Customers
       x-content-type: application/vnd.api+json
       x-accepts:
       - application/vnd.api+json
@@ -9135,6 +9550,375 @@ components:
       required:
       - data
       type: object
+    AuthorizedUserType:
+      example:
+        fullName:
+          first: Richard
+          last: Hendricks
+        email: richard@piedpiper.com
+        phone:
+          countryCode: "1"
+          number: "5555555555"
+        canConnectWithAuthVendor: true
+      properties:
+        fullName:
+          allOf:
+          - $ref: "#/components/schemas/FullNameType"
+          description: Full name of the authorized user.
+        email:
+          description: The authorized user's email address.
+          type: string
+        phone:
+          allOf:
+          - $ref: "#/components/schemas/PhoneType"
+          description: The authorized user's phone number. This number will be used
+            for One Time Password (OTP) authentication.
+        jwtSubject:
+          description: Optional. See this section for more information.
+          type: string
+        canConnectWithAuthVendor:
+          description: "Optional. Default is true. When set to false, the authorized\
+            \ user cannot authenticate through exchange networks such as Plaid. See\
+            \ Plaid Exchange for more information."
+          type: boolean
+      required:
+      - email
+      - fullName
+      - phone
+      type: object
+    ProductType:
+      description: "A product a customer is eligible for. One of: Banking, BillPay,\
+        \ CapitalLineOfCredit."
+      enum:
+      - Banking
+      - BillPay
+      - CapitalLineOfCredit
+      type: string
+    BusinessCustomer:
+      example:
+        type: businessCustomer
+        id: "1"
+        attributes:
+          createdAt: 2020-05-10T12:28:37.698Z
+          name: Pied Piper
+          address:
+            street: 5230 Newell Rd
+            street2: null
+            city: Palo Alto
+            state: CA
+            postalCode: "94303"
+            country: US
+          phone:
+            countryCode: "1"
+            number: "1555555578"
+          stateOfIncorporation: DE
+          ein: "123456789"
+          entityType: Corporation
+          businessVertical: TechnologyMediaOrTelecom
+          numberOfEmployees: Between50And100
+          annualRevenue: Between500kAnd1m
+          cashFlow: Predictable
+          countriesOfOperation:
+          - US
+          - CA
+          website: https://piedpiper.com
+          stockSymbol: PPI
+          yearOfIncorporation: "2014"
+          operatingAddress:
+            street: 5250 Newell Rd
+            street2: null
+            city: Palo Alto
+            state: CA
+            postalCode: "94303"
+            country: US
+          contact:
+            fullName:
+              first: Richard
+              last: Hendricks
+            email: richard@piedpiper.com
+            phone:
+              countryCode: "1"
+              number: "1555555578"
+          authorizedUsers:
+          - fullName:
+              first: Jared
+              last: Dunn
+            email: jared@piedpiper.com
+            phone:
+              countryCode: "1"
+              number: "1555555590"
+            canConnectWithAuthVendor: true
+          status: Active
+          eligibleProducts:
+          - Banking
+          - BillPay
+          tags:
+            userId: 106a75e9-de77-4e25-9561-faffe59d7814
+        relationships:
+          org:
+            data:
+              type: org
+              id: "1"
+          application:
+            data:
+              type: businessApplication
+              id: "1"
+          officer:
+            data:
+              type: officer
+              id: "12"
+      properties:
+        type:
+          enum:
+          - businessCustomer
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/BusinessCustomer_attributes"
+        relationships:
+          $ref: "#/components/schemas/BusinessCustomer_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    IndividualCustomer:
+      example:
+        type: individualCustomer
+        id: "8"
+        attributes:
+          createdAt: 2020-05-12T19:41:04.123Z
+          fullName:
+            first: Peter
+            last: Parker
+          ssn: "721074426"
+          address:
+            street: 20 Ingram St
+            street2: null
+            city: Forest Hills
+            state: NY
+            postalCode: "11375"
+            country: US
+          dateOfBirth: 2001-08-10
+          email: peter@oscorp.com
+          phone:
+            countryCode: "1"
+            number: "1555555578"
+          occupation: ArchitectOrEngineer
+          annualIncome: Between50kAnd100k
+          sourceOfIncome: EmploymentOrPayrollIncome
+          annualRevenue: Between100kAnd200k
+          numberOfEmployees: Between2And5
+          businessVertical: TechnologyMediaOrTelecom
+          website: https://piedpiper.com
+          status: Active
+          eligibleProducts:
+          - Banking
+          - BillPay
+          tags:
+            userId: 106a75e9-de77-4e25-9561-faffe59d7814
+          authorizedUsers:
+          - fullName:
+              first: Erlich
+              last: Backman
+            email: erlich-backman@piedpiper.com
+            phone:
+              countryCode: "1"
+              number: "1234567890"
+            canConnectWithAuthVendor: true
+        relationships:
+          org:
+            data:
+              type: org
+              id: "1"
+          application:
+            data:
+              type: individualApplication
+              id: "8"
+      properties:
+        type:
+          enum:
+          - individualCustomer
+          type: string
+        id:
+          type: string
+        attributes:
+          properties: {}
+          type: object
+        relationships:
+          $ref: "#/components/schemas/IndividualCustomer_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    BusinessWalletCustomer:
+      example:
+        type: businessWalletCustomer
+        id: "42"
+        attributes:
+          createdAt: 2023-07-23T09:13:18.926Z
+          bankName: myBankName
+          businessName: Sirius & Snape Inc.
+          name: Sirius & Snape Inc.
+          address:
+            street: 5230 Newell Rd
+            city: Palo Alto
+            state: CA
+            postalCode: "94303"
+            country: US
+          ein: "123456789"
+          businessVertical: TechnologyMediaOrTelecom
+          numberOfEmployees: Between10And50
+          tags:
+            purpose: Sirius & Snape Inc.
+        relationships:
+          org:
+            data:
+              type: org
+              id: "1"
+      properties:
+        type:
+          enum:
+          - businessWalletCustomer
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/BusinessWalletCustomer_attributes"
+        relationships:
+          $ref: "#/components/schemas/BusinessWalletCustomer_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    Officer:
+      example:
+        type: officer
+        id: "12"
+        attributes:
+          status: Approved
+          fullName:
+            first: Richard
+            last: Hendricks
+          title: CEO
+          ssn: "721074426"
+          dateOfBirth: 1980-09-10
+          address:
+            street: 5230 Newell Rd
+            street2: null
+            city: Palo Alto
+            state: CA
+            postalCode: "94303"
+            country: US
+          phone:
+            countryCode: "1"
+            number: "5555555555"
+          email: richard@piedpiper.com
+          occupation: ExecutiveOrManager
+          annualIncome: Between100kAnd250k
+          sourceOfIncome: EmploymentOrPayrollIncome
+        relationships:
+          org:
+            data:
+              type: org
+              id: "1"
+          customer:
+            data:
+              type: businessCustomer
+              id: "1"
+      properties:
+        type:
+          enum:
+          - officer
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/Officer_attributes"
+        relationships:
+          $ref: "#/components/schemas/Officer_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    CreateBusinessWalletCustomerData:
+      properties:
+        type:
+          enum:
+          - businessWalletCustomer
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CreateBusinessWalletCustomerData_attributes"
+      required:
+      - attributes
+      - type
+      type: object
+    UpdateBusinessCustomerData:
+      properties:
+        type:
+          enum:
+          - businessCustomer
+          type: string
+        attributes:
+          $ref: "#/components/schemas/UpdateBusinessCustomerData_attributes"
+      required:
+      - attributes
+      - type
+      type: object
+    UpdateBusinessCustomerRequest:
+      properties:
+        data:
+          $ref: "#/components/schemas/UpdateBusinessCustomerData"
+      required:
+      - data
+      type: object
+    UpdateIndividualCustomerData:
+      properties:
+        type:
+          enum:
+          - individualCustomer
+          type: string
+        attributes:
+          $ref: "#/components/schemas/UpdateIndividualCustomerData_attributes"
+      required:
+      - attributes
+      - type
+      type: object
+    UpdateIndividualCustomerRequest:
+      properties:
+        data:
+          $ref: "#/components/schemas/UpdateIndividualCustomerData"
+      required:
+      - data
+      type: object
+    ArchiveCustomerData:
+      properties:
+        type:
+          enum:
+          - customerArchive
+          type: string
+        attributes:
+          $ref: "#/components/schemas/ArchiveCustomerData_attributes"
+      required:
+      - attributes
+      - type
+      type: object
+    UpdateBusinessCustomerOfficerData:
+      properties:
+        type:
+          enum:
+          - officer
+          type: string
+        attributes:
+          $ref: "#/components/schemas/UpdateBusinessCustomerOfficerData_attributes"
+      required:
+      - attributes
+      - type
+      type: object
     list_200_response_data_inner:
       discriminator:
         mapping:
@@ -9911,6 +10695,83 @@ components:
           items:
             $ref: "#/components/schemas/listTransactions_200_response_included_inner"
           type: array
+      required:
+      - data
+      type: object
+    listCustomers_200_response_data_inner:
+      discriminator:
+        mapping:
+          businessCustomer: "#/components/schemas/BusinessCustomer"
+          individualCustomer: "#/components/schemas/IndividualCustomer"
+        propertyName: type
+      oneOf:
+      - $ref: "#/components/schemas/BusinessCustomer"
+      - $ref: "#/components/schemas/IndividualCustomer"
+    listCustomers_200_response:
+      properties:
+        data:
+          items:
+            $ref: "#/components/schemas/listCustomers_200_response_data_inner"
+          type: array
+        meta:
+          $ref: "#/components/schemas/Meta"
+      required:
+      - data
+      type: object
+    createBusinessWalletCustomer_request:
+      properties:
+        data:
+          $ref: "#/components/schemas/CreateBusinessWalletCustomerData"
+      required:
+      - data
+      type: object
+    createBusinessWalletCustomer_201_response:
+      properties:
+        data:
+          $ref: "#/components/schemas/BusinessWalletCustomer"
+      required:
+      - data
+      type: object
+    getCustomer_200_response:
+      properties:
+        data:
+          $ref: "#/components/schemas/listCustomers_200_response_data_inner"
+        included:
+          items:
+            $ref: "#/components/schemas/AuthorizedUserType"
+          type: array
+      required:
+      - data
+      type: object
+    updateCustomer_request:
+      oneOf:
+      - $ref: "#/components/schemas/UpdateBusinessCustomerRequest"
+      - $ref: "#/components/schemas/UpdateIndividualCustomerRequest"
+    updateCustomer_200_response:
+      properties:
+        data:
+          $ref: "#/components/schemas/listCustomers_200_response_data_inner"
+      required:
+      - data
+      type: object
+    archiveCustomer_request:
+      properties:
+        data:
+          $ref: "#/components/schemas/ArchiveCustomerData"
+      required:
+      - data
+      type: object
+    updateBusinessCustomerOfficer_request:
+      properties:
+        data:
+          $ref: "#/components/schemas/UpdateBusinessCustomerOfficerData"
+      required:
+      - data
+      type: object
+    updateBusinessCustomerOfficer_200_response:
+      properties:
+        data:
+          $ref: "#/components/schemas/Officer"
       required:
       - data
       type: object
@@ -14654,6 +15515,518 @@ components:
           example:
             trackUserId: "1234"
           type: object
+      type: object
+    BusinessCustomer_attributes:
+      properties:
+        createdAt:
+          description: The date the resource was created.
+          format: date-time
+          type: string
+        name:
+          description: Name of the business.
+          type: string
+        dba:
+          description: Optional. "Doing business as".
+          type: string
+        address:
+          allOf:
+          - $ref: "#/components/schemas/AddressType"
+          description: Address of the business.
+        operatingAddress:
+          allOf:
+          - $ref: "#/components/schemas/AddressType"
+          description: Optional. The operating address of the business.
+        phone:
+          allOf:
+          - $ref: "#/components/schemas/PhoneType"
+          description: Phone of the business.
+        stateOfIncorporation:
+          description: Two letters representing a US state.
+          type: string
+        ein:
+          description: Business EIN (numbers only).
+          type: string
+        entityType:
+          description: "The business entity type. Documented values are LLC, Partnership,\
+            \ PubliclyTradedCorporation, PrivatelyHeldCorporation and NotForProfitOrganization,\
+            \ but the live API also returns Corporation, so the documented list is\
+            \ not exhaustive. Kept as a free-form string (not a strict enum) to avoid\
+            \ breaking strict client deserialization on undocumented values."
+          type: string
+        contact:
+          allOf:
+          - $ref: "#/components/schemas/BusinessContactType"
+          description: Primary contact of the business.
+        annualRevenue:
+          allOf:
+          - $ref: "#/components/schemas/AnnualRevenueType"
+          description: Optional. Annual revenue of the business.
+        numberOfEmployees:
+          allOf:
+          - $ref: "#/components/schemas/NumberOfEmployeesType"
+          description: Optional. Number of employees of the business.
+        businessVertical:
+          allOf:
+          - $ref: "#/components/schemas/BusinessVerticalType"
+          description: Optional. Business vertical of the business.
+        cashFlow:
+          allOf:
+          - $ref: "#/components/schemas/CashFlowType"
+          description: Optional. Cash flow of the business.
+        countriesOfOperation:
+          description: Optional. Countries where the business operates.
+          items:
+            maxLength: 2
+            minLength: 2
+            type: string
+          type: array
+        website:
+          description: Optional. Business's website.
+          type: string
+        stockSymbol:
+          description: Optional. The stock symbol (ticker) of the business.
+          type: string
+        yearOfIncorporation:
+          description: Optional. Year of incorporation of the business.
+          pattern: "^\\d{4}$"
+          type: string
+        authorizedUsers:
+          description: Array of authorized users. An authorized user is someone who
+            can participate in the One Time Password (OTP) authentication process.
+          items:
+            $ref: "#/components/schemas/AuthorizedUserType"
+          type: array
+        status:
+          description: "Status of the customer, either Active or Archived. You can't\
+            \ do any write operations on an Archived customer."
+          type: string
+        eligibleProducts:
+          description: Optional. The products that the customer is eligible for.
+          items:
+            $ref: "#/components/schemas/ProductType"
+          type: array
+        archiveReason:
+          description: "Optional, only if the customer status is Archived. The reason\
+            \ the customer was archived, can be one of ByBank, Inactive, FraudACHActivity,\
+            \ FraudCardActivity, FraudCheckActivity, FraudApplicationHistory, FraudAccountActivity,\
+            \ FraudClientIdentified, FraudLinkedToFraudulentCustomer."
+          type: string
+        tags:
+          additionalProperties: true
+          description: See Tags. Inherited from the application tags (see Tag Inheritance).
+          type: object
+      required:
+      - address
+      - authorizedUsers
+      - contact
+      - createdAt
+      - ein
+      - entityType
+      - name
+      - phone
+      - stateOfIncorporation
+      - status
+      - tags
+      type: object
+    BusinessCustomer_relationships:
+      properties:
+        org:
+          $ref: "#/components/schemas/Relationship"
+        application:
+          $ref: "#/components/schemas/Relationship"
+        authorizedUserResources:
+          $ref: "#/components/schemas/Relationship"
+        officer:
+          $ref: "#/components/schemas/Relationship"
+        beneficialOwners:
+          $ref: "#/components/schemas/Relationship"
+      type: object
+    IndividualCustomer_relationships:
+      properties:
+        org:
+          $ref: "#/components/schemas/Relationship"
+        application:
+          $ref: "#/components/schemas/Relationship"
+        authorizedUserResources:
+          $ref: "#/components/schemas/Relationship"
+      type: object
+    BusinessWalletCustomer_attributes:
+      properties:
+        createdAt:
+          description: The date the resource was created.
+          format: date-time
+          type: string
+        bankName:
+          description: The name of the bank partner this customer is about to create
+            a wallet under.
+          type: string
+        businessName:
+          description: The name of the business this customer represents.
+          type: string
+        name:
+          description: The official name.
+          type: string
+        address:
+          allOf:
+          - $ref: "#/components/schemas/AddressType"
+          description: Address of the business.
+        ein:
+          description: Business EIN (numbers only).
+          type: string
+        businessVertical:
+          allOf:
+          - $ref: "#/components/schemas/BusinessVerticalType"
+          description: The business vertical of the business.
+        numberOfEmployees:
+          allOf:
+          - $ref: "#/components/schemas/NumberOfEmployeesType"
+          description: The number of employees working for this business.
+        tags:
+          additionalProperties: true
+          description: Optional. See Tags.
+          type: object
+      required:
+      - address
+      - bankName
+      - businessName
+      - businessVertical
+      - createdAt
+      - ein
+      - name
+      - numberOfEmployees
+      type: object
+    BusinessWalletCustomer_relationships:
+      properties:
+        org:
+          $ref: "#/components/schemas/Relationship"
+      type: object
+    Officer_attributes:
+      properties:
+        status:
+          description: "One of Approved, Denied or PendingReview."
+          type: string
+        fullName:
+          allOf:
+          - $ref: "#/components/schemas/FullNameType"
+          description: Full name of the officer.
+        title:
+          description: "Title of the officer. One of CEO, COO, CFO, President, BenefitsAdministrationOfficer,\
+            \ CIO, VP, AVP, Treasurer, Secretary, Controller, Manager, Partner or\
+            \ Member."
+          type: string
+        ssn:
+          description: SSN (or ITIN) of the officer (numbers only). Either an ssn
+            or passport is required.
+          type: string
+        passport:
+          description: Passport number of the officer. Valid only for non-US persons.
+            Either an ssn or passport number is required.
+          type: string
+        nationality:
+          description: Required if a passport is used as the main ID and optional
+            when ssn is used. Two letters representing the officer's nationality.
+            (e.g. "US").
+          maxLength: 2
+          minLength: 2
+          type: string
+        dateOfBirth:
+          description: Date only (e.g. "2001-08-15").
+          format: date
+          type: string
+        address:
+          allOf:
+          - $ref: "#/components/schemas/AddressType"
+          description: The officer's address.
+        phone:
+          allOf:
+          - $ref: "#/components/schemas/PhoneType"
+          description: The officer's phone number.
+        email:
+          description: The officer's email address.
+          type: string
+        occupation:
+          allOf:
+          - $ref: "#/components/schemas/OccupationType"
+          description: Optional. Occupation of the officer.
+        annualIncome:
+          allOf:
+          - $ref: "#/components/schemas/AnnualIncomeType"
+          description: Optional. Annual income of the officer.
+        sourceOfIncome:
+          allOf:
+          - $ref: "#/components/schemas/SourceOfIncomeType"
+          description: Optional. Source of income of the officer.
+      required:
+      - address
+      - dateOfBirth
+      - email
+      - fullName
+      - phone
+      - status
+      - title
+      type: object
+    Officer_relationships:
+      properties:
+        org:
+          $ref: "#/components/schemas/Relationship"
+        customer:
+          $ref: "#/components/schemas/Relationship"
+      type: object
+    CreateBusinessWalletCustomerData_attributes:
+      properties:
+        bankName:
+          description: The name of the bank partner this customer is about to create
+            a wallet under.
+          example: myBankName
+          type: string
+        businessName:
+          description: The name of the business this customer represents.
+          example: Sirius & Snape Inc.
+          type: string
+        address:
+          allOf:
+          - $ref: "#/components/schemas/AddressType"
+          description: Address of the business.
+          example:
+            street: 5230 Newell Rd
+            city: Palo Alto
+            state: CA
+            postalCode: "94303"
+            country: US
+        ein:
+          description: Business EIN (numbers only).
+          example: "123456789"
+          type: string
+        businessVertical:
+          allOf:
+          - $ref: "#/components/schemas/BusinessVerticalType"
+          description: The business vertical of the business.
+          example: TechnologyMediaOrTelecom
+        numberOfEmployees:
+          allOf:
+          - $ref: "#/components/schemas/BusinessNumberOfEmployeesType"
+          description: The number of employees working for this business.
+          example: Between10And50
+        tags:
+          additionalProperties: true
+          description: See Updating Tags.
+          example:
+            purpose: Sirius & Snape Inc.
+          type: object
+      required:
+      - address
+      - bankName
+      - businessName
+      - businessVertical
+      - ein
+      - numberOfEmployees
+      type: object
+    UpdateBusinessCustomerData_attributes:
+      properties:
+        address:
+          allOf:
+          - $ref: "#/components/schemas/AddressType"
+          description: Address of the business. To modify specify the new address.
+          example:
+            street: 5231 Newell Rd
+            street2: null
+            city: Palo Alto
+            state: CA
+            postalCode: "94301"
+            country: US
+        phone:
+          allOf:
+          - $ref: "#/components/schemas/PhoneType"
+          description: Phone of the business. To modify specify the new phone number.
+          example:
+            countryCode: "1"
+            number: "5555555555"
+        contact:
+          allOf:
+          - $ref: "#/components/schemas/BusinessContactType"
+          description: Primary contact of the business.
+        authorizedUsers:
+          description: Array of authorized users. The provided array items will replace
+            the existing ones.
+          items:
+            $ref: "#/components/schemas/AuthorizedUserType"
+          type: array
+        dba:
+          description: To modify or add specify the new dba name.
+          type: string
+        businessVertical:
+          allOf:
+          - $ref: "#/components/schemas/BusinessVerticalType"
+          description: The business vertical of the business.
+          example: TechnologyMediaOrTelecom
+        numberOfEmployees:
+          allOf:
+          - $ref: "#/components/schemas/BusinessNumberOfEmployeesType"
+          description: Number of employees of the business.
+          example: Between50And100
+        annualRevenue:
+          allOf:
+          - $ref: "#/components/schemas/AnnualRevenueType"
+          description: Annual revenue of the business.
+          example: Between500kAnd1m
+        cashFlow:
+          allOf:
+          - $ref: "#/components/schemas/CashFlowType"
+          description: Cash flow of the business.
+          example: Predictable
+        countriesOfOperation:
+          description: Countries where the business operates.
+          example:
+          - US
+          - CA
+          items:
+            maxLength: 2
+            minLength: 2
+            type: string
+          type: array
+        website:
+          description: Business's website.
+          example: https://piedpiper.com
+          type: string
+        stockSymbol:
+          description: Stock symbol (ticker) of the business.
+          example: PPI
+          type: string
+        yearOfIncorporation:
+          description: Year of incorporation of the business.
+          example: "2014"
+          pattern: "^\\d{4}$"
+          type: string
+        operatingAddress:
+          allOf:
+          - $ref: "#/components/schemas/AddressType"
+          description: The operating address of the business.
+          example:
+            street: 5231 Newell Rd
+            street2: null
+            city: Palo Alto
+            state: CA
+            postalCode: "94301"
+            country: US
+        tags:
+          additionalProperties: true
+          description: See Updating Tags.
+          type: object
+      type: object
+    UpdateIndividualCustomerData_attributes:
+      properties:
+        address:
+          allOf:
+          - $ref: "#/components/schemas/AddressType"
+          description: Address of the individual. To modify or add specify the new
+            address.
+          example:
+            street: 5231 Newell Rd
+            street2: null
+            city: Palo Alto
+            state: CA
+            postalCode: "94301"
+            country: US
+        phone:
+          allOf:
+          - $ref: "#/components/schemas/PhoneType"
+          description: Phone of the individual. To modify or add specify the new phone
+            number.
+          example:
+            countryCode: "1"
+            number: "5555555555"
+        email:
+          description: Email address of the individual. To modify or add specify the
+            new email address.
+          example: richard@piedpiper.com
+          type: string
+        dba:
+          description: If the individual is a sole proprietor who is doing business
+            under a different name. To modify or add specify the new dba name.
+          type: string
+        numberOfEmployees:
+          allOf:
+          - $ref: "#/components/schemas/BusinessNumberOfEmployeesType"
+          description: Number of employees if the customer is a sole proprietor.
+          example: Between2And5
+        businessVertical:
+          allOf:
+          - $ref: "#/components/schemas/BusinessVerticalType"
+          description: Business vertical if the customer is a sole proprietor.
+          example: TechnologyMediaOrTelecom
+        occupation:
+          allOf:
+          - $ref: "#/components/schemas/OccupationType"
+          description: Occupation of the individual.
+          example: ArchitectOrEngineer
+        annualIncome:
+          allOf:
+          - $ref: "#/components/schemas/AnnualIncomeType"
+          description: Annual income of the individual.
+          example: Between50kAnd100k
+        annualRevenue:
+          allOf:
+          - $ref: "#/components/schemas/AnnualRevenueType"
+          description: Annual revenue if the customer is a sole proprietor.
+          example: Between100kAnd200k
+        website:
+          description: Business's website if the customer is a sole proprietor.
+          example: https://piedpiper.com
+          type: string
+        sourceOfIncome:
+          allOf:
+          - $ref: "#/components/schemas/SourceOfIncomeType"
+          description: Source of income of the individual.
+          example: EmploymentOrPayrollIncome
+        authorizedUsers:
+          description: Array of authorized users. The provided array items will replace
+            the existing ones.
+          items:
+            $ref: "#/components/schemas/AuthorizedUserType"
+          type: array
+        tags:
+          additionalProperties: true
+          description: See Updating Tags.
+          type: object
+        jwtSubject:
+          description: See this section for more information.
+          type: string
+      type: object
+    ArchiveCustomerData_attributes:
+      properties:
+        reason:
+          description: "The reason for archiving the customer. One of Inactive, FraudACHActivity,\
+            \ FraudCardActivity, FraudCheckActivity, FraudApplicationHistory, FraudAccountActivity,\
+            \ FraudClientIdentified, FraudLinkedToFraudulentCustomer, ByBank. This\
+            \ list is subject to change."
+          example: FraudCardActivity
+          type: string
+      required:
+      - reason
+      type: object
+    UpdateBusinessCustomerOfficerData_attributes:
+      properties:
+        title:
+          description: "Title of the officer. One of CEO, COO, CFO, President, BenefitsAdministrationOfficer,\
+            \ CIO, VP, AVP, Treasurer, Secretary, Controller, Manager, Partner or\
+            \ Member."
+          example: CEO
+          type: string
+        occupation:
+          allOf:
+          - $ref: "#/components/schemas/OccupationType"
+          description: Occupation of the officer.
+          example: ExecutiveOrManager
+        annualIncome:
+          allOf:
+          - $ref: "#/components/schemas/AnnualIncomeType"
+          description: Annual income of the officer.
+          example: Between100kAnd250k
+        sourceOfIncome:
+          allOf:
+          - $ref: "#/components/schemas/SourceOfIncomeType"
+          description: Source of income of the officer.
+          example: EmploymentOrPayrollIncome
       type: object
   securitySchemes:
     bearerAuth:
