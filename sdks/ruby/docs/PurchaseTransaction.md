@@ -1,0 +1,24 @@
+# UnitFinanceSdk::PurchaseTransaction
+
+## Properties
+
+| Name | Type | Description | Notes |
+| ---- | ---- | ----------- | ----- |
+| **type** | **String** |  |  |
+| **id** | **String** |  |  |
+| **attributes** | [**PurchaseTransactionAttributes**](PurchaseTransactionAttributes.md) |  |  |
+| **relationships** | [**PurchaseTransactionRelationships**](PurchaseTransactionRelationships.md) |  | [optional] |
+
+## Example
+
+```ruby
+require 'unit_finance_sdk'
+
+instance = UnitFinanceSdk::PurchaseTransaction.new(
+  type: null,
+  id: null,
+  attributes: null,
+  relationships: null
+)
+```
+
