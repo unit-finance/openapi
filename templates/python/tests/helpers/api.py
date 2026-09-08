@@ -14,6 +14,7 @@ from unit_finance_sdk import (
     Configuration,
     FeesApi,
     PaymentsApi,
+    TransactionsApi,
 )
 
 TOKEN = os.environ.get("UNIT_SANDBOX_TOKEN")
@@ -62,6 +63,11 @@ def build_payments_api() -> PaymentsApi:
 def build_cards_api() -> CardsApi:
     """Construct a ``CardsApi`` bound to the sandbox."""
     return CardsApi(ApiClient(_configuration()))
+
+
+def build_transactions_api() -> TransactionsApi:
+    """Construct a ``TransactionsApi`` bound to the sandbox."""
+    return TransactionsApi(ApiClient(_configuration()))
 
 
 def sleep(seconds: float) -> None:

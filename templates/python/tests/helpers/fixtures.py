@@ -58,11 +58,14 @@ from unit_finance_sdk import (
     UpdateAccountRequest,
     UpdateApplicationRequest,
     UpdateBookPaymentRequest,
+    UpdateBookTransactionRequest,
     UpdateBusinessApplicationRequest,
     UpdateBusinessBeneficialOwnerRequest,
     UpdateCardRequest,
     UpdateDepositAccountRequest,
     UpdatePaymentRequest,
+    UpdateTagsRequest,
+    UpdateTransactionRequest,
 )
 
 from .api import TEST_RUN_ID
@@ -678,6 +681,43 @@ def build_replace_card_request() -> ReplaceCardRequest:
         },
     }
     return ReplaceCardRequest.from_dict(body)
+
+
+def build_update_transaction_tags_request() -> UpdateTagsRequest:
+    # PATCH /accounts/{accountId}/transactions/{transactionId} accepts a
+    # generic tags-update envelope (``type: "transaction"``) regardless of the
+    # underlying transaction variant. UpdateTagsData has no nested oneOf, so a
+    # plain from_dict on the concrete request model is sufficient.
+    body = {
+        "data": {
+            "type": "transaction",
+            "attributes": {"tags": {**_base_tags(), "updated": "true"}},
+        },
+    }
+    return UpdateTagsRequest.from_dict(body)
+
+
+def build_update_book_transaction_request(account_id: str) -> UpdateTransactionRequest:
+    # PATCH /transactions/{transactionId} is a oneOf union discriminated by
+    # data.type; the bookTransaction variant requires the owning account
+    # relationship (a RelationshipData oneOf) alongside the updatable
+    # summary/tags attributes, so it is built via from_dict and wrapped as the
+    # union's actual_instance (same pattern as the create fixtures above).
+    body = {
+        "data": {
+            "type": "bookTransaction",
+            "attributes": {
+                "summary": "SDK integration test book transaction update",
+                "tags": {**_base_tags(), "updated": "true"},
+            },
+            "relationships": {
+                "account": {"data": {"type": "account", "id": account_id}},
+            },
+        },
+    }
+    return UpdateTransactionRequest(
+        actual_instance=UpdateBookTransactionRequest.from_dict(body)
+    )
 
 
 def build_add_account_owners_request(customer_ids: List[str]) -> Dict[str, Any]:
