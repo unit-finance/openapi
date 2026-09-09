@@ -35,8 +35,11 @@ manifests (`templates/java/pom-dependencies.xml`) are source of truth too.
 
 ## Other derived files
 
-- `spec/openapi.bundled.json` — downloaded by `npm run fetch-spec`. The spec is
-  authored in the separate `unit-openapi` repo; do not hand-edit it here.
+- `spec/openapi.bundled.json` — downloaded by `npm run fetch-spec` (which
+  `generate-sdks` runs) and committed to the repo. The spec is authored in the
+  separate `unit-openapi` repo; do not hand-edit it here. It is covered by the
+  CI drift gate, so regenerate with `npm run generate-sdks` and commit the
+  result rather than editing it directly.
 - `spec-version.json` — `slices` is derived by `fetch-spec`; don't edit by hand.
 - `test-coverage-report.json` — written by `npm run test-coverage`.
 
