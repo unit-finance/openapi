@@ -1,14 +1,18 @@
 import type {
+	ArchiveCustomerRequest,
 	CreateBusinessApplicationRequest,
 	CreateBusinessDebitCardRequest,
 	CreateBusinessVirtualDebitCardRequest,
+	CreateBusinessWalletCustomerRequest,
 	CreateIndividualApplicationRequest,
 	CreateSoleProprietorApplicationRequest,
 	FreezeCardRequest,
 	ReplaceCardRequest,
 	UpdateBusinessApplicationRequest,
 	UpdateBusinessBeneficialOwnerRequest,
+	UpdateBusinessCustomerOfficerRequest,
 	UpdateCardRequest,
+	UpdateCustomerRequest,
 } from "../..";
 import {
 	BusinessAnnualRevenueType,
@@ -531,6 +535,61 @@ export function buildUpdateBookTransactionRequest(accountId: string) {
 			relationships: {
 				account: { data: { type: "account", id: accountId } },
 			},
+		},
+	};
+}
+
+// A business wallet customer is created directly (no application flow). The
+// sandbox requires the full attribute set from the spec: bank partner name,
+// business name, address, EIN, vertical and employee-count bucket.
+export function buildCreateBusinessWalletCustomerRequest(): CreateBusinessWalletCustomerRequest {
+	return {
+		data: {
+			type: "businessWalletCustomer",
+			attributes: {
+				// bankName must be one of the sandbox's partner-bank names
+				// (Piermont, Blue Ridge, Pacific West, MVB, Choice Financial
+				// Group, Thread, Lincoln Savings, Emprise, TransPecos, Vantage).
+				bankName: "Thread",
+				businessName: `Pied Piper Wallet ${TEST_RUN_ID}`,
+				address: usAddress(),
+				ein: "123456789",
+				businessVertical: "TechnologyMediaOrTelecom",
+				numberOfEmployees: BusinessNumberOfEmployeesType.Between50And100,
+				tags: baseTags(),
+			},
+		},
+	};
+}
+
+// updateCustomer is discriminated by data.type; the businessCustomer variant
+// only touches tags here so the shared business customer is left otherwise
+// intact for downstream suites.
+export function buildUpdateBusinessCustomerRequest(): UpdateCustomerRequest {
+	return {
+		data: {
+			type: "businessCustomer",
+			attributes: {
+				tags: { ...baseTags(), updated: "true" },
+			},
+		},
+	};
+}
+
+export function buildArchiveCustomerRequest(): ArchiveCustomerRequest {
+	return {
+		data: {
+			type: "customerArchive",
+			attributes: { reason: "Inactive" },
+		},
+	};
+}
+
+export function buildUpdateBusinessCustomerOfficerRequest(): UpdateBusinessCustomerOfficerRequest {
+	return {
+		data: {
+			type: "officer",
+			attributes: { occupation: "ArchitectOrEngineer" },
 		},
 	};
 }

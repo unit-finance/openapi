@@ -2,6 +2,9 @@ package com.unit.finance.sdk.it;
 
 import com.unit.finance.sdk.model.AddressType;
 import com.unit.finance.sdk.model.AnnualIncomeType;
+import com.unit.finance.sdk.model.ArchiveCustomerData;
+import com.unit.finance.sdk.model.ArchiveCustomerDataAttributes;
+import com.unit.finance.sdk.model.ArchiveCustomerRequest;
 import com.unit.finance.sdk.model.BeneficialOwnerRequestType;
 import com.unit.finance.sdk.model.BusinessAnnualRevenueType;
 import com.unit.finance.sdk.model.BusinessContactType;
@@ -37,6 +40,9 @@ import com.unit.finance.sdk.model.CreateBusinessDebitCardRequest;
 import com.unit.finance.sdk.model.CreateBusinessVirtualDebitCardData;
 import com.unit.finance.sdk.model.CreateBusinessVirtualDebitCardDataAttributes;
 import com.unit.finance.sdk.model.CreateBusinessVirtualDebitCardRequest;
+import com.unit.finance.sdk.model.CreateBusinessWalletCustomerData;
+import com.unit.finance.sdk.model.CreateBusinessWalletCustomerDataAttributes;
+import com.unit.finance.sdk.model.CreateBusinessWalletCustomerRequest;
 import com.unit.finance.sdk.model.CreateCardRequest;
 import com.unit.finance.sdk.model.CreateDepositAccountData;
 import com.unit.finance.sdk.model.CreateDepositAccountDataAttributes;
@@ -110,9 +116,16 @@ import com.unit.finance.sdk.model.UpdateBusinessBeneficialOwnerData;
 import com.unit.finance.sdk.model.UpdateBusinessBeneficialOwnerDataAttributes;
 import com.unit.finance.sdk.model.UpdateBusinessBeneficialOwnerDataRelationships;
 import com.unit.finance.sdk.model.UpdateBusinessBeneficialOwnerRequest;
+import com.unit.finance.sdk.model.UpdateBusinessCustomerData;
+import com.unit.finance.sdk.model.UpdateBusinessCustomerDataAttributes;
+import com.unit.finance.sdk.model.UpdateBusinessCustomerOfficerData;
+import com.unit.finance.sdk.model.UpdateBusinessCustomerOfficerDataAttributes;
+import com.unit.finance.sdk.model.UpdateBusinessCustomerOfficerRequest;
+import com.unit.finance.sdk.model.UpdateBusinessCustomerRequest;
 import com.unit.finance.sdk.model.UpdateCardData;
 import com.unit.finance.sdk.model.UpdateCardDataAttributes;
 import com.unit.finance.sdk.model.UpdateCardRequest;
+import com.unit.finance.sdk.model.UpdateCustomerRequest;
 import com.unit.finance.sdk.model.UpdateDepositAccountData;
 import com.unit.finance.sdk.model.UpdateDepositAccountDataAttributes;
 import com.unit.finance.sdk.model.UpdateDepositAccountRequest;
@@ -675,6 +688,64 @@ final class Fixtures {
     ReplaceCardData data =
         new ReplaceCardData().type(ReplaceCardData.TypeEnum.REPLACE_CARD).attributes(attributes);
     return new ReplaceCardRequest().data(data);
+  }
+
+  // A business wallet customer is created directly (no application flow). The
+  // sandbox requires the full attribute set from the spec: bank partner name,
+  // business name, address, EIN, vertical and employee-count bucket.
+  static CreateBusinessWalletCustomerRequest createBusinessWalletCustomerRequest() {
+    CreateBusinessWalletCustomerDataAttributes attributes =
+        new CreateBusinessWalletCustomerDataAttributes()
+            // bankName must be one of the sandbox's partner-bank names
+            // (Piermont, Blue Ridge, Pacific West, MVB, Choice Financial Group,
+            // Thread, Lincoln Savings, Emprise, TransPecos, Vantage).
+            .bankName("Thread")
+            .businessName("Pied Piper Wallet " + RUN)
+            .address(usAddress())
+            .ein("123456789")
+            .businessVertical(BusinessVerticalType.TECHNOLOGY_MEDIA_OR_TELECOM)
+            .numberOfEmployees(BusinessNumberOfEmployeesType.BETWEEN50_AND100)
+            .tags(baseTags());
+    CreateBusinessWalletCustomerData data =
+        new CreateBusinessWalletCustomerData()
+            .type(CreateBusinessWalletCustomerData.TypeEnum.BUSINESS_WALLET_CUSTOMER)
+            .attributes(attributes);
+    return new CreateBusinessWalletCustomerRequest().data(data);
+  }
+
+  // updateCustomer is discriminated by data.type; the businessCustomer variant
+  // only touches tags here so the shared business customer is left otherwise
+  // intact for downstream suites.
+  static UpdateCustomerRequest updateBusinessCustomerRequest() {
+    Map<String, Object> tags = baseTags();
+    tags.put("updated", "true");
+    UpdateBusinessCustomerDataAttributes attributes =
+        new UpdateBusinessCustomerDataAttributes().tags(tags);
+    UpdateBusinessCustomerData data =
+        new UpdateBusinessCustomerData()
+            .type(UpdateBusinessCustomerData.TypeEnum.BUSINESS_CUSTOMER)
+            .attributes(attributes);
+    return new UpdateCustomerRequest(new UpdateBusinessCustomerRequest().data(data));
+  }
+
+  static ArchiveCustomerRequest archiveCustomerRequest() {
+    ArchiveCustomerDataAttributes attributes = new ArchiveCustomerDataAttributes().reason("Inactive");
+    ArchiveCustomerData data =
+        new ArchiveCustomerData()
+            .type(ArchiveCustomerData.TypeEnum.CUSTOMER_ARCHIVE)
+            .attributes(attributes);
+    return new ArchiveCustomerRequest().data(data);
+  }
+
+  static UpdateBusinessCustomerOfficerRequest updateBusinessCustomerOfficerRequest() {
+    UpdateBusinessCustomerOfficerDataAttributes attributes =
+        new UpdateBusinessCustomerOfficerDataAttributes()
+            .occupation(OccupationType.ARCHITECT_OR_ENGINEER);
+    UpdateBusinessCustomerOfficerData data =
+        new UpdateBusinessCustomerOfficerData()
+            .type(UpdateBusinessCustomerOfficerData.TypeEnum.OFFICER)
+            .attributes(attributes);
+    return new UpdateBusinessCustomerOfficerRequest().data(data);
   }
 
   static AddAccountOwnersRequest addAccountOwnersRequest(List<String> customerIds) {

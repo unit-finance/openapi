@@ -6,6 +6,7 @@ import com.unit.finance.sdk.ApiClient;
 import com.unit.finance.sdk.api.AccountsApi;
 import com.unit.finance.sdk.api.ApplicationsApi;
 import com.unit.finance.sdk.api.CardsApi;
+import com.unit.finance.sdk.api.CustomersApi;
 import com.unit.finance.sdk.api.FeesApi;
 import com.unit.finance.sdk.api.PaymentsApi;
 import com.unit.finance.sdk.api.TransactionsApi;
@@ -15,6 +16,11 @@ import com.unit.finance.sdk.model.IndividualApplication;
 import com.unit.finance.sdk.model.List200ResponseDataInner;
 import io.github.cdimascio.dotenv.Dotenv;
 import java.io.File;
+import java.io.IOException;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 /**
  * Shared helpers for the sandbox integration suite, mirroring the Node
@@ -41,6 +47,13 @@ final class ApiSupport {
 
   static final String BASE_PATH =
       env("UNIT_SANDBOX_BASE_URL") != null ? env("UNIT_SANDBOX_BASE_URL") : "https://api.s.unit.sh";
+
+  /**
+   * Opt-in raw HTTP response logging. Unset disables logging; {@code 1}/{@code
+   * true}/{@code all} logs every response; any other value is treated as a URL
+   * substring filter (e.g. {@code officers}). See {@link #logResponse}.
+   */
+  private static final String LOG_HTTP = env("UNIT_SDK_LOG_HTTP");
 
   /** Stable id for this run; stamped into created applications' tags. */
   static final String TEST_RUN_ID =
@@ -104,7 +117,48 @@ final class ApiSupport {
     client.setConnectTimeout(30_000);
     client.setReadTimeout(60_000);
     client.setWriteTimeout(60_000);
+    // Opt-in raw response logging via UNIT_SDK_LOG_HTTP. The SDK deserializes
+    // some 200 bodies into models with stricter `required` sets than the sandbox
+    // returns (e.g. Officer.status), throwing an IllegalArgumentException before
+    // the body is visible. Peeking the body in an interceptor logs the exact
+    // JSON the sandbox sent without consuming the stream, so the typed
+    // deserialization still runs afterward. The variable doubles as a filter:
+    //   1 | true | all   -> log every response (very noisy; approval polling
+    //                        alone dumps the full application body many times)
+    //   <substring>      -> log only responses whose URL contains the substring
+    //                        (e.g. UNIT_SDK_LOG_HTTP=officers for the officer
+    //                        deserialization bug)
+    if (LOG_HTTP != null) {
+      OkHttpClient logging =
+          client.getHttpClient().newBuilder().addInterceptor(ApiSupport::logResponse).build();
+      client.setHttpClient(logging);
+    }
     return client;
+  }
+
+  private static boolean shouldLog(String url) {
+    if (LOG_HTTP == null) {
+      return false;
+    }
+    if (LOG_HTTP.equals("1") || LOG_HTTP.equalsIgnoreCase("true") || LOG_HTTP.equalsIgnoreCase("all")) {
+      return true;
+    }
+    return url.contains(LOG_HTTP);
+  }
+
+  /** Logs method, URL, status and (peeked) body of matching responses to stderr. */
+  private static Response logResponse(okhttp3.Interceptor.Chain chain) throws IOException {
+    Request request = chain.request();
+    Response response = chain.proceed(request);
+    String url = request.url().toString();
+    if (shouldLog(url)) {
+      // Peek up to 1 MiB so the buffered copy we read here does not consume the
+      // body the SDK deserializes downstream.
+      ResponseBody peeked = response.peekBody(1_048_576L);
+      System.err.println("[http] " + request.method() + " " + url + " -> " + response.code());
+      System.err.println("[http] body: " + peeked.string());
+    }
+    return response;
   }
 
   /** Construct an {@code ApplicationsApi} bound to the sandbox. */
@@ -135,6 +189,11 @@ final class ApiSupport {
   /** Construct a {@code TransactionsApi} bound to the sandbox. */
   static TransactionsApi buildTransactionsApi() {
     return new TransactionsApi(buildApiClient());
+  }
+
+  /** Construct a {@code CustomersApi} bound to the sandbox. */
+  static CustomersApi buildCustomersApi() {
+    return new CustomersApi(buildApiClient());
   }
 
   /** Block the current thread for sandbox polling (mirrors Node {@code sleep}). */
