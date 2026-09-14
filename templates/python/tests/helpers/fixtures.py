@@ -45,6 +45,8 @@ from unit_finance_sdk import (
     CreateBusinessVirtualDebitCardRequest,
     CreateBusinessWalletCustomerRequest,
     CreateCardRequest,
+    CreateCheckDepositRequest,
+    CreateCheckDepositSendLinkRequest,
     CreateDepositAccountRequest,
     CreateFeeRequest,
     CreateIndividualApplicationRequest,
@@ -66,6 +68,7 @@ from unit_finance_sdk import (
     UpdateBusinessCustomerOfficerRequest,
     UpdateBusinessCustomerRequest,
     UpdateCardRequest,
+    UpdateCheckDepositRequest,
     UpdateCustomerRequest,
     UpdateDepositAccountRequest,
     UpdatePaymentRequest,
@@ -402,6 +405,68 @@ def build_release_account_hold_request(amount: int = 500) -> Dict[str, Any]:
             "attributes": {"amount": amount},
         },
     }
+
+
+# A check deposit is created against an existing account; `amount` and
+# `description` are the only required attributes. The account relationship uses
+# the generic "account" resource type (matching the hold/fee fixtures). Built
+# via from_dict for the same oneOf-relationship reason as those fixtures.
+def build_create_check_deposit_request(account_id: str) -> CreateCheckDepositRequest:
+    body = {
+        "data": {
+            "type": "checkDeposit",
+            "attributes": {
+                "amount": 20000,
+                "description": "SDK integration test check deposit",
+                "tags": _base_tags(),
+            },
+            "relationships": {
+                "account": {"data": {"type": "account", "id": account_id}},
+            },
+        },
+    }
+    return CreateCheckDepositRequest.from_dict(body)
+
+
+# updateCheckDeposit only exposes `tags` (and the optional clearingDaysOverride);
+# `tags` is required on the update envelope.
+def build_update_check_deposit_request() -> UpdateCheckDepositRequest:
+    body = {
+        "data": {
+            "type": "checkDeposit",
+            "attributes": {"tags": {**_base_tags(), "updated": "true"}},
+        },
+    }
+    return UpdateCheckDepositRequest.from_dict(body)
+
+
+# The send-link component requires a white-label theme and an authorized user
+# alongside the account. Sandbox orgs without those resources reject the call,
+# so the suite treats a validation error as a feature-unavailable skip.
+def build_create_check_deposit_send_link_request(
+    account_id: str,
+    white_label_theme_id: str,
+    authorized_user_id: str,
+) -> CreateCheckDepositSendLinkRequest:
+    body = {
+        "data": {
+            "type": "sendLinkForCheckDepositComponent",
+            "attributes": {
+                "qrCode": True,
+                "idempotencyKey": f"{TEST_RUN_ID}-send-link-{uuid.uuid4().hex[:8]}",
+            },
+            "relationships": {
+                "whiteLabelTheme": {
+                    "data": {"type": "whiteLabelTheme", "id": white_label_theme_id}
+                },
+                "account": {"data": {"type": "account", "id": account_id}},
+                "authorizedUser": {
+                    "data": {"type": "authorizedUser", "id": authorized_user_id}
+                },
+            },
+        },
+    }
+    return CreateCheckDepositSendLinkRequest.from_dict(body)
 
 
 def build_create_book_payment_request(

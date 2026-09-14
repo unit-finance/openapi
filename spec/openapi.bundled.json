@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Unit API",
-    "version": "0.7.0",
+    "version": "0.8.0",
     "description": "JSON:API-compliant banking API.",
     "license": {
       "name": "Proprietary",
@@ -47,6 +47,10 @@
     {
       "name": "Customers",
       "description": "Business, individual, and business wallet customers, their officers, and archival."
+    },
+    {
+      "name": "Check Deposits",
+      "description": "Check deposits into accounts, their images, clearing, confirmation, and shareable deposit links."
     }
   ],
   "paths": {
@@ -6923,6 +6927,868 @@
                   "properties": {
                     "data": {
                       "$ref": "#/components/schemas/Officer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/check-deposits": {
+      "post": {
+        "operationId": "createCheckDeposit",
+        "summary": "Create a check deposit",
+        "description": "Creates a check deposit for an `Account`.",
+        "tags": [
+          "Check Deposits"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "check-deposits-write"
+            ]
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "properties": {
+                  "data": {
+                    "$ref": "#/components/schemas/CreateCheckDepositData"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The requested resource after the operation was completed.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/CheckDeposit"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "listCheckDeposits",
+        "summary": "List check deposits",
+        "description": "List check deposit resources. Filtering, paging and sorting can be applied.",
+        "tags": [
+          "Check Deposits"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "check-deposits"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page[limit]",
+            "in": "query",
+            "required": false,
+            "description": "Maximum number of resources that will be returned. Maximum is 1000 resources. See Pagination.",
+            "schema": {
+              "type": "string",
+              "default": "100"
+            }
+          },
+          {
+            "name": "page[offset]",
+            "in": "query",
+            "required": false,
+            "description": "Number of resources to skip. See Pagination.",
+            "schema": {
+              "type": "string",
+              "default": "0"
+            }
+          },
+          {
+            "name": "filter[accountId]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the results by the specified account id.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[customerId]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the results by the specified customer id.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[status]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filter by Check Deposit Status. Usage Example: filter[status][0]=PendingReview&filter[status][1]=AwaitingImages",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[tags]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filter check deposits by Tags.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[fromAmount]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the Check Deposits that have an amount that is *higher or equal to* the specified amount (in cents). e.g. 5000",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[toAmount]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the Check Deposits that have an amount that is *lower or equal to* the specified amount (in cents). e.g. 7000",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Leave empty or provide sort=createdAt for ascending order. Provide sort=-createdAt (leading minus sign) for descending order.",
+            "schema": {
+              "type": "string",
+              "default": "-createdAt"
+            }
+          },
+          {
+            "name": "include",
+            "in": "query",
+            "required": false,
+            "description": "Optional. A comma-separated list of related resources to include in the response. Related resources include: customer, account, transaction. See Getting Related Resources",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of check deposit resources.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/CheckDeposit"
+                      }
+                    },
+                    "included": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/DepositAccount"
+                      },
+                      "description": "Array of resources requested by the include query parameter."
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/check-deposits/{checkDepositId}": {
+      "parameters": [
+        {
+          "name": "checkDepositId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "getCheckDeposit",
+        "summary": "Get a check deposit by id",
+        "description": "Get a check deposit by id.",
+        "tags": [
+          "Check Deposits"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "check-deposits"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "include",
+            "in": "query",
+            "required": false,
+            "description": "Optional. A comma-separated list of related resources to include in the response. Related resources include: customer, account, transaction. See Getting Related Resources",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "CheckDeposit resource.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/CheckDeposit"
+                    },
+                    "included": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/DepositAccount"
+                      },
+                      "description": "Array of resources requested by the include query parameter."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "updateCheckDeposit",
+        "summary": "Update a check deposit",
+        "description": "Update a check deposit.",
+        "tags": [
+          "Check Deposits"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "check-deposits-write"
+            ]
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "properties": {
+                  "data": {
+                    "$ref": "#/components/schemas/UpdateData"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The updated CheckDeposit resource.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/CheckDeposit"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/check-deposits/{checkDepositId}/clear": {
+      "parameters": [
+        {
+          "name": "checkDepositId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "operationId": "clearCheckDeposit",
+        "summary": "Clear a check deposit",
+        "description": "Clears a check deposit while in `Clearing` status. Overrides the original clearing period, making funds available immediately. Requires the Dynamic Clearing Period feature to be enabled.",
+        "tags": [
+          "Check Deposits"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "check-deposits-write"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The cleared check deposit.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/CheckDeposit"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/check-deposits/{checkDepositId}/confirm": {
+      "parameters": [
+        {
+          "name": "checkDepositId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "operationId": "confirmCheckDepositDetails",
+        "summary": "Confirm check deposit details",
+        "description": "Confirms a check deposit details when it's in `AwaitingCustomerConfirmation` status",
+        "tags": [
+          "Check Deposits"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "check-deposits"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The check deposit details were confirmed."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/check-deposits/{checkDepositId}/front": {
+      "parameters": [
+        {
+          "name": "checkDepositId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "getCheckDepositFrontImage",
+        "summary": "Get a check deposit front image",
+        "description": "Get a check deposit front image by check deposit id.",
+        "tags": [
+          "Check Deposits"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "check-deposits"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The check deposit front image.",
+            "content": {
+              "image/jpeg": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "uploadCheckDepositFrontImage",
+        "summary": "Upload a check deposit front image",
+        "description": "Uploads a check front-side image file. Currently only `jpeg` file type is supported.",
+        "tags": [
+          "Check Deposits"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "check-deposits-write"
+            ]
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "image/jpeg": {
+              "schema": {
+                "type": "string",
+                "format": "binary"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The updated CheckDeposit resource.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/CheckDeposit"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/check-deposits/{checkDepositId}/back": {
+      "parameters": [
+        {
+          "name": "checkDepositId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "getCheckDepositBackImage",
+        "summary": "Get a check deposit back image",
+        "description": "Get a check deposit back image by check deposit id.",
+        "tags": [
+          "Check Deposits"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "check-deposits"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The check deposit back image.",
+            "content": {
+              "image/jpeg": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "uploadCheckDepositBackImage",
+        "summary": "Upload a check deposit back image",
+        "description": "Uploads a check back-side image file. Currently only `jpeg` file type is supported.",
+        "tags": [
+          "Check Deposits"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "check-deposits-write"
+            ]
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "image/jpeg": {
+              "schema": {
+                "type": "string",
+                "format": "binary"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The updated CheckDeposit resource.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/CheckDeposit"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/white-label/send-link": {
+      "post": {
+        "operationId": "createCheckDepositSendLink",
+        "summary": "Create a check deposit send link",
+        "description": "Creates a shareable link for the Check Deposit component for an `Account`. The link can be sent to an end user via SMS or email and used to complete a check deposit. Unless a White Label Theme is customized, the component uses the default theme. Unless an Email Domain is customized the link will be created under a default domain starting in `https://application-form.sh`.",
+        "tags": [
+          "Check Deposits"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "check-deposits-write"
+            ]
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "properties": {
+                  "data": {
+                    "$ref": "#/components/schemas/CreateCheckDepositSendLinkData"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The requested resource after the operation was completed.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "required": [
+                        "type"
+                      ],
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "sendLinkForCheckDepositComponent"
+                          ]
+                        }
+                      }
                     }
                   }
                 }
@@ -21481,6 +22347,302 @@
                 ],
                 "description": "Source of income of the officer.",
                 "example": "EmploymentOrPayrollIncome"
+              }
+            }
+          }
+        }
+      },
+      "CheckDeposit": {
+        "type": "object",
+        "required": [
+          "type",
+          "id",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "checkDeposit"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "createdAt",
+              "status",
+              "description",
+              "amount"
+            ],
+            "properties": {
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the resource was created."
+              },
+              "status": {
+                "type": "string",
+                "description": "One of AwaitingImages, AwaitingFrontImage, AwaitingBackImage, Pending, PendingReview, Rejected, Clearing, Sent, Canceled, Returned."
+              },
+              "reason": {
+                "type": "string",
+                "description": "More information about the status."
+              },
+              "description": {
+                "type": "string",
+                "description": "Check Deposit description (maximum of 50 characters)."
+              },
+              "amount": {
+                "type": "string",
+                "description": "The amount (cents) of the check deposit."
+              },
+              "checkNumber": {
+                "type": "string",
+                "description": "The serial number printed at the bottom of the check"
+              },
+              "counterparty": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CheckCounterpartyType"
+                  }
+                ],
+                "description": "The party the check belongs to."
+              },
+              "clearingDaysOverride": {
+                "type": "integer",
+                "description": "The amount of days it will take a check deposit to clear if a clearingDaysOverride was provided. See Dynamic Clearing Period"
+              },
+              "settlementDate": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Optional, For Pending or Clearing, shows the date on which the check will be settled."
+              },
+              "tags": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "See Tags."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "properties": {
+              "account": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "customer": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "customers": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "transaction": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        },
+        "example": {
+          "type": "checkDeposit",
+          "id": "11221",
+          "attributes": {
+            "createdAt": "2021-05-27T09:29:30.828Z",
+            "amount": 20000,
+            "description": "Check deposit",
+            "clearingDaysOverride": 5,
+            "status": "AwaitingImages"
+          },
+          "relationships": {
+            "account": {
+              "data": {
+                "type": "account",
+                "id": "10001"
+              }
+            },
+            "customer": {
+              "data": {
+                "type": "customer",
+                "id": "10000"
+              }
+            }
+          }
+        },
+        "description": "`CheckDeposit` is a JSON:API resource, top-level fields:"
+      },
+      "CheckCounterpartyType": {
+        "type": "object",
+        "required": [
+          "routingNumber",
+          "accountNumber",
+          "name"
+        ],
+        "properties": {
+          "routingNumber": {
+            "type": "string",
+            "description": "Valid 9-digit ABA routing transit number."
+          },
+          "accountNumber": {
+            "type": "string",
+            "description": "Bank account number."
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the person or company that owns the bank account."
+          }
+        },
+        "example": {
+          "name": "April Oneil",
+          "routingNumber": "812345678",
+          "accountNumber": "1000000001"
+        }
+      },
+      "CreateCheckDepositData": {
+        "type": "object",
+        "required": [
+          "type",
+          "attributes",
+          "relationships"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "checkDeposit"
+            ]
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "amount",
+              "description"
+            ],
+            "properties": {
+              "amount": {
+                "type": "integer",
+                "description": "The check amount (in cents) to deposit.",
+                "example": 20000
+              },
+              "description": {
+                "type": "string",
+                "description": "Description of the check deposit (maximum of 50 characters).",
+                "example": "Check deposit"
+              },
+              "clearingDaysOverride": {
+                "type": "number",
+                "description": "See Dynamic Clearing Period."
+              },
+              "tags": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "See Tags."
+              },
+              "idempotencyKey": {
+                "type": "string",
+                "description": "Optional, but **strongly recommended**. See Idempotency."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "required": [
+              "account"
+            ],
+            "properties": {
+              "account": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        }
+      },
+      "UpdateData": {
+        "type": "object",
+        "required": [
+          "type",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "checkDeposit"
+            ]
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "tags"
+            ],
+            "properties": {
+              "clearingDaysOverride": {
+                "type": "number",
+                "description": "See Dynamic Clearing Period."
+              },
+              "tags": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "See Updating Tags.",
+                "example": {
+                  "by": "Richard Hendricks",
+                  "id": "23033b64-38f8-4dbc-91a1-313ff0156d02"
+                }
+              }
+            }
+          }
+        }
+      },
+      "CreateCheckDepositSendLinkData": {
+        "type": "object",
+        "required": [
+          "type",
+          "attributes",
+          "relationships"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "sendLinkForCheckDepositComponent"
+            ]
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "qrCode",
+              "idempotencyKey"
+            ],
+            "properties": {
+              "qrCode": {
+                "type": "boolean",
+                "description": "If true, a QR code (base64 encoded PNG) will be included in the response.",
+                "example": true
+              },
+              "idempotencyKey": {
+                "type": "string",
+                "description": "See Idempotency.",
+                "example": "3a1a33be-4e12-4603-9ed0-820922389fb8"
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "required": [
+              "whiteLabelTheme",
+              "account",
+              "authorizedUser"
+            ],
+            "properties": {
+              "whiteLabelTheme": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "account": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "authorizedUser": {
+                "$ref": "#/components/schemas/Relationship"
               }
             }
           }

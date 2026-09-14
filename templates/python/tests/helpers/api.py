@@ -11,6 +11,7 @@ from unit_finance_sdk import (
     ApiClient,
     ApplicationsApi,
     CardsApi,
+    CheckDepositsApi,
     Configuration,
     CustomersApi,
     FeesApi,
@@ -74,6 +75,11 @@ def build_transactions_api() -> TransactionsApi:
 def build_customers_api() -> CustomersApi:
     """Construct a ``CustomersApi`` bound to the sandbox."""
     return CustomersApi(ApiClient(_configuration()))
+
+
+def build_check_deposits_api() -> CheckDepositsApi:
+    """Construct a ``CheckDepositsApi`` bound to the sandbox."""
+    return CheckDepositsApi(ApiClient(_configuration()))
 
 
 def sleep(seconds: float) -> None:

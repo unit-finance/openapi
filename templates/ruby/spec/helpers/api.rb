@@ -60,6 +60,10 @@ module Helpers
       UnitFinanceSdk::CustomersApi.new(UnitFinanceSdk::ApiClient.new(configuration))
     end
 
+    def build_check_deposits_api
+      UnitFinanceSdk::CheckDepositsApi.new(UnitFinanceSdk::ApiClient.new(configuration))
+    end
+
     def sleep(seconds)
       Kernel.sleep(seconds)
     end
