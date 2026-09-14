@@ -34,6 +34,10 @@ docs/AnnualRevenueType.md
 docs/ApplicationDocument.md
 docs/ApplicationDocumentAttributes.md
 docs/ApplicationsApi.md
+docs/ArchiveCustomerData.md
+docs/ArchiveCustomerDataAttributes.md
+docs/ArchiveCustomerRequest.md
+docs/AuthorizedUserType.md
 docs/BatchRelease.md
 docs/BatchReleaseAttributes.md
 docs/BatchReleaseRelationships.md
@@ -53,6 +57,9 @@ docs/BusinessApplicationAttributes.md
 docs/BusinessApplicationRelationships.md
 docs/BusinessContactType.md
 docs/BusinessCreditCard.md
+docs/BusinessCustomer.md
+docs/BusinessCustomerAttributes.md
+docs/BusinessCustomerRelationships.md
 docs/BusinessDebitCard.md
 docs/BusinessDebitCardAttributes.md
 docs/BusinessNumberOfEmployeesType.md
@@ -60,6 +67,9 @@ docs/BusinessVerticalType.md
 docs/BusinessVirtualCreditCard.md
 docs/BusinessVirtualDebitCard.md
 docs/BusinessVirtualDebitCardAttributes.md
+docs/BusinessWalletCustomer.md
+docs/BusinessWalletCustomerAttributes.md
+docs/BusinessWalletCustomerRelationships.md
 docs/CancelApplication201Response.md
 docs/CancelApplicationData.md
 docs/CancelApplicationDataAttributes.md
@@ -152,6 +162,10 @@ docs/CreateBusinessVirtualCreditCardRequest.md
 docs/CreateBusinessVirtualDebitCardData.md
 docs/CreateBusinessVirtualDebitCardDataAttributes.md
 docs/CreateBusinessVirtualDebitCardRequest.md
+docs/CreateBusinessWalletCustomer201Response.md
+docs/CreateBusinessWalletCustomerData.md
+docs/CreateBusinessWalletCustomerDataAttributes.md
+docs/CreateBusinessWalletCustomerRequest.md
 docs/CreateCard201Response.md
 docs/CreateCard201ResponseData.md
 docs/CreateCardRequest.md
@@ -201,6 +215,7 @@ docs/CreditAccount.md
 docs/CreditAccountAttributes.md
 docs/CreditAccountRelationships.md
 docs/CurrencyConversionType.md
+docs/CustomersApi.md
 docs/DepositAccount.md
 docs/DepositAccountAttributes.md
 docs/DepositAccountRelationships.md
@@ -249,6 +264,7 @@ docs/GetAvailableDepositProducts200ResponseDataInner.md
 docs/GetAvailableDepositProducts200ResponseDataInnerAttributes.md
 docs/GetCard200Response.md
 docs/GetCardPinStatus200Response.md
+docs/GetCustomer200Response.md
 docs/GetExpectedACHCompletionDateData.md
 docs/GetExpectedACHCompletionDateDataAttributes.md
 docs/GetExpectedAchCompletionDate200Response.md
@@ -260,6 +276,8 @@ docs/GetWireDrawdown200Response.md
 docs/IndividualApplication.md
 docs/IndividualApplicationAttributes.md
 docs/IndividualApplicationRelationships.md
+docs/IndividualCustomer.md
+docs/IndividualCustomerRelationships.md
 docs/IndividualDebitCard.md
 docs/IndividualDebitCardAttributes.md
 docs/IndividualVirtualDebitCard.md
@@ -275,6 +293,8 @@ docs/ListAccounts200Response.md
 docs/ListAccounts200ResponseDataInner.md
 docs/ListCards200Response.md
 docs/ListCards200ResponseDataInner.md
+docs/ListCustomers200Response.md
+docs/ListCustomers200ResponseDataInner.md
 docs/ListReceivedPayments200Response.md
 docs/ListReceivedPayments200ResponseDataInner.md
 docs/ListRecurringPayments200Response.md
@@ -288,6 +308,9 @@ docs/MetaPagination.md
 docs/NegativeBalanceCoverageTransaction.md
 docs/NumberOfEmployeesType.md
 docs/OccupationType.md
+docs/Officer.md
+docs/OfficerAttributes.md
+docs/OfficerRelationships.md
 docs/OfficerRequestType.md
 docs/OfficerType.md
 docs/OriginatedACHTransaction.md
@@ -302,6 +325,7 @@ docs/PaymentsApi.md
 docs/PhoneType.md
 docs/PinStatus.md
 docs/PinStatusAttributes.md
+docs/ProductType.md
 docs/PurchaseTransaction.md
 docs/PurchaseTransactionAttributes.md
 docs/PurchaseTransactionAttributesMerchant.md
@@ -402,6 +426,13 @@ docs/UpdateBusinessBeneficialOwnerData.md
 docs/UpdateBusinessBeneficialOwnerDataAttributes.md
 docs/UpdateBusinessBeneficialOwnerDataRelationships.md
 docs/UpdateBusinessBeneficialOwnerRequest.md
+docs/UpdateBusinessCustomerData.md
+docs/UpdateBusinessCustomerDataAttributes.md
+docs/UpdateBusinessCustomerOfficer200Response.md
+docs/UpdateBusinessCustomerOfficerData.md
+docs/UpdateBusinessCustomerOfficerDataAttributes.md
+docs/UpdateBusinessCustomerOfficerRequest.md
+docs/UpdateBusinessCustomerRequest.md
 docs/UpdateBusinessOfficerData.md
 docs/UpdateBusinessOfficerDataAttributes.md
 docs/UpdateBusinessOfficerRequest.md
@@ -416,12 +447,17 @@ docs/UpdateChargebackTransactionRequest.md
 docs/UpdateCreditAccountData.md
 docs/UpdateCreditAccountDataAttributes.md
 docs/UpdateCreditAccountRequest.md
+docs/UpdateCustomer200Response.md
+docs/UpdateCustomerRequest.md
 docs/UpdateDepositAccountData.md
 docs/UpdateDepositAccountDataAttributes.md
 docs/UpdateDepositAccountRequest.md
 docs/UpdateIndividualApplicationData.md
 docs/UpdateIndividualApplicationDataAttributes.md
 docs/UpdateIndividualApplicationRequest.md
+docs/UpdateIndividualCustomerData.md
+docs/UpdateIndividualCustomerDataAttributes.md
+docs/UpdateIndividualCustomerRequest.md
 docs/UpdatePayment200Response.md
 docs/UpdatePayment200ResponseData.md
 docs/UpdatePaymentRequest.md

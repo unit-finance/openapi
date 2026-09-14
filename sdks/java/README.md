@@ -1,7 +1,7 @@
 # unit-java-sdk
 
 Unit API
-- API version: 0.6.0
+- API version: 0.7.0
   - Generator version: 7.22.0
 
 JSON:API-compliant banking API.
@@ -155,6 +155,12 @@ Class | Method | HTTP request | Description
 *CardsApi* | [**reportCardStolen**](docs/CardsApi.md#reportCardStolen) | **POST** /cards/{cardId}/report-stolen | Report card stolen
 *CardsApi* | [**unfreezeCard**](docs/CardsApi.md#unfreezeCard) | **POST** /cards/{cardId}/unfreeze | Unfreeze a card
 *CardsApi* | [**updateCard**](docs/CardsApi.md#updateCard) | **PATCH** /cards/{cardId} | Update a card
+*CustomersApi* | [**archiveCustomer**](docs/CustomersApi.md#archiveCustomer) | **POST** /customers/{customerId}/archive | Archive a customer
+*CustomersApi* | [**createBusinessWalletCustomer**](docs/CustomersApi.md#createBusinessWalletCustomer) | **POST** /customers | Create a business wallet customer
+*CustomersApi* | [**getCustomer**](docs/CustomersApi.md#getCustomer) | **GET** /customers/{customerId} | Get a customer
+*CustomersApi* | [**listCustomers**](docs/CustomersApi.md#listCustomers) | **GET** /customers | List customers
+*CustomersApi* | [**updateBusinessCustomerOfficer**](docs/CustomersApi.md#updateBusinessCustomerOfficer) | **PATCH** /customers/{customerId}/officers/{officerId} | Update a business customer officer
+*CustomersApi* | [**updateCustomer**](docs/CustomersApi.md#updateCustomer) | **PATCH** /customers/{customerId} | Update a customer
 *FeesApi* | [**createFee**](docs/FeesApi.md#createFee) | **POST** /fees | Create a fee
 *FeesApi* | [**reverseFee**](docs/FeesApi.md#reverseFee) | **POST** /fees/reverse | Reverse a fee
 *PaymentsApi* | [**cancelPayment**](docs/PaymentsApi.md#cancelPayment) | **POST** /payments/{paymentId}/cancel | Cancel a payment
@@ -213,6 +219,10 @@ Class | Method | HTTP request | Description
  - [AnnualRevenueType](docs/AnnualRevenueType.md)
  - [ApplicationDocument](docs/ApplicationDocument.md)
  - [ApplicationDocumentAttributes](docs/ApplicationDocumentAttributes.md)
+ - [ArchiveCustomerData](docs/ArchiveCustomerData.md)
+ - [ArchiveCustomerDataAttributes](docs/ArchiveCustomerDataAttributes.md)
+ - [ArchiveCustomerRequest](docs/ArchiveCustomerRequest.md)
+ - [AuthorizedUserType](docs/AuthorizedUserType.md)
  - [BatchRelease](docs/BatchRelease.md)
  - [BatchReleaseAttributes](docs/BatchReleaseAttributes.md)
  - [BatchReleaseRelationships](docs/BatchReleaseRelationships.md)
@@ -232,6 +242,9 @@ Class | Method | HTTP request | Description
  - [BusinessApplicationRelationships](docs/BusinessApplicationRelationships.md)
  - [BusinessContactType](docs/BusinessContactType.md)
  - [BusinessCreditCard](docs/BusinessCreditCard.md)
+ - [BusinessCustomer](docs/BusinessCustomer.md)
+ - [BusinessCustomerAttributes](docs/BusinessCustomerAttributes.md)
+ - [BusinessCustomerRelationships](docs/BusinessCustomerRelationships.md)
  - [BusinessDebitCard](docs/BusinessDebitCard.md)
  - [BusinessDebitCardAttributes](docs/BusinessDebitCardAttributes.md)
  - [BusinessNumberOfEmployeesType](docs/BusinessNumberOfEmployeesType.md)
@@ -239,6 +252,9 @@ Class | Method | HTTP request | Description
  - [BusinessVirtualCreditCard](docs/BusinessVirtualCreditCard.md)
  - [BusinessVirtualDebitCard](docs/BusinessVirtualDebitCard.md)
  - [BusinessVirtualDebitCardAttributes](docs/BusinessVirtualDebitCardAttributes.md)
+ - [BusinessWalletCustomer](docs/BusinessWalletCustomer.md)
+ - [BusinessWalletCustomerAttributes](docs/BusinessWalletCustomerAttributes.md)
+ - [BusinessWalletCustomerRelationships](docs/BusinessWalletCustomerRelationships.md)
  - [CancelApplication201Response](docs/CancelApplication201Response.md)
  - [CancelApplicationData](docs/CancelApplicationData.md)
  - [CancelApplicationDataAttributes](docs/CancelApplicationDataAttributes.md)
@@ -330,6 +346,10 @@ Class | Method | HTTP request | Description
  - [CreateBusinessVirtualDebitCardData](docs/CreateBusinessVirtualDebitCardData.md)
  - [CreateBusinessVirtualDebitCardDataAttributes](docs/CreateBusinessVirtualDebitCardDataAttributes.md)
  - [CreateBusinessVirtualDebitCardRequest](docs/CreateBusinessVirtualDebitCardRequest.md)
+ - [CreateBusinessWalletCustomer201Response](docs/CreateBusinessWalletCustomer201Response.md)
+ - [CreateBusinessWalletCustomerData](docs/CreateBusinessWalletCustomerData.md)
+ - [CreateBusinessWalletCustomerDataAttributes](docs/CreateBusinessWalletCustomerDataAttributes.md)
+ - [CreateBusinessWalletCustomerRequest](docs/CreateBusinessWalletCustomerRequest.md)
  - [CreateCard201Response](docs/CreateCard201Response.md)
  - [CreateCard201ResponseData](docs/CreateCard201ResponseData.md)
  - [CreateCardRequest](docs/CreateCardRequest.md)
@@ -426,6 +446,7 @@ Class | Method | HTTP request | Description
  - [GetAvailableDepositProducts200ResponseDataInnerAttributes](docs/GetAvailableDepositProducts200ResponseDataInnerAttributes.md)
  - [GetCard200Response](docs/GetCard200Response.md)
  - [GetCardPinStatus200Response](docs/GetCardPinStatus200Response.md)
+ - [GetCustomer200Response](docs/GetCustomer200Response.md)
  - [GetExpectedACHCompletionDateData](docs/GetExpectedACHCompletionDateData.md)
  - [GetExpectedACHCompletionDateDataAttributes](docs/GetExpectedACHCompletionDateDataAttributes.md)
  - [GetExpectedAchCompletionDate200Response](docs/GetExpectedAchCompletionDate200Response.md)
@@ -437,6 +458,8 @@ Class | Method | HTTP request | Description
  - [IndividualApplication](docs/IndividualApplication.md)
  - [IndividualApplicationAttributes](docs/IndividualApplicationAttributes.md)
  - [IndividualApplicationRelationships](docs/IndividualApplicationRelationships.md)
+ - [IndividualCustomer](docs/IndividualCustomer.md)
+ - [IndividualCustomerRelationships](docs/IndividualCustomerRelationships.md)
  - [IndividualDebitCard](docs/IndividualDebitCard.md)
  - [IndividualDebitCardAttributes](docs/IndividualDebitCardAttributes.md)
  - [IndividualVirtualDebitCard](docs/IndividualVirtualDebitCard.md)
@@ -452,6 +475,8 @@ Class | Method | HTTP request | Description
  - [ListAccounts200ResponseDataInner](docs/ListAccounts200ResponseDataInner.md)
  - [ListCards200Response](docs/ListCards200Response.md)
  - [ListCards200ResponseDataInner](docs/ListCards200ResponseDataInner.md)
+ - [ListCustomers200Response](docs/ListCustomers200Response.md)
+ - [ListCustomers200ResponseDataInner](docs/ListCustomers200ResponseDataInner.md)
  - [ListReceivedPayments200Response](docs/ListReceivedPayments200Response.md)
  - [ListReceivedPayments200ResponseDataInner](docs/ListReceivedPayments200ResponseDataInner.md)
  - [ListRecurringPayments200Response](docs/ListRecurringPayments200Response.md)
@@ -465,6 +490,9 @@ Class | Method | HTTP request | Description
  - [NegativeBalanceCoverageTransaction](docs/NegativeBalanceCoverageTransaction.md)
  - [NumberOfEmployeesType](docs/NumberOfEmployeesType.md)
  - [OccupationType](docs/OccupationType.md)
+ - [Officer](docs/Officer.md)
+ - [OfficerAttributes](docs/OfficerAttributes.md)
+ - [OfficerRelationships](docs/OfficerRelationships.md)
  - [OfficerRequestType](docs/OfficerRequestType.md)
  - [OfficerType](docs/OfficerType.md)
  - [OriginatedACHTransaction](docs/OriginatedACHTransaction.md)
@@ -478,6 +506,7 @@ Class | Method | HTTP request | Description
  - [PhoneType](docs/PhoneType.md)
  - [PinStatus](docs/PinStatus.md)
  - [PinStatusAttributes](docs/PinStatusAttributes.md)
+ - [ProductType](docs/ProductType.md)
  - [PurchaseTransaction](docs/PurchaseTransaction.md)
  - [PurchaseTransactionAttributes](docs/PurchaseTransactionAttributes.md)
  - [PurchaseTransactionAttributesMerchant](docs/PurchaseTransactionAttributesMerchant.md)
@@ -577,6 +606,13 @@ Class | Method | HTTP request | Description
  - [UpdateBusinessBeneficialOwnerDataAttributes](docs/UpdateBusinessBeneficialOwnerDataAttributes.md)
  - [UpdateBusinessBeneficialOwnerDataRelationships](docs/UpdateBusinessBeneficialOwnerDataRelationships.md)
  - [UpdateBusinessBeneficialOwnerRequest](docs/UpdateBusinessBeneficialOwnerRequest.md)
+ - [UpdateBusinessCustomerData](docs/UpdateBusinessCustomerData.md)
+ - [UpdateBusinessCustomerDataAttributes](docs/UpdateBusinessCustomerDataAttributes.md)
+ - [UpdateBusinessCustomerOfficer200Response](docs/UpdateBusinessCustomerOfficer200Response.md)
+ - [UpdateBusinessCustomerOfficerData](docs/UpdateBusinessCustomerOfficerData.md)
+ - [UpdateBusinessCustomerOfficerDataAttributes](docs/UpdateBusinessCustomerOfficerDataAttributes.md)
+ - [UpdateBusinessCustomerOfficerRequest](docs/UpdateBusinessCustomerOfficerRequest.md)
+ - [UpdateBusinessCustomerRequest](docs/UpdateBusinessCustomerRequest.md)
  - [UpdateBusinessOfficerData](docs/UpdateBusinessOfficerData.md)
  - [UpdateBusinessOfficerDataAttributes](docs/UpdateBusinessOfficerDataAttributes.md)
  - [UpdateBusinessOfficerRequest](docs/UpdateBusinessOfficerRequest.md)
@@ -591,12 +627,17 @@ Class | Method | HTTP request | Description
  - [UpdateCreditAccountData](docs/UpdateCreditAccountData.md)
  - [UpdateCreditAccountDataAttributes](docs/UpdateCreditAccountDataAttributes.md)
  - [UpdateCreditAccountRequest](docs/UpdateCreditAccountRequest.md)
+ - [UpdateCustomer200Response](docs/UpdateCustomer200Response.md)
+ - [UpdateCustomerRequest](docs/UpdateCustomerRequest.md)
  - [UpdateDepositAccountData](docs/UpdateDepositAccountData.md)
  - [UpdateDepositAccountDataAttributes](docs/UpdateDepositAccountDataAttributes.md)
  - [UpdateDepositAccountRequest](docs/UpdateDepositAccountRequest.md)
  - [UpdateIndividualApplicationData](docs/UpdateIndividualApplicationData.md)
  - [UpdateIndividualApplicationDataAttributes](docs/UpdateIndividualApplicationDataAttributes.md)
  - [UpdateIndividualApplicationRequest](docs/UpdateIndividualApplicationRequest.md)
+ - [UpdateIndividualCustomerData](docs/UpdateIndividualCustomerData.md)
+ - [UpdateIndividualCustomerDataAttributes](docs/UpdateIndividualCustomerDataAttributes.md)
+ - [UpdateIndividualCustomerRequest](docs/UpdateIndividualCustomerRequest.md)
  - [UpdatePayment200Response](docs/UpdatePayment200Response.md)
  - [UpdatePayment200ResponseData](docs/UpdatePayment200ResponseData.md)
  - [UpdatePaymentRequest](docs/UpdatePaymentRequest.md)

@@ -552,5 +552,58 @@ module Helpers
         }
       }
     end
+
+    # A business wallet customer is created directly (no application flow). The
+    # sandbox requires the full attribute set from the spec: bank partner name,
+    # business name, address, EIN, vertical and employee-count bucket.
+    def create_business_wallet_customer_request
+      {
+        'data' => {
+          'type' => 'businessWalletCustomer',
+          'attributes' => {
+            # bankName must be one of the sandbox's partner-bank names
+            # (Piermont, Blue Ridge, Pacific West, MVB, Choice Financial Group,
+            # Thread, Lincoln Savings, Emprise, TransPecos, Vantage).
+            'bankName' => 'Thread',
+            'businessName' => "Pied Piper Wallet #{Helpers::Api::TEST_RUN_ID}",
+            'address' => US_ADDRESS,
+            'ein' => '123456789',
+            'businessVertical' => 'TechnologyMediaOrTelecom',
+            'numberOfEmployees' => 'Between50And100',
+            'tags' => base_tags
+          }
+        }
+      }
+    end
+
+    # updateCustomer is discriminated by `data.type`; the businessCustomer
+    # variant only touches tags here so the shared business customer is left
+    # otherwise intact for downstream suites.
+    def update_business_customer_request
+      {
+        'data' => {
+          'type' => 'businessCustomer',
+          'attributes' => { 'tags' => base_tags.merge('updated' => 'true') }
+        }
+      }
+    end
+
+    def archive_customer_request
+      {
+        'data' => {
+          'type' => 'customerArchive',
+          'attributes' => { 'reason' => 'Inactive' }
+        }
+      }
+    end
+
+    def update_business_customer_officer_request
+      {
+        'data' => {
+          'type' => 'officer',
+          'attributes' => { 'occupation' => 'ArchitectOrEngineer' }
+        }
+      }
+    end
   end
 end

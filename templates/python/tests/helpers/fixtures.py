@@ -31,6 +31,7 @@ import uuid
 from typing import Any, Dict, List
 
 from unit_finance_sdk import (
+    ArchiveCustomerRequest,
     CloseAccountRequest,
     CloseDepositAccountRequest,
     CreateABookPaymentRequest,
@@ -42,6 +43,7 @@ from unit_finance_sdk import (
     CreateBusinessApplicationRequest,
     CreateBusinessDebitCardRequest,
     CreateBusinessVirtualDebitCardRequest,
+    CreateBusinessWalletCustomerRequest,
     CreateCardRequest,
     CreateDepositAccountRequest,
     CreateFeeRequest,
@@ -61,7 +63,10 @@ from unit_finance_sdk import (
     UpdateBookTransactionRequest,
     UpdateBusinessApplicationRequest,
     UpdateBusinessBeneficialOwnerRequest,
+    UpdateBusinessCustomerOfficerRequest,
+    UpdateBusinessCustomerRequest,
     UpdateCardRequest,
+    UpdateCustomerRequest,
     UpdateDepositAccountRequest,
     UpdatePaymentRequest,
     UpdateTagsRequest,
@@ -718,6 +723,66 @@ def build_update_book_transaction_request(account_id: str) -> UpdateTransactionR
     return UpdateTransactionRequest(
         actual_instance=UpdateBookTransactionRequest.from_dict(body)
     )
+
+
+# A business wallet customer is created directly (no application flow). The
+# sandbox requires the full attribute set from the spec: bank partner name,
+# business name, address, EIN, vertical and employee-count bucket. The request
+# model is concrete (no nested oneOf), so a plain from_dict is sufficient.
+def build_create_business_wallet_customer_request() -> CreateBusinessWalletCustomerRequest:
+    body = {
+        "data": {
+            "type": "businessWalletCustomer",
+            "attributes": {
+                # bankName must be one of the sandbox's partner-bank names
+                # (Piermont, Blue Ridge, Pacific West, MVB, Choice Financial
+                # Group, Thread, Lincoln Savings, Emprise, TransPecos, Vantage).
+                "bankName": "Thread",
+                "businessName": f"Pied Piper Wallet {TEST_RUN_ID}",
+                "address": _us_address(),
+                "ein": "123456789",
+                "businessVertical": "TechnologyMediaOrTelecom",
+                "numberOfEmployees": "Between50And100",
+                "tags": _base_tags(),
+            },
+        },
+    }
+    return CreateBusinessWalletCustomerRequest.from_dict(body)
+
+
+# updateCustomer is a oneOf union discriminated by data.type; the
+# businessCustomer variant only touches tags here so the shared business
+# customer is left otherwise intact for downstream suites.
+def build_update_business_customer_request() -> UpdateCustomerRequest:
+    body = {
+        "data": {
+            "type": "businessCustomer",
+            "attributes": {"tags": {**_base_tags(), "updated": "true"}},
+        },
+    }
+    return UpdateCustomerRequest(
+        actual_instance=UpdateBusinessCustomerRequest.from_dict(body)
+    )
+
+
+def build_archive_customer_request() -> ArchiveCustomerRequest:
+    body = {
+        "data": {
+            "type": "customerArchive",
+            "attributes": {"reason": "Inactive"},
+        },
+    }
+    return ArchiveCustomerRequest.from_dict(body)
+
+
+def build_update_business_customer_officer_request() -> UpdateBusinessCustomerOfficerRequest:
+    body = {
+        "data": {
+            "type": "officer",
+            "attributes": {"occupation": "ArchitectOrEngineer"},
+        },
+    }
+    return UpdateBusinessCustomerOfficerRequest.from_dict(body)
 
 
 def build_add_account_owners_request(customer_ids: List[str]) -> Dict[str, Any]:
