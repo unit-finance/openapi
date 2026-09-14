@@ -1,5 +1,8 @@
 import type {
 	ArchiveCustomerRequest,
+	CreateCheckDepositRequest,
+	CreateCheckDepositSendLinkRequest,
+	UpdateCheckDepositRequest,
 	CreateBusinessApplicationRequest,
 	CreateBusinessDebitCardRequest,
 	CreateBusinessVirtualDebitCardRequest,
@@ -590,6 +593,70 @@ export function buildUpdateBusinessCustomerOfficerRequest(): UpdateBusinessCusto
 		data: {
 			type: "officer",
 			attributes: { occupation: "ArchitectOrEngineer" },
+		},
+	};
+}
+
+// A check deposit is created against an existing account; `amount` and
+// `description` are the only required attributes. The account relationship uses
+// the generic "account" resource type (matching the hold/fee fixtures).
+export function buildCreateCheckDepositRequest(
+	accountId: string,
+): CreateCheckDepositRequest {
+	return {
+		data: {
+			type: "checkDeposit",
+			attributes: {
+				amount: 20000,
+				description: "SDK integration test check deposit",
+				tags: baseTags(),
+			},
+			relationships: {
+				account: { data: { type: "account", id: accountId } },
+			},
+		},
+	};
+}
+
+// updateCheckDeposit only exposes `tags` (and the optional
+// clearingDaysOverride); `tags` is required on the update envelope.
+export function buildUpdateCheckDepositRequest(): UpdateCheckDepositRequest {
+	return {
+		data: {
+			type: "checkDeposit",
+			attributes: {
+				tags: { ...baseTags(), updated: "true" },
+			},
+		},
+	};
+}
+
+// The send-link component requires a white-label theme and an authorized user
+// alongside the account. Sandbox orgs without those resources reject the call,
+// so the suite treats a validation error as a feature-unavailable skip.
+export function buildCreateCheckDepositSendLinkRequest(
+	accountId: string,
+	whiteLabelThemeId: string,
+	authorizedUserId: string,
+): CreateCheckDepositSendLinkRequest {
+	return {
+		data: {
+			type: "sendLinkForCheckDepositComponent",
+			attributes: {
+				qrCode: true,
+				idempotencyKey: `${TEST_RUN_ID}-send-link-${Math.random()
+					.toString(36)
+					.slice(2, 10)}`,
+			},
+			relationships: {
+				whiteLabelTheme: {
+					data: { type: "whiteLabelTheme", id: whiteLabelThemeId },
+				},
+				account: { data: { type: "account", id: accountId } },
+				authorizedUser: {
+					data: { type: "authorizedUser", id: authorizedUserId },
+				},
+			},
 		},
 	};
 }

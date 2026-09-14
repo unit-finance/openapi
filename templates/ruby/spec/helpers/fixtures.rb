@@ -292,6 +292,57 @@ module Helpers
       }
     end
 
+    # A check deposit is created against an existing account; `amount` and
+    # `description` are the only required attributes. The account relationship
+    # uses the generic "account" resource type (matching the hold/fee fixtures).
+    def create_check_deposit_request(account_id)
+      {
+        'data' => {
+          'type' => 'checkDeposit',
+          'attributes' => {
+            'amount' => 20_000,
+            'description' => 'SDK integration test check deposit',
+            'tags' => base_tags
+          },
+          'relationships' => {
+            'account' => { 'data' => { 'type' => 'account', 'id' => account_id } }
+          }
+        }
+      }
+    end
+
+    # updateCheckDeposit only exposes `tags` (and the optional
+    # clearingDaysOverride); `tags` is required on the update envelope.
+    def update_check_deposit_request
+      {
+        'data' => {
+          'type' => 'checkDeposit',
+          'attributes' => { 'tags' => base_tags.merge('updated' => 'true') }
+        }
+      }
+    end
+
+    # The send-link component requires a white-label theme and an authorized
+    # user alongside the account. Sandbox orgs without those resources reject
+    # the call, so the suite treats a validation error as a feature-unavailable
+    # skip.
+    def create_check_deposit_send_link_request(account_id, white_label_theme_id, authorized_user_id)
+      {
+        'data' => {
+          'type' => 'sendLinkForCheckDepositComponent',
+          'attributes' => {
+            'qrCode' => true,
+            'idempotencyKey' => "#{Helpers::Api::TEST_RUN_ID}-send-link-#{SecureRandom.hex(4)}"
+          },
+          'relationships' => {
+            'whiteLabelTheme' => { 'data' => { 'type' => 'whiteLabelTheme', 'id' => white_label_theme_id } },
+            'account' => { 'data' => { 'type' => 'account', 'id' => account_id } },
+            'authorizedUser' => { 'data' => { 'type' => 'authorizedUser', 'id' => authorized_user_id } }
+          }
+        }
+      }
+    end
+
     def create_book_payment_request(account_id, counterparty_account_id)
       {
         'data' => {
