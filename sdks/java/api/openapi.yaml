@@ -5,7 +5,7 @@ info:
     name: Proprietary
     url: https://www.unit.co/terms-of-service
   title: Unit API
-  version: 0.7.0
+  version: 0.8.0
 servers:
 - url: https://api.s.unit.sh
 security:
@@ -30,6 +30,9 @@ tags:
 - description: "Business, individual, and business wallet customers, their officers,\
     \ and archival."
   name: Customers
+- description: "Check deposits into accounts, their images, clearing, confirmation,\
+    \ and shareable deposit links."
+  name: Check Deposits
 paths:
   /applications:
     get:
@@ -4683,6 +4686,711 @@ paths:
       summary: Update a business customer officer
       tags:
       - Customers
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /check-deposits:
+    get:
+      description: "List check deposit resources. Filtering, paging and sorting can\
+        \ be applied."
+      operationId: listCheckDeposits
+      parameters:
+      - description: Maximum number of resources that will be returned. Maximum is
+          1000 resources. See Pagination.
+        explode: true
+        in: query
+        name: "page[limit]"
+        required: false
+        schema:
+          default: "100"
+          type: string
+        style: form
+      - description: Number of resources to skip. See Pagination.
+        explode: true
+        in: query
+        name: "page[offset]"
+        required: false
+        schema:
+          default: "0"
+          type: string
+        style: form
+      - description: Optional. Filters the results by the specified account id.
+        explode: true
+        in: query
+        name: "filter[accountId]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filters the results by the specified customer id.
+        explode: true
+        in: query
+        name: "filter[customerId]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: "Optional. Filter by Check Deposit Status. Usage Example: filter[status][0]=PendingReview&filter[status][1]=AwaitingImages"
+        explode: true
+        in: query
+        name: "filter[status]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filter check deposits by Tags.
+        explode: true
+        in: query
+        name: "filter[tags]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filters the Check Deposits that have an amount that
+          is *higher or equal to* the specified amount (in cents). e.g. 5000
+        explode: true
+        in: query
+        name: "filter[fromAmount]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filters the Check Deposits that have an amount that
+          is *lower or equal to* the specified amount (in cents). e.g. 7000
+        explode: true
+        in: query
+        name: "filter[toAmount]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Leave empty or provide sort=createdAt for ascending
+          order. Provide sort=-createdAt (leading minus sign) for descending order.
+        explode: true
+        in: query
+        name: sort
+        required: false
+        schema:
+          default: -createdAt
+          type: string
+        style: form
+      - description: "Optional. A comma-separated list of related resources to include\
+          \ in the response. Related resources include: customer, account, transaction.\
+          \ See Getting Related Resources"
+        explode: true
+        in: query
+        name: include
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/listCheckDeposits_200_response"
+          description: Array of check deposit resources.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - check-deposits
+      summary: List check deposits
+      tags:
+      - Check Deposits
+      x-accepts:
+      - application/vnd.api+json
+    post:
+      description: Creates a check deposit for an `Account`.
+      operationId: createCheckDeposit
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/createCheckDeposit_request"
+        required: true
+      responses:
+        "201":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/createCheckDeposit_201_response"
+          description: The requested resource after the operation was completed.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - check-deposits-write
+      summary: Create a check deposit
+      tags:
+      - Check Deposits
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /check-deposits/{checkDepositId}:
+    get:
+      description: Get a check deposit by id.
+      operationId: getCheckDeposit
+      parameters:
+      - explode: false
+        in: path
+        name: checkDepositId
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: "Optional. A comma-separated list of related resources to include\
+          \ in the response. Related resources include: customer, account, transaction.\
+          \ See Getting Related Resources"
+        explode: true
+        in: query
+        name: include
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/getCheckDeposit_200_response"
+          description: CheckDeposit resource.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - check-deposits
+      summary: Get a check deposit by id
+      tags:
+      - Check Deposits
+      x-accepts:
+      - application/vnd.api+json
+    patch:
+      description: Update a check deposit.
+      operationId: updateCheckDeposit
+      parameters:
+      - explode: false
+        in: path
+        name: checkDepositId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/updateCheckDeposit_request"
+        required: true
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/createCheckDeposit_201_response"
+          description: The updated CheckDeposit resource.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - check-deposits-write
+      summary: Update a check deposit
+      tags:
+      - Check Deposits
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /check-deposits/{checkDepositId}/clear:
+    post:
+      description: "Clears a check deposit while in `Clearing` status. Overrides the\
+        \ original clearing period, making funds available immediately. Requires the\
+        \ Dynamic Clearing Period feature to be enabled."
+      operationId: clearCheckDeposit
+      parameters:
+      - explode: false
+        in: path
+        name: checkDepositId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+        required: false
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/createCheckDeposit_201_response"
+          description: The cleared check deposit.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - check-deposits-write
+      summary: Clear a check deposit
+      tags:
+      - Check Deposits
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /check-deposits/{checkDepositId}/confirm:
+    post:
+      description: Confirms a check deposit details when it's in `AwaitingCustomerConfirmation`
+        status
+      operationId: confirmCheckDepositDetails
+      parameters:
+      - explode: false
+        in: path
+        name: checkDepositId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+        required: false
+      responses:
+        "200":
+          description: The check deposit details were confirmed.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - check-deposits
+      summary: Confirm check deposit details
+      tags:
+      - Check Deposits
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /check-deposits/{checkDepositId}/front:
+    get:
+      description: Get a check deposit front image by check deposit id.
+      operationId: getCheckDepositFrontImage
+      parameters:
+      - explode: false
+        in: path
+        name: checkDepositId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            image/jpeg:
+              schema:
+                format: binary
+                type: string
+          description: The check deposit front image.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - check-deposits
+      summary: Get a check deposit front image
+      tags:
+      - Check Deposits
+      x-accepts:
+      - application/vnd.api+json
+      - image/jpeg
+    put:
+      description: Uploads a check front-side image file. Currently only `jpeg` file
+        type is supported.
+      operationId: uploadCheckDepositFrontImage
+      parameters:
+      - explode: false
+        in: path
+        name: checkDepositId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          image/jpeg:
+            schema:
+              format: binary
+              type: string
+        required: true
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/createCheckDeposit_201_response"
+          description: The updated CheckDeposit resource.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - check-deposits-write
+      summary: Upload a check deposit front image
+      tags:
+      - Check Deposits
+      x-content-type: image/jpeg
+      x-accepts:
+      - application/vnd.api+json
+  /check-deposits/{checkDepositId}/back:
+    get:
+      description: Get a check deposit back image by check deposit id.
+      operationId: getCheckDepositBackImage
+      parameters:
+      - explode: false
+        in: path
+        name: checkDepositId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            image/jpeg:
+              schema:
+                format: binary
+                type: string
+          description: The check deposit back image.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - check-deposits
+      summary: Get a check deposit back image
+      tags:
+      - Check Deposits
+      x-accepts:
+      - application/vnd.api+json
+      - image/jpeg
+    put:
+      description: Uploads a check back-side image file. Currently only `jpeg` file
+        type is supported.
+      operationId: uploadCheckDepositBackImage
+      parameters:
+      - explode: false
+        in: path
+        name: checkDepositId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          image/jpeg:
+            schema:
+              format: binary
+              type: string
+        required: true
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/createCheckDeposit_201_response"
+          description: The updated CheckDeposit resource.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - check-deposits-write
+      summary: Upload a check deposit back image
+      tags:
+      - Check Deposits
+      x-content-type: image/jpeg
+      x-accepts:
+      - application/vnd.api+json
+  /white-label/send-link:
+    post:
+      description: "Creates a shareable link for the Check Deposit component for an\
+        \ `Account`. The link can be sent to an end user via SMS or email and used\
+        \ to complete a check deposit. Unless a White Label Theme is customized, the\
+        \ component uses the default theme. Unless an Email Domain is customized the\
+        \ link will be created under a default domain starting in `https://application-form.sh`."
+      operationId: createCheckDepositSendLink
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/createCheckDepositSendLink_request"
+        required: true
+      responses:
+        "201":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/createCheckDepositSendLink_201_response"
+          description: The requested resource after the operation was completed.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - check-deposits-write
+      summary: Create a check deposit send link
+      tags:
+      - Check Deposits
       x-content-type: application/vnd.api+json
       x-accepts:
       - application/vnd.api+json
@@ -9919,6 +10627,104 @@ components:
       - attributes
       - type
       type: object
+    CheckDeposit:
+      description: "`CheckDeposit` is a JSON:API resource, top-level fields:"
+      example:
+        type: checkDeposit
+        id: "11221"
+        attributes:
+          createdAt: 2021-05-27T09:29:30.828Z
+          amount: 20000
+          description: Check deposit
+          clearingDaysOverride: 5
+          status: AwaitingImages
+        relationships:
+          account:
+            data:
+              type: account
+              id: "10001"
+          customer:
+            data:
+              type: customer
+              id: "10000"
+      properties:
+        type:
+          enum:
+          - checkDeposit
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CheckDeposit_attributes"
+        relationships:
+          $ref: "#/components/schemas/CheckDeposit_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    CheckCounterpartyType:
+      example:
+        name: April Oneil
+        routingNumber: "812345678"
+        accountNumber: "1000000001"
+      properties:
+        routingNumber:
+          description: Valid 9-digit ABA routing transit number.
+          type: string
+        accountNumber:
+          description: Bank account number.
+          type: string
+        name:
+          description: Name of the person or company that owns the bank account.
+          type: string
+      required:
+      - accountNumber
+      - name
+      - routingNumber
+      type: object
+    CreateCheckDepositData:
+      properties:
+        type:
+          enum:
+          - checkDeposit
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CreateCheckDepositData_attributes"
+        relationships:
+          $ref: "#/components/schemas/CreateFeeData_relationships"
+      required:
+      - attributes
+      - relationships
+      - type
+      type: object
+    UpdateData:
+      properties:
+        type:
+          enum:
+          - checkDeposit
+          type: string
+        attributes:
+          $ref: "#/components/schemas/UpdateData_attributes"
+      required:
+      - attributes
+      - type
+      type: object
+    CreateCheckDepositSendLinkData:
+      properties:
+        type:
+          enum:
+          - sendLinkForCheckDepositComponent
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CreateCheckDepositSendLinkData_attributes"
+        relationships:
+          $ref: "#/components/schemas/CreateCheckDepositSendLinkData_relationships"
+      required:
+      - attributes
+      - relationships
+      - type
+      type: object
     list_200_response_data_inner:
       discriminator:
         mapping:
@@ -10772,6 +11578,78 @@ components:
       properties:
         data:
           $ref: "#/components/schemas/Officer"
+      required:
+      - data
+      type: object
+    listCheckDeposits_200_response:
+      properties:
+        data:
+          items:
+            $ref: "#/components/schemas/CheckDeposit"
+          type: array
+        included:
+          description: Array of resources requested by the include query parameter.
+          items:
+            $ref: "#/components/schemas/DepositAccount"
+          type: array
+        meta:
+          $ref: "#/components/schemas/Meta"
+      required:
+      - data
+      type: object
+    createCheckDeposit_request:
+      properties:
+        data:
+          $ref: "#/components/schemas/CreateCheckDepositData"
+      required:
+      - data
+      type: object
+    createCheckDeposit_201_response:
+      properties:
+        data:
+          $ref: "#/components/schemas/CheckDeposit"
+      required:
+      - data
+      type: object
+    getCheckDeposit_200_response:
+      properties:
+        data:
+          $ref: "#/components/schemas/CheckDeposit"
+        included:
+          description: Array of resources requested by the include query parameter.
+          items:
+            $ref: "#/components/schemas/DepositAccount"
+          type: array
+      required:
+      - data
+      type: object
+    updateCheckDeposit_request:
+      properties:
+        data:
+          $ref: "#/components/schemas/UpdateData"
+      required:
+      - data
+      type: object
+    createCheckDepositSendLink_request:
+      properties:
+        data:
+          $ref: "#/components/schemas/CreateCheckDepositSendLinkData"
+      required:
+      - data
+      type: object
+    createCheckDepositSendLink_201_response_data:
+      properties:
+        type:
+          enum:
+          - sendLinkForCheckDepositComponent
+          type: string
+      required:
+      - type
+      type: object
+    createCheckDepositSendLink_201_response:
+      properties:
+        data:
+          $ref: "#/components/schemas/createCheckDepositSendLink_201_response_data"
       required:
       - data
       type: object
@@ -16027,6 +16905,129 @@ components:
           - $ref: "#/components/schemas/SourceOfIncomeType"
           description: Source of income of the officer.
           example: EmploymentOrPayrollIncome
+      type: object
+    CheckDeposit_attributes:
+      properties:
+        createdAt:
+          description: The date the resource was created.
+          format: date-time
+          type: string
+        status:
+          description: "One of AwaitingImages, AwaitingFrontImage, AwaitingBackImage,\
+            \ Pending, PendingReview, Rejected, Clearing, Sent, Canceled, Returned."
+          type: string
+        reason:
+          description: More information about the status.
+          type: string
+        description:
+          description: Check Deposit description (maximum of 50 characters).
+          type: string
+        amount:
+          description: The amount (cents) of the check deposit.
+          type: string
+        checkNumber:
+          description: The serial number printed at the bottom of the check
+          type: string
+        counterparty:
+          allOf:
+          - $ref: "#/components/schemas/CheckCounterpartyType"
+          description: The party the check belongs to.
+        clearingDaysOverride:
+          description: The amount of days it will take a check deposit to clear if
+            a clearingDaysOverride was provided. See Dynamic Clearing Period
+          type: integer
+        settlementDate:
+          description: "Optional, For Pending or Clearing, shows the date on which\
+            \ the check will be settled."
+          format: date-time
+          type: string
+        tags:
+          additionalProperties: true
+          description: See Tags.
+          type: object
+      required:
+      - amount
+      - createdAt
+      - description
+      - status
+      type: object
+    CheckDeposit_relationships:
+      properties:
+        account:
+          $ref: "#/components/schemas/Relationship"
+        customer:
+          $ref: "#/components/schemas/Relationship"
+        customers:
+          $ref: "#/components/schemas/Relationship"
+        transaction:
+          $ref: "#/components/schemas/Relationship"
+      type: object
+    CreateCheckDepositData_attributes:
+      properties:
+        amount:
+          description: The check amount (in cents) to deposit.
+          example: 20000
+          type: integer
+        description:
+          description: Description of the check deposit (maximum of 50 characters).
+          example: Check deposit
+          type: string
+        clearingDaysOverride:
+          description: See Dynamic Clearing Period.
+          type: number
+        tags:
+          additionalProperties: true
+          description: See Tags.
+          type: object
+        idempotencyKey:
+          description: "Optional, but **strongly recommended**. See Idempotency."
+          type: string
+      required:
+      - amount
+      - description
+      type: object
+    UpdateData_attributes:
+      properties:
+        clearingDaysOverride:
+          description: See Dynamic Clearing Period.
+          type: number
+        tags:
+          additionalProperties: true
+          description: See Updating Tags.
+          example:
+            by: Richard Hendricks
+            id: 23033b64-38f8-4dbc-91a1-313ff0156d02
+          type: object
+      required:
+      - tags
+      type: object
+    CreateCheckDepositSendLinkData_attributes:
+      properties:
+        qrCode:
+          description: "If true, a QR code (base64 encoded PNG) will be included in\
+            \ the response."
+          example: true
+          type: boolean
+        idempotencyKey:
+          description: See Idempotency.
+          example: 3a1a33be-4e12-4603-9ed0-820922389fb8
+          type: string
+      required:
+      - idempotencyKey
+      - qrCode
+      type: object
+    CreateCheckDepositSendLinkData_relationships:
+      properties:
+        whiteLabelTheme:
+          $ref: "#/components/schemas/Relationship"
+        account:
+          $ref: "#/components/schemas/Relationship"
+        authorizedUser:
+          $ref: "#/components/schemas/Relationship"
+      required:
+      - account
+      - authorizedUser
+      - whiteLabelTheme
       type: object
   securitySchemes:
     bearerAuth:

@@ -1,7 +1,7 @@
 # unit-java-sdk
 
 Unit API
-- API version: 0.7.0
+- API version: 0.8.0
   - Generator version: 7.22.0
 
 JSON:API-compliant banking API.
@@ -155,6 +155,17 @@ Class | Method | HTTP request | Description
 *CardsApi* | [**reportCardStolen**](docs/CardsApi.md#reportCardStolen) | **POST** /cards/{cardId}/report-stolen | Report card stolen
 *CardsApi* | [**unfreezeCard**](docs/CardsApi.md#unfreezeCard) | **POST** /cards/{cardId}/unfreeze | Unfreeze a card
 *CardsApi* | [**updateCard**](docs/CardsApi.md#updateCard) | **PATCH** /cards/{cardId} | Update a card
+*CheckDepositsApi* | [**clearCheckDeposit**](docs/CheckDepositsApi.md#clearCheckDeposit) | **POST** /check-deposits/{checkDepositId}/clear | Clear a check deposit
+*CheckDepositsApi* | [**confirmCheckDepositDetails**](docs/CheckDepositsApi.md#confirmCheckDepositDetails) | **POST** /check-deposits/{checkDepositId}/confirm | Confirm check deposit details
+*CheckDepositsApi* | [**createCheckDeposit**](docs/CheckDepositsApi.md#createCheckDeposit) | **POST** /check-deposits | Create a check deposit
+*CheckDepositsApi* | [**createCheckDepositSendLink**](docs/CheckDepositsApi.md#createCheckDepositSendLink) | **POST** /white-label/send-link | Create a check deposit send link
+*CheckDepositsApi* | [**getCheckDeposit**](docs/CheckDepositsApi.md#getCheckDeposit) | **GET** /check-deposits/{checkDepositId} | Get a check deposit by id
+*CheckDepositsApi* | [**getCheckDepositBackImage**](docs/CheckDepositsApi.md#getCheckDepositBackImage) | **GET** /check-deposits/{checkDepositId}/back | Get a check deposit back image
+*CheckDepositsApi* | [**getCheckDepositFrontImage**](docs/CheckDepositsApi.md#getCheckDepositFrontImage) | **GET** /check-deposits/{checkDepositId}/front | Get a check deposit front image
+*CheckDepositsApi* | [**listCheckDeposits**](docs/CheckDepositsApi.md#listCheckDeposits) | **GET** /check-deposits | List check deposits
+*CheckDepositsApi* | [**updateCheckDeposit**](docs/CheckDepositsApi.md#updateCheckDeposit) | **PATCH** /check-deposits/{checkDepositId} | Update a check deposit
+*CheckDepositsApi* | [**uploadCheckDepositBackImage**](docs/CheckDepositsApi.md#uploadCheckDepositBackImage) | **PUT** /check-deposits/{checkDepositId}/back | Upload a check deposit back image
+*CheckDepositsApi* | [**uploadCheckDepositFrontImage**](docs/CheckDepositsApi.md#uploadCheckDepositFrontImage) | **PUT** /check-deposits/{checkDepositId}/front | Upload a check deposit front image
 *CustomersApi* | [**archiveCustomer**](docs/CustomersApi.md#archiveCustomer) | **POST** /customers/{customerId}/archive | Archive a customer
 *CustomersApi* | [**createBusinessWalletCustomer**](docs/CustomersApi.md#createBusinessWalletCustomer) | **POST** /customers | Create a business wallet customer
 *CustomersApi* | [**getCustomer**](docs/CustomersApi.md#getCustomer) | **GET** /customers/{customerId} | Get a customer
@@ -278,6 +289,10 @@ Class | Method | HTTP request | Description
  - [ChargebackTransaction](docs/ChargebackTransaction.md)
  - [ChargebackTransactionAttributes](docs/ChargebackTransactionAttributes.md)
  - [ChargebackTransactionRelationships](docs/ChargebackTransactionRelationships.md)
+ - [CheckCounterpartyType](docs/CheckCounterpartyType.md)
+ - [CheckDeposit](docs/CheckDeposit.md)
+ - [CheckDepositAttributes](docs/CheckDepositAttributes.md)
+ - [CheckDepositRelationships](docs/CheckDepositRelationships.md)
  - [CheckDepositTransaction](docs/CheckDepositTransaction.md)
  - [CheckDepositTransactionAttributes](docs/CheckDepositTransactionAttributes.md)
  - [CheckDepositTransactionRelationships](docs/CheckDepositTransactionRelationships.md)
@@ -353,6 +368,16 @@ Class | Method | HTTP request | Description
  - [CreateCard201Response](docs/CreateCard201Response.md)
  - [CreateCard201ResponseData](docs/CreateCard201ResponseData.md)
  - [CreateCardRequest](docs/CreateCardRequest.md)
+ - [CreateCheckDeposit201Response](docs/CreateCheckDeposit201Response.md)
+ - [CreateCheckDepositData](docs/CreateCheckDepositData.md)
+ - [CreateCheckDepositDataAttributes](docs/CreateCheckDepositDataAttributes.md)
+ - [CreateCheckDepositRequest](docs/CreateCheckDepositRequest.md)
+ - [CreateCheckDepositSendLink201Response](docs/CreateCheckDepositSendLink201Response.md)
+ - [CreateCheckDepositSendLink201ResponseData](docs/CreateCheckDepositSendLink201ResponseData.md)
+ - [CreateCheckDepositSendLinkData](docs/CreateCheckDepositSendLinkData.md)
+ - [CreateCheckDepositSendLinkDataAttributes](docs/CreateCheckDepositSendLinkDataAttributes.md)
+ - [CreateCheckDepositSendLinkDataRelationships](docs/CreateCheckDepositSendLinkDataRelationships.md)
+ - [CreateCheckDepositSendLinkRequest](docs/CreateCheckDepositSendLinkRequest.md)
  - [CreateCreditAccountData](docs/CreateCreditAccountData.md)
  - [CreateCreditAccountDataAttributes](docs/CreateCreditAccountDataAttributes.md)
  - [CreateCreditAccountRequest](docs/CreateCreditAccountRequest.md)
@@ -446,6 +471,7 @@ Class | Method | HTTP request | Description
  - [GetAvailableDepositProducts200ResponseDataInnerAttributes](docs/GetAvailableDepositProducts200ResponseDataInnerAttributes.md)
  - [GetCard200Response](docs/GetCard200Response.md)
  - [GetCardPinStatus200Response](docs/GetCardPinStatus200Response.md)
+ - [GetCheckDeposit200Response](docs/GetCheckDeposit200Response.md)
  - [GetCustomer200Response](docs/GetCustomer200Response.md)
  - [GetExpectedACHCompletionDateData](docs/GetExpectedACHCompletionDateData.md)
  - [GetExpectedACHCompletionDateDataAttributes](docs/GetExpectedACHCompletionDateDataAttributes.md)
@@ -475,6 +501,7 @@ Class | Method | HTTP request | Description
  - [ListAccounts200ResponseDataInner](docs/ListAccounts200ResponseDataInner.md)
  - [ListCards200Response](docs/ListCards200Response.md)
  - [ListCards200ResponseDataInner](docs/ListCards200ResponseDataInner.md)
+ - [ListCheckDeposits200Response](docs/ListCheckDeposits200Response.md)
  - [ListCustomers200Response](docs/ListCustomers200Response.md)
  - [ListCustomers200ResponseDataInner](docs/ListCustomers200ResponseDataInner.md)
  - [ListReceivedPayments200Response](docs/ListReceivedPayments200Response.md)
@@ -624,11 +651,14 @@ Class | Method | HTTP request | Description
  - [UpdateChargebackTransactionData](docs/UpdateChargebackTransactionData.md)
  - [UpdateChargebackTransactionDataAttributes](docs/UpdateChargebackTransactionDataAttributes.md)
  - [UpdateChargebackTransactionRequest](docs/UpdateChargebackTransactionRequest.md)
+ - [UpdateCheckDepositRequest](docs/UpdateCheckDepositRequest.md)
  - [UpdateCreditAccountData](docs/UpdateCreditAccountData.md)
  - [UpdateCreditAccountDataAttributes](docs/UpdateCreditAccountDataAttributes.md)
  - [UpdateCreditAccountRequest](docs/UpdateCreditAccountRequest.md)
  - [UpdateCustomer200Response](docs/UpdateCustomer200Response.md)
  - [UpdateCustomerRequest](docs/UpdateCustomerRequest.md)
+ - [UpdateData](docs/UpdateData.md)
+ - [UpdateDataAttributes](docs/UpdateDataAttributes.md)
  - [UpdateDepositAccountData](docs/UpdateDepositAccountData.md)
  - [UpdateDepositAccountDataAttributes](docs/UpdateDepositAccountDataAttributes.md)
  - [UpdateDepositAccountRequest](docs/UpdateDepositAccountRequest.md)
