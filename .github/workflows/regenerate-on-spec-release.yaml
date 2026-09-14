@@ -65,6 +65,15 @@ jobs:
           npm run set-spec-version -- "${{ steps.ver.outputs.version }}"
           cat spec-version.json
 
+      # Force a fresh spec download. `spec/openapi.bundled.json` is committed, so
+      # after checkout it exists at fetch-spec's default SPEC_BUNDLE_PATH; left in
+      # place, fetch-spec would read that stale bundle (and sync spec-version.json
+      # back to its info.version) instead of downloading the pinned release,
+      # making the whole regeneration a no-op that opens no PR. Deleting it forces
+      # fetch-spec to fall through to the pinned release asset.
+      - name: Force fresh spec fetch
+        run: rm -f spec/openapi.bundled.json
+
       - name: Regenerate SDKs
         run: npm run generate-sdks
 
