@@ -26,6 +26,16 @@ import com.unit.finance.sdk.model.CreateAccountHoldData;
 import com.unit.finance.sdk.model.CreateAccountHoldDataAttributes;
 import com.unit.finance.sdk.model.CreateAccountHoldRequest;
 import com.unit.finance.sdk.model.CreateAccountRequest;
+import com.unit.finance.sdk.model.CreateCheckDepositData;
+import com.unit.finance.sdk.model.CreateCheckDepositDataAttributes;
+import com.unit.finance.sdk.model.CreateCheckDepositRequest;
+import com.unit.finance.sdk.model.CreateCheckDepositSendLinkData;
+import com.unit.finance.sdk.model.CreateCheckDepositSendLinkDataAttributes;
+import com.unit.finance.sdk.model.CreateCheckDepositSendLinkDataRelationships;
+import com.unit.finance.sdk.model.CreateCheckDepositSendLinkRequest;
+import com.unit.finance.sdk.model.UpdateCheckDepositRequest;
+import com.unit.finance.sdk.model.UpdateData;
+import com.unit.finance.sdk.model.UpdateDataAttributes;
 import com.unit.finance.sdk.model.CreateBatchReleasesData;
 import com.unit.finance.sdk.model.CreateBatchReleasesDataAttributes;
 import com.unit.finance.sdk.model.CreateBatchReleasesRequest;
@@ -456,6 +466,57 @@ final class Fixtures {
             .attributes(attributes)
             .relationships(new CreateFeeDataRelationships().account(relationship("account", accountId)));
     return new CreateAccountHoldRequest().data(data);
+  }
+
+  // A check deposit is created against an existing account; `amount` and
+  // `description` are the only required attributes. The account relationship
+  // uses the generic "account" resource type (matching the hold/fee fixtures).
+  static CreateCheckDepositRequest createCheckDepositRequest(String accountId) {
+    CreateCheckDepositDataAttributes attributes =
+        new CreateCheckDepositDataAttributes()
+            .amount(20000)
+            .description("SDK integration test check deposit")
+            .tags(baseTags());
+    CreateCheckDepositData data =
+        new CreateCheckDepositData()
+            .type(CreateCheckDepositData.TypeEnum.CHECK_DEPOSIT)
+            .attributes(attributes)
+            .relationships(new CreateFeeDataRelationships().account(relationship("account", accountId)));
+    return new CreateCheckDepositRequest().data(data);
+  }
+
+  // updateCheckDeposit only exposes `tags` (and the optional
+  // clearingDaysOverride); `tags` is required on the update envelope.
+  static UpdateCheckDepositRequest updateCheckDepositRequest() {
+    Map<String, Object> tags = baseTags();
+    tags.put("updated", "true");
+    UpdateData data =
+        new UpdateData()
+            .type(UpdateData.TypeEnum.CHECK_DEPOSIT)
+            .attributes(new UpdateDataAttributes().tags(tags));
+    return new UpdateCheckDepositRequest().data(data);
+  }
+
+  // The send-link component requires a white-label theme and an authorized user
+  // alongside the account. Sandbox orgs without those resources reject the
+  // call, so the suite treats a validation error as a feature-unavailable skip.
+  static CreateCheckDepositSendLinkRequest createCheckDepositSendLinkRequest(
+      String accountId, String whiteLabelThemeId, String authorizedUserId) {
+    CreateCheckDepositSendLinkDataAttributes attributes =
+        new CreateCheckDepositSendLinkDataAttributes()
+            .qrCode(true)
+            .idempotencyKey(ApiSupport.TEST_RUN_ID + "-send-link-" + UUID.randomUUID());
+    CreateCheckDepositSendLinkDataRelationships relationships =
+        new CreateCheckDepositSendLinkDataRelationships()
+            .whiteLabelTheme(relationship("whiteLabelTheme", whiteLabelThemeId))
+            .account(relationship("account", accountId))
+            .authorizedUser(relationship("authorizedUser", authorizedUserId));
+    CreateCheckDepositSendLinkData data =
+        new CreateCheckDepositSendLinkData()
+            .type(CreateCheckDepositSendLinkData.TypeEnum.SEND_LINK_FOR_CHECK_DEPOSIT_COMPONENT)
+            .attributes(attributes)
+            .relationships(relationships);
+    return new CreateCheckDepositSendLinkRequest().data(data);
   }
 
   static ReleaseAccountHoldRequest releaseAccountHoldRequest(int amount) {

@@ -2,6 +2,7 @@ import {
 	AccountsApi,
 	ApplicationsApi,
 	CardsApi,
+	CheckDepositsApi,
 	Configuration,
 	CustomersApi,
 	FeesApi,
@@ -49,6 +50,10 @@ export function buildTransactionsApi(): TransactionsApi {
 
 export function buildCustomersApi(): CustomersApi {
 	return new CustomersApi(configuration());
+}
+
+export function buildCheckDepositsApi(): CheckDepositsApi {
+	return new CheckDepositsApi(configuration());
 }
 
 /**
