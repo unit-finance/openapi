@@ -29,6 +29,25 @@ function fail(msg: string): never {
 	process.exit(1);
 }
 
+/**
+ * Compare two bare semver strings by their numeric release cores
+ * (major.minor.patch), ignoring any pre-release/build metadata. Returns a
+ * negative number when `a < b`, zero when they share a core, positive when
+ * `a > b`. Good enough to reject accidental version *downgrades* of the pinned
+ * spec; we deliberately don't try to order pre-releases against their release.
+ */
+function compareCore(a: string, b: string): number {
+	const core = (v: string) =>
+		v
+			.replace(/^v/, "")
+			.split(/[-+]/, 1)[0]
+			.split(".")
+			.map((n) => Number.parseInt(n, 10) || 0);
+	const [aMajor, aMinor, aPatch] = core(a);
+	const [bMajor, bMinor, bPatch] = core(b);
+	return aMajor - bMajor || aMinor - bMinor || aPatch - bPatch;
+}
+
 function main(): void {
 	const raw = (process.argv[2] ?? process.env.SPEC_VERSION ?? "").trim();
 	if (!raw) {
@@ -50,6 +69,16 @@ function main(): void {
 		unknown
 	>;
 	const previous = lock.version;
+	// Guard against regenerating from an older spec than the one the committed
+	// SDKs are already built from: that would silently roll the published
+	// surface backwards. Same-core versions (incl. re-pinning the current
+	// version or moving between its pre-releases) are allowed.
+	if (typeof previous === "string" && compareCore(version, previous) < 0) {
+		fail(
+			`refusing to downgrade spec version: requested ${version} is lower than ` +
+				`the currently implemented ${previous}.`,
+		);
+	}
 	lock.version = version;
 	fs.writeFileSync(LOCK_PATH, `${JSON.stringify(lock, null, 2)}\n`, "utf8");
 
