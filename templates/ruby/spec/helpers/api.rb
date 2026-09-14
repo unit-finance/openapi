@@ -56,6 +56,10 @@ module Helpers
       UnitFinanceSdk::TransactionsApi.new(UnitFinanceSdk::ApiClient.new(configuration))
     end
 
+    def build_customers_api
+      UnitFinanceSdk::CustomersApi.new(UnitFinanceSdk::ApiClient.new(configuration))
+    end
+
     def sleep(seconds)
       Kernel.sleep(seconds)
     end

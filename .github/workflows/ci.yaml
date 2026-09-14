@@ -33,11 +33,11 @@ jobs:
         run: npm ci
       - name: Regenerate SDKs (fetches pinned spec via spec-version.json)
         run: npm run generate-sdks
-      - name: Verify committed SDKs are up to date
+      - name: Verify committed SDKs and bundled spec are up to date
         run: |
-          if ! git diff --quiet -- sdks; then
-            echo "::error::Committed SDKs under sdks/ are out of date relative to the pinned spec (spec-version.json). Run \`npm run generate-sdks\` locally and commit the result."
-            git --no-pager diff --stat -- sdks
+          if ! git diff --quiet -- sdks spec/openapi.bundled.json; then
+            echo "::error::Committed SDKs under sdks/ or the bundled spec (spec/openapi.bundled.json) are out of date relative to the pinned spec (spec-version.json). Run \`npm run generate-sdks\` locally and commit the result."
+            git --no-pager diff --stat -- sdks spec/openapi.bundled.json
             exit 1
           fi
 
