@@ -26,6 +26,7 @@ interface Step {
 
 const STEPS: Step[] = [
 	{ script: "fetch-spec", label: "Fetch OpenAPI spec bundle" },
+	{ script: "check-model-collisions", label: "Check model name collisions" },
 	{ script: "generate-sdk:node", label: "Generate SDK", group: "Node" },
 	{ script: "prepare-node-sdk", label: "Prepare SDK", group: "Node" },
 	{ script: "place-node-tests", label: "Place tests", group: "Node" },
