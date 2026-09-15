@@ -6,6 +6,7 @@
   "scripts": {
     "fetch-spec": "tsx scripts/openapi/fetch-spec.ts",
     "set-spec-version": "tsx scripts/openapi/set-spec-version.ts",
+    "check-model-collisions": "tsx scripts/openapi/check-model-collisions.ts",
     "test-coverage": "tsx scripts/openapi/test-coverage-report.ts",
     "author-tests": "tsx scripts/agents/author-tests.ts",
     "author-tests-local": "npm run test-coverage && tsx scripts/agents/author-tests.ts --print-prompt | pbcopy && echo '[author-tests] prompt copied to clipboard.'",
