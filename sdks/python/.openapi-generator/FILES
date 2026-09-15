@@ -1,5 +1,7 @@
 .gitignore
 README.md
+docs/ACHCounterparty.md
+docs/ACHCounterpartyAttributes.md
 docs/ACHPayment.md
 docs/ACHPaymentAttributes.md
 docs/ACHPaymentRelationships.md
@@ -111,6 +113,10 @@ docs/CloseWalletData.md
 docs/CloseWalletDataAttributes.md
 docs/CloseWalletRequest.md
 docs/CoordinatesType.md
+docs/CounterpartiesApi.md
+docs/CounterpartyBalance.md
+docs/CounterpartyBalanceAttributes.md
+docs/CounterpartyBalanceRelationships.md
 docs/CounterpartyType.md
 docs/CreateABookPaymentData.md
 docs/CreateABookPaymentDataAttributes.md
@@ -178,6 +184,14 @@ docs/CreateCheckDepositSendLinkData.md
 docs/CreateCheckDepositSendLinkDataAttributes.md
 docs/CreateCheckDepositSendLinkDataRelationships.md
 docs/CreateCheckDepositSendLinkRequest.md
+docs/CreateCounterparty201Response.md
+docs/CreateCounterpartyBody.md
+docs/CreateCounterpartyData.md
+docs/CreateCounterpartyDataAttributes.md
+docs/CreateCounterpartyRequest.md
+docs/CreateCounterpartyWithPlaidTokenData.md
+docs/CreateCounterpartyWithPlaidTokenDataAttributes.md
+docs/CreateCounterpartyWithPlaidTokenRequest.md
 docs/CreateCreditAccountData.md
 docs/CreateCreditAccountDataAttributes.md
 docs/CreateCreditAccountRequest.md
@@ -274,6 +288,7 @@ docs/GetAvailableDepositProducts200ResponseDataInnerAttributes.md
 docs/GetCard200Response.md
 docs/GetCardPinStatus200Response.md
 docs/GetCheckDeposit200Response.md
+docs/GetCounterpartyBalance200Response.md
 docs/GetCustomer200Response.md
 docs/GetExpectedACHCompletionDateData.md
 docs/GetExpectedACHCompletionDateDataAttributes.md
@@ -304,6 +319,7 @@ docs/ListAccounts200ResponseDataInner.md
 docs/ListCards200Response.md
 docs/ListCards200ResponseDataInner.md
 docs/ListCheckDeposits200Response.md
+docs/ListCounterparties200Response.md
 docs/ListCustomers200Response.md
 docs/ListCustomers200ResponseDataInner.md
 docs/ListReceivedPayments200Response.md
@@ -456,6 +472,10 @@ docs/UpdateChargebackTransactionData.md
 docs/UpdateChargebackTransactionDataAttributes.md
 docs/UpdateChargebackTransactionRequest.md
 docs/UpdateCheckDepositRequest.md
+docs/UpdateCounterparty200Response.md
+docs/UpdateCounterpartyData.md
+docs/UpdateCounterpartyDataAttributes.md
+docs/UpdateCounterpartyRequest.md
 docs/UpdateCreditAccountData.md
 docs/UpdateCreditAccountDataAttributes.md
 docs/UpdateCreditAccountRequest.md
@@ -509,6 +529,7 @@ unit_finance_sdk/api/accounts_api.py
 unit_finance_sdk/api/applications_api.py
 unit_finance_sdk/api/cards_api.py
 unit_finance_sdk/api/check_deposits_api.py
+unit_finance_sdk/api/counterparties_api.py
 unit_finance_sdk/api/customers_api.py
 unit_finance_sdk/api/fees_api.py
 unit_finance_sdk/api/payments_api.py
@@ -526,6 +547,8 @@ unit_finance_sdk/models/account_hold_attributes.py
 unit_finance_sdk/models/account_low_balance_closure_transaction.py
 unit_finance_sdk/models/account_low_balance_closure_transaction_attributes.py
 unit_finance_sdk/models/account_low_balance_closure_transaction_relationships.py
+unit_finance_sdk/models/ach_counterparty.py
+unit_finance_sdk/models/ach_counterparty_attributes.py
 unit_finance_sdk/models/ach_payment.py
 unit_finance_sdk/models/ach_payment_attributes.py
 unit_finance_sdk/models/ach_payment_relationships.py
@@ -625,6 +648,9 @@ unit_finance_sdk/models/close_wallet_data.py
 unit_finance_sdk/models/close_wallet_data_attributes.py
 unit_finance_sdk/models/close_wallet_request.py
 unit_finance_sdk/models/coordinates_type.py
+unit_finance_sdk/models/counterparty_balance.py
+unit_finance_sdk/models/counterparty_balance_attributes.py
+unit_finance_sdk/models/counterparty_balance_relationships.py
 unit_finance_sdk/models/counterparty_type.py
 unit_finance_sdk/models/create_a_book_payment_data.py
 unit_finance_sdk/models/create_a_book_payment_data_attributes.py
@@ -692,6 +718,14 @@ unit_finance_sdk/models/create_check_deposit_send_link_data.py
 unit_finance_sdk/models/create_check_deposit_send_link_data_attributes.py
 unit_finance_sdk/models/create_check_deposit_send_link_data_relationships.py
 unit_finance_sdk/models/create_check_deposit_send_link_request.py
+unit_finance_sdk/models/create_counterparty201_response.py
+unit_finance_sdk/models/create_counterparty_body.py
+unit_finance_sdk/models/create_counterparty_data.py
+unit_finance_sdk/models/create_counterparty_data_attributes.py
+unit_finance_sdk/models/create_counterparty_request.py
+unit_finance_sdk/models/create_counterparty_with_plaid_token_data.py
+unit_finance_sdk/models/create_counterparty_with_plaid_token_data_attributes.py
+unit_finance_sdk/models/create_counterparty_with_plaid_token_request.py
 unit_finance_sdk/models/create_credit_account_data.py
 unit_finance_sdk/models/create_credit_account_data_attributes.py
 unit_finance_sdk/models/create_credit_account_request.py
@@ -786,6 +820,7 @@ unit_finance_sdk/models/get_available_deposit_products200_response_data_inner_at
 unit_finance_sdk/models/get_card200_response.py
 unit_finance_sdk/models/get_card_pin_status200_response.py
 unit_finance_sdk/models/get_check_deposit200_response.py
+unit_finance_sdk/models/get_counterparty_balance200_response.py
 unit_finance_sdk/models/get_customer200_response.py
 unit_finance_sdk/models/get_expected_ach_completion_date200_response.py
 unit_finance_sdk/models/get_expected_ach_completion_date200_response_data.py
@@ -816,6 +851,7 @@ unit_finance_sdk/models/list_accounts200_response_data_inner.py
 unit_finance_sdk/models/list_cards200_response.py
 unit_finance_sdk/models/list_cards200_response_data_inner.py
 unit_finance_sdk/models/list_check_deposits200_response.py
+unit_finance_sdk/models/list_counterparties200_response.py
 unit_finance_sdk/models/list_customers200_response.py
 unit_finance_sdk/models/list_customers200_response_data_inner.py
 unit_finance_sdk/models/list_received_payments200_response.py
@@ -966,6 +1002,10 @@ unit_finance_sdk/models/update_chargeback_transaction_data.py
 unit_finance_sdk/models/update_chargeback_transaction_data_attributes.py
 unit_finance_sdk/models/update_chargeback_transaction_request.py
 unit_finance_sdk/models/update_check_deposit_request.py
+unit_finance_sdk/models/update_counterparty200_response.py
+unit_finance_sdk/models/update_counterparty_data.py
+unit_finance_sdk/models/update_counterparty_data_attributes.py
+unit_finance_sdk/models/update_counterparty_request.py
 unit_finance_sdk/models/update_credit_account_data.py
 unit_finance_sdk/models/update_credit_account_data_attributes.py
 unit_finance_sdk/models/update_credit_account_request.py

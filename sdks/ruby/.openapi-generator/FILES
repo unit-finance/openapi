@@ -4,6 +4,8 @@
 Gemfile
 README.md
 Rakefile
+docs/ACHCounterparty.md
+docs/ACHCounterpartyAttributes.md
 docs/ACHPayment.md
 docs/ACHPaymentAttributes.md
 docs/ACHPaymentRelationships.md
@@ -115,6 +117,10 @@ docs/CloseWalletData.md
 docs/CloseWalletDataAttributes.md
 docs/CloseWalletRequest.md
 docs/CoordinatesType.md
+docs/CounterpartiesApi.md
+docs/CounterpartyBalance.md
+docs/CounterpartyBalanceAttributes.md
+docs/CounterpartyBalanceRelationships.md
 docs/CounterpartyType.md
 docs/CreateABookPaymentData.md
 docs/CreateABookPaymentDataAttributes.md
@@ -182,6 +188,14 @@ docs/CreateCheckDepositSendLinkData.md
 docs/CreateCheckDepositSendLinkDataAttributes.md
 docs/CreateCheckDepositSendLinkDataRelationships.md
 docs/CreateCheckDepositSendLinkRequest.md
+docs/CreateCounterparty201Response.md
+docs/CreateCounterpartyBody.md
+docs/CreateCounterpartyData.md
+docs/CreateCounterpartyDataAttributes.md
+docs/CreateCounterpartyRequest.md
+docs/CreateCounterpartyWithPlaidTokenData.md
+docs/CreateCounterpartyWithPlaidTokenDataAttributes.md
+docs/CreateCounterpartyWithPlaidTokenRequest.md
 docs/CreateCreditAccountData.md
 docs/CreateCreditAccountDataAttributes.md
 docs/CreateCreditAccountRequest.md
@@ -278,6 +292,7 @@ docs/GetAvailableDepositProducts200ResponseDataInnerAttributes.md
 docs/GetCard200Response.md
 docs/GetCardPinStatus200Response.md
 docs/GetCheckDeposit200Response.md
+docs/GetCounterpartyBalance200Response.md
 docs/GetCustomer200Response.md
 docs/GetExpectedACHCompletionDateData.md
 docs/GetExpectedACHCompletionDateDataAttributes.md
@@ -308,6 +323,7 @@ docs/ListAccounts200ResponseDataInner.md
 docs/ListCards200Response.md
 docs/ListCards200ResponseDataInner.md
 docs/ListCheckDeposits200Response.md
+docs/ListCounterparties200Response.md
 docs/ListCustomers200Response.md
 docs/ListCustomers200ResponseDataInner.md
 docs/ListReceivedPayments200Response.md
@@ -460,6 +476,10 @@ docs/UpdateChargebackTransactionData.md
 docs/UpdateChargebackTransactionDataAttributes.md
 docs/UpdateChargebackTransactionRequest.md
 docs/UpdateCheckDepositRequest.md
+docs/UpdateCounterparty200Response.md
+docs/UpdateCounterpartyData.md
+docs/UpdateCounterpartyDataAttributes.md
+docs/UpdateCounterpartyRequest.md
 docs/UpdateCreditAccountData.md
 docs/UpdateCreditAccountDataAttributes.md
 docs/UpdateCreditAccountRequest.md
@@ -511,6 +531,7 @@ lib/unit_finance_sdk/api/accounts_api.rb
 lib/unit_finance_sdk/api/applications_api.rb
 lib/unit_finance_sdk/api/cards_api.rb
 lib/unit_finance_sdk/api/check_deposits_api.rb
+lib/unit_finance_sdk/api/counterparties_api.rb
 lib/unit_finance_sdk/api/customers_api.rb
 lib/unit_finance_sdk/api/fees_api.rb
 lib/unit_finance_sdk/api/payments_api.rb
@@ -527,6 +548,8 @@ lib/unit_finance_sdk/models/account_hold_attributes.rb
 lib/unit_finance_sdk/models/account_low_balance_closure_transaction.rb
 lib/unit_finance_sdk/models/account_low_balance_closure_transaction_attributes.rb
 lib/unit_finance_sdk/models/account_low_balance_closure_transaction_relationships.rb
+lib/unit_finance_sdk/models/ach_counterparty.rb
+lib/unit_finance_sdk/models/ach_counterparty_attributes.rb
 lib/unit_finance_sdk/models/ach_payment.rb
 lib/unit_finance_sdk/models/ach_payment_attributes.rb
 lib/unit_finance_sdk/models/ach_payment_relationships.rb
@@ -626,6 +649,9 @@ lib/unit_finance_sdk/models/close_wallet_data.rb
 lib/unit_finance_sdk/models/close_wallet_data_attributes.rb
 lib/unit_finance_sdk/models/close_wallet_request.rb
 lib/unit_finance_sdk/models/coordinates_type.rb
+lib/unit_finance_sdk/models/counterparty_balance.rb
+lib/unit_finance_sdk/models/counterparty_balance_attributes.rb
+lib/unit_finance_sdk/models/counterparty_balance_relationships.rb
 lib/unit_finance_sdk/models/counterparty_type.rb
 lib/unit_finance_sdk/models/create_a_book_payment_data.rb
 lib/unit_finance_sdk/models/create_a_book_payment_data_attributes.rb
@@ -693,6 +719,14 @@ lib/unit_finance_sdk/models/create_check_deposit_send_link_data.rb
 lib/unit_finance_sdk/models/create_check_deposit_send_link_data_attributes.rb
 lib/unit_finance_sdk/models/create_check_deposit_send_link_data_relationships.rb
 lib/unit_finance_sdk/models/create_check_deposit_send_link_request.rb
+lib/unit_finance_sdk/models/create_counterparty201_response.rb
+lib/unit_finance_sdk/models/create_counterparty_body.rb
+lib/unit_finance_sdk/models/create_counterparty_data.rb
+lib/unit_finance_sdk/models/create_counterparty_data_attributes.rb
+lib/unit_finance_sdk/models/create_counterparty_request.rb
+lib/unit_finance_sdk/models/create_counterparty_with_plaid_token_data.rb
+lib/unit_finance_sdk/models/create_counterparty_with_plaid_token_data_attributes.rb
+lib/unit_finance_sdk/models/create_counterparty_with_plaid_token_request.rb
 lib/unit_finance_sdk/models/create_credit_account_data.rb
 lib/unit_finance_sdk/models/create_credit_account_data_attributes.rb
 lib/unit_finance_sdk/models/create_credit_account_request.rb
@@ -787,6 +821,7 @@ lib/unit_finance_sdk/models/get_available_deposit_products200_response_data_inne
 lib/unit_finance_sdk/models/get_card200_response.rb
 lib/unit_finance_sdk/models/get_card_pin_status200_response.rb
 lib/unit_finance_sdk/models/get_check_deposit200_response.rb
+lib/unit_finance_sdk/models/get_counterparty_balance200_response.rb
 lib/unit_finance_sdk/models/get_customer200_response.rb
 lib/unit_finance_sdk/models/get_expected_ach_completion_date200_response.rb
 lib/unit_finance_sdk/models/get_expected_ach_completion_date200_response_data.rb
@@ -817,6 +852,7 @@ lib/unit_finance_sdk/models/list_accounts200_response_data_inner.rb
 lib/unit_finance_sdk/models/list_cards200_response.rb
 lib/unit_finance_sdk/models/list_cards200_response_data_inner.rb
 lib/unit_finance_sdk/models/list_check_deposits200_response.rb
+lib/unit_finance_sdk/models/list_counterparties200_response.rb
 lib/unit_finance_sdk/models/list_customers200_response.rb
 lib/unit_finance_sdk/models/list_customers200_response_data_inner.rb
 lib/unit_finance_sdk/models/list_received_payments200_response.rb
@@ -967,6 +1003,10 @@ lib/unit_finance_sdk/models/update_chargeback_transaction_data.rb
 lib/unit_finance_sdk/models/update_chargeback_transaction_data_attributes.rb
 lib/unit_finance_sdk/models/update_chargeback_transaction_request.rb
 lib/unit_finance_sdk/models/update_check_deposit_request.rb
+lib/unit_finance_sdk/models/update_counterparty200_response.rb
+lib/unit_finance_sdk/models/update_counterparty_data.rb
+lib/unit_finance_sdk/models/update_counterparty_data_attributes.rb
+lib/unit_finance_sdk/models/update_counterparty_request.rb
 lib/unit_finance_sdk/models/update_credit_account_data.rb
 lib/unit_finance_sdk/models/update_credit_account_data_attributes.rb
 lib/unit_finance_sdk/models/update_credit_account_request.rb

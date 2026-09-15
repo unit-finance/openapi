@@ -6,6 +6,8 @@ api.ts
 base.ts
 common.ts
 configuration.ts
+docs/ACHCounterparty.md
+docs/ACHCounterpartyAttributes.md
 docs/ACHPayment.md
 docs/ACHPaymentAttributes.md
 docs/ACHPaymentRelationships.md
@@ -117,6 +119,10 @@ docs/CloseWalletData.md
 docs/CloseWalletDataAttributes.md
 docs/CloseWalletRequest.md
 docs/CoordinatesType.md
+docs/CounterpartiesApi.md
+docs/CounterpartyBalance.md
+docs/CounterpartyBalanceAttributes.md
+docs/CounterpartyBalanceRelationships.md
 docs/CounterpartyType.md
 docs/CreateABookPaymentData.md
 docs/CreateABookPaymentDataAttributes.md
@@ -184,6 +190,14 @@ docs/CreateCheckDepositSendLinkData.md
 docs/CreateCheckDepositSendLinkDataAttributes.md
 docs/CreateCheckDepositSendLinkDataRelationships.md
 docs/CreateCheckDepositSendLinkRequest.md
+docs/CreateCounterparty201Response.md
+docs/CreateCounterpartyBody.md
+docs/CreateCounterpartyData.md
+docs/CreateCounterpartyDataAttributes.md
+docs/CreateCounterpartyRequest.md
+docs/CreateCounterpartyWithPlaidTokenData.md
+docs/CreateCounterpartyWithPlaidTokenDataAttributes.md
+docs/CreateCounterpartyWithPlaidTokenRequest.md
 docs/CreateCreditAccountData.md
 docs/CreateCreditAccountDataAttributes.md
 docs/CreateCreditAccountRequest.md
@@ -280,6 +294,7 @@ docs/GetAvailableDepositProducts200ResponseDataInnerAttributes.md
 docs/GetCard200Response.md
 docs/GetCardPinStatus200Response.md
 docs/GetCheckDeposit200Response.md
+docs/GetCounterpartyBalance200Response.md
 docs/GetCustomer200Response.md
 docs/GetExpectedACHCompletionDateData.md
 docs/GetExpectedACHCompletionDateDataAttributes.md
@@ -310,6 +325,7 @@ docs/ListAccounts200ResponseDataInner.md
 docs/ListCards200Response.md
 docs/ListCards200ResponseDataInner.md
 docs/ListCheckDeposits200Response.md
+docs/ListCounterparties200Response.md
 docs/ListCustomers200Response.md
 docs/ListCustomers200ResponseDataInner.md
 docs/ListReceivedPayments200Response.md
@@ -462,6 +478,10 @@ docs/UpdateChargebackTransactionData.md
 docs/UpdateChargebackTransactionDataAttributes.md
 docs/UpdateChargebackTransactionRequest.md
 docs/UpdateCheckDepositRequest.md
+docs/UpdateCounterparty200Response.md
+docs/UpdateCounterpartyData.md
+docs/UpdateCounterpartyDataAttributes.md
+docs/UpdateCounterpartyRequest.md
 docs/UpdateCreditAccountData.md
 docs/UpdateCreditAccountDataAttributes.md
 docs/UpdateCreditAccountRequest.md
