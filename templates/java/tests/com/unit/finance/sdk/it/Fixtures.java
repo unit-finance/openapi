@@ -57,7 +57,14 @@ import com.unit.finance.sdk.model.CreateCardRequest;
 import com.unit.finance.sdk.model.CreateDepositAccountData;
 import com.unit.finance.sdk.model.CreateDepositAccountDataAttributes;
 import com.unit.finance.sdk.model.CreateDepositAccountDataRelationships;
+import com.unit.finance.sdk.model.CreateCounterpartyBody;
+import com.unit.finance.sdk.model.CreateCounterpartyData;
+import com.unit.finance.sdk.model.CreateCounterpartyDataAttributes;
+import com.unit.finance.sdk.model.CreateCounterpartyRequest;
 import com.unit.finance.sdk.model.CreateDepositAccountRequest;
+import com.unit.finance.sdk.model.UpdateCounterpartyData;
+import com.unit.finance.sdk.model.UpdateCounterpartyDataAttributes;
+import com.unit.finance.sdk.model.UpdateCounterpartyRequest;
 import com.unit.finance.sdk.model.CreateFeeData;
 import com.unit.finance.sdk.model.CreateFeeDataAttributes;
 import com.unit.finance.sdk.model.CreateFeeDataRelationships;
@@ -377,6 +384,51 @@ final class Fixtures {
             .attributes(attributes)
             .relationships(relationships);
     return new CreateDepositAccountRequest().data(data);
+  }
+
+  /**
+   * An ACH counterparty is an external bank account owned by one of our
+   * customers. The routing/account number pair has to resolve to a real bank,
+   * so the suite points the counterparty at one of the shared customer's own
+   * Unit deposit accounts (see {@code Counterparties}) rather than inventing an
+   * ABA number the sandbox would reject.
+   */
+  static CreateCounterpartyBody createCounterpartyRequest(
+      String customerId, String routingNumber, String accountNumber) {
+    CreateCounterpartyDataAttributes attributes =
+        new CreateCounterpartyDataAttributes()
+            .name("Peter Parker " + RUN)
+            .routingNumber(routingNumber)
+            .accountNumber(accountNumber)
+            .accountType("Checking")
+            .type("Business")
+            .tags(baseTags())
+            .idempotencyKey(RUN + "-counterparty-" + UUID.randomUUID().toString().substring(0, 8));
+    CreateDepositAccountDataRelationships relationships =
+        new CreateDepositAccountDataRelationships().customer(relationship("customer", customerId));
+    CreateCounterpartyData data =
+        new CreateCounterpartyData()
+            .type(CreateCounterpartyData.TypeEnum.ACH_COUNTERPARTY)
+            .attributes(attributes)
+            .relationships(relationships);
+    return new CreateCounterpartyBody(new CreateCounterpartyRequest().data(data));
+  }
+
+  /**
+   * {@code UpdateCounterpartyDataAttributes} exposes plaidProcessorToken,
+   * verifyName, permissions and tags. Only {@code tags} is safe for a non-Plaid
+   * counterparty: a relink needs a Plaid token we don't have, and permissions
+   * beyond the default CreditOnly depend on the counterparty's bank.
+   */
+  static UpdateCounterpartyRequest updateCounterpartyRequest() {
+    Map<String, Object> tags = baseTags();
+    tags.put("updated", "true");
+    UpdateCounterpartyDataAttributes attributes = new UpdateCounterpartyDataAttributes().tags(tags);
+    UpdateCounterpartyData data =
+        new UpdateCounterpartyData()
+            .type(UpdateCounterpartyData.TypeEnum.COUNTERPARTY)
+            .attributes(attributes);
+    return new UpdateCounterpartyRequest().data(data);
   }
 
   static CreateAccountRequest depositAccountRequestForCustomer(String customerId) {
