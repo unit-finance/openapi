@@ -7,6 +7,7 @@ import com.unit.finance.sdk.api.AccountsApi;
 import com.unit.finance.sdk.api.ApplicationsApi;
 import com.unit.finance.sdk.api.CardsApi;
 import com.unit.finance.sdk.api.CheckDepositsApi;
+import com.unit.finance.sdk.api.CounterpartiesApi;
 import com.unit.finance.sdk.api.CustomersApi;
 import com.unit.finance.sdk.api.FeesApi;
 import com.unit.finance.sdk.api.PaymentsApi;
@@ -200,6 +201,11 @@ final class ApiSupport {
   /** Construct a {@code CheckDepositsApi} bound to the sandbox. */
   static CheckDepositsApi buildCheckDepositsApi() {
     return new CheckDepositsApi(buildApiClient());
+  }
+
+  /** Construct a {@code CounterpartiesApi} bound to the sandbox. */
+  static CounterpartiesApi buildCounterpartiesApi() {
+    return new CounterpartiesApi(buildApiClient());
   }
 
   /** Block the current thread for sandbox polling (mirrors Node {@code sleep}). */

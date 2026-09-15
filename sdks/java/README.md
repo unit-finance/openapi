@@ -1,7 +1,7 @@
 # unit-java-sdk
 
 Unit API
-- API version: 0.8.0
+- API version: 0.9.0
   - Generator version: 7.22.0
 
 JSON:API-compliant banking API.
@@ -166,6 +166,12 @@ Class | Method | HTTP request | Description
 *CheckDepositsApi* | [**updateCheckDeposit**](docs/CheckDepositsApi.md#updateCheckDeposit) | **PATCH** /check-deposits/{checkDepositId} | Update a check deposit
 *CheckDepositsApi* | [**uploadCheckDepositBackImage**](docs/CheckDepositsApi.md#uploadCheckDepositBackImage) | **PUT** /check-deposits/{checkDepositId}/back | Upload a check deposit back image
 *CheckDepositsApi* | [**uploadCheckDepositFrontImage**](docs/CheckDepositsApi.md#uploadCheckDepositFrontImage) | **PUT** /check-deposits/{checkDepositId}/front | Upload a check deposit front image
+*CounterpartiesApi* | [**createCounterparty**](docs/CounterpartiesApi.md#createCounterparty) | **POST** /counterparties | Create a counterparty
+*CounterpartiesApi* | [**deleteCounterparty**](docs/CounterpartiesApi.md#deleteCounterparty) | **DELETE** /counterparties/{counterpartyId} | Delete a counterparty
+*CounterpartiesApi* | [**getCounterparty**](docs/CounterpartiesApi.md#getCounterparty) | **GET** /counterparties/{counterpartyId} | Get a counterparty by id
+*CounterpartiesApi* | [**getCounterpartyBalance**](docs/CounterpartiesApi.md#getCounterpartyBalance) | **GET** /counterparties/{counterpartyId}/balance | Get a counterparty balance by id
+*CounterpartiesApi* | [**listCounterparties**](docs/CounterpartiesApi.md#listCounterparties) | **GET** /counterparties | List counterparties
+*CounterpartiesApi* | [**updateCounterparty**](docs/CounterpartiesApi.md#updateCounterparty) | **PATCH** /counterparties/{counterpartyId} | Update a counterparty
 *CustomersApi* | [**archiveCustomer**](docs/CustomersApi.md#archiveCustomer) | **POST** /customers/{customerId}/archive | Archive a customer
 *CustomersApi* | [**createBusinessWalletCustomer**](docs/CustomersApi.md#createBusinessWalletCustomer) | **POST** /customers | Create a business wallet customer
 *CustomersApi* | [**getCustomer**](docs/CustomersApi.md#getCustomer) | **GET** /customers/{customerId} | Get a customer
@@ -204,6 +210,8 @@ Class | Method | HTTP request | Description
 
 ## Documentation for Models
 
+ - [ACHCounterparty](docs/ACHCounterparty.md)
+ - [ACHCounterpartyAttributes](docs/ACHCounterpartyAttributes.md)
  - [ACHPayment](docs/ACHPayment.md)
  - [ACHPaymentAttributes](docs/ACHPaymentAttributes.md)
  - [ACHPaymentRelationships](docs/ACHPaymentRelationships.md)
@@ -311,6 +319,9 @@ Class | Method | HTTP request | Description
  - [CloseWalletDataAttributes](docs/CloseWalletDataAttributes.md)
  - [CloseWalletRequest](docs/CloseWalletRequest.md)
  - [CoordinatesType](docs/CoordinatesType.md)
+ - [CounterpartyBalance](docs/CounterpartyBalance.md)
+ - [CounterpartyBalanceAttributes](docs/CounterpartyBalanceAttributes.md)
+ - [CounterpartyBalanceRelationships](docs/CounterpartyBalanceRelationships.md)
  - [CounterpartyType](docs/CounterpartyType.md)
  - [CreateABookPaymentData](docs/CreateABookPaymentData.md)
  - [CreateABookPaymentDataAttributes](docs/CreateABookPaymentDataAttributes.md)
@@ -378,6 +389,14 @@ Class | Method | HTTP request | Description
  - [CreateCheckDepositSendLinkDataAttributes](docs/CreateCheckDepositSendLinkDataAttributes.md)
  - [CreateCheckDepositSendLinkDataRelationships](docs/CreateCheckDepositSendLinkDataRelationships.md)
  - [CreateCheckDepositSendLinkRequest](docs/CreateCheckDepositSendLinkRequest.md)
+ - [CreateCounterparty201Response](docs/CreateCounterparty201Response.md)
+ - [CreateCounterpartyBody](docs/CreateCounterpartyBody.md)
+ - [CreateCounterpartyData](docs/CreateCounterpartyData.md)
+ - [CreateCounterpartyDataAttributes](docs/CreateCounterpartyDataAttributes.md)
+ - [CreateCounterpartyRequest](docs/CreateCounterpartyRequest.md)
+ - [CreateCounterpartyWithPlaidTokenData](docs/CreateCounterpartyWithPlaidTokenData.md)
+ - [CreateCounterpartyWithPlaidTokenDataAttributes](docs/CreateCounterpartyWithPlaidTokenDataAttributes.md)
+ - [CreateCounterpartyWithPlaidTokenRequest](docs/CreateCounterpartyWithPlaidTokenRequest.md)
  - [CreateCreditAccountData](docs/CreateCreditAccountData.md)
  - [CreateCreditAccountDataAttributes](docs/CreateCreditAccountDataAttributes.md)
  - [CreateCreditAccountRequest](docs/CreateCreditAccountRequest.md)
@@ -472,6 +491,7 @@ Class | Method | HTTP request | Description
  - [GetCard200Response](docs/GetCard200Response.md)
  - [GetCardPinStatus200Response](docs/GetCardPinStatus200Response.md)
  - [GetCheckDeposit200Response](docs/GetCheckDeposit200Response.md)
+ - [GetCounterpartyBalance200Response](docs/GetCounterpartyBalance200Response.md)
  - [GetCustomer200Response](docs/GetCustomer200Response.md)
  - [GetExpectedACHCompletionDateData](docs/GetExpectedACHCompletionDateData.md)
  - [GetExpectedACHCompletionDateDataAttributes](docs/GetExpectedACHCompletionDateDataAttributes.md)
@@ -502,6 +522,7 @@ Class | Method | HTTP request | Description
  - [ListCards200Response](docs/ListCards200Response.md)
  - [ListCards200ResponseDataInner](docs/ListCards200ResponseDataInner.md)
  - [ListCheckDeposits200Response](docs/ListCheckDeposits200Response.md)
+ - [ListCounterparties200Response](docs/ListCounterparties200Response.md)
  - [ListCustomers200Response](docs/ListCustomers200Response.md)
  - [ListCustomers200ResponseDataInner](docs/ListCustomers200ResponseDataInner.md)
  - [ListReceivedPayments200Response](docs/ListReceivedPayments200Response.md)
@@ -652,6 +673,10 @@ Class | Method | HTTP request | Description
  - [UpdateChargebackTransactionDataAttributes](docs/UpdateChargebackTransactionDataAttributes.md)
  - [UpdateChargebackTransactionRequest](docs/UpdateChargebackTransactionRequest.md)
  - [UpdateCheckDepositRequest](docs/UpdateCheckDepositRequest.md)
+ - [UpdateCounterparty200Response](docs/UpdateCounterparty200Response.md)
+ - [UpdateCounterpartyData](docs/UpdateCounterpartyData.md)
+ - [UpdateCounterpartyDataAttributes](docs/UpdateCounterpartyDataAttributes.md)
+ - [UpdateCounterpartyRequest](docs/UpdateCounterpartyRequest.md)
  - [UpdateCreditAccountData](docs/UpdateCreditAccountData.md)
  - [UpdateCreditAccountDataAttributes](docs/UpdateCreditAccountDataAttributes.md)
  - [UpdateCreditAccountRequest](docs/UpdateCreditAccountRequest.md)

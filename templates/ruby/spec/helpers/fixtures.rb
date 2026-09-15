@@ -656,5 +656,43 @@ module Helpers
         }
       }
     end
+
+    # An ACH counterparty is an external bank account owned by one of our
+    # customers. The routing/account number pair has to resolve to a real bank,
+    # so the suite points the counterparty at one of the shared customer's own
+    # Unit deposit accounts (see `helpers/counterparties.rb`) rather than
+    # inventing an ABA number the sandbox would reject.
+    def create_counterparty_request(customer_id, routing_number, account_number)
+      {
+        'data' => {
+          'type' => 'achCounterparty',
+          'attributes' => {
+            'name' => "Peter Parker #{Helpers::Api::TEST_RUN_ID}",
+            'routingNumber' => routing_number,
+            'accountNumber' => account_number,
+            'accountType' => 'Checking',
+            'type' => 'Business',
+            'tags' => base_tags,
+            'idempotencyKey' => "#{Helpers::Api::TEST_RUN_ID}-counterparty-#{SecureRandom.hex(4)}"
+          },
+          'relationships' => {
+            'customer' => { 'data' => { 'type' => 'customer', 'id' => customer_id } }
+          }
+        }
+      }
+    end
+
+    # UpdateCounterpartyDataAttributes exposes plaidProcessorToken, verifyName,
+    # permissions and tags. Only `tags` is safe for a non-Plaid counterparty: a
+    # relink needs a Plaid token we don't have, and permissions beyond the
+    # default CreditOnly depend on the counterparty's bank.
+    def update_counterparty_request
+      {
+        'data' => {
+          'type' => 'counterparty',
+          'attributes' => { 'tags' => base_tags.merge('updated' => 'true') }
+        }
+      }
+    end
   end
 end
