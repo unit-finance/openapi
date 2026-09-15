@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Unit API",
-    "version": "0.8.0",
+    "version": "0.9.0",
     "description": "JSON:API-compliant banking API.",
     "license": {
       "name": "Proprietary",
@@ -51,6 +51,10 @@
     {
       "name": "Check Deposits",
       "description": "Check deposits into accounts, their images, clearing, confirmation, and shareable deposit links."
+    },
+    {
+      "name": "Counterparties",
+      "description": "ACH counterparties, their creation from account/routing numbers or Plaid tokens, balances, and lifecycle."
     }
   ],
   "paths": {
@@ -7789,6 +7793,462 @@
                           ]
                         }
                       }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/counterparties": {
+      "get": {
+        "operationId": "listCounterparties",
+        "summary": "List counterparties",
+        "description": "List counterparties. Filtering and paging can be applied.",
+        "tags": [
+          "Counterparties"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "counterparties"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page[limit]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Maximum number of resources that will be returned. Maximum is 1000 resources. See Pagination.",
+            "schema": {
+              "type": "string",
+              "default": "100"
+            }
+          },
+          {
+            "name": "page[offset]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Number of resources to skip. See Pagination.",
+            "schema": {
+              "type": "string",
+              "default": "0"
+            }
+          },
+          {
+            "name": "filter[customerId]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the results by the specified customer id.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[accountNumber]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the results by the specified account number.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[routingNumber]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the results by the specified routing number.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[tags]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filter Counterparties by Tags.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[permissions][]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the results by the specified counterparty permissions either CreditOnly, DebitOnly, CreditAndDebit. Usage example: *filter[permissions][0]=CreditOnly&filter[permissions][1]=CreditAndDebit*",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "description": "Optional. sort=createdAt for ascending order or sort=-createdAt (leading minus sign) for descending order.",
+            "schema": {
+              "type": "string",
+              "default": "createdAt"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of counterparty resources.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ACHCounterparty"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createCounterparty",
+        "summary": "Create a counterparty",
+        "description": "Creates an ACH counterparty for a specific customer. The request body is one of CreateCounterpartyRequest (account/routing number) or CreateCounterpartyWithPlaidTokenRequest (Plaid processor token).",
+        "tags": [
+          "Counterparties"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "counterparties-write"
+            ]
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/CreateCounterpartyRequest"
+                  },
+                  {
+                    "$ref": "#/components/schemas/CreateCounterpartyWithPlaidTokenRequest"
+                  }
+                ],
+                "title": "CreateCounterpartyBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The created counterparty resource.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/ACHCounterparty"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/counterparties/{counterpartyId}": {
+      "parameters": [
+        {
+          "name": "counterpartyId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "getCounterparty",
+        "summary": "Get a counterparty by id",
+        "description": "Get a counterparty resource by id.",
+        "tags": [
+          "Counterparties"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "counterparties"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Counterparty resource.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/ACHCounterparty"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "updateCounterparty",
+        "summary": "Update a counterparty",
+        "description": "Update a Counterparty. Relink existing counterparty with a new Plaid processor token.",
+        "tags": [
+          "Counterparties"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "counterparties-write"
+            ]
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCounterpartyRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The target resource after the operation was completed.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/ACHCounterparty"
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteCounterparty",
+        "summary": "Delete a counterparty",
+        "description": "Delete a counterparty resource by id.",
+        "tags": [
+          "Counterparties"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "counterparties"
+            ]
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "The counterparty was deleted successfully."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/counterparties/{counterpartyId}/balance": {
+      "parameters": [
+        {
+          "name": "counterpartyId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "getCounterpartyBalance",
+        "summary": "Get a counterparty balance by id",
+        "description": "Get a counterparty balance resource by id.",
+        "tags": [
+          "Counterparties"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "counterparties"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Counterparty Balance resource.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/CounterpartyBalance"
                     }
                   }
                 }
@@ -22645,6 +23105,396 @@
                 "$ref": "#/components/schemas/Relationship"
               }
             }
+          }
+        }
+      },
+      "ACHCounterparty": {
+        "type": "object",
+        "required": [
+          "type",
+          "id",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "achCounterparty"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "createdAt",
+              "name",
+              "routingNumber",
+              "bank",
+              "accountNumber",
+              "accountType",
+              "type",
+              "permissions"
+            ],
+            "properties": {
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the resource was created."
+              },
+              "name": {
+                "type": "string",
+                "description": "The account holder's name (whether an individual or a business)."
+              },
+              "routingNumber": {
+                "type": "string",
+                "description": "Valid 9-digit ABA routing transit number."
+              },
+              "bank": {
+                "type": "string",
+                "description": "Name of the bank."
+              },
+              "accountNumber": {
+                "type": "string",
+                "description": "Bank account number."
+              },
+              "accountType": {
+                "type": "string",
+                "description": "Either Checking, Savings or Loan."
+              },
+              "type": {
+                "type": "string",
+                "description": "Either Business, Person or Unknown."
+              },
+              "permissions": {
+                "type": "string",
+                "description": "Either CreditOnly or CreditAndDebit."
+              },
+              "tags": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "See Tags."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "properties": {
+              "customer": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        },
+        "example": {
+          "type": "achCounterparty",
+          "id": "8",
+          "attributes": {
+            "createdAt": "2020-05-13T09:07:47.645Z",
+            "name": "Joe Doe",
+            "routingNumber": "011000138",
+            "bank": "Bank Of America",
+            "accountNumber": "123",
+            "accountType": "Checking",
+            "type": "Person",
+            "permissions": "CreditOnly"
+          },
+          "relationships": {
+            "customer": {
+              "data": {
+                "type": "customer",
+                "id": "111111"
+              }
+            }
+          }
+        },
+        "description": "`ACHCounterparty` is a JSON:API resource, top-level fields:"
+      },
+      "CounterpartyBalance": {
+        "type": "object",
+        "required": [
+          "type",
+          "id",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "counterpartyBalance"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "balance"
+            ],
+            "properties": {
+              "balance": {
+                "type": "number",
+                "description": "The current balance amount (in cents) of the counterparty."
+              },
+              "available": {
+                "type": "number",
+                "description": "The available balance amount (in cents) of the counterparty."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "properties": {
+              "counterparty": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "customer": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        },
+        "example": {
+          "type": "counterpartyBalance",
+          "id": "2",
+          "attributes": {
+            "balance": 11000,
+            "available": 10000
+          },
+          "relationships": {
+            "counterparty": {
+              "data": {
+                "type": "counterparty",
+                "id": "2"
+              }
+            },
+            "customer": {
+              "data": {
+                "type": "customer",
+                "id": "10000"
+              }
+            }
+          }
+        },
+        "description": "`CounterpartyBalance` is a JSON:API resource, top-level fields:"
+      },
+      "CreateCounterpartyData": {
+        "type": "object",
+        "required": [
+          "type",
+          "attributes",
+          "relationships"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "achCounterparty"
+            ]
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "name",
+              "routingNumber",
+              "accountNumber",
+              "accountType",
+              "type"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "The account holder's name (whether an individual or a business, maximum of 50 characters).",
+                "example": "Joe Doe"
+              },
+              "routingNumber": {
+                "type": "string",
+                "description": "Valid 9-digit ABA routing transit number.",
+                "example": "011000133"
+              },
+              "accountNumber": {
+                "type": "string",
+                "description": "Bank account number.",
+                "example": "123"
+              },
+              "accountType": {
+                "type": "string",
+                "description": "(defaults to checking). Either Checking, Savings or Loan.",
+                "example": "Checking"
+              },
+              "type": {
+                "type": "string",
+                "description": "Either Business, Person or Unknown.",
+                "example": "Person"
+              },
+              "tags": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "See Tags."
+              },
+              "permissions": {
+                "type": "string",
+                "description": "Optional, custom counterparty permissions. Only DebitOnly or CreditAndDebit are valid values when using the permissions' attribute. 'CreditOnly' will be assigned as default value when permissions attribute is not declared. If the account and routing number of the counterparty belong to an account under your org on Unit, you may specify \"CreditAndDebit\" or \"DebitOnly\" permissions as well."
+              },
+              "idempotencyKey": {
+                "type": "string",
+                "description": "See Idempotency."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "required": [
+              "customer"
+            ],
+            "properties": {
+              "customer": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        }
+      },
+      "CreateCounterpartyRequest": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/CreateCounterpartyData"
+          }
+        }
+      },
+      "CreateCounterpartyWithPlaidTokenData": {
+        "type": "object",
+        "required": [
+          "type",
+          "attributes",
+          "relationships"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "achCounterparty"
+            ]
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "type",
+              "name",
+              "plaidProcessorToken"
+            ],
+            "properties": {
+              "type": {
+                "type": "string",
+                "description": "Either Business, Person or Unknown",
+                "example": "Person"
+              },
+              "name": {
+                "type": "string",
+                "description": "The account holder's name (whether an individual or a business).",
+                "example": "Sherlock Holmes"
+              },
+              "plaidProcessorToken": {
+                "type": "string",
+                "description": "Plaid integration token<br />See Plaid processor token",
+                "example": "processor-5a62q307-ww0a-6737-f6db-pole26004556"
+              },
+              "verifyName": {
+                "type": "boolean",
+                "description": "Optional, default to false. Verify a match between the name of the counterparty and the name of the external account's owner as provided by Plaid. If the name verification fails the request will fail with code field set to NameVerificationFailed."
+              },
+              "permissions": {
+                "type": "string",
+                "description": "Optional, custom counterparty permissions. Either CreditOnly, DebitOnly, CreditAndDebit. Default is CreditAndDebit.",
+                "example": "DebitOnly"
+              },
+              "tags": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "See Tags."
+              },
+              "idempotencyKey": {
+                "type": "string",
+                "description": "See Idempotency."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "required": [
+              "customer"
+            ],
+            "properties": {
+              "customer": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        }
+      },
+      "CreateCounterpartyWithPlaidTokenRequest": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/CreateCounterpartyWithPlaidTokenData"
+          }
+        }
+      },
+      "UpdateCounterpartyData": {
+        "type": "object",
+        "required": [
+          "type",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "counterparty"
+            ]
+          },
+          "attributes": {
+            "type": "object",
+            "properties": {
+              "plaidProcessorToken": {
+                "type": "string",
+                "description": "Optional, unless updating a Plaid counterparty. Plaid integration token<br />See Plaid processor token",
+                "example": "processor-sandbox-b14ad1fd-3398-46a8-a316-5bf574fc2459"
+              },
+              "verifyName": {
+                "type": "boolean",
+                "description": "Optional, default to false. Verify the name of the counterparty, if the name verification fails the request will fail with code field set to NameVerificationFailed."
+              },
+              "permissions": {
+                "type": "string",
+                "description": "Optional, custom counterparty permissions. Either CreditOnly, DebitOnly, CreditAndDebit."
+              },
+              "tags": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "See Tags."
+              }
+            }
+          }
+        }
+      },
+      "UpdateCounterpartyRequest": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/UpdateCounterpartyData"
           }
         }
       }
