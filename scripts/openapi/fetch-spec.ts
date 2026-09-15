@@ -26,6 +26,11 @@
 import fs from "node:fs";
 import https from "node:https";
 import path from "node:path";
+import {
+	inlineRequestBodyKey,
+	toClassName,
+	uniqueClassName,
+} from "./model-names";
 
 const REPO_ROOT = process.cwd();
 const LOCK_PATH = path.join(REPO_ROOT, "spec-version.json");
@@ -127,16 +132,27 @@ function httpGet(url: string, headers: Headers = {}): Promise<HttpResponse> {
 	});
 }
 
+interface OpenApiSchema {
+	$ref?: string;
+	title?: string;
+}
+
+interface OpenApiRequestBody {
+	required?: boolean;
+	content?: Record<string, { schema?: OpenApiSchema } | undefined>;
+}
+
 interface OpenApiOperation {
 	tags?: string[];
 	operationId?: string;
-	requestBody?: unknown;
+	requestBody?: OpenApiRequestBody;
 }
 
 interface OpenApiDoc {
 	info?: { version?: string };
 	tags?: Array<{ name?: string }>;
 	paths?: Record<string, Record<string, OpenApiOperation>>;
+	components?: { schemas?: Record<string, unknown> };
 }
 
 /**
@@ -175,6 +191,57 @@ function injectBodylessRequestBodies(doc: OpenApiDoc): string[] {
 		}
 	}
 	return patched;
+}
+
+/**
+ * Break model-name collisions caused by inline request bodies.
+ *
+ * Nearly every operation in this spec writes its request body inline rather
+ * than as a `$ref`, so openapi-generator hoists each one into a synthetic
+ * model keyed `<operationId>_request`. When that key's class name matches one
+ * a real schema already claims — `createCounterparty_request` and
+ * `CreateCounterpartyRequest` both become `CreateCounterpartyRequest` — the
+ * generators break, and not always loudly (see `model-names.ts`).
+ *
+ * `InlineModelResolver` prefers an explicit `title` over the derived key, so
+ * titling the colliding body fixes every language at once, without the
+ * per-language CLI flags the same fix would otherwise need. Only colliding
+ * bodies are touched: generated model names are a published API surface, so
+ * the other ~50 inline bodies keep the names they already ship under.
+ */
+function titleCollidingInlineRequestBodies(doc: OpenApiDoc): string[] {
+	// Every class name already claimed, starting with the named schemas.
+	const taken = new Set(
+		Object.keys(doc.components?.schemas ?? {}).map(toClassName),
+	);
+	const titled: string[] = [];
+
+	for (const [route, ops] of Object.entries(doc.paths ?? {})) {
+		for (const [method, op] of Object.entries(ops)) {
+			const operationId = op?.operationId;
+			if (!operationId) continue;
+			for (const media of Object.values(op.requestBody?.content ?? {})) {
+				const schema = media?.schema;
+				// `$ref` bodies are already named; an authored `title` already wins.
+				if (!schema || schema.$ref || schema.title) continue;
+
+				const derived = toClassName(inlineRequestBodyKey(operationId));
+				if (!taken.has(derived)) {
+					// Claim it, so a later body deriving the same name collides here.
+					taken.add(derived);
+					continue;
+				}
+
+				const title = uniqueClassName(`${toClassName(operationId)}Body`, taken);
+				schema.title = title;
+				taken.add(title);
+				titled.push(
+					`${method.toUpperCase()} ${route} (${operationId}) -> ${title}`,
+				);
+			}
+		}
+	}
+	return titled;
 }
 
 /**
@@ -261,7 +328,9 @@ function writeOut(buf: Buffer, source: string, expectedVersion?: string): void {
 		process.exit(1);
 	}
 	const patched = injectBodylessRequestBodies(doc);
-	const out = patched.length ? `${JSON.stringify(doc, null, 2)}\n` : text.endsWith("\n") ? text : `${text}\n`;
+	const titled = titleCollidingInlineRequestBodies(doc);
+	const rewritten = patched.length > 0 || titled.length > 0;
+	const out = rewritten ? `${JSON.stringify(doc, null, 2)}\n` : text.endsWith("\n") ? text : `${text}\n`;
 	fs.mkdirSync(path.dirname(OUT_PATH), { recursive: true });
 	fs.writeFileSync(OUT_PATH, out, "utf8");
 	console.log(
@@ -271,6 +340,12 @@ function writeOut(buf: Buffer, source: string, expectedVersion?: string): void {
 		console.log(
 			`[fetch-spec] Added optional JSON:API request body to ${patched.length} ` +
 				`bodyless mutating operation(s): ${patched.join(", ")}`,
+		);
+	}
+	if (titled.length) {
+		console.log(
+			`[fetch-spec] Titled ${titled.length} inline request body/bodies whose ` +
+				`derived model name collided with an existing schema: ${titled.join(", ")}`,
 		);
 	}
 	updateLock(doc, expectedVersion === undefined);
