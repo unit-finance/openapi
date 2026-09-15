@@ -7,6 +7,7 @@ import type {
 	CreateBusinessDebitCardRequest,
 	CreateBusinessVirtualDebitCardRequest,
 	CreateBusinessWalletCustomerRequest,
+	CreateCounterpartyRequest,
 	CreateIndividualApplicationRequest,
 	CreateSoleProprietorApplicationRequest,
 	FreezeCardRequest,
@@ -15,6 +16,7 @@ import type {
 	UpdateBusinessBeneficialOwnerRequest,
 	UpdateBusinessCustomerOfficerRequest,
 	UpdateCardRequest,
+	UpdateCounterpartyRequest,
 	UpdateCustomerRequest,
 } from "../..";
 import {
@@ -656,6 +658,52 @@ export function buildCreateCheckDepositSendLinkRequest(
 				authorizedUser: {
 					data: { type: "authorizedUser", id: authorizedUserId },
 				},
+			},
+		},
+	};
+}
+
+// An ACH counterparty is an external bank account owned by one of our
+// customers. The routing/account number pair has to resolve to a real bank, so
+// the suite points the counterparty at one of the shared customer's own Unit
+// deposit accounts (see `helpers/counterparties.ts`) rather than inventing an
+// ABA number the sandbox would reject.
+export function buildCreateCounterpartyRequest(
+	customerId: string,
+	routingNumber: string,
+	accountNumber: string,
+): CreateCounterpartyRequest {
+	return {
+		data: {
+			type: "achCounterparty",
+			attributes: {
+				name: `Peter Parker ${TEST_RUN_ID}`,
+				routingNumber,
+				accountNumber,
+				accountType: "Checking",
+				type: "Business",
+				tags: baseTags(),
+				idempotencyKey: `${TEST_RUN_ID}-counterparty-${Math.random()
+					.toString(36)
+					.slice(2, 10)}`,
+			},
+			relationships: {
+				customer: { data: { type: "customer", id: customerId } },
+			},
+		},
+	};
+}
+
+// UpdateCounterpartyDataAttributes exposes plaidProcessorToken, verifyName,
+// permissions and tags. Only `tags` is safe for a non-Plaid counterparty: a
+// relink needs a Plaid token we don't have, and `permissions` beyond the
+// default CreditOnly depends on the counterparty's bank.
+export function buildUpdateCounterpartyRequest(): UpdateCounterpartyRequest {
+	return {
+		data: {
+			type: "counterparty",
+			attributes: {
+				tags: { ...baseTags(), updated: "true" },
 			},
 		},
 	};

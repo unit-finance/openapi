@@ -5,7 +5,7 @@ info:
     name: Proprietary
     url: https://www.unit.co/terms-of-service
   title: Unit API
-  version: 0.8.0
+  version: 0.9.0
 servers:
 - url: https://api.s.unit.sh
 security:
@@ -33,6 +33,9 @@ tags:
 - description: "Check deposits into accounts, their images, clearing, confirmation,\
     \ and shareable deposit links."
   name: Check Deposits
+- description: "ACH counterparties, their creation from account/routing numbers or\
+    \ Plaid tokens, balances, and lifecycle."
+  name: Counterparties
 paths:
   /applications:
     get:
@@ -5394,6 +5397,391 @@ paths:
       x-content-type: application/vnd.api+json
       x-accepts:
       - application/vnd.api+json
+  /counterparties:
+    get:
+      description: List counterparties. Filtering and paging can be applied.
+      operationId: listCounterparties
+      parameters:
+      - description: Optional. Maximum number of resources that will be returned.
+          Maximum is 1000 resources. See Pagination.
+        explode: true
+        in: query
+        name: "page[limit]"
+        required: false
+        schema:
+          default: "100"
+          type: string
+        style: form
+      - description: Optional. Number of resources to skip. See Pagination.
+        explode: true
+        in: query
+        name: "page[offset]"
+        required: false
+        schema:
+          default: "0"
+          type: string
+        style: form
+      - description: Optional. Filters the results by the specified customer id.
+        explode: true
+        in: query
+        name: "filter[customerId]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filters the results by the specified account number.
+        explode: true
+        in: query
+        name: "filter[accountNumber]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filters the results by the specified routing number.
+        explode: true
+        in: query
+        name: "filter[routingNumber]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filter Counterparties by Tags.
+        explode: true
+        in: query
+        name: "filter[tags]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: "Optional. Filters the results by the specified counterparty\
+          \ permissions either CreditOnly, DebitOnly, CreditAndDebit. Usage example:\
+          \ *filter[permissions][0]=CreditOnly&filter[permissions][1]=CreditAndDebit*"
+        explode: true
+        in: query
+        name: "filter[permissions][]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. sort=createdAt for ascending order or sort=-createdAt
+          (leading minus sign) for descending order.
+        explode: true
+        in: query
+        name: sort
+        required: false
+        schema:
+          default: createdAt
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/listCounterparties_200_response"
+          description: Array of counterparty resources.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - counterparties
+      summary: List counterparties
+      tags:
+      - Counterparties
+      x-accepts:
+      - application/vnd.api+json
+    post:
+      description: Creates an ACH counterparty for a specific customer. The request
+        body is one of CreateCounterpartyRequest (account/routing number) or CreateCounterpartyWithPlaidTokenRequest
+        (Plaid processor token).
+      operationId: createCounterparty
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/CreateCounterpartyBody"
+        required: true
+      responses:
+        "201":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/createCounterparty_201_response"
+          description: The created counterparty resource.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - counterparties-write
+      summary: Create a counterparty
+      tags:
+      - Counterparties
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /counterparties/{counterpartyId}:
+    delete:
+      description: Delete a counterparty resource by id.
+      operationId: deleteCounterparty
+      parameters:
+      - explode: false
+        in: path
+        name: counterpartyId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+        required: false
+      responses:
+        "204":
+          description: The counterparty was deleted successfully.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - counterparties
+      summary: Delete a counterparty
+      tags:
+      - Counterparties
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+    get:
+      description: Get a counterparty resource by id.
+      operationId: getCounterparty
+      parameters:
+      - explode: false
+        in: path
+        name: counterpartyId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/createCounterparty_201_response"
+          description: Counterparty resource.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - counterparties
+      summary: Get a counterparty by id
+      tags:
+      - Counterparties
+      x-accepts:
+      - application/vnd.api+json
+    patch:
+      description: Update a Counterparty. Relink existing counterparty with a new
+        Plaid processor token.
+      operationId: updateCounterparty
+      parameters:
+      - explode: false
+        in: path
+        name: counterpartyId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/UpdateCounterpartyRequest"
+        required: true
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/updateCounterparty_200_response"
+          description: The target resource after the operation was completed.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - counterparties-write
+      summary: Update a counterparty
+      tags:
+      - Counterparties
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /counterparties/{counterpartyId}/balance:
+    get:
+      description: Get a counterparty balance resource by id.
+      operationId: getCounterpartyBalance
+      parameters:
+      - explode: false
+        in: path
+        name: counterpartyId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/getCounterpartyBalance_200_response"
+          description: Counterparty Balance resource.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - counterparties
+      summary: Get a counterparty balance by id
+      tags:
+      - Counterparties
+      x-accepts:
+      - application/vnd.api+json
 components:
   responses:
     BadRequest:
@@ -10725,6 +11113,137 @@ components:
       - relationships
       - type
       type: object
+    ACHCounterparty:
+      description: "`ACHCounterparty` is a JSON:API resource, top-level fields:"
+      example:
+        type: achCounterparty
+        id: "8"
+        attributes:
+          createdAt: 2020-05-13T09:07:47.645Z
+          name: Joe Doe
+          routingNumber: "011000138"
+          bank: Bank Of America
+          accountNumber: "123"
+          accountType: Checking
+          type: Person
+          permissions: CreditOnly
+        relationships:
+          customer:
+            data:
+              type: customer
+              id: "111111"
+      properties:
+        type:
+          enum:
+          - achCounterparty
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/ACHCounterparty_attributes"
+        relationships:
+          $ref: "#/components/schemas/CreditAccount_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    CounterpartyBalance:
+      description: "`CounterpartyBalance` is a JSON:API resource, top-level fields:"
+      example:
+        type: counterpartyBalance
+        id: "2"
+        attributes:
+          balance: 11000
+          available: 10000
+        relationships:
+          counterparty:
+            data:
+              type: counterparty
+              id: "2"
+          customer:
+            data:
+              type: customer
+              id: "10000"
+      properties:
+        type:
+          enum:
+          - counterpartyBalance
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CounterpartyBalance_attributes"
+        relationships:
+          $ref: "#/components/schemas/CounterpartyBalance_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    CreateCounterpartyData:
+      properties:
+        type:
+          enum:
+          - achCounterparty
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CreateCounterpartyData_attributes"
+        relationships:
+          $ref: "#/components/schemas/CreateDepositAccountData_relationships"
+      required:
+      - attributes
+      - relationships
+      - type
+      type: object
+    CreateCounterpartyRequest:
+      properties:
+        data:
+          $ref: "#/components/schemas/CreateCounterpartyData"
+      required:
+      - data
+      type: object
+    CreateCounterpartyWithPlaidTokenData:
+      properties:
+        type:
+          enum:
+          - achCounterparty
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CreateCounterpartyWithPlaidTokenData_attributes"
+        relationships:
+          $ref: "#/components/schemas/CreateDepositAccountData_relationships"
+      required:
+      - attributes
+      - relationships
+      - type
+      type: object
+    CreateCounterpartyWithPlaidTokenRequest:
+      properties:
+        data:
+          $ref: "#/components/schemas/CreateCounterpartyWithPlaidTokenData"
+      required:
+      - data
+      type: object
+    UpdateCounterpartyData:
+      properties:
+        type:
+          enum:
+          - counterparty
+          type: string
+        attributes:
+          $ref: "#/components/schemas/UpdateCounterpartyData_attributes"
+      required:
+      - attributes
+      - type
+      type: object
+    UpdateCounterpartyRequest:
+      properties:
+        data:
+          $ref: "#/components/schemas/UpdateCounterpartyData"
+      required:
+      - data
+      type: object
     list_200_response_data_inner:
       discriminator:
         mapping:
@@ -11650,6 +12169,43 @@ components:
       properties:
         data:
           $ref: "#/components/schemas/createCheckDepositSendLink_201_response_data"
+      required:
+      - data
+      type: object
+    listCounterparties_200_response:
+      properties:
+        data:
+          items:
+            $ref: "#/components/schemas/ACHCounterparty"
+          type: array
+      required:
+      - data
+      type: object
+    CreateCounterpartyBody:
+      oneOf:
+      - $ref: "#/components/schemas/CreateCounterpartyRequest"
+      - $ref: "#/components/schemas/CreateCounterpartyWithPlaidTokenRequest"
+      title: CreateCounterpartyBody
+    createCounterparty_201_response:
+      properties:
+        data:
+          $ref: "#/components/schemas/ACHCounterparty"
+      required:
+      - data
+      type: object
+    updateCounterparty_200_response:
+      properties:
+        data:
+          $ref: "#/components/schemas/ACHCounterparty"
+        meta:
+          $ref: "#/components/schemas/Meta"
+      required:
+      - data
+      type: object
+    getCounterpartyBalance_200_response:
+      properties:
+        data:
+          $ref: "#/components/schemas/CounterpartyBalance"
       required:
       - data
       type: object
@@ -17028,6 +17584,168 @@ components:
       - account
       - authorizedUser
       - whiteLabelTheme
+      type: object
+    ACHCounterparty_attributes:
+      properties:
+        createdAt:
+          description: The date the resource was created.
+          format: date-time
+          type: string
+        name:
+          description: The account holder's name (whether an individual or a business).
+          type: string
+        routingNumber:
+          description: Valid 9-digit ABA routing transit number.
+          type: string
+        bank:
+          description: Name of the bank.
+          type: string
+        accountNumber:
+          description: Bank account number.
+          type: string
+        accountType:
+          description: "Either Checking, Savings or Loan."
+          type: string
+        type:
+          description: "Either Business, Person or Unknown."
+          type: string
+        permissions:
+          description: Either CreditOnly or CreditAndDebit.
+          type: string
+        tags:
+          additionalProperties: true
+          description: See Tags.
+          type: object
+      required:
+      - accountNumber
+      - accountType
+      - bank
+      - createdAt
+      - name
+      - permissions
+      - routingNumber
+      - type
+      type: object
+    CounterpartyBalance_attributes:
+      properties:
+        balance:
+          description: The current balance amount (in cents) of the counterparty.
+          type: number
+        available:
+          description: The available balance amount (in cents) of the counterparty.
+          type: number
+      required:
+      - balance
+      type: object
+    CounterpartyBalance_relationships:
+      properties:
+        counterparty:
+          $ref: "#/components/schemas/Relationship"
+        customer:
+          $ref: "#/components/schemas/Relationship"
+      type: object
+    CreateCounterpartyData_attributes:
+      properties:
+        name:
+          description: "The account holder's name (whether an individual or a business,\
+            \ maximum of 50 characters)."
+          example: Joe Doe
+          type: string
+        routingNumber:
+          description: Valid 9-digit ABA routing transit number.
+          example: "011000133"
+          type: string
+        accountNumber:
+          description: Bank account number.
+          example: "123"
+          type: string
+        accountType:
+          description: "(defaults to checking). Either Checking, Savings or Loan."
+          example: Checking
+          type: string
+        type:
+          description: "Either Business, Person or Unknown."
+          example: Person
+          type: string
+        tags:
+          additionalProperties: true
+          description: See Tags.
+          type: object
+        permissions:
+          description: "Optional, custom counterparty permissions. Only DebitOnly\
+            \ or CreditAndDebit are valid values when using the permissions' attribute.\
+            \ 'CreditOnly' will be assigned as default value when permissions attribute\
+            \ is not declared. If the account and routing number of the counterparty\
+            \ belong to an account under your org on Unit, you may specify \"CreditAndDebit\"\
+            \ or \"DebitOnly\" permissions as well."
+          type: string
+        idempotencyKey:
+          description: See Idempotency.
+          type: string
+      required:
+      - accountNumber
+      - accountType
+      - name
+      - routingNumber
+      - type
+      type: object
+    CreateCounterpartyWithPlaidTokenData_attributes:
+      properties:
+        type:
+          description: "Either Business, Person or Unknown"
+          example: Person
+          type: string
+        name:
+          description: The account holder's name (whether an individual or a business).
+          example: Sherlock Holmes
+          type: string
+        plaidProcessorToken:
+          description: Plaid integration token<br />See Plaid processor token
+          example: processor-5a62q307-ww0a-6737-f6db-pole26004556
+          type: string
+        verifyName:
+          description: "Optional, default to false. Verify a match between the name\
+            \ of the counterparty and the name of the external account's owner as\
+            \ provided by Plaid. If the name verification fails the request will fail\
+            \ with code field set to NameVerificationFailed."
+          type: boolean
+        permissions:
+          description: "Optional, custom counterparty permissions. Either CreditOnly,\
+            \ DebitOnly, CreditAndDebit. Default is CreditAndDebit."
+          example: DebitOnly
+          type: string
+        tags:
+          additionalProperties: true
+          description: See Tags.
+          type: object
+        idempotencyKey:
+          description: See Idempotency.
+          type: string
+      required:
+      - name
+      - plaidProcessorToken
+      - type
+      type: object
+    UpdateCounterpartyData_attributes:
+      properties:
+        plaidProcessorToken:
+          description: "Optional, unless updating a Plaid counterparty. Plaid integration\
+            \ token<br />See Plaid processor token"
+          example: processor-sandbox-b14ad1fd-3398-46a8-a316-5bf574fc2459
+          type: string
+        verifyName:
+          description: "Optional, default to false. Verify the name of the counterparty,\
+            \ if the name verification fails the request will fail with code field\
+            \ set to NameVerificationFailed."
+          type: boolean
+        permissions:
+          description: "Optional, custom counterparty permissions. Either CreditOnly,\
+            \ DebitOnly, CreditAndDebit."
+          type: string
+        tags:
+          additionalProperties: true
+          description: See Tags.
+          type: object
       type: object
   securitySchemes:
     bearerAuth:

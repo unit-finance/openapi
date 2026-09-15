@@ -47,6 +47,8 @@ from unit_finance_sdk import (
     CreateCardRequest,
     CreateCheckDepositRequest,
     CreateCheckDepositSendLinkRequest,
+    CreateCounterpartyBody,
+    CreateCounterpartyRequest,
     CreateDepositAccountRequest,
     CreateFeeRequest,
     CreateIndividualApplicationRequest,
@@ -69,6 +71,7 @@ from unit_finance_sdk import (
     UpdateBusinessCustomerRequest,
     UpdateCardRequest,
     UpdateCheckDepositRequest,
+    UpdateCounterpartyRequest,
     UpdateCustomerRequest,
     UpdateDepositAccountRequest,
     UpdatePaymentRequest,
@@ -848,6 +851,54 @@ def build_update_business_customer_officer_request() -> UpdateBusinessCustomerOf
         },
     }
     return UpdateBusinessCustomerOfficerRequest.from_dict(body)
+
+
+# An ACH counterparty is an external bank account owned by one of our
+# customers. The routing/account number pair has to resolve to a real bank, so
+# the suite points the counterparty at one of the shared customer's own Unit
+# deposit accounts (see ``helpers/counterparties.py``) rather than inventing an
+# ABA number the sandbox would reject. ``createCounterparty`` takes a oneOf
+# union body, so the concrete variant is wrapped as the union's
+# ``actual_instance``.
+def build_create_counterparty_request(
+    customer_id: str,
+    routing_number: str,
+    account_number: str,
+) -> CreateCounterpartyBody:
+    body = {
+        "data": {
+            "type": "achCounterparty",
+            "attributes": {
+                "name": f"Peter Parker {TEST_RUN_ID}",
+                "routingNumber": routing_number,
+                "accountNumber": account_number,
+                "accountType": "Checking",
+                "type": "Business",
+                "tags": _base_tags(),
+                "idempotencyKey": f"{TEST_RUN_ID}-counterparty-{uuid.uuid4().hex[:8]}",
+            },
+            "relationships": {
+                "customer": {"data": {"type": "customer", "id": customer_id}},
+            },
+        },
+    }
+    return CreateCounterpartyBody(
+        actual_instance=CreateCounterpartyRequest.from_dict(body)
+    )
+
+
+# UpdateCounterpartyDataAttributes exposes plaid_processor_token, verify_name,
+# permissions and tags. Only ``tags`` is safe for a non-Plaid counterparty: a
+# relink needs a Plaid token we don't have, and permissions beyond the default
+# CreditOnly depend on the counterparty's bank.
+def build_update_counterparty_request() -> UpdateCounterpartyRequest:
+    body = {
+        "data": {
+            "type": "counterparty",
+            "attributes": {"tags": {**_base_tags(), "updated": "true"}},
+        },
+    }
+    return UpdateCounterpartyRequest.from_dict(body)
 
 
 def build_add_account_owners_request(customer_ids: List[str]) -> Dict[str, Any]:

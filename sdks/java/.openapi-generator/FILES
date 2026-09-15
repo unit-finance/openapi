@@ -1,6 +1,8 @@
 .gitignore
 README.md
 api/openapi.yaml
+docs/ACHCounterparty.md
+docs/ACHCounterpartyAttributes.md
 docs/ACHPayment.md
 docs/ACHPaymentAttributes.md
 docs/ACHPaymentRelationships.md
@@ -112,6 +114,10 @@ docs/CloseWalletData.md
 docs/CloseWalletDataAttributes.md
 docs/CloseWalletRequest.md
 docs/CoordinatesType.md
+docs/CounterpartiesApi.md
+docs/CounterpartyBalance.md
+docs/CounterpartyBalanceAttributes.md
+docs/CounterpartyBalanceRelationships.md
 docs/CounterpartyType.md
 docs/CreateABookPaymentData.md
 docs/CreateABookPaymentDataAttributes.md
@@ -179,6 +185,14 @@ docs/CreateCheckDepositSendLinkData.md
 docs/CreateCheckDepositSendLinkDataAttributes.md
 docs/CreateCheckDepositSendLinkDataRelationships.md
 docs/CreateCheckDepositSendLinkRequest.md
+docs/CreateCounterparty201Response.md
+docs/CreateCounterpartyBody.md
+docs/CreateCounterpartyData.md
+docs/CreateCounterpartyDataAttributes.md
+docs/CreateCounterpartyRequest.md
+docs/CreateCounterpartyWithPlaidTokenData.md
+docs/CreateCounterpartyWithPlaidTokenDataAttributes.md
+docs/CreateCounterpartyWithPlaidTokenRequest.md
 docs/CreateCreditAccountData.md
 docs/CreateCreditAccountDataAttributes.md
 docs/CreateCreditAccountRequest.md
@@ -275,6 +289,7 @@ docs/GetAvailableDepositProducts200ResponseDataInnerAttributes.md
 docs/GetCard200Response.md
 docs/GetCardPinStatus200Response.md
 docs/GetCheckDeposit200Response.md
+docs/GetCounterpartyBalance200Response.md
 docs/GetCustomer200Response.md
 docs/GetExpectedACHCompletionDateData.md
 docs/GetExpectedACHCompletionDateDataAttributes.md
@@ -305,6 +320,7 @@ docs/ListAccounts200ResponseDataInner.md
 docs/ListCards200Response.md
 docs/ListCards200ResponseDataInner.md
 docs/ListCheckDeposits200Response.md
+docs/ListCounterparties200Response.md
 docs/ListCustomers200Response.md
 docs/ListCustomers200ResponseDataInner.md
 docs/ListReceivedPayments200Response.md
@@ -457,6 +473,10 @@ docs/UpdateChargebackTransactionData.md
 docs/UpdateChargebackTransactionDataAttributes.md
 docs/UpdateChargebackTransactionRequest.md
 docs/UpdateCheckDepositRequest.md
+docs/UpdateCounterparty200Response.md
+docs/UpdateCounterpartyData.md
+docs/UpdateCounterpartyDataAttributes.md
+docs/UpdateCounterpartyRequest.md
 docs/UpdateCreditAccountData.md
 docs/UpdateCreditAccountDataAttributes.md
 docs/UpdateCreditAccountRequest.md
@@ -521,6 +541,7 @@ src/main/java/com/unit/finance/sdk/api/AccountsApi.java
 src/main/java/com/unit/finance/sdk/api/ApplicationsApi.java
 src/main/java/com/unit/finance/sdk/api/CardsApi.java
 src/main/java/com/unit/finance/sdk/api/CheckDepositsApi.java
+src/main/java/com/unit/finance/sdk/api/CounterpartiesApi.java
 src/main/java/com/unit/finance/sdk/api/CustomersApi.java
 src/main/java/com/unit/finance/sdk/api/FeesApi.java
 src/main/java/com/unit/finance/sdk/api/PaymentsApi.java
@@ -529,6 +550,8 @@ src/main/java/com/unit/finance/sdk/auth/ApiKeyAuth.java
 src/main/java/com/unit/finance/sdk/auth/Authentication.java
 src/main/java/com/unit/finance/sdk/auth/HttpBasicAuth.java
 src/main/java/com/unit/finance/sdk/auth/HttpBearerAuth.java
+src/main/java/com/unit/finance/sdk/model/ACHCounterparty.java
+src/main/java/com/unit/finance/sdk/model/ACHCounterpartyAttributes.java
 src/main/java/com/unit/finance/sdk/model/ACHPayment.java
 src/main/java/com/unit/finance/sdk/model/ACHPaymentAttributes.java
 src/main/java/com/unit/finance/sdk/model/ACHPaymentRelationships.java
@@ -637,6 +660,9 @@ src/main/java/com/unit/finance/sdk/model/CloseWalletData.java
 src/main/java/com/unit/finance/sdk/model/CloseWalletDataAttributes.java
 src/main/java/com/unit/finance/sdk/model/CloseWalletRequest.java
 src/main/java/com/unit/finance/sdk/model/CoordinatesType.java
+src/main/java/com/unit/finance/sdk/model/CounterpartyBalance.java
+src/main/java/com/unit/finance/sdk/model/CounterpartyBalanceAttributes.java
+src/main/java/com/unit/finance/sdk/model/CounterpartyBalanceRelationships.java
 src/main/java/com/unit/finance/sdk/model/CounterpartyType.java
 src/main/java/com/unit/finance/sdk/model/CreateABookPaymentData.java
 src/main/java/com/unit/finance/sdk/model/CreateABookPaymentDataAttributes.java
@@ -704,6 +730,14 @@ src/main/java/com/unit/finance/sdk/model/CreateCheckDepositSendLinkData.java
 src/main/java/com/unit/finance/sdk/model/CreateCheckDepositSendLinkDataAttributes.java
 src/main/java/com/unit/finance/sdk/model/CreateCheckDepositSendLinkDataRelationships.java
 src/main/java/com/unit/finance/sdk/model/CreateCheckDepositSendLinkRequest.java
+src/main/java/com/unit/finance/sdk/model/CreateCounterparty201Response.java
+src/main/java/com/unit/finance/sdk/model/CreateCounterpartyBody.java
+src/main/java/com/unit/finance/sdk/model/CreateCounterpartyData.java
+src/main/java/com/unit/finance/sdk/model/CreateCounterpartyDataAttributes.java
+src/main/java/com/unit/finance/sdk/model/CreateCounterpartyRequest.java
+src/main/java/com/unit/finance/sdk/model/CreateCounterpartyWithPlaidTokenData.java
+src/main/java/com/unit/finance/sdk/model/CreateCounterpartyWithPlaidTokenDataAttributes.java
+src/main/java/com/unit/finance/sdk/model/CreateCounterpartyWithPlaidTokenRequest.java
 src/main/java/com/unit/finance/sdk/model/CreateCreditAccountData.java
 src/main/java/com/unit/finance/sdk/model/CreateCreditAccountDataAttributes.java
 src/main/java/com/unit/finance/sdk/model/CreateCreditAccountRequest.java
@@ -798,6 +832,7 @@ src/main/java/com/unit/finance/sdk/model/GetAvailableDepositProducts200ResponseD
 src/main/java/com/unit/finance/sdk/model/GetCard200Response.java
 src/main/java/com/unit/finance/sdk/model/GetCardPinStatus200Response.java
 src/main/java/com/unit/finance/sdk/model/GetCheckDeposit200Response.java
+src/main/java/com/unit/finance/sdk/model/GetCounterpartyBalance200Response.java
 src/main/java/com/unit/finance/sdk/model/GetCustomer200Response.java
 src/main/java/com/unit/finance/sdk/model/GetExpectedACHCompletionDateData.java
 src/main/java/com/unit/finance/sdk/model/GetExpectedACHCompletionDateDataAttributes.java
@@ -828,6 +863,7 @@ src/main/java/com/unit/finance/sdk/model/ListAccounts200ResponseDataInner.java
 src/main/java/com/unit/finance/sdk/model/ListCards200Response.java
 src/main/java/com/unit/finance/sdk/model/ListCards200ResponseDataInner.java
 src/main/java/com/unit/finance/sdk/model/ListCheckDeposits200Response.java
+src/main/java/com/unit/finance/sdk/model/ListCounterparties200Response.java
 src/main/java/com/unit/finance/sdk/model/ListCustomers200Response.java
 src/main/java/com/unit/finance/sdk/model/ListCustomers200ResponseDataInner.java
 src/main/java/com/unit/finance/sdk/model/ListReceivedPayments200Response.java
@@ -978,6 +1014,10 @@ src/main/java/com/unit/finance/sdk/model/UpdateChargebackTransactionData.java
 src/main/java/com/unit/finance/sdk/model/UpdateChargebackTransactionDataAttributes.java
 src/main/java/com/unit/finance/sdk/model/UpdateChargebackTransactionRequest.java
 src/main/java/com/unit/finance/sdk/model/UpdateCheckDepositRequest.java
+src/main/java/com/unit/finance/sdk/model/UpdateCounterparty200Response.java
+src/main/java/com/unit/finance/sdk/model/UpdateCounterpartyData.java
+src/main/java/com/unit/finance/sdk/model/UpdateCounterpartyDataAttributes.java
+src/main/java/com/unit/finance/sdk/model/UpdateCounterpartyRequest.java
 src/main/java/com/unit/finance/sdk/model/UpdateCreditAccountData.java
 src/main/java/com/unit/finance/sdk/model/UpdateCreditAccountDataAttributes.java
 src/main/java/com/unit/finance/sdk/model/UpdateCreditAccountRequest.java

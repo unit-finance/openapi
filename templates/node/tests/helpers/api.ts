@@ -4,6 +4,7 @@ import {
 	CardsApi,
 	CheckDepositsApi,
 	Configuration,
+	CounterpartiesApi,
 	CustomersApi,
 	FeesApi,
 	PaymentsApi,
@@ -54,6 +55,10 @@ export function buildCustomersApi(): CustomersApi {
 
 export function buildCheckDepositsApi(): CheckDepositsApi {
 	return new CheckDepositsApi(configuration());
+}
+
+export function buildCounterpartiesApi(): CounterpartiesApi {
+	return new CounterpartiesApi(configuration());
 }
 
 /**
