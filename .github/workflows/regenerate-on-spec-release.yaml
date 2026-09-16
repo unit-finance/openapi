@@ -160,8 +160,9 @@ jobs:
               review those changes with extra care.
             ${{ steps.author.outcome == 'failure' && '- :warning: **Test authoring failed** — this PR was opened as a *draft* without the newly generated tests. Review the failed `Author missing tests with Cursor agent` step, then write/repair the missing tests under `templates/<lang>/` before marking ready for review.' || '' }}
 
-            Merging this PR is step 3 of the pipeline; merging to `main` (and tagging)
-            triggers the publish workflows (step 4).
+            Merging this PR is step 3 of the pipeline; merging to `main` runs CI,
+            then `tag-releases.yaml` creates a missing `python-vX.Y.Z` tag which
+            publishes the Python SDK to PyPI (step 4).
           labels: |
             sdk-regeneration
             automated
