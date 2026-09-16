@@ -1,12 +1,12 @@
 package com.unit.finance.sdk.it;
 
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
+import com.unit.finance.sdk.ApiResponse;
 import com.unit.finance.sdk.api.AccountsApi;
 import com.unit.finance.sdk.model.CreateAccountHold201Response;
-import com.unit.finance.sdk.model.ListAccountHolds200Response;
 import org.junit.jupiter.api.Test;
 
 class GetAccountHoldByIdIT {
@@ -15,10 +15,12 @@ class GetAccountHoldByIdIT {
   void returnsTheAccountHoldById() throws Exception {
     ApiSupport.assumeToken();
     AccountsApi api = ApiSupport.buildAccountsApi();
+    SharedAccount shared = SharedAccount.get();
 
-    ListAccountHolds200Response list = api.listAccountHolds("1", null, null, null);
-    assumeTrue(list.getData() != null && !list.getData().isEmpty(), "no account holds in sandbox");
-    String holdId = ApiSupport.jsonApiId(list.getData().get(0));
+    ApiResponse<CreateAccountHold201Response> created =
+        Holds.createOrSkip(api, shared.accountId);
+    assumeTrue(created != null, "account holds are disabled on this sandbox org");
+    String holdId = ApiSupport.jsonApiId(created.getData().getData());
 
     CreateAccountHold201Response response = api.getAccountHoldById(holdId);
 

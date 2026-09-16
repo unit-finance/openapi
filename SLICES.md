@@ -35,18 +35,11 @@ Not listed: the global token gate (`describeIfToken` / `assumeToken` /
 | `getCounterpartyBalance` | abort | Tests create an **ACH counterparty** (routing + account number). Balance is only stored for **Plaid-linked** counterparties. GET therefore returns **400 or 404**. The suite cannot mint a Plaid token, so it treats that as the wrong counterparty kind rather than a failed request. |
 | `createBusinessWalletCustomer` | hard skip | The create body hard-codes `bankName: "Thread"`. This org has no partner bank by that name (**404** “bank was not found”). Which banks exist is org config; this SDK surface has no list-banks operation, so the test is skipped instead of guessing another name. |
 | `archiveCustomer` | hard skip | Spec type `customerArchive`; sandbox wants `archiveCustomer`. |
+| `cancelPayment` | abort on 400/409/422/501 | Creates a **book** payment (settles immediately). Cancel is only for Pending/PendingReview ACH/Wire, so those statuses count as a pass. |
 
 ---
 
 ## Where SDKs differ
-
-### `updateBusinessBeneficialOwner`
-
-The PATCH needs a beneficial-owner id. Create-application does **not** compound-include owners (`included[]` is empty); tests read `relationships.beneficialOwners.data[0].id` from the shared business application. A business application is supposed to always have at least one owner.
-
-| Node | Java | Ruby | Python |
-| --- | --- | --- | --- |
-| **Runs.** Missing id is an assertion failure (envelope/relationship bug). | **Abort** if that relationship id is missing. | **Skip** if missing. | **Skip** if missing. |
 
 ### `updateBusinessCustomerOfficer`
 
@@ -74,15 +67,7 @@ Clear is only valid for an **ACH debit** already in **`Clearing`**, and that sta
 
 | Node | Java | Ruby | Python |
 | --- | --- | --- | --- |
-| **Abort** unless `UNIT_SANDBOX_ACH_DEBIT_PAYMENT_ID` is set, then POST clear. | Creates a **book** payment (not an ACH debit) and **aborts** when clear throws. | Same as Node (env var). | **Hard skip.** Creating an ACH debit is **403** (“provide Plaid Processor Token”). Nested skip if create fails or status is not `Clearing`. |
-
-### `cancelPayment`
-
-Cancel is only valid for payments still **Pending** or **PendingReview** (typically ACH/Wire). **Book** payments in this sandbox **settle immediately**, so cancel after create is expected to fail.
-
-| Node | Java | Ruby | Python |
-| --- | --- | --- | --- |
-| Creates a **book** payment, then cancel. **400 / 409 / 422 / 501** count as a pass (wrong state, or 501 if cancel is unimplemented for the type). | Same as Node. | Same as Node. | **Hard skip.** Creates an **ACH** payment instead; sandbox returns **500** on cancel. Revisit once cancel of a fresh ACH is specified/fixed. |
+| **Abort** unless `UNIT_SANDBOX_ACH_DEBIT_PAYMENT_ID` is set, then POST clear. | Same as Node (env var). | Same as Node (env var). | **Hard skip.** Creating an ACH debit is **403** (“provide Plaid Processor Token”). Nested skip if create fails or status is not `Clearing`. |
 
 ### `getReceivedPayment` / `updateReceivedPayment`
 
@@ -111,8 +96,6 @@ GET store locations near a postal code (cash-deposit barcode stores). Two separa
    - Python: `phone` is generated as a **`PhoneType` object**; sandbox sends a **bare string**.
    Node axios does not validate required fields, so it only hits problem (1).
 
-That table is **only** `listStoreLocations` — what each SDK does **today** when the list call fails:
-
 | SDK | What the test does |
 | --- | --- |
 | **Node** | Calls list. On **500**, returns early (pass). On 200, asserts the array (axios does not check `distance` / `phone`). |
@@ -127,7 +110,3 @@ These are **not** extra store-list bugs. They **depend on** `listStoreLocations`
 If list 500s, returns empty, or cannot deserialize, generate and image **never run**. Node (and Ruby, if list works) can also abort if **generate itself 500s**.
 
 Fix list (spec + sandbox 500) first; then these two can be asserted for real.
-
-### `getRecurringPayment`
-
-Node, Java, and Python **create** a recurring book payment, then GET it (no skip). Ruby only lists existing ones and **skips** if the list is empty.
