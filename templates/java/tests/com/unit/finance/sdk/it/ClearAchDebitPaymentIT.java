@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.unit.finance.sdk.api.PaymentsApi;
 import com.unit.finance.sdk.model.ClearAchDebitPayment200Response;
-import com.unit.finance.sdk.model.CreatePayment201Response;
 import org.junit.jupiter.api.Test;
 
 class ClearAchDebitPaymentIT {
@@ -14,19 +13,15 @@ class ClearAchDebitPaymentIT {
   void clearsAnAchDebitPaymentWhenOneExists() throws Exception {
     ApiSupport.assumeToken();
     PaymentsApi api = ApiSupport.buildPaymentsApi();
-    SharedAccount shared = SharedAccount.get();
 
-    CreatePayment201Response created =
-        api.createPayment(
-            Fixtures.createBookPaymentRequest(shared.accountId, shared.counterpartyAccountId));
-    String paymentId = ApiSupport.jsonApiId(created.getData());
-    assumeTrue(paymentId != null, "no payment available to clear");
+    // Same as Node/Ruby: no list-payments on the generated SDK, so this only
+    // runs when a caller supplies an ACH debit already in Clearing.
+    String paymentId = System.getenv("UNIT_SANDBOX_ACH_DEBIT_PAYMENT_ID");
+    assumeTrue(
+        paymentId != null && !paymentId.isBlank(),
+        "No UNIT_SANDBOX_ACH_DEBIT_PAYMENT_ID; cannot exercise clearAchDebitPayment.");
 
-    try {
-      ClearAchDebitPayment200Response response = api.clearAchDebitPayment(paymentId, null);
-      assertNotNull(response.getData());
-    } catch (Exception e) {
-      assumeTrue(false, "sandbox has no clearable ACH debit payment: " + e.getMessage());
-    }
+    ClearAchDebitPayment200Response response = api.clearAchDebitPayment(paymentId, null);
+    assertNotNull(response.getData());
   }
 }

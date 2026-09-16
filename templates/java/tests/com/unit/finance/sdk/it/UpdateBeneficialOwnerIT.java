@@ -1,7 +1,7 @@
 package com.unit.finance.sdk.it;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.unit.finance.sdk.ApiResponse;
 import com.unit.finance.sdk.api.ApplicationsApi;
@@ -17,9 +17,9 @@ class UpdateBeneficialOwnerIT {
     ApplicationsApi api = ApiSupport.buildApi();
     SharedApp shared = SharedApp.get();
 
-    assumeTrue(
-        shared.beneficialOwnerId != null,
-        "No beneficial owner in the shared application's beneficialOwners relationship; skipping.");
+    assertNotNull(
+        shared.beneficialOwnerId,
+        "Business application is missing beneficialOwners.data[0].id");
 
     ApiResponse<UpdateBusinessBeneficialOwner201Response> response =
         api.updateBusinessBeneficialOwnerWithHttpInfo(
