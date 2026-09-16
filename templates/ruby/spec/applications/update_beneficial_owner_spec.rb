@@ -7,7 +7,7 @@ RSpec.describe 'update_business_beneficial_owner', :sandbox do
     api = Helpers::Api.build_api
     shared = Helpers::SharedApp.get_or_create
 
-    skip "No beneficial owner found in the shared business application's beneficialOwners relationship." unless shared[:beneficial_owner_id]
+    expect(shared[:beneficial_owner_id]).not_to be_nil
 
     data, status_code, = api.update_business_beneficial_owner_with_http_info(
       shared[:beneficial_owner_id],
