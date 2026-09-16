@@ -110,3 +110,38 @@ These are **not** extra store-list bugs. They **depend on** `listStoreLocations`
 If list 500s, returns empty, or cannot deserialize, generate and image **never run**. Node (and Ruby, if list works) can also abort if **generate itself 500s**.
 
 Fix list (spec + sandbox 500) first; then these two can be asserted for real.
+
+---
+
+## Helpers that bypass the generated SDK
+
+Not skips: setup code that talks to Unit **without** (or around) the typed client.
+
+### Raw HTTP: `fundAccount` (all four languages)
+
+| File | How |
+| --- | --- |
+| `templates/node/tests/helpers/funding.ts` | `fetch` `rawPost` |
+| `templates/java/.../Funding.java` | `HttpURLConnection` |
+| `templates/ruby/spec/helpers/funding.rb` | `Net::HTTP` |
+| `templates/python/tests/helpers/funding.py` | `urllib.request` |
+
+Two POSTs used to live here. **Card create now uses `CardsApi`** (same fixture as `sharedCard`). Raw HTTP remains only for:
+
+1. **`POST /sandbox/atm-deposits`** — sandbox-only simulation. **Not in** `openapi.bundled.json`, so there is no SDK method. Needed so fees/holds/outbound payments are not `InsufficientFunds`.
+
+`GET` account balance in the same helper uses `AccountsApi.getAccount`.
+
+### Python check deposits: SDK, but untyped body
+
+`templates/python/tests/helpers/check_deposits.py` uses `*_without_preload_content` and `json.loads` instead of Pydantic models. Spec types `CheckDepositAttributes.amount` as a **string**; sandbox returns an **integer** (cents). `StrictStr` would throw. Node/Java/Ruby coerce. Spec fix in `unit-openapi`; until then this is the Python-only kludge.
+
+### List-transactions filter (all four)
+
+Shared transaction helpers create a **book** payment, then list with a filter for `bookTransaction`. Funding’s ATM sim posts an `atmTransaction` whose body **omits `tags`**, which some generated models require. Tests avoid deserializing that ATM row.
+
+### Other fixtures (not raw HTTP)
+
+- Individual applications set SSN **`000000003`** (sandbox “approve” simulation). Documented in fixtures; not an SDK bypass.
+- Send-link still uses relationship ids **`"0"`** (see skips above).
+- Check-deposit image uploads use a tiny in-memory JPEG, not a real scan.
