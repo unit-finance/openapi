@@ -1,5 +1,3 @@
-import pytest
-
 from helpers.api import build_api, requires_token, unwrap
 from helpers.fixtures import build_update_business_beneficial_owner_request
 from helpers.shared_app import get_or_create_shared_business_app
@@ -10,11 +8,9 @@ def test_patches_a_beneficial_owner_of_the_shared_business_application():
     api = build_api()
     shared = get_or_create_shared_business_app()
 
-    if not shared["beneficial_owner_id"]:
-        pytest.skip(
-            "No beneficial owner found in the shared business application's "
-            "beneficialOwners relationship."
-        )
+    assert shared["beneficial_owner_id"], (
+        "Business application is missing beneficialOwners.data[0].id"
+    )
 
     res = api.update_business_beneficial_owner_with_http_info(
         shared["beneficial_owner_id"],
