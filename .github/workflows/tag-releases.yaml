@@ -1,0 +1,46 @@
+name: Tag SDK releases
+# After CI succeeds on main, create a missing python-vX.Y.Z tag from
+# spec-version.json. Pushing that tag triggers publish.yaml (PyPI only).
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  tag:
+    if: github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          fetch-depth: 0
+
+      - name: Create missing language tags
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          VERSION="$(jq -r .version spec-version.json)"
+          if [ -z "$VERSION" ] || [ "$VERSION" = "null" ]; then
+            echo "::error::spec-version.json has no version"; exit 1
+          fi
+          git fetch --tags origin
+          created=0
+          for lang in python; do
+            tag="${lang}-v${VERSION}"
+            if git ls-remote --exit-code --tags origin "refs/tags/${tag}" >/dev/null 2>&1; then
+              echo "Tag ${tag} already exists on origin; skipping"
+              continue
+            fi
+            git tag "$tag" "${{ github.event.workflow_run.head_sha }}"
+            git push origin "$tag"
+            echo "Created ${tag}"
+            created=$((created + 1))
+          done
+          echo "Created ${created} new tag(s) for spec ${VERSION}"
