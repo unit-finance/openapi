@@ -64,7 +64,8 @@ unit-openapi release ──(repository_dispatch: spec-released)──▶ regener
   ──▶ bumps spec-version.json, regenerates, detects test-coverage gaps; if any (and
       CURSOR_API_KEY is set) a Cursor agent authors/repairs tests under templates/<lang>/,
       then opens "Regenerate SDKs for spec X" PR  (step 3)
-  ──▶ merge to main, push <lang>-vX.Y.Z tag ──▶ publish.yaml publishes to registry  (step 4)
+  ──▶ merge to main ──▶ CI succeeds ──▶ tag-releases.yaml pushes a missing python-vX.Y.Z tag
+  ──▶ publish.yaml publishes the Python SDK to PyPI  (step 4; other languages disabled)
 ```
 
 When new spec operations land without integration coverage, the regeneration
@@ -82,16 +83,21 @@ drift gate and sandbox suites on the resulting PR, which stays human-reviewed.
 | `SPEC_REPO_TOKEN` | `ci.yaml`, `regenerate-on-spec-release.yaml`, `publish.yaml` | read the private `unit-openapi` releases in `fetch-spec`. PAT/App token with Contents: read on `unit-openapi` |
 | `CURSOR_API_KEY` | `regenerate-on-spec-release.yaml` | run the test-authoring Cursor agent on coverage gaps (optional; step skips when unset) |
 | `UNIT_SANDBOX_TOKEN` | `ci.yaml`, `regenerate-on-spec-release.yaml` | run sandbox integration tests (optional) |
-| `NPM_TOKEN` | `publish.yaml` | npm publish |
-| `MAVEN_CENTRAL_USERNAME` / `MAVEN_CENTRAL_PASSWORD` | `publish.yaml` | Maven Central |
-| `MAVEN_GPG_PRIVATE_KEY` / `MAVEN_GPG_PASSPHRASE` | `publish.yaml` | artifact signing |
-| `RUBYGEMS_API_KEY` | `publish.yaml` | gem push |
+| `NPM_TOKEN` | `publish.yaml` (disabled) | npm publish |
+| `MAVEN_CENTRAL_USERNAME` / `MAVEN_CENTRAL_PASSWORD` | `publish.yaml` (disabled) | Maven Central |
+| `MAVEN_GPG_PRIVATE_KEY` / `MAVEN_GPG_PASSPHRASE` | `publish.yaml` (disabled) | artifact signing |
+| `RUBYGEMS_API_KEY` | `publish.yaml` (disabled) | gem push |
 
-PyPI uses trusted publishing (OIDC) — configure the publisher on PyPI instead
-of a token.
+Python publish to PyPI uses trusted publishing (OIDC) — configure the publisher
+on PyPI instead of a token. Node, Java, and Ruby publish jobs are currently
+disabled.
 
 ## Versioning
 
-Each language is versioned independently via its curated manifest under
-`templates/<lang>/` and released by pushing a `<lang>-vX.Y.Z` tag. Bump those
-in step with `spec-version.json`.
+SDK package versions are stamped from `spec-version.json` during
+`npm run generate-sdks`. After a merge to `main`, if CI succeeds,
+`tag-releases.yaml` creates a missing `python-vX.Y.Z` tag for that spec
+version. That tag triggers `publish.yaml`, which uploads to PyPI. Existing
+tags are left alone, so merges that do not bump the spec version do not
+republish. Manual `workflow_dispatch` on `publish.yaml` remains an escape
+hatch (Python only for now).
