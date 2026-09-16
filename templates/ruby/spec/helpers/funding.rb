@@ -56,7 +56,7 @@ module Helpers
       raise "Failed to create card: expected status 201, got #{status_code}." unless status_code == 201
 
       card = Helpers::Api.unwrap(data.data)
-      last4 = card.attributes.last_4_digits
+      last4 = card.attributes.last4_digits
       raise 'Created card is missing id or last4Digits.' if card.id.nil? || last4.nil?
 
       last4
