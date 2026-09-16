@@ -1,13 +1,10 @@
-# Account funding, the Ruby analogue of Node's `helpers/funding.ts` and
-# Python's `helpers/funding.py`.
+# Account funding, the Ruby analogue of Node's `helpers/funding.ts`.
 #
 # Funds a sandbox deposit account so balance-dependent operations (fees, holds,
 # outbound payments) succeed instead of failing with `InsufficientFunds`.
 #
-# Unit's sandbox exposes a one-shot ATM deposit simulation that credits an
-# account immediately. It isn't part of the generated SDK slice, so we call it
-# (and the card creation it matches against) with raw HTTP. Unlike ACH-debit
-# origination, it needs no Plaid processor token.
+# The ATM deposit simulation is not in the OpenAPI spec, so it is called with
+# raw HTTP. The card the simulation matches against is created with CardsApi.
 #
 # See https://www.unit.co/docs/api/cards/simulations/#create-atm-deposit
 
@@ -49,39 +46,18 @@ module Helpers
       Helpers::Api.unwrap(data.data).attributes.balance || 0
     end
 
-    # Create a business virtual debit card on the account and return its last 4
-    # digits. The ATM deposit simulation matches the deposit to an existing card,
-    # so a fresh account needs one before it can be funded this way. Cards aren't
-    # part of the generated SDK slice, so this is a raw call. Virtual debit cards
-    # are Active on creation, so the simulation can match against it immediately.
+    # Create a business virtual debit card and return its last 4 digits.
+    # Virtual debit cards are Active on creation, so the ATM simulation can
+    # match against the card immediately.
     def create_debit_card_last4(account_id)
-      created = raw_post(
-        '/cards',
-        {
-          'data' => {
-            'type' => 'businessVirtualDebitCard',
-            'attributes' => {
-              'fullName' => { 'first' => 'Peter', 'last' => 'Parker' },
-              'dateOfBirth' => '2001-08-10',
-              'phone' => { 'countryCode' => '1', 'number' => '5555555555' },
-              'email' => 'peter@oscorp.com',
-              'address' => {
-                'street' => '20 Ingram St',
-                'city' => 'Forest Hills',
-                'state' => 'NY',
-                'postalCode' => '11375',
-                'country' => 'US'
-              }
-            },
-            'relationships' => {
-              'account' => { 'data' => { 'type' => 'depositAccount', 'id' => account_id } }
-            }
-          }
-        }
+      data, status_code, = Helpers::Api.build_cards_api.create_card_with_http_info(
+        Helpers::Fixtures.create_business_virtual_debit_card_request(account_id)
       )
-      data = created['data'] || {}
-      last4 = data.dig('attributes', 'last4Digits')
-      raise 'Created card is missing id or last4Digits.' if data['id'].nil? || last4.nil?
+      raise "Failed to create card: expected status 201, got #{status_code}." unless status_code == 201
+
+      card = Helpers::Api.unwrap(data.data)
+      last4 = card.attributes.last_4_digits
+      raise 'Created card is missing id or last4Digits.' if card.id.nil? || last4.nil?
 
       last4
     end
@@ -106,14 +82,10 @@ module Helpers
       )
     end
 
-    # Ensure `account_id` holds at least `minimum_balance` cents, funding it via a
-    # simulated ATM deposit if needed. A no-op when the balance already suffices.
     def fund_account(account_id, minimum_balance)
       return if account_balance(account_id) >= minimum_balance
 
       last4 = create_debit_card_last4(account_id)
-      # Deposit a comfortable multiple so one fund covers several downstream
-      # charges within a test run.
       simulate_atm_deposit(account_id, [minimum_balance * 10, 100_000].max, last4)
 
       20.times do
