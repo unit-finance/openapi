@@ -4,7 +4,11 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.unit.finance.sdk.ApiException;
 import com.unit.finance.sdk.api.AccountsApi;
+import com.unit.finance.sdk.api.CardsApi;
+import com.unit.finance.sdk.model.AbstractOpenApiSchema;
+import com.unit.finance.sdk.model.BusinessVirtualDebitCard;
 import com.unit.finance.sdk.model.CreateAccount201Response;
+import com.unit.finance.sdk.model.CreateCard201Response;
 import com.unit.finance.sdk.model.DepositAccount;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -19,9 +23,9 @@ import java.nio.charset.StandardCharsets;
  * outbound payments) succeed instead of failing with {@code InsufficientFunds},
  * mirroring the Node {@code tests/helpers/funding.ts}.
  *
- * <p>Unit's sandbox exposes a one-shot ATM deposit simulation that credits an
- * account immediately. Neither the card-creation nor the ATM-deposit endpoint
- * is part of the generated SDK slice, so they are called with raw HTTP.
+ * <p>The ATM deposit simulation is not in the OpenAPI spec, so it is called
+ * with raw HTTP. The card the simulation matches against is created with
+ * {@code CardsApi}.
  *
  * @see <a href="https://www.unit.co/docs/api/cards/simulations/#create-atm-deposit">ATM deposit simulation</a>
  */
@@ -42,8 +46,6 @@ final class Funding {
       return;
     }
     String last4 = createDebitCardLast4(accountId);
-    // Deposit a comfortable multiple so one fund covers several downstream
-    // charges within a test run.
     simulateAtmDeposit(accountId, Math.max(minimumBalance * 10, 100_000), last4);
 
     for (int attempt = 0; attempt < 20; attempt++) {
@@ -65,28 +67,24 @@ final class Funding {
   }
 
   /**
-   * Create a business virtual debit card on the account and return its last-4
-   * digits. The ATM deposit simulation matches the deposit to an existing card,
-   * so a fresh account needs one before it can be funded this way.
+   * Create a business virtual debit card and return its last-4 digits. Virtual
+   * debit cards are Active on creation, so the ATM simulation can match
+   * immediately.
    */
-  private static String createDebitCardLast4(String accountId) throws IOException {
-    String body =
-        "{\"data\":{\"type\":\"businessVirtualDebitCard\",\"attributes\":{"
-            + "\"fullName\":{\"first\":\"Peter\",\"last\":\"Parker\"},"
-            + "\"dateOfBirth\":\"2001-08-10\","
-            + "\"phone\":{\"countryCode\":\"1\",\"number\":\"5555555555\"},"
-            + "\"email\":\"peter@oscorp.com\","
-            + "\"address\":{\"street\":\"20 Ingram St\",\"city\":\"Forest Hills\","
-            + "\"state\":\"NY\",\"postalCode\":\"11375\",\"country\":\"US\"}},"
-            + "\"relationships\":{\"account\":{\"data\":{"
-            + "\"type\":\"depositAccount\",\"id\":\"" + accountId + "\"}}}}}";
-    JsonObject created = rawPost("/cards", body);
-    JsonObject data = created.getAsJsonObject("data");
-    JsonObject attributes = data != null ? data.getAsJsonObject("attributes") : null;
+  private static String createDebitCardLast4(String accountId) throws ApiException {
+    CardsApi api = ApiSupport.buildCardsApi();
+    CreateCard201Response created =
+        api.createCard(Fixtures.createBusinessVirtualDebitCardRequest(accountId));
+    Object instance = created.getData();
+    if (instance instanceof AbstractOpenApiSchema) {
+      instance = ((AbstractOpenApiSchema) instance).getActualInstance();
+    }
+    if (!(instance instanceof BusinessVirtualDebitCard)) {
+      throw new IllegalStateException(
+          "Expected businessVirtualDebitCard, got " + instance.getClass().getName());
+    }
     String last4 =
-        attributes != null && attributes.has("last4Digits")
-            ? attributes.get("last4Digits").getAsString()
-            : null;
+        ((BusinessVirtualDebitCard) instance).getAttributes().getLast4Digits();
     if (last4 == null) {
       throw new IllegalStateException("Created card is missing last4Digits.");
     }
@@ -97,12 +95,18 @@ final class Funding {
       throws IOException {
     String body =
         "{\"data\":{\"type\":\"atmTransaction\",\"attributes\":{"
-            + "\"amount\":" + amount + ","
+            + "\"amount\":"
+            + amount
+            + ","
             + "\"atmName\":\"SDK Test ATM\","
             + "\"atmLocation\":\"Cupertino, CA, US\","
-            + "\"last4Digits\":\"" + last4Digits + "\"},"
+            + "\"last4Digits\":\""
+            + last4Digits
+            + "\"},"
             + "\"relationships\":{\"account\":{\"data\":{"
-            + "\"type\":\"depositAccount\",\"id\":\"" + accountId + "\"}}}}}";
+            + "\"type\":\"depositAccount\",\"id\":\""
+            + accountId
+            + "\"}}}}}";
     rawPost("/sandbox/atm-deposits", body);
   }
 

@@ -1,14 +1,21 @@
 import type { DepositAccount } from "../..";
-import { BASE_PATH, TOKEN, buildAccountsApi, sleep } from "./api";
+import {
+	BASE_PATH,
+	TOKEN,
+	buildAccountsApi,
+	buildCardsApi,
+	sleep,
+} from "./api";
+import { buildCreateBusinessVirtualDebitCardRequest } from "./fixtures";
 
 /**
  * Funds a sandbox deposit account so balance-dependent operations (fees, holds,
  * outbound payments) succeed instead of failing with `InsufficientFunds`.
  *
  * Unit's sandbox exposes a one-shot ATM deposit simulation that credits an
- * account immediately (firing a Transaction Created event). It isn't part of
- * the generated SDK, so we call it with raw fetch. Unlike ACH-debit
- * origination, it needs no Plaid processor token.
+ * account immediately (firing a Transaction Created event). That simulation is
+ * not in the OpenAPI spec, so it is called with raw fetch. The card the
+ * simulation matches against is created with `CardsApi`.
  *
  * @see https://www.unit.co/docs/api/cards/simulations/#create-atm-deposit
  */
@@ -39,44 +46,24 @@ async function accountBalance(accountId: string): Promise<number> {
 }
 
 /**
- * Create a business debit card on the account and return its last-4 digits.
- * The ATM deposit simulation matches the deposit to an existing card, so a
- * fresh account needs one before it can be funded this way. Cards aren't part
- * of the generated SDK slice, so this is a raw call.
+ * Create a business virtual debit card on the account and return its last-4
+ * digits. The ATM deposit simulation matches the deposit to an existing card.
+ * Virtual debit cards are Active on creation, so the simulation can match
+ * immediately (no physical activation).
  */
 async function createDebitCardLast4(accountId: string): Promise<string> {
-	const created = await rawPost("/cards", {
-		data: {
-			type: "businessVirtualDebitCard",
-			attributes: {
-				fullName: { first: "Peter", last: "Parker" },
-				dateOfBirth: "2001-08-10",
-				phone: { countryCode: "1", number: "5555555555" },
-				email: "peter@oscorp.com",
-				address: {
-					street: "20 Ingram St",
-					city: "Forest Hills",
-					state: "NY",
-					postalCode: "11375",
-					country: "US",
-				},
-			},
-			relationships: {
-				account: { data: { type: "depositAccount", id: accountId } },
-			},
-		},
+	const { data, status } = await buildCardsApi().createCard({
+		createCardRequest: buildCreateBusinessVirtualDebitCardRequest(accountId),
 	});
-	const data = created.data as {
-		id?: string;
-		attributes?: { last4Digits?: string };
-	};
-	const last4 = data.attributes?.last4Digits;
-	if (!data.id || !last4) {
+	if (status !== 201) {
+		throw new Error(`Failed to create card: expected status 201, got ${status}.`);
+	}
+	const last4 = (
+		data.data.attributes as { last4Digits?: string } | undefined
+	)?.last4Digits;
+	if (!data.data.id || !last4) {
 		throw new Error("Created card is missing id or last4Digits.");
 	}
-	// Virtual debit cards are Active on creation (no physical activation, which
-	// an org token isn't allowed to perform anyway), so the ATM deposit
-	// simulation can match against this card immediately.
 	return last4;
 }
 
@@ -112,8 +99,6 @@ export async function fundAccount(
 	if ((await accountBalance(accountId)) >= minimumBalance) return;
 
 	const last4 = await createDebitCardLast4(accountId);
-	// Deposit a comfortable multiple so one fund covers several downstream
-	// charges within a test run.
 	await simulateAtmDeposit(
 		accountId,
 		Math.max(minimumBalance * 10, 100_000),
