@@ -1,7 +1,7 @@
 # unit-java-sdk
 
 Unit API
-- API version: 0.9.0
+- API version: 0.10.0
   - Generator version: 7.22.0
 
 JSON:API-compliant banking API.
@@ -137,6 +137,13 @@ Class | Method | HTTP request | Description
 *AccountsApi* | [**reopenAccount**](docs/AccountsApi.md#reopenAccount) | **POST** /accounts/{accountId}/reopen | Reopen an account
 *AccountsApi* | [**unfreezeAccount**](docs/AccountsApi.md#unfreezeAccount) | **POST** /accounts/{accountId}/unfreeze | Unfreeze an account
 *AccountsApi* | [**updateAccount**](docs/AccountsApi.md#updateAccount) | **PATCH** /accounts/{accountId} | Update an account
+*ApplicationDocumentsApi* | [**createApplicationDocument**](docs/ApplicationDocumentsApi.md#createApplicationDocument) | **POST** /applications/{applicationId}/documents | Create an application document
+*ApplicationDocumentsApi* | [**downloadApplicationDocument**](docs/ApplicationDocumentsApi.md#downloadApplicationDocument) | **GET** /applications/{applicationId}/documents/{documentId}/download | Download an application document
+*ApplicationDocumentsApi* | [**downloadApplicationDocumentBackSide**](docs/ApplicationDocumentsApi.md#downloadApplicationDocumentBackSide) | **GET** /applications/{applicationId}/documents/{documentId}/download/back | Download an application document back-side
+*ApplicationDocumentsApi* | [**listApplicationDocuments**](docs/ApplicationDocumentsApi.md#listApplicationDocuments) | **GET** /applications/{applicationId}/documents | List application documents
+*ApplicationDocumentsApi* | [**uploadApplicationDocument**](docs/ApplicationDocumentsApi.md#uploadApplicationDocument) | **PUT** /applications/{applicationId}/documents/{documentId} | Upload an application document
+*ApplicationDocumentsApi* | [**uploadApplicationDocumentBackSide**](docs/ApplicationDocumentsApi.md#uploadApplicationDocumentBackSide) | **PUT** /applications/{applicationId}/documents/{documentId}/back | Upload an application document back-side
+*ApplicationDocumentsApi* | [**verifyApplicationDocument**](docs/ApplicationDocumentsApi.md#verifyApplicationDocument) | **POST** /application/{applicationId}/documents/{documentId}/verify | Verify document
 *ApplicationsApi* | [**callList**](docs/ApplicationsApi.md#callList) | **GET** /applications | List applications
 *ApplicationsApi* | [**cancelApplication**](docs/ApplicationsApi.md#cancelApplication) | **POST** /applications/{id}/cancel | Cancel an application
 *ApplicationsApi* | [**createApplication**](docs/ApplicationsApi.md#createApplication) | **POST** /applications | Create an application
@@ -348,6 +355,7 @@ Class | Method | HTTP request | Description
  - [CreateAccountRequest](docs/CreateAccountRequest.md)
  - [CreateApplication201Response](docs/CreateApplication201Response.md)
  - [CreateApplication201ResponseIncludedInner](docs/CreateApplication201ResponseIncludedInner.md)
+ - [CreateApplicationDocument200Response](docs/CreateApplicationDocument200Response.md)
  - [CreateApplicationRequest](docs/CreateApplicationRequest.md)
  - [CreateBatchReleases201Response](docs/CreateBatchReleases201Response.md)
  - [CreateBatchReleasesData](docs/CreateBatchReleasesData.md)
@@ -519,6 +527,7 @@ Class | Method | HTTP request | Description
  - [ListAccountHolds200Response](docs/ListAccountHolds200Response.md)
  - [ListAccounts200Response](docs/ListAccounts200Response.md)
  - [ListAccounts200ResponseDataInner](docs/ListAccounts200ResponseDataInner.md)
+ - [ListApplicationDocuments200Response](docs/ListApplicationDocuments200Response.md)
  - [ListCards200Response](docs/ListCards200Response.md)
  - [ListCards200ResponseDataInner](docs/ListCards200ResponseDataInner.md)
  - [ListCheckDeposits200Response](docs/ListCheckDeposits200Response.md)
@@ -711,6 +720,9 @@ Class | Method | HTTP request | Description
  - [UpdateWalletData](docs/UpdateWalletData.md)
  - [UpdateWalletDataAttributes](docs/UpdateWalletDataAttributes.md)
  - [UpdateWalletRequest](docs/UpdateWalletRequest.md)
+ - [VerifyDocumentData](docs/VerifyDocumentData.md)
+ - [VerifyDocumentDataAttributes](docs/VerifyDocumentDataAttributes.md)
+ - [VerifyDocumentRequest](docs/VerifyDocumentRequest.md)
  - [WalletAccount](docs/WalletAccount.md)
  - [WalletAccountAttributes](docs/WalletAccountAttributes.md)
  - [WireCounterpartyType](docs/WireCounterpartyType.md)
