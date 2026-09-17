@@ -10,6 +10,9 @@ on:
   # regeneration branch without pushing a new commit).
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 # Token for fetching the (private) unit-openapi spec release in `fetch-spec`.
 # The default GITHUB_TOKEN can't read another repo, so this is a separate
 # PAT/App token with Contents: read on unit-openapi.

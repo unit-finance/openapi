@@ -81,6 +81,7 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/v') || github.event.inputs.target == 'python'
     runs-on: ubuntu-latest
     permissions:
+      contents: read   # required to clone this private repo (job permissions replace defaults)
       id-token: write  # PyPI trusted publishing
     steps:
       - uses: actions/checkout@v5
