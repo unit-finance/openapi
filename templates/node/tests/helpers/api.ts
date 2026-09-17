@@ -1,5 +1,6 @@
 import {
 	AccountsApi,
+	ApplicationDocumentsApi,
 	ApplicationsApi,
 	CardsApi,
 	CheckDepositsApi,
@@ -59,6 +60,10 @@ export function buildCheckDepositsApi(): CheckDepositsApi {
 
 export function buildCounterpartiesApi(): CounterpartiesApi {
 	return new CounterpartiesApi(configuration());
+}
+
+export function buildApplicationDocumentsApi(): ApplicationDocumentsApi {
+	return new ApplicationDocumentsApi(configuration());
 }
 
 /**
