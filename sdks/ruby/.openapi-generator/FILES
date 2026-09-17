@@ -33,6 +33,7 @@ docs/AnnualIncomeType.md
 docs/AnnualRevenueType.md
 docs/ApplicationDocument.md
 docs/ApplicationDocumentAttributes.md
+docs/ApplicationDocumentsApi.md
 docs/ApplicationsApi.md
 docs/ArchiveCustomerData.md
 docs/ArchiveCustomerDataAttributes.md
@@ -147,6 +148,7 @@ docs/CreateAccountHoldRequest.md
 docs/CreateAccountRequest.md
 docs/CreateApplication201Response.md
 docs/CreateApplication201ResponseIncludedInner.md
+docs/CreateApplicationDocument200Response.md
 docs/CreateApplicationRequest.md
 docs/CreateBatchReleases201Response.md
 docs/CreateBatchReleasesData.md
@@ -320,6 +322,7 @@ docs/List200ResponseDataInner.md
 docs/ListAccountHolds200Response.md
 docs/ListAccounts200Response.md
 docs/ListAccounts200ResponseDataInner.md
+docs/ListApplicationDocuments200Response.md
 docs/ListCards200Response.md
 docs/ListCards200ResponseDataInner.md
 docs/ListCheckDeposits200Response.md
@@ -514,6 +517,9 @@ docs/UpdateTransactionRequest.md
 docs/UpdateWalletData.md
 docs/UpdateWalletDataAttributes.md
 docs/UpdateWalletRequest.md
+docs/VerifyDocumentData.md
+docs/VerifyDocumentDataAttributes.md
+docs/VerifyDocumentRequest.md
 docs/WalletAccount.md
 docs/WalletAccountAttributes.md
 docs/WireCounterpartyType.md
@@ -528,6 +534,7 @@ docs/WireTransactionAttributes.md
 docs/WriteOffTransaction.md
 lib/unit_finance_sdk.rb
 lib/unit_finance_sdk/api/accounts_api.rb
+lib/unit_finance_sdk/api/application_documents_api.rb
 lib/unit_finance_sdk/api/applications_api.rb
 lib/unit_finance_sdk/api/cards_api.rb
 lib/unit_finance_sdk/api/check_deposits_api.rb
@@ -678,6 +685,7 @@ lib/unit_finance_sdk/models/create_ach_payment_plaid_token_request.rb
 lib/unit_finance_sdk/models/create_ach_payment_request.rb
 lib/unit_finance_sdk/models/create_application201_response.rb
 lib/unit_finance_sdk/models/create_application201_response_included_inner.rb
+lib/unit_finance_sdk/models/create_application_document200_response.rb
 lib/unit_finance_sdk/models/create_application_request.rb
 lib/unit_finance_sdk/models/create_batch_releases201_response.rb
 lib/unit_finance_sdk/models/create_batch_releases_data.rb
@@ -849,6 +857,7 @@ lib/unit_finance_sdk/models/list200_response_data_inner.rb
 lib/unit_finance_sdk/models/list_account_holds200_response.rb
 lib/unit_finance_sdk/models/list_accounts200_response.rb
 lib/unit_finance_sdk/models/list_accounts200_response_data_inner.rb
+lib/unit_finance_sdk/models/list_application_documents200_response.rb
 lib/unit_finance_sdk/models/list_cards200_response.rb
 lib/unit_finance_sdk/models/list_cards200_response_data_inner.rb
 lib/unit_finance_sdk/models/list_check_deposits200_response.rb
@@ -1041,6 +1050,9 @@ lib/unit_finance_sdk/models/update_transaction_request.rb
 lib/unit_finance_sdk/models/update_wallet_data.rb
 lib/unit_finance_sdk/models/update_wallet_data_attributes.rb
 lib/unit_finance_sdk/models/update_wallet_request.rb
+lib/unit_finance_sdk/models/verify_document_data.rb
+lib/unit_finance_sdk/models/verify_document_data_attributes.rb
+lib/unit_finance_sdk/models/verify_document_request.rb
 lib/unit_finance_sdk/models/wallet_account.rb
 lib/unit_finance_sdk/models/wallet_account_attributes.rb
 lib/unit_finance_sdk/models/wire_counterparty_type.rb

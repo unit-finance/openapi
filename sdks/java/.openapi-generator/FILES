@@ -30,6 +30,7 @@ docs/AnnualIncomeType.md
 docs/AnnualRevenueType.md
 docs/ApplicationDocument.md
 docs/ApplicationDocumentAttributes.md
+docs/ApplicationDocumentsApi.md
 docs/ApplicationsApi.md
 docs/ArchiveCustomerData.md
 docs/ArchiveCustomerDataAttributes.md
@@ -144,6 +145,7 @@ docs/CreateAccountHoldRequest.md
 docs/CreateAccountRequest.md
 docs/CreateApplication201Response.md
 docs/CreateApplication201ResponseIncludedInner.md
+docs/CreateApplicationDocument200Response.md
 docs/CreateApplicationRequest.md
 docs/CreateBatchReleases201Response.md
 docs/CreateBatchReleasesData.md
@@ -317,6 +319,7 @@ docs/List200ResponseDataInner.md
 docs/ListAccountHolds200Response.md
 docs/ListAccounts200Response.md
 docs/ListAccounts200ResponseDataInner.md
+docs/ListApplicationDocuments200Response.md
 docs/ListCards200Response.md
 docs/ListCards200ResponseDataInner.md
 docs/ListCheckDeposits200Response.md
@@ -511,6 +514,9 @@ docs/UpdateTransactionRequest.md
 docs/UpdateWalletData.md
 docs/UpdateWalletDataAttributes.md
 docs/UpdateWalletRequest.md
+docs/VerifyDocumentData.md
+docs/VerifyDocumentDataAttributes.md
+docs/VerifyDocumentRequest.md
 docs/WalletAccount.md
 docs/WalletAccountAttributes.md
 docs/WireCounterpartyType.md
@@ -538,6 +544,7 @@ src/main/java/com/unit/finance/sdk/ServerConfiguration.java
 src/main/java/com/unit/finance/sdk/ServerVariable.java
 src/main/java/com/unit/finance/sdk/StringUtil.java
 src/main/java/com/unit/finance/sdk/api/AccountsApi.java
+src/main/java/com/unit/finance/sdk/api/ApplicationDocumentsApi.java
 src/main/java/com/unit/finance/sdk/api/ApplicationsApi.java
 src/main/java/com/unit/finance/sdk/api/CardsApi.java
 src/main/java/com/unit/finance/sdk/api/CheckDepositsApi.java
@@ -689,6 +696,7 @@ src/main/java/com/unit/finance/sdk/model/CreateAccountHoldRequest.java
 src/main/java/com/unit/finance/sdk/model/CreateAccountRequest.java
 src/main/java/com/unit/finance/sdk/model/CreateApplication201Response.java
 src/main/java/com/unit/finance/sdk/model/CreateApplication201ResponseIncludedInner.java
+src/main/java/com/unit/finance/sdk/model/CreateApplicationDocument200Response.java
 src/main/java/com/unit/finance/sdk/model/CreateApplicationRequest.java
 src/main/java/com/unit/finance/sdk/model/CreateBatchReleases201Response.java
 src/main/java/com/unit/finance/sdk/model/CreateBatchReleasesData.java
@@ -860,6 +868,7 @@ src/main/java/com/unit/finance/sdk/model/List200ResponseDataInner.java
 src/main/java/com/unit/finance/sdk/model/ListAccountHolds200Response.java
 src/main/java/com/unit/finance/sdk/model/ListAccounts200Response.java
 src/main/java/com/unit/finance/sdk/model/ListAccounts200ResponseDataInner.java
+src/main/java/com/unit/finance/sdk/model/ListApplicationDocuments200Response.java
 src/main/java/com/unit/finance/sdk/model/ListCards200Response.java
 src/main/java/com/unit/finance/sdk/model/ListCards200ResponseDataInner.java
 src/main/java/com/unit/finance/sdk/model/ListCheckDeposits200Response.java
@@ -1052,6 +1061,9 @@ src/main/java/com/unit/finance/sdk/model/UpdateTransactionRequest.java
 src/main/java/com/unit/finance/sdk/model/UpdateWalletData.java
 src/main/java/com/unit/finance/sdk/model/UpdateWalletDataAttributes.java
 src/main/java/com/unit/finance/sdk/model/UpdateWalletRequest.java
+src/main/java/com/unit/finance/sdk/model/VerifyDocumentData.java
+src/main/java/com/unit/finance/sdk/model/VerifyDocumentDataAttributes.java
+src/main/java/com/unit/finance/sdk/model/VerifyDocumentRequest.java
 src/main/java/com/unit/finance/sdk/model/WalletAccount.java
 src/main/java/com/unit/finance/sdk/model/WalletAccountAttributes.java
 src/main/java/com/unit/finance/sdk/model/WireCounterpartyType.java

@@ -5,7 +5,7 @@ info:
     name: Proprietary
     url: https://www.unit.co/terms-of-service
   title: Unit API
-  version: 0.9.0
+  version: 0.10.0
 servers:
 - url: https://api.s.unit.sh
 security:
@@ -13,6 +13,9 @@ security:
 tags:
 - description: End-customer onboarding applications.
   name: Applications
+- description: "Documents attached to applications, their creation, upload, download,\
+    \ and verification."
+  name: Application Documents
 - description: Fees charged to and reversed on accounts.
   name: Fees
 - description: "Deposit accounts, credit accounts, and wallets, plus their holds and\
@@ -439,6 +442,478 @@ paths:
       summary: Update a business beneficial owner
       tags:
       - Applications
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /applications/{applicationId}/documents:
+    get:
+      description: List application documents.
+      operationId: listApplicationDocuments
+      parameters:
+      - explode: false
+        in: path
+        name: applicationId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/listApplicationDocuments_200_response"
+          description: Array of application documents.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - applications
+      summary: List application documents
+      tags:
+      - Application Documents
+      x-accepts:
+      - application/vnd.api+json
+    post:
+      description: "Unit allows you to create (and store) **custom documents**. This\
+        \ feature allows you to run additional document verifications on your side\
+        \ - these are documents that are not required by Unit for the evaluation of\
+        \ the application. Once you create a custom document resource, you can upload\
+        \ and store the document by using the relevant endpoints."
+      operationId: createApplicationDocument
+      parameters:
+      - explode: false
+        in: path
+        name: applicationId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+        required: false
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/createApplicationDocument_200_response"
+          description: The target resource after the operation was completed.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - applications-write
+      summary: Create an application document
+      tags:
+      - Application Documents
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /applications/{applicationId}/documents/{documentId}:
+    put:
+      description: "Uploads a document file. Supported file types are `pdf`, `jpeg`\
+        \ or `png`. This endpoint is not available when `archived`=`true`."
+      operationId: uploadApplicationDocument
+      parameters:
+      - explode: false
+        in: path
+        name: applicationId
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: documentId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/pdf:
+            schema:
+              format: binary
+              type: string
+          image/jpeg:
+            schema:
+              format: binary
+              title: UploadApplicationDocumentBody
+              type: string
+          image/png:
+            schema:
+              format: binary
+              title: UploadApplicationDocumentBody2
+              type: string
+        required: true
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/createApplicationDocument_200_response"
+          description: The target resource after the operation was completed.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - applications-write
+      summary: Upload an application document
+      tags:
+      - Application Documents
+      x-content-type: application/pdf
+      x-accepts:
+      - application/vnd.api+json
+  /applications/{applicationId}/documents/{documentId}/back:
+    put:
+      description: "Uploads the back-side of a document. Supported file types are\
+        \ `pdf`, `jpeg` or `png`. This endpoint is not available when `archived`=`true`."
+      operationId: uploadApplicationDocumentBackSide
+      parameters:
+      - explode: false
+        in: path
+        name: applicationId
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: documentId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/pdf:
+            schema:
+              format: binary
+              type: string
+          image/jpeg:
+            schema:
+              format: binary
+              title: UploadApplicationDocumentBackSideBody
+              type: string
+          image/png:
+            schema:
+              format: binary
+              title: UploadApplicationDocumentBackSideBody2
+              type: string
+        required: true
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/createApplicationDocument_200_response"
+          description: The target resource after the operation was completed.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - applications-write
+      summary: Upload an application document back-side
+      tags:
+      - Application Documents
+      x-content-type: application/pdf
+      x-accepts:
+      - application/vnd.api+json
+  /applications/{applicationId}/documents/{documentId}/download:
+    get:
+      description: Download the application document file.
+      operationId: downloadApplicationDocument
+      parameters:
+      - explode: false
+        in: path
+        name: applicationId
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: documentId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/pdf:
+              schema:
+                format: binary
+                type: string
+            image/jpeg:
+              schema:
+                format: binary
+                type: string
+            image/png:
+              schema:
+                format: binary
+                type: string
+          description: The application document file.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      summary: Download an application document
+      tags:
+      - Application Documents
+      x-accepts:
+      - application/pdf
+      - application/vnd.api+json
+      - image/jpeg
+      - image/png
+  /applications/{applicationId}/documents/{documentId}/download/back:
+    get:
+      description: Download the application document back-side file.
+      operationId: downloadApplicationDocumentBackSide
+      parameters:
+      - explode: false
+        in: path
+        name: applicationId
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: documentId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/pdf:
+              schema:
+                format: binary
+                type: string
+            image/jpeg:
+              schema:
+                format: binary
+                type: string
+            image/png:
+              schema:
+                format: binary
+                type: string
+          description: The application document back-side file.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      summary: Download an application document back-side
+      tags:
+      - Application Documents
+      x-accepts:
+      - application/pdf
+      - application/vnd.api+json
+      - image/jpeg
+      - image/png
+  /application/{applicationId}/documents/{documentId}/verify:
+    post:
+      description: Verify Selfie Verification document
+      operationId: verifyApplicationDocument
+      parameters:
+      - explode: false
+        in: path
+        name: applicationId
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: documentId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/VerifyDocumentRequest"
+        required: true
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/createApplicationDocument_200_response"
+          description: The updated Document resource.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - applications-write
+      summary: Verify document
+      tags:
+      - Application Documents
       x-content-type: application/vnd.api+json
       x-accepts:
       - application/vnd.api+json
@@ -6688,6 +7163,25 @@ components:
       - id
       - type
       type: object
+    VerifyDocumentData:
+      properties:
+        type:
+          enum:
+          - selfieVerification
+          type: string
+        attributes:
+          $ref: "#/components/schemas/VerifyDocumentData_attributes"
+      required:
+      - attributes
+      - type
+      type: object
+    VerifyDocumentRequest:
+      properties:
+        data:
+          $ref: "#/components/schemas/VerifyDocumentData"
+      required:
+      - data
+      type: object
     IndividualApplication:
       description: "`IndividualApplication` is a JSON:API resource, top-level fields:"
       example:
@@ -11327,6 +11821,22 @@ components:
       required:
       - data
       type: object
+    listApplicationDocuments_200_response:
+      properties:
+        data:
+          items:
+            $ref: "#/components/schemas/ApplicationDocument"
+          type: array
+      required:
+      - data
+      type: object
+    createApplicationDocument_200_response:
+      properties:
+        data:
+          $ref: "#/components/schemas/ApplicationDocument"
+      required:
+      - data
+      type: object
     createFee_request:
       properties:
         data:
@@ -12898,6 +13408,15 @@ components:
       - documentType
       - name
       - status
+      type: object
+    VerifyDocumentData_attributes:
+      properties:
+        jobId:
+          description: Verification job identifier
+          example: X16krjAN1
+          type: string
+      required:
+      - jobId
       type: object
     IndividualApplication_attributes:
       properties:
