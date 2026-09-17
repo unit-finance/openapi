@@ -9,6 +9,7 @@ import pytest
 from unit_finance_sdk import (
     AccountsApi,
     ApiClient,
+    ApplicationDocumentsApi,
     ApplicationsApi,
     CardsApi,
     CheckDepositsApi,
@@ -86,6 +87,11 @@ def build_check_deposits_api() -> CheckDepositsApi:
 def build_counterparties_api() -> CounterpartiesApi:
     """Construct a ``CounterpartiesApi`` bound to the sandbox."""
     return CounterpartiesApi(ApiClient(_configuration()))
+
+
+def build_application_documents_api() -> ApplicationDocumentsApi:
+    """Construct an ``ApplicationDocumentsApi`` bound to the sandbox."""
+    return ApplicationDocumentsApi(ApiClient(_configuration()))
 
 
 def sleep(seconds: float) -> None:
