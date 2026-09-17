@@ -21,7 +21,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
-import { readSpecVersion } from "./spec-version";
+import { readPackageVersion } from "./spec-version";
 
 const REPO_ROOT = process.cwd();
 const SDK_DIR = path.join(REPO_ROOT, "sdks", "java");
@@ -88,7 +88,7 @@ function main(): void {
  * project `<name>` — leaving dependency versions untouched.
  */
 function stampVersion(pom: string): string {
-	const version = readSpecVersion();
+	const version = readPackageVersion();
 	let replaced = false;
 	const out = pom.replace(
 		/(<name>unit-java-sdk<\/name>\s*<version>)[^<]*(<\/version>)/,

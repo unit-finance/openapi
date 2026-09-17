@@ -25,7 +25,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
-import { readSpecVersion } from "./spec-version";
+import { readPackageVersion } from "./spec-version";
 
 const REPO_ROOT = process.cwd();
 const SDK_DIR = path.join(REPO_ROOT, "sdks", "node");
@@ -56,7 +56,7 @@ function replacePackageJson(): void {
 	ensureExists(SDK_DIR, "SDK dir");
 	// Stamp the pinned spec version onto the curated manifest so the published
 	// package version tracks spec-version.json rather than a stale hardcoded one.
-	const version = readSpecVersion();
+	const version = readPackageVersion();
 	const pkg = JSON.parse(fs.readFileSync(PKG_SRC, "utf8")) as {
 		version?: string;
 	};

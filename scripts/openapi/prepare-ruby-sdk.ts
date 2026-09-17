@@ -20,7 +20,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
-import { readSpecVersion } from "./spec-version";
+import { readPackageVersion } from "./spec-version";
 
 const REPO_ROOT = process.cwd();
 const SDK_DIR = path.join(REPO_ROOT, "sdks", "ruby");
@@ -67,7 +67,7 @@ function stampVersion(): void {
 	if (!fs.existsSync(VERSION_RB)) {
 		fail(`version.rb not found: ${rel(VERSION_RB)}. Run \`npm run generate-sdk:ruby\` first.`);
 	}
-	const version = readSpecVersion();
+	const version = readPackageVersion();
 	const src = fs.readFileSync(VERSION_RB, "utf8");
 	let replaced = false;
 	const out = src.replace(/^(\s*VERSION\s*=\s*)'[^']*'(\s*)$/m, (_m, p1, p2) => {
