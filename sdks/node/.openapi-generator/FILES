@@ -35,6 +35,7 @@ docs/AnnualIncomeType.md
 docs/AnnualRevenueType.md
 docs/ApplicationDocument.md
 docs/ApplicationDocumentAttributes.md
+docs/ApplicationDocumentsApi.md
 docs/ApplicationsApi.md
 docs/ArchiveCustomerData.md
 docs/ArchiveCustomerDataAttributes.md
@@ -149,6 +150,7 @@ docs/CreateAccountHoldRequest.md
 docs/CreateAccountRequest.md
 docs/CreateApplication201Response.md
 docs/CreateApplication201ResponseIncludedInner.md
+docs/CreateApplicationDocument200Response.md
 docs/CreateApplicationRequest.md
 docs/CreateBatchReleases201Response.md
 docs/CreateBatchReleasesData.md
@@ -322,6 +324,7 @@ docs/List200ResponseDataInner.md
 docs/ListAccountHolds200Response.md
 docs/ListAccounts200Response.md
 docs/ListAccounts200ResponseDataInner.md
+docs/ListApplicationDocuments200Response.md
 docs/ListCards200Response.md
 docs/ListCards200ResponseDataInner.md
 docs/ListCheckDeposits200Response.md
@@ -516,6 +519,9 @@ docs/UpdateTransactionRequest.md
 docs/UpdateWalletData.md
 docs/UpdateWalletDataAttributes.md
 docs/UpdateWalletRequest.md
+docs/VerifyDocumentData.md
+docs/VerifyDocumentDataAttributes.md
+docs/VerifyDocumentRequest.md
 docs/WalletAccount.md
 docs/WalletAccountAttributes.md
 docs/WireCounterpartyType.md
