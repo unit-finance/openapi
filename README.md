@@ -94,11 +94,11 @@ disabled.
 
 ## Versioning
 
-SDK package versions are stamped from `spec-version.json` during
-`npm run generate-sdks`. After a merge to `main`, if CI succeeds,
-`tag-releases.yaml` creates a missing GitHub Release `vX.Y.Z` for that spec
-version. All language SDKs share that version. Publishing the release
-triggers `publish.yaml`, which uploads to PyPI. Existing releases are left
-alone, so merges that do not bump the spec version do not republish. Manual
-`workflow_dispatch` on `publish.yaml` remains an escape hatch (Python only
-for now).
+SDK package versions are stamped from `spec-version.json` `sdkVersion`
+(falling back to the spec pin) during `npm run generate-sdks`. After a
+merge to `main`, if CI succeeds, `tag-releases.yaml` creates a missing
+GitHub Release `vX.Y.Z` for that package version. All language SDKs share
+it. Publishing the release triggers `publish.yaml`, which uploads to PyPI.
+Existing releases are left alone, so merges that do not bump `sdkVersion`
+do not republish. Manual `workflow_dispatch` on `publish.yaml` remains an
+escape hatch (Python only for now).

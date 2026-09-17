@@ -80,6 +80,11 @@ function main(): void {
 		);
 	}
 	lock.version = version;
+	const previousSdk =
+		typeof lock.sdkVersion === "string" ? lock.sdkVersion : previous;
+	if (typeof previousSdk !== "string" || compareCore(version, previousSdk) > 0) {
+		lock.sdkVersion = version;
+	}
 	fs.writeFileSync(LOCK_PATH, `${JSON.stringify(lock, null, 2)}\n`, "utf8");
 
 	if (previous === version) {

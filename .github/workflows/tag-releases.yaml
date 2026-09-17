@@ -1,6 +1,7 @@
 name: Create SDK release
 # After CI succeeds on main, publish a missing GitHub Release vX.Y.Z from
-# spec-version.json. Publishing that release triggers publish.yaml.
+# spec-version.json sdkVersion (else version). Publishing that release
+# triggers publish.yaml.
 on:
   workflow_run:
     workflows: [CI]
@@ -26,11 +27,12 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          VERSION="$(jq -r .version spec-version.json)"
-          if [ -z "$VERSION" ] || [ "$VERSION" = "null" ]; then
-            echo "::error::spec-version.json has no version"; exit 1
+          SDK_VERSION="$(jq -r '.sdkVersion // .version' spec-version.json)"
+          SPEC_VERSION="$(jq -r .version spec-version.json)"
+          if [ -z "$SDK_VERSION" ] || [ "$SDK_VERSION" = "null" ]; then
+            echo "::error::spec-version.json has no sdkVersion or version"; exit 1
           fi
-          tag="v${VERSION}"
+          tag="v${SDK_VERSION}"
           if gh release view "$tag" >/dev/null 2>&1; then
             echo "Release ${tag} already exists; skipping"
             exit 0
@@ -39,5 +41,5 @@ jobs:
             --target "${{ github.event.workflow_run.head_sha }}" \
             --title "$tag" \
             --generate-notes \
-            --notes "SDK release ${VERSION}, generated from unit-openapi ${VERSION}."
+            --notes "SDK release ${SDK_VERSION}, generated from unit-openapi ${SPEC_VERSION}."
           echo "Created GitHub Release ${tag}"
