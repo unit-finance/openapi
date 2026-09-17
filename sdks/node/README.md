@@ -68,6 +68,13 @@ Class | Method | HTTP request | Description
 *AccountsApi* | [**reopenAccount**](docs/AccountsApi.md#reopenaccount) | **POST** /accounts/{accountId}/reopen | Reopen an account
 *AccountsApi* | [**unfreezeAccount**](docs/AccountsApi.md#unfreezeaccount) | **POST** /accounts/{accountId}/unfreeze | Unfreeze an account
 *AccountsApi* | [**updateAccount**](docs/AccountsApi.md#updateaccount) | **PATCH** /accounts/{accountId} | Update an account
+*ApplicationDocumentsApi* | [**createApplicationDocument**](docs/ApplicationDocumentsApi.md#createapplicationdocument) | **POST** /applications/{applicationId}/documents | Create an application document
+*ApplicationDocumentsApi* | [**downloadApplicationDocument**](docs/ApplicationDocumentsApi.md#downloadapplicationdocument) | **GET** /applications/{applicationId}/documents/{documentId}/download | Download an application document
+*ApplicationDocumentsApi* | [**downloadApplicationDocumentBackSide**](docs/ApplicationDocumentsApi.md#downloadapplicationdocumentbackside) | **GET** /applications/{applicationId}/documents/{documentId}/download/back | Download an application document back-side
+*ApplicationDocumentsApi* | [**listApplicationDocuments**](docs/ApplicationDocumentsApi.md#listapplicationdocuments) | **GET** /applications/{applicationId}/documents | List application documents
+*ApplicationDocumentsApi* | [**uploadApplicationDocument**](docs/ApplicationDocumentsApi.md#uploadapplicationdocument) | **PUT** /applications/{applicationId}/documents/{documentId} | Upload an application document
+*ApplicationDocumentsApi* | [**uploadApplicationDocumentBackSide**](docs/ApplicationDocumentsApi.md#uploadapplicationdocumentbackside) | **PUT** /applications/{applicationId}/documents/{documentId}/back | Upload an application document back-side
+*ApplicationDocumentsApi* | [**verifyApplicationDocument**](docs/ApplicationDocumentsApi.md#verifyapplicationdocument) | **POST** /application/{applicationId}/documents/{documentId}/verify | Verify document
 *ApplicationsApi* | [**cancelApplication**](docs/ApplicationsApi.md#cancelapplication) | **POST** /applications/{id}/cancel | Cancel an application
 *ApplicationsApi* | [**createApplication**](docs/ApplicationsApi.md#createapplication) | **POST** /applications | Create an application
 *ApplicationsApi* | [**getById**](docs/ApplicationsApi.md#getbyid) | **GET** /applications/{id} | Get an application
@@ -279,6 +286,7 @@ Class | Method | HTTP request | Description
  - [CreateAccountRequest](docs/CreateAccountRequest.md)
  - [CreateApplication201Response](docs/CreateApplication201Response.md)
  - [CreateApplication201ResponseIncludedInner](docs/CreateApplication201ResponseIncludedInner.md)
+ - [CreateApplicationDocument200Response](docs/CreateApplicationDocument200Response.md)
  - [CreateApplicationRequest](docs/CreateApplicationRequest.md)
  - [CreateBatchReleases201Response](docs/CreateBatchReleases201Response.md)
  - [CreateBatchReleasesData](docs/CreateBatchReleasesData.md)
@@ -450,6 +458,7 @@ Class | Method | HTTP request | Description
  - [ListAccountHolds200Response](docs/ListAccountHolds200Response.md)
  - [ListAccounts200Response](docs/ListAccounts200Response.md)
  - [ListAccounts200ResponseDataInner](docs/ListAccounts200ResponseDataInner.md)
+ - [ListApplicationDocuments200Response](docs/ListApplicationDocuments200Response.md)
  - [ListCards200Response](docs/ListCards200Response.md)
  - [ListCards200ResponseDataInner](docs/ListCards200ResponseDataInner.md)
  - [ListCheckDeposits200Response](docs/ListCheckDeposits200Response.md)
@@ -642,6 +651,9 @@ Class | Method | HTTP request | Description
  - [UpdateWalletData](docs/UpdateWalletData.md)
  - [UpdateWalletDataAttributes](docs/UpdateWalletDataAttributes.md)
  - [UpdateWalletRequest](docs/UpdateWalletRequest.md)
+ - [VerifyDocumentData](docs/VerifyDocumentData.md)
+ - [VerifyDocumentDataAttributes](docs/VerifyDocumentDataAttributes.md)
+ - [VerifyDocumentRequest](docs/VerifyDocumentRequest.md)
  - [WalletAccount](docs/WalletAccount.md)
  - [WalletAccountAttributes](docs/WalletAccountAttributes.md)
  - [WireCounterpartyType](docs/WireCounterpartyType.md)

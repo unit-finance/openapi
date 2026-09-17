@@ -2,6 +2,7 @@
 
 # import apis into api package
 from unit_finance_sdk.api.accounts_api import AccountsApi
+from unit_finance_sdk.api.application_documents_api import ApplicationDocumentsApi
 from unit_finance_sdk.api.applications_api import ApplicationsApi
 from unit_finance_sdk.api.cards_api import CardsApi
 from unit_finance_sdk.api.check_deposits_api import CheckDepositsApi

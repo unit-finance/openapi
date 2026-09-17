@@ -68,6 +68,10 @@ module Helpers
       UnitFinanceSdk::CounterpartiesApi.new(UnitFinanceSdk::ApiClient.new(configuration))
     end
 
+    def build_application_documents_api
+      UnitFinanceSdk::ApplicationDocumentsApi.new(UnitFinanceSdk::ApiClient.new(configuration))
+    end
+
     def sleep(seconds)
       Kernel.sleep(seconds)
     end

@@ -1,9 +1,9 @@
 # Implemented API slices
 
-From `spec-version.json` (`slices`), OpenAPI tags on `unit-finance/unit-openapi` **0.9.0**.
+From `spec-version.json` (`slices`), OpenAPI tags on `unit-finance/unit-openapi` **0.10.0**.
 
-Accounts · Applications · Cards · Check Deposits · Counterparties · Customers ·
-Fees · Payments · Transactions
+Accounts · Application Documents · Applications · Cards · Check Deposits ·
+Counterparties · Customers · Fees · Payments · Transactions
 
 # Test skips and early exits
 
@@ -111,6 +111,42 @@ If list 500s, returns empty, or cannot deserialize, generate and image **never r
 
 Fix list (spec + sandbox 500) first; then these two can be asserted for real.
 
+### Application Documents (whole slice, new in spec 0.10.0)
+
+`ApplicationDocumentAttributes` marks `status`, `documentType`, `description`,
+`name`, and `archived` **required**, but the sandbox returns them as **`null`**
+for freshly created / pending documents (a custom document has `name: null`).
+This is a spec defect owned by `unit-openapi`. How each SDK copes with the
+document-returning operations differs:
+
+| Node | Java | Ruby | Python |
+| --- | --- | --- | --- |
+| **Runs.** Axios does not validate the body. | **Hard skip.** Gson's `validateJsonElement` rejects a JSON-null required field, throwing on the 200 before any assertion. All seven ITs `@Disabled`. | **Runs (raw).** The typed model raises `ArgumentError, 'name cannot be nil'`, so the specs read the raw body via `debug_return_type: 'String'`. | **Runs (raw).** `StrictStr`/oneOf validation raises, so the tests read the raw body via `*_without_preload_content`. |
+
+Fix: make those `ApplicationDocumentAttributes` fields optional in the spec, then
+drop the Java `@Disabled` and the ruby/python raw-body reads.
+
+Behavior common to the SDKs that do call the API:
+
+| Operation | How | Why |
+| --- | --- | --- |
+| `createApplicationDocument` | runs (201) | The spec documents **200**; the sandbox creates the resource and answers **201**, so the tests accept either. If the org does not offer custom documents the POST 4xx/5xxs and the test aborts. |
+| `listApplicationDocuments` | runs | Lists documents on the shared business application; asserts the JSON:API list shape. |
+| `uploadApplicationDocument` / `downloadApplicationDocument` | runs | Create a custom document, upload a front image, then (download) fetch it back. |
+| `uploadApplicationDocumentBackSide` / `downloadApplicationDocumentBackSide` | abort | A custom (client-requested) document is single-sided, so the sandbox rejects a back-side upload (4xx). With no back-side file, the back-side download has nothing to fetch. Treated as feature-unavailable, not a failure. |
+| `verifyApplicationDocument` | abort | Verify is only legal for a `SelfieVerification` document paired with a real IDV `jobId`. These suites can only create a custom document, so the call 4xx/5xxs and the test aborts. |
+
+### Application create/get/update response `included[]` (spec 0.10.0)
+
+The application create / `getById` / `updateApplication` responses now
+compound-include `ApplicationDocument` resources in `included[]`, which carry
+the same null-required-field defect above. This broke the existing
+`getById` / `updateApplication` specs in the strict-typed languages:
+
+| Node | Java | Ruby | Python |
+| --- | --- | --- | --- |
+| **Runs.** Axios does not validate. | **Runs.** Passes in practice (the required documents are not yet generated when these ITs run in the single fast JVM, so `included[]` is empty). Will break if a document appears; same spec fix applies. | **Runs (raw).** `shared_app` + `get_by_id` + `update` specs read the raw body (`debug_return_type: 'String'`). | **Runs (raw).** `shared_app` + `test_get_by_id` + `test_update` read the raw body (`*_without_preload_content`). |
+
 ---
 
 ## Helpers that bypass the generated SDK
@@ -142,6 +178,5 @@ Shared transaction helpers create a **book** payment, then list with a filter fo
 
 ### Other fixtures (not raw HTTP)
 
-- Individual applications set SSN **`000000003`** (sandbox “approve” simulation). Documented in fixtures; not an SDK bypass.
 - Send-link still uses relationship ids **`"0"`** (see skips above).
 - Check-deposit image uploads use a tiny in-memory JPEG, not a real scan.
