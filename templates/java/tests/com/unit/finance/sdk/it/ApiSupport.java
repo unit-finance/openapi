@@ -6,6 +6,7 @@ import com.unit.finance.sdk.ApiClient;
 import com.unit.finance.sdk.api.AccountsApi;
 import com.unit.finance.sdk.api.ApplicationDocumentsApi;
 import com.unit.finance.sdk.api.ApplicationsApi;
+import com.unit.finance.sdk.api.AuthorizedUsersApi;
 import com.unit.finance.sdk.api.CardsApi;
 import com.unit.finance.sdk.api.CheckDepositsApi;
 import com.unit.finance.sdk.api.CounterpartiesApi;
@@ -212,6 +213,11 @@ final class ApiSupport {
   /** Construct an {@code ApplicationDocumentsApi} bound to the sandbox. */
   static ApplicationDocumentsApi buildApplicationDocumentsApi() {
     return new ApplicationDocumentsApi(buildApiClient());
+  }
+
+  /** Construct an {@code AuthorizedUsersApi} bound to the sandbox. */
+  static AuthorizedUsersApi buildAuthorizedUsersApi() {
+    return new AuthorizedUsersApi(buildApiClient());
   }
 
   /** Block the current thread for sandbox polling (mirrors Node {@code sleep}). */
