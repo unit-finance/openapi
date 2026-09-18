@@ -11,6 +11,7 @@ from unit_finance_sdk import (
     ApiClient,
     ApplicationDocumentsApi,
     ApplicationsApi,
+    AuthorizedUsersApi,
     CardsApi,
     CheckDepositsApi,
     Configuration,
@@ -92,6 +93,11 @@ def build_counterparties_api() -> CounterpartiesApi:
 def build_application_documents_api() -> ApplicationDocumentsApi:
     """Construct an ``ApplicationDocumentsApi`` bound to the sandbox."""
     return ApplicationDocumentsApi(ApiClient(_configuration()))
+
+
+def build_authorized_users_api() -> AuthorizedUsersApi:
+    """Construct an ``AuthorizedUsersApi`` bound to the sandbox."""
+    return AuthorizedUsersApi(ApiClient(_configuration()))
 
 
 def sleep(seconds: float) -> None:

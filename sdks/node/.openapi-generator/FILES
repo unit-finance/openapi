@@ -28,6 +28,9 @@ docs/AccountLowBalanceClosureTransactionRelationships.md
 docs/AccountsApi.md
 docs/AddAccountOwners200Response.md
 docs/AddAccountOwnersRequest.md
+docs/AddAuthorizedUsersData.md
+docs/AddAuthorizedUsersDataAttributes.md
+docs/AddAuthorizedUsersRequest.md
 docs/AddressType.md
 docs/AdjustmentTransaction.md
 docs/AdjustmentTransactionAttributes.md
@@ -41,6 +44,7 @@ docs/ArchiveCustomerData.md
 docs/ArchiveCustomerDataAttributes.md
 docs/ArchiveCustomerRequest.md
 docs/AuthorizedUserType.md
+docs/AuthorizedUsersApi.md
 docs/BatchRelease.md
 docs/BatchReleaseAttributes.md
 docs/BatchReleaseRelationships.md
@@ -290,6 +294,7 @@ docs/GenerateCashDepositBarcodeRequest.md
 docs/GetAccountBalanceHistory200Response.md
 docs/GetAccountLimits200Response.md
 docs/GetAccountLimits200ResponseData.md
+docs/GetAuthorizedUser200Response.md
 docs/GetAvailableDepositProducts200Response.md
 docs/GetAvailableDepositProducts200ResponseDataInner.md
 docs/GetAvailableDepositProducts200ResponseDataInnerAttributes.md
@@ -325,6 +330,7 @@ docs/ListAccountHolds200Response.md
 docs/ListAccounts200Response.md
 docs/ListAccounts200ResponseDataInner.md
 docs/ListApplicationDocuments200Response.md
+docs/ListAuthorizedUsers200Response.md
 docs/ListCards200Response.md
 docs/ListCards200ResponseDataInner.md
 docs/ListCheckDeposits200Response.md
@@ -391,6 +397,9 @@ docs/ReleaseAccountHoldRequest.md
 docs/ReleaseTransaction.md
 docs/ReleaseTransactionAttributes.md
 docs/RemoveAccountOwnersRequest.md
+docs/RemoveAuthorizedUsersData.md
+docs/RemoveAuthorizedUsersDataAttributes.md
+docs/RemoveAuthorizedUsersRequest.md
 docs/ReopenAccount200Response.md
 docs/ReopenAccount200ResponseData.md
 docs/RepaidPaymentAdvanceTransaction.md

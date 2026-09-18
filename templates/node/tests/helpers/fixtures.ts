@@ -1,5 +1,7 @@
 import type {
+	AddAuthorizedUsersRequest,
 	ArchiveCustomerRequest,
+	AuthorizedUserType,
 	CreateCheckDepositRequest,
 	CreateCheckDepositSendLinkRequest,
 	UpdateCheckDepositRequest,
@@ -17,6 +19,7 @@ import type {
 	UpdateBusinessCustomerOfficerRequest,
 	UpdateCardRequest,
 	UpdateCounterpartyRequest,
+	RemoveAuthorizedUsersRequest,
 	UpdateCustomerRequest,
 } from "../..";
 import {
@@ -718,5 +721,44 @@ export function buildAddAccountOwnersRequest(customerIds: string[]) {
 export function buildRemoveAccountOwnersRequest(customerIds: string[]) {
 	return {
 		data: customerIds.map((id) => ({ type: "customer", id })),
+	};
+}
+
+/** 10-digit US-looking number that will not collide with the shared contact. */
+function uniquePhoneNumber(): string {
+	return `2${Date.now().toString().slice(-9)}`.slice(0, 10);
+}
+
+export function buildAuthorizedUser(
+	overrides: Partial<AuthorizedUserType> = {},
+): AuthorizedUserType {
+	const unique = TEST_RUN_ID.replace(/[^a-zA-Z0-9]/g, "").slice(-8) || "user";
+	return {
+		fullName: { first: "Erlich", last: `Backman${unique}` },
+		email: `erlich+${TEST_RUN_ID}@piedpiper.com`,
+		phone: { countryCode: "1", number: uniquePhoneNumber() },
+		...overrides,
+	};
+}
+
+export function buildAddAuthorizedUsersRequest(
+	users: AuthorizedUserType[] = [buildAuthorizedUser()],
+): AddAuthorizedUsersRequest {
+	return {
+		data: {
+			type: "addAuthorizedUsers",
+			attributes: { authorizedUsers: users },
+		},
+	};
+}
+
+export function buildRemoveAuthorizedUsersRequest(
+	emails: string[],
+): RemoveAuthorizedUsersRequest {
+	return {
+		data: {
+			type: "removeAuthorizedUsers",
+			attributes: { authorizedUsersEmails: emails },
+		},
 	};
 }

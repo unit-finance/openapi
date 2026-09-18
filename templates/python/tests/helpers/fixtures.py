@@ -27,10 +27,12 @@ How they are then handed to the API depends on the endpoint's request type:
   need every required field present, so we pick the variant ourselves.
 """
 
+import time
 import uuid
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from unit_finance_sdk import (
+    AddAuthorizedUsersRequest,
     ArchiveCustomerRequest,
     CloseAccountRequest,
     CloseDepositAccountRequest,
@@ -59,6 +61,7 @@ from unit_finance_sdk import (
     FreezeCardRequest,
     FreezeDepositAccountRequest,
     GetExpectedAchCompletionDateRequest,
+    RemoveAuthorizedUsersRequest,
     ReplaceCardRequest,
     ReverseFeeRequest,
     UpdateAccountRequest,
@@ -911,3 +914,43 @@ def build_remove_account_owners_request(customer_ids: List[str]) -> Dict[str, An
     return {
         "data": [{"type": "customer", "id": customer_id} for customer_id in customer_ids],
     }
+
+
+def _unique_phone_number() -> str:
+    return f"2{int(time.time() * 1000) % 10**9:09d}"[:10]
+
+
+def build_authorized_user(overrides: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    unique = "".join(ch for ch in TEST_RUN_ID if ch.isalnum())[-8:] or "user"
+    user = {
+        "fullName": {"first": "Erlich", "last": f"Backman{unique}"},
+        "email": f"erlich+{TEST_RUN_ID}@piedpiper.com",
+        "phone": {"countryCode": "1", "number": _unique_phone_number()},
+    }
+    if overrides:
+        user.update(overrides)
+    return user
+
+
+def build_add_authorized_users_request(
+    users: Optional[List[Dict[str, Any]]] = None,
+) -> AddAuthorizedUsersRequest:
+    body = {
+        "data": {
+            "type": "addAuthorizedUsers",
+            "attributes": {"authorizedUsers": users or [build_authorized_user()]},
+        },
+    }
+    return AddAuthorizedUsersRequest.from_dict(body)
+
+
+def build_remove_authorized_users_request(
+    emails: List[str],
+) -> RemoveAuthorizedUsersRequest:
+    body = {
+        "data": {
+            "type": "removeAuthorizedUsers",
+            "attributes": {"authorizedUsersEmails": emails},
+        },
+    }
+    return RemoveAuthorizedUsersRequest.from_dict(body)

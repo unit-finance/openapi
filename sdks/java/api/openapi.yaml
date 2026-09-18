@@ -5,7 +5,7 @@ info:
     name: Proprietary
     url: https://www.unit.co/terms-of-service
   title: Unit API
-  version: 0.10.0
+  version: 0.11.0
 servers:
 - url: https://api.s.unit.sh
 security:
@@ -39,6 +39,9 @@ tags:
 - description: "ACH counterparties, their creation from account/routing numbers or\
     \ Plaid tokens, balances, and lifecycle."
   name: Counterparties
+- description: "Authorized users on a customer, their creation, listing, retrieval,\
+    \ and removal."
+  name: Authorized Users
 paths:
   /applications:
     get:
@@ -6257,6 +6260,250 @@ paths:
       - Counterparties
       x-accepts:
       - application/vnd.api+json
+  /customers/{customerId}/authorized-users:
+    delete:
+      description: Remove existing authorized users from a customer. The Customer
+        Update webhook event will be fired.
+      operationId: removeAuthorizedUsers
+      parameters:
+      - explode: false
+        in: path
+        name: customerId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/removeAuthorizedUsers_request"
+        required: true
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/updateCustomer_200_response"
+          description: "The updated customer resource - a business or individual customer,\
+            \ indicated by the `type` field."
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - customers-write
+      summary: Remove authorized users
+      tags:
+      - Authorized Users
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+    get:
+      description: List of authorized user resources. Filtering can be applied.
+      operationId: listAuthorizedUsers
+      parameters:
+      - explode: false
+        in: path
+        name: customerId
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: Optional. Filter authorized users by JWT subject.
+        explode: true
+        in: query
+        name: "filter[jwtSubject]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filter authorized users by phone.
+        explode: true
+        in: query
+        name: "filter[phone]"
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/listAuthorizedUsers_200_response"
+          description: Array of authorized user resources.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - customers
+      summary: List authorized users
+      tags:
+      - Authorized Users
+      x-accepts:
+      - application/vnd.api+json
+    post:
+      description: Add authorized users for a customer. The Customer Update webhook
+        event will be fired.
+      operationId: addAuthorizedUsers
+      parameters:
+      - explode: false
+        in: path
+        name: customerId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/addAuthorizedUsers_request"
+        required: true
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/updateCustomer_200_response"
+          description: "The updated customer resource - a business or individual customer,\
+            \ indicated by the `type` field."
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - customers-write
+      summary: Add authorized users
+      tags:
+      - Authorized Users
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /customers/{customerId}/authorized-users/{authorizedUserId}:
+    get:
+      description: Get an authorized user resource by id.
+      operationId: getAuthorizedUser
+      parameters:
+      - explode: false
+        in: path
+        name: customerId
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: authorizedUserId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/getAuthorizedUser_200_response"
+          description: Authorized user resource.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      summary: Get an authorized user
+      tags:
+      - Authorized Users
+      x-accepts:
+      - application/vnd.api+json
 components:
   responses:
     BadRequest:
@@ -11738,6 +11985,30 @@ components:
       required:
       - data
       type: object
+    AddAuthorizedUsersData:
+      properties:
+        type:
+          enum:
+          - addAuthorizedUsers
+          type: string
+        attributes:
+          $ref: "#/components/schemas/AddAuthorizedUsersData_attributes"
+      required:
+      - attributes
+      - type
+      type: object
+    RemoveAuthorizedUsersData:
+      properties:
+        type:
+          enum:
+          - removeAuthorizedUsers
+          type: string
+        attributes:
+          $ref: "#/components/schemas/RemoveAuthorizedUsersData_attributes"
+      required:
+      - attributes
+      - type
+      type: object
     list_200_response_data_inner:
       discriminator:
         mapping:
@@ -12716,6 +12987,36 @@ components:
       properties:
         data:
           $ref: "#/components/schemas/CounterpartyBalance"
+      required:
+      - data
+      type: object
+    listAuthorizedUsers_200_response:
+      properties:
+        data:
+          items:
+            $ref: "#/components/schemas/AuthorizedUserType"
+          type: array
+      required:
+      - data
+      type: object
+    addAuthorizedUsers_request:
+      properties:
+        data:
+          $ref: "#/components/schemas/AddAuthorizedUsersData"
+      required:
+      - data
+      type: object
+    removeAuthorizedUsers_request:
+      properties:
+        data:
+          $ref: "#/components/schemas/RemoveAuthorizedUsersData"
+      required:
+      - data
+      type: object
+    getAuthorizedUser_200_response:
+      properties:
+        data:
+          $ref: "#/components/schemas/AuthorizedUserType"
       required:
       - data
       type: object
@@ -18265,6 +18566,38 @@ components:
           additionalProperties: true
           description: See Tags.
           type: object
+      type: object
+    AddAuthorizedUsersData_attributes:
+      properties:
+        authorizedUsers:
+          description: Array of authorized users. The provided array items will be
+            added to the existing ones.
+          example:
+          - fullName:
+              first: Erlich
+              last: Backman
+            email: erlich@piedpiper.com
+            phone:
+              countryCode: "1"
+              number: "1234567890"
+            canConnectWithAuthVendor: true
+          items:
+            $ref: "#/components/schemas/AuthorizedUserType"
+          type: array
+      required:
+      - authorizedUsers
+      type: object
+    RemoveAuthorizedUsersData_attributes:
+      properties:
+        authorizedUsersEmails:
+          description: The list of authorized users emails to remove from the customer.
+          example:
+          - jared@piedpiper.com
+          items:
+            type: string
+          type: array
+      required:
+      - authorizedUsersEmails
       type: object
   securitySchemes:
     bearerAuth:
