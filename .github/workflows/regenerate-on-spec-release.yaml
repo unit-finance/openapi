@@ -135,6 +135,36 @@ jobs:
           git clean -fd templates sdks
           npm run generate-sdks
 
+      # Diff the `slices` array in spec-version.json (derived by fetch-spec from
+      # the spec's tags) between the committed version and the freshly
+      # regenerated one, so the PR body can call out which API slices were added
+      # or removed by this spec bump. Emits a markdown fragment as a step output.
+      - name: Compute slice changes
+        id: slices
+        run: |
+          node -e '
+            const fs = require("node:fs");
+            const { execSync } = require("node:child_process");
+            const read = (raw) => {
+              try { return JSON.parse(raw).slices ?? []; } catch { return []; }
+            };
+            let before = [];
+            try {
+              before = read(execSync("git show HEAD:spec-version.json", { encoding: "utf8" }));
+            } catch {}
+            const after = read(fs.readFileSync("spec-version.json", "utf8"));
+            const beforeSet = new Set(before);
+            const afterSet = new Set(after);
+            const added = after.filter((s) => !beforeSet.has(s));
+            const removed = before.filter((s) => !afterSet.has(s));
+            const lines = [];
+            if (added.length) lines.push("- Added slices: " + added.map((s) => "`" + s + "`").join(", "));
+            if (removed.length) lines.push("- Removed slices: " + removed.map((s) => "`" + s + "`").join(", "));
+            if (!lines.length) lines.push("- No slices added or removed.");
+            const body = lines.join("\n");
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, "markdown<<SLICES_EOF\n" + body + "\nSLICES_EOF\n");
+          '
+
       - name: Open regeneration PR
         uses: peter-evans/create-pull-request@v7
         with:
@@ -154,6 +184,11 @@ jobs:
 
             - Spec version: `${{ steps.ver.outputs.version }}`
             - Updates `spec-version.json` and all committed SDKs under `sdks/`.
+
+            **Slice changes**
+
+            ${{ steps.slices.outputs.markdown }}
+
             - Coverage gaps detected at regeneration: `${{ steps.coverage.outputs.gap_count }}`.
               When non-zero (and `CURSOR_API_KEY` is configured), a Cursor agent
               authored/updated the integration tests under `templates/<lang>/`;
