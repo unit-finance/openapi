@@ -1,7 +1,7 @@
 # unit-java-sdk
 
 Unit API
-- API version: 0.10.0
+- API version: 0.11.0
   - Generator version: 7.22.0
 
 JSON:API-compliant banking API.
@@ -150,6 +150,10 @@ Class | Method | HTTP request | Description
 *ApplicationsApi* | [**getById**](docs/ApplicationsApi.md#getById) | **GET** /applications/{id} | Get an application
 *ApplicationsApi* | [**updateApplication**](docs/ApplicationsApi.md#updateApplication) | **PATCH** /applications/{id} | Update an application
 *ApplicationsApi* | [**updateBusinessBeneficialOwner**](docs/ApplicationsApi.md#updateBusinessBeneficialOwner) | **PATCH** /beneficial-owner/{id} | Update a business beneficial owner
+*AuthorizedUsersApi* | [**addAuthorizedUsers**](docs/AuthorizedUsersApi.md#addAuthorizedUsers) | **POST** /customers/{customerId}/authorized-users | Add authorized users
+*AuthorizedUsersApi* | [**getAuthorizedUser**](docs/AuthorizedUsersApi.md#getAuthorizedUser) | **GET** /customers/{customerId}/authorized-users/{authorizedUserId} | Get an authorized user
+*AuthorizedUsersApi* | [**listAuthorizedUsers**](docs/AuthorizedUsersApi.md#listAuthorizedUsers) | **GET** /customers/{customerId}/authorized-users | List authorized users
+*AuthorizedUsersApi* | [**removeAuthorizedUsers**](docs/AuthorizedUsersApi.md#removeAuthorizedUsers) | **DELETE** /customers/{customerId}/authorized-users | Remove authorized users
 *CardsApi* | [**closeCard**](docs/CardsApi.md#closeCard) | **POST** /cards/{cardId}/close | Close a card
 *CardsApi* | [**createCard**](docs/CardsApi.md#createCard) | **POST** /cards | Create a card
 *CardsApi* | [**freezeCard**](docs/CardsApi.md#freezeCard) | **POST** /cards/{cardId}/freeze | Freeze a card
@@ -238,6 +242,9 @@ Class | Method | HTTP request | Description
  - [AccountLowBalanceClosureTransactionRelationships](docs/AccountLowBalanceClosureTransactionRelationships.md)
  - [AddAccountOwners200Response](docs/AddAccountOwners200Response.md)
  - [AddAccountOwnersRequest](docs/AddAccountOwnersRequest.md)
+ - [AddAuthorizedUsersData](docs/AddAuthorizedUsersData.md)
+ - [AddAuthorizedUsersDataAttributes](docs/AddAuthorizedUsersDataAttributes.md)
+ - [AddAuthorizedUsersRequest](docs/AddAuthorizedUsersRequest.md)
  - [AddressType](docs/AddressType.md)
  - [AdjustmentTransaction](docs/AdjustmentTransaction.md)
  - [AdjustmentTransactionAttributes](docs/AdjustmentTransactionAttributes.md)
@@ -493,6 +500,7 @@ Class | Method | HTTP request | Description
  - [GetAccountBalanceHistory200Response](docs/GetAccountBalanceHistory200Response.md)
  - [GetAccountLimits200Response](docs/GetAccountLimits200Response.md)
  - [GetAccountLimits200ResponseData](docs/GetAccountLimits200ResponseData.md)
+ - [GetAuthorizedUser200Response](docs/GetAuthorizedUser200Response.md)
  - [GetAvailableDepositProducts200Response](docs/GetAvailableDepositProducts200Response.md)
  - [GetAvailableDepositProducts200ResponseDataInner](docs/GetAvailableDepositProducts200ResponseDataInner.md)
  - [GetAvailableDepositProducts200ResponseDataInnerAttributes](docs/GetAvailableDepositProducts200ResponseDataInnerAttributes.md)
@@ -528,6 +536,7 @@ Class | Method | HTTP request | Description
  - [ListAccounts200Response](docs/ListAccounts200Response.md)
  - [ListAccounts200ResponseDataInner](docs/ListAccounts200ResponseDataInner.md)
  - [ListApplicationDocuments200Response](docs/ListApplicationDocuments200Response.md)
+ - [ListAuthorizedUsers200Response](docs/ListAuthorizedUsers200Response.md)
  - [ListCards200Response](docs/ListCards200Response.md)
  - [ListCards200ResponseDataInner](docs/ListCards200ResponseDataInner.md)
  - [ListCheckDeposits200Response](docs/ListCheckDeposits200Response.md)
@@ -593,6 +602,9 @@ Class | Method | HTTP request | Description
  - [ReleaseTransaction](docs/ReleaseTransaction.md)
  - [ReleaseTransactionAttributes](docs/ReleaseTransactionAttributes.md)
  - [RemoveAccountOwnersRequest](docs/RemoveAccountOwnersRequest.md)
+ - [RemoveAuthorizedUsersData](docs/RemoveAuthorizedUsersData.md)
+ - [RemoveAuthorizedUsersDataAttributes](docs/RemoveAuthorizedUsersDataAttributes.md)
+ - [RemoveAuthorizedUsersRequest](docs/RemoveAuthorizedUsersRequest.md)
  - [ReopenAccount200Response](docs/ReopenAccount200Response.md)
  - [ReopenAccount200ResponseData](docs/ReopenAccount200ResponseData.md)
  - [RepaidPaymentAdvanceTransaction](docs/RepaidPaymentAdvanceTransaction.md)
