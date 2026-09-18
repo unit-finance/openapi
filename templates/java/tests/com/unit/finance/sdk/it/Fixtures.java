@@ -156,7 +156,14 @@ import com.unit.finance.sdk.model.UpdateACHReceivedPaymentDataAttributes;
 import com.unit.finance.sdk.model.UpdateACHReceivedPaymentRequest;
 import com.unit.finance.sdk.model.UpdateReceivedPaymentRequest;
 import com.unit.finance.sdk.model.AddAccountOwnersRequest;
+import com.unit.finance.sdk.model.AddAuthorizedUsersData;
+import com.unit.finance.sdk.model.AddAuthorizedUsersDataAttributes;
+import com.unit.finance.sdk.model.AddAuthorizedUsersRequest;
+import com.unit.finance.sdk.model.AuthorizedUserType;
 import com.unit.finance.sdk.model.RemoveAccountOwnersRequest;
+import com.unit.finance.sdk.model.RemoveAuthorizedUsersData;
+import com.unit.finance.sdk.model.RemoveAuthorizedUsersDataAttributes;
+import com.unit.finance.sdk.model.RemoveAuthorizedUsersRequest;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -875,6 +882,40 @@ final class Fixtures {
             .map(id -> new ResourceIdentifier().type("customer").id(id))
             .collect(Collectors.toList());
     return new RemoveAccountOwnersRequest().data(data);
+  }
+
+  static AuthorizedUserType authorizedUser() {
+    String unique = RUN.replaceAll("[^a-zA-Z0-9]", "");
+    if (unique.length() > 8) {
+      unique = unique.substring(unique.length() - 8);
+    }
+    String phone = ("2" + Long.toString(System.currentTimeMillis())).substring(0, 10);
+    return new AuthorizedUserType()
+        .fullName(new FullNameType().first("Erlich").last("Backman" + unique))
+        .email("erlich+" + RUN + "@piedpiper.com")
+        .phone(new PhoneType().countryCode("1").number(phone));
+  }
+
+  static AddAuthorizedUsersRequest addAuthorizedUsersRequest(AuthorizedUserType user) {
+    List<AuthorizedUserType> users = new ArrayList<>();
+    users.add(user);
+    AddAuthorizedUsersDataAttributes attributes =
+        new AddAuthorizedUsersDataAttributes().authorizedUsers(users);
+    AddAuthorizedUsersData data =
+        new AddAuthorizedUsersData()
+            .type(AddAuthorizedUsersData.TypeEnum.ADD_AUTHORIZED_USERS)
+            .attributes(attributes);
+    return new AddAuthorizedUsersRequest().data(data);
+  }
+
+  static RemoveAuthorizedUsersRequest removeAuthorizedUsersRequest(List<String> emails) {
+    RemoveAuthorizedUsersDataAttributes attributes =
+        new RemoveAuthorizedUsersDataAttributes().authorizedUsersEmails(emails);
+    RemoveAuthorizedUsersData data =
+        new RemoveAuthorizedUsersData()
+            .type(RemoveAuthorizedUsersData.TypeEnum.REMOVE_AUTHORIZED_USERS)
+            .attributes(attributes);
+    return new RemoveAuthorizedUsersRequest().data(data);
   }
 
   static AddressType addressType() {

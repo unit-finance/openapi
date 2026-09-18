@@ -22,6 +22,9 @@ docs/AccountLowBalanceClosureTransactionRelationships.md
 docs/AccountsApi.md
 docs/AddAccountOwners200Response.md
 docs/AddAccountOwnersRequest.md
+docs/AddAuthorizedUsersData.md
+docs/AddAuthorizedUsersDataAttributes.md
+docs/AddAuthorizedUsersRequest.md
 docs/AddressType.md
 docs/AdjustmentTransaction.md
 docs/AdjustmentTransactionAttributes.md
@@ -35,6 +38,7 @@ docs/ArchiveCustomerData.md
 docs/ArchiveCustomerDataAttributes.md
 docs/ArchiveCustomerRequest.md
 docs/AuthorizedUserType.md
+docs/AuthorizedUsersApi.md
 docs/BatchRelease.md
 docs/BatchReleaseAttributes.md
 docs/BatchReleaseRelationships.md
@@ -284,6 +288,7 @@ docs/GenerateCashDepositBarcodeRequest.md
 docs/GetAccountBalanceHistory200Response.md
 docs/GetAccountLimits200Response.md
 docs/GetAccountLimits200ResponseData.md
+docs/GetAuthorizedUser200Response.md
 docs/GetAvailableDepositProducts200Response.md
 docs/GetAvailableDepositProducts200ResponseDataInner.md
 docs/GetAvailableDepositProducts200ResponseDataInnerAttributes.md
@@ -319,6 +324,7 @@ docs/ListAccountHolds200Response.md
 docs/ListAccounts200Response.md
 docs/ListAccounts200ResponseDataInner.md
 docs/ListApplicationDocuments200Response.md
+docs/ListAuthorizedUsers200Response.md
 docs/ListCards200Response.md
 docs/ListCards200ResponseDataInner.md
 docs/ListCheckDeposits200Response.md
@@ -385,6 +391,9 @@ docs/ReleaseAccountHoldRequest.md
 docs/ReleaseTransaction.md
 docs/ReleaseTransactionAttributes.md
 docs/RemoveAccountOwnersRequest.md
+docs/RemoveAuthorizedUsersData.md
+docs/RemoveAuthorizedUsersDataAttributes.md
+docs/RemoveAuthorizedUsersRequest.md
 docs/ReopenAccount200Response.md
 docs/ReopenAccount200ResponseData.md
 docs/RepaidPaymentAdvanceTransaction.md
@@ -534,6 +543,7 @@ unit_finance_sdk/api/__init__.py
 unit_finance_sdk/api/accounts_api.py
 unit_finance_sdk/api/application_documents_api.py
 unit_finance_sdk/api/applications_api.py
+unit_finance_sdk/api/authorized_users_api.py
 unit_finance_sdk/api/cards_api.py
 unit_finance_sdk/api/check_deposits_api.py
 unit_finance_sdk/api/counterparties_api.py
@@ -564,6 +574,9 @@ unit_finance_sdk/models/ach_received_payment_attributes.py
 unit_finance_sdk/models/ach_received_payment_relationships.py
 unit_finance_sdk/models/add_account_owners200_response.py
 unit_finance_sdk/models/add_account_owners_request.py
+unit_finance_sdk/models/add_authorized_users_data.py
+unit_finance_sdk/models/add_authorized_users_data_attributes.py
+unit_finance_sdk/models/add_authorized_users_request.py
 unit_finance_sdk/models/address_type.py
 unit_finance_sdk/models/adjustment_transaction.py
 unit_finance_sdk/models/adjustment_transaction_attributes.py
@@ -822,6 +835,7 @@ unit_finance_sdk/models/generate_cash_deposit_barcode_request.py
 unit_finance_sdk/models/get_account_balance_history200_response.py
 unit_finance_sdk/models/get_account_limits200_response.py
 unit_finance_sdk/models/get_account_limits200_response_data.py
+unit_finance_sdk/models/get_authorized_user200_response.py
 unit_finance_sdk/models/get_available_deposit_products200_response.py
 unit_finance_sdk/models/get_available_deposit_products200_response_data_inner.py
 unit_finance_sdk/models/get_available_deposit_products200_response_data_inner_attributes.py
@@ -857,6 +871,7 @@ unit_finance_sdk/models/list_account_holds200_response.py
 unit_finance_sdk/models/list_accounts200_response.py
 unit_finance_sdk/models/list_accounts200_response_data_inner.py
 unit_finance_sdk/models/list_application_documents200_response.py
+unit_finance_sdk/models/list_authorized_users200_response.py
 unit_finance_sdk/models/list_cards200_response.py
 unit_finance_sdk/models/list_cards200_response_data_inner.py
 unit_finance_sdk/models/list_check_deposits200_response.py
@@ -922,6 +937,9 @@ unit_finance_sdk/models/release_account_hold_request.py
 unit_finance_sdk/models/release_transaction.py
 unit_finance_sdk/models/release_transaction_attributes.py
 unit_finance_sdk/models/remove_account_owners_request.py
+unit_finance_sdk/models/remove_authorized_users_data.py
+unit_finance_sdk/models/remove_authorized_users_data_attributes.py
+unit_finance_sdk/models/remove_authorized_users_request.py
 unit_finance_sdk/models/reopen_account200_response.py
 unit_finance_sdk/models/reopen_account200_response_data.py
 unit_finance_sdk/models/repaid_payment_advance_transaction.py

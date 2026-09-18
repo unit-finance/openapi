@@ -576,6 +576,37 @@ module Helpers
       }
     end
 
+    def unique_phone_number
+      "2#{(Time.now.to_f * 1000).to_i.to_s[-9..]}".slice(0, 10)
+    end
+
+    def authorized_user
+      unique = Helpers::Api::TEST_RUN_ID.gsub(/[^a-zA-Z0-9]/, '')[-8..] || 'user'
+      {
+        'fullName' => { 'first' => 'Erlich', 'last' => "Backman#{unique}" },
+        'email' => "erlich+#{Helpers::Api::TEST_RUN_ID}@piedpiper.com",
+        'phone' => { 'countryCode' => '1', 'number' => unique_phone_number }
+      }
+    end
+
+    def add_authorized_users_request(users = [authorized_user])
+      {
+        'data' => {
+          'type' => 'addAuthorizedUsers',
+          'attributes' => { 'authorizedUsers' => users }
+        }
+      }
+    end
+
+    def remove_authorized_users_request(emails)
+      {
+        'data' => {
+          'type' => 'removeAuthorizedUsers',
+          'attributes' => { 'authorizedUsersEmails' => emails }
+        }
+      }
+    end
+
     def create_batch_releases_request
       {
         'data' => {

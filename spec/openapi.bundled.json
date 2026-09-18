@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Unit API",
-    "version": "0.10.0",
+    "version": "0.11.0",
     "description": "JSON:API-compliant banking API.",
     "license": {
       "name": "Proprietary",
@@ -59,6 +59,10 @@
     {
       "name": "Counterparties",
       "description": "ACH counterparties, their creation from account/routing numbers or Plaid tokens, balances, and lifecycle."
+    },
+    {
+      "name": "Authorized Users",
+      "description": "Authorized users on a customer, their creation, listing, retrieval, and removal."
     }
   ],
   "paths": {
@@ -8812,6 +8816,352 @@
                   "properties": {
                     "data": {
                       "$ref": "#/components/schemas/CounterpartyBalance"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/customers/{customerId}/authorized-users": {
+      "get": {
+        "operationId": "listAuthorizedUsers",
+        "summary": "List authorized users",
+        "description": "List of authorized user resources. Filtering can be applied.",
+        "tags": [
+          "Authorized Users"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "customers"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "customerId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[jwtSubject]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filter authorized users by JWT subject.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[phone]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filter authorized users by phone.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of authorized user resources.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/AuthorizedUserType"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "addAuthorizedUsers",
+        "summary": "Add authorized users",
+        "description": "Add authorized users for a customer. The Customer Update webhook event will be fired.",
+        "tags": [
+          "Authorized Users"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "customers-write"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "customerId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "properties": {
+                  "data": {
+                    "$ref": "#/components/schemas/AddAuthorizedUsersData"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The updated customer resource - a business or individual customer, indicated by the `type` field.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "oneOf": [
+                        {
+                          "$ref": "#/components/schemas/BusinessCustomer"
+                        },
+                        {
+                          "$ref": "#/components/schemas/IndividualCustomer"
+                        }
+                      ],
+                      "discriminator": {
+                        "propertyName": "type",
+                        "mapping": {
+                          "businessCustomer": "#/components/schemas/BusinessCustomer",
+                          "individualCustomer": "#/components/schemas/IndividualCustomer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "removeAuthorizedUsers",
+        "summary": "Remove authorized users",
+        "description": "Remove existing authorized users from a customer. The Customer Update webhook event will be fired.",
+        "tags": [
+          "Authorized Users"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "customers-write"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "customerId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "properties": {
+                  "data": {
+                    "$ref": "#/components/schemas/RemoveAuthorizedUsersData"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The updated customer resource - a business or individual customer, indicated by the `type` field.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "oneOf": [
+                        {
+                          "$ref": "#/components/schemas/BusinessCustomer"
+                        },
+                        {
+                          "$ref": "#/components/schemas/IndividualCustomer"
+                        }
+                      ],
+                      "discriminator": {
+                        "propertyName": "type",
+                        "mapping": {
+                          "businessCustomer": "#/components/schemas/BusinessCustomer",
+                          "individualCustomer": "#/components/schemas/IndividualCustomer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/customers/{customerId}/authorized-users/{authorizedUserId}": {
+      "get": {
+        "operationId": "getAuthorizedUser",
+        "summary": "Get an authorized user",
+        "description": "Get an authorized user resource by id.",
+        "tags": [
+          "Authorized Users"
+        ],
+        "parameters": [
+          {
+            "name": "customerId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "authorizedUserId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized user resource.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/AuthorizedUserType"
                     }
                   }
                 }
@@ -24097,6 +24447,83 @@
         "properties": {
           "data": {
             "$ref": "#/components/schemas/UpdateCounterpartyData"
+          }
+        }
+      },
+      "AddAuthorizedUsersData": {
+        "type": "object",
+        "required": [
+          "type",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "addAuthorizedUsers"
+            ]
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "authorizedUsers"
+            ],
+            "properties": {
+              "authorizedUsers": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/AuthorizedUserType"
+                },
+                "description": "Array of authorized users. The provided array items will be added to the existing ones.",
+                "example": [
+                  {
+                    "fullName": {
+                      "first": "Erlich",
+                      "last": "Backman"
+                    },
+                    "email": "erlich@piedpiper.com",
+                    "phone": {
+                      "countryCode": "1",
+                      "number": "1234567890"
+                    },
+                    "canConnectWithAuthVendor": true
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "RemoveAuthorizedUsersData": {
+        "type": "object",
+        "required": [
+          "type",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "removeAuthorizedUsers"
+            ]
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "authorizedUsersEmails"
+            ],
+            "properties": {
+              "authorizedUsersEmails": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "The list of authorized users emails to remove from the customer.",
+                "example": [
+                  "jared@piedpiper.com"
+                ]
+              }
+            }
           }
         }
       }
