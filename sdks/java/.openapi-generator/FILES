@@ -23,6 +23,9 @@ docs/AccountLowBalanceClosureTransactionRelationships.md
 docs/AccountsApi.md
 docs/AddAccountOwners200Response.md
 docs/AddAccountOwnersRequest.md
+docs/AddAuthorizedUsersData.md
+docs/AddAuthorizedUsersDataAttributes.md
+docs/AddAuthorizedUsersRequest.md
 docs/AddressType.md
 docs/AdjustmentTransaction.md
 docs/AdjustmentTransactionAttributes.md
@@ -36,6 +39,7 @@ docs/ArchiveCustomerData.md
 docs/ArchiveCustomerDataAttributes.md
 docs/ArchiveCustomerRequest.md
 docs/AuthorizedUserType.md
+docs/AuthorizedUsersApi.md
 docs/BatchRelease.md
 docs/BatchReleaseAttributes.md
 docs/BatchReleaseRelationships.md
@@ -285,6 +289,7 @@ docs/GenerateCashDepositBarcodeRequest.md
 docs/GetAccountBalanceHistory200Response.md
 docs/GetAccountLimits200Response.md
 docs/GetAccountLimits200ResponseData.md
+docs/GetAuthorizedUser200Response.md
 docs/GetAvailableDepositProducts200Response.md
 docs/GetAvailableDepositProducts200ResponseDataInner.md
 docs/GetAvailableDepositProducts200ResponseDataInnerAttributes.md
@@ -320,6 +325,7 @@ docs/ListAccountHolds200Response.md
 docs/ListAccounts200Response.md
 docs/ListAccounts200ResponseDataInner.md
 docs/ListApplicationDocuments200Response.md
+docs/ListAuthorizedUsers200Response.md
 docs/ListCards200Response.md
 docs/ListCards200ResponseDataInner.md
 docs/ListCheckDeposits200Response.md
@@ -386,6 +392,9 @@ docs/ReleaseAccountHoldRequest.md
 docs/ReleaseTransaction.md
 docs/ReleaseTransactionAttributes.md
 docs/RemoveAccountOwnersRequest.md
+docs/RemoveAuthorizedUsersData.md
+docs/RemoveAuthorizedUsersDataAttributes.md
+docs/RemoveAuthorizedUsersRequest.md
 docs/ReopenAccount200Response.md
 docs/ReopenAccount200ResponseData.md
 docs/RepaidPaymentAdvanceTransaction.md
@@ -546,6 +555,7 @@ src/main/java/com/unit/finance/sdk/StringUtil.java
 src/main/java/com/unit/finance/sdk/api/AccountsApi.java
 src/main/java/com/unit/finance/sdk/api/ApplicationDocumentsApi.java
 src/main/java/com/unit/finance/sdk/api/ApplicationsApi.java
+src/main/java/com/unit/finance/sdk/api/AuthorizedUsersApi.java
 src/main/java/com/unit/finance/sdk/api/CardsApi.java
 src/main/java/com/unit/finance/sdk/api/CheckDepositsApi.java
 src/main/java/com/unit/finance/sdk/api/CounterpartiesApi.java
@@ -579,6 +589,9 @@ src/main/java/com/unit/finance/sdk/model/AccountLowBalanceClosureTransactionAttr
 src/main/java/com/unit/finance/sdk/model/AccountLowBalanceClosureTransactionRelationships.java
 src/main/java/com/unit/finance/sdk/model/AddAccountOwners200Response.java
 src/main/java/com/unit/finance/sdk/model/AddAccountOwnersRequest.java
+src/main/java/com/unit/finance/sdk/model/AddAuthorizedUsersData.java
+src/main/java/com/unit/finance/sdk/model/AddAuthorizedUsersDataAttributes.java
+src/main/java/com/unit/finance/sdk/model/AddAuthorizedUsersRequest.java
 src/main/java/com/unit/finance/sdk/model/AddressType.java
 src/main/java/com/unit/finance/sdk/model/AdjustmentTransaction.java
 src/main/java/com/unit/finance/sdk/model/AdjustmentTransactionAttributes.java
@@ -834,6 +847,7 @@ src/main/java/com/unit/finance/sdk/model/GenerateCashDepositBarcodeRequest.java
 src/main/java/com/unit/finance/sdk/model/GetAccountBalanceHistory200Response.java
 src/main/java/com/unit/finance/sdk/model/GetAccountLimits200Response.java
 src/main/java/com/unit/finance/sdk/model/GetAccountLimits200ResponseData.java
+src/main/java/com/unit/finance/sdk/model/GetAuthorizedUser200Response.java
 src/main/java/com/unit/finance/sdk/model/GetAvailableDepositProducts200Response.java
 src/main/java/com/unit/finance/sdk/model/GetAvailableDepositProducts200ResponseDataInner.java
 src/main/java/com/unit/finance/sdk/model/GetAvailableDepositProducts200ResponseDataInnerAttributes.java
@@ -869,6 +883,7 @@ src/main/java/com/unit/finance/sdk/model/ListAccountHolds200Response.java
 src/main/java/com/unit/finance/sdk/model/ListAccounts200Response.java
 src/main/java/com/unit/finance/sdk/model/ListAccounts200ResponseDataInner.java
 src/main/java/com/unit/finance/sdk/model/ListApplicationDocuments200Response.java
+src/main/java/com/unit/finance/sdk/model/ListAuthorizedUsers200Response.java
 src/main/java/com/unit/finance/sdk/model/ListCards200Response.java
 src/main/java/com/unit/finance/sdk/model/ListCards200ResponseDataInner.java
 src/main/java/com/unit/finance/sdk/model/ListCheckDeposits200Response.java
@@ -934,6 +949,9 @@ src/main/java/com/unit/finance/sdk/model/ReleaseAccountHoldRequest.java
 src/main/java/com/unit/finance/sdk/model/ReleaseTransaction.java
 src/main/java/com/unit/finance/sdk/model/ReleaseTransactionAttributes.java
 src/main/java/com/unit/finance/sdk/model/RemoveAccountOwnersRequest.java
+src/main/java/com/unit/finance/sdk/model/RemoveAuthorizedUsersData.java
+src/main/java/com/unit/finance/sdk/model/RemoveAuthorizedUsersDataAttributes.java
+src/main/java/com/unit/finance/sdk/model/RemoveAuthorizedUsersRequest.java
 src/main/java/com/unit/finance/sdk/model/ReopenAccount200Response.java
 src/main/java/com/unit/finance/sdk/model/ReopenAccount200ResponseData.java
 src/main/java/com/unit/finance/sdk/model/RepaidPaymentAdvanceTransaction.java
