@@ -2,6 +2,7 @@ import {
 	AccountsApi,
 	ApplicationDocumentsApi,
 	ApplicationsApi,
+	AuthorizedUsersApi,
 	CardsApi,
 	CheckDepositsApi,
 	Configuration,
@@ -64,6 +65,10 @@ export function buildCounterpartiesApi(): CounterpartiesApi {
 
 export function buildApplicationDocumentsApi(): ApplicationDocumentsApi {
 	return new ApplicationDocumentsApi(configuration());
+}
+
+export function buildAuthorizedUsersApi(): AuthorizedUsersApi {
+	return new AuthorizedUsersApi(configuration());
 }
 
 /**

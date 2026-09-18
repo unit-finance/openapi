@@ -72,6 +72,10 @@ module Helpers
       UnitFinanceSdk::ApplicationDocumentsApi.new(UnitFinanceSdk::ApiClient.new(configuration))
     end
 
+    def build_authorized_users_api
+      UnitFinanceSdk::AuthorizedUsersApi.new(UnitFinanceSdk::ApiClient.new(configuration))
+    end
+
     def sleep(seconds)
       Kernel.sleep(seconds)
     end

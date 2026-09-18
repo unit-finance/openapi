@@ -1,9 +1,9 @@
 # Implemented API slices
 
-From `spec-version.json` (`slices`), OpenAPI tags on `unit-finance/unit-openapi` **0.10.0**.
+From `spec-version.json` (`slices`), OpenAPI tags on `unit-finance/unit-openapi` **0.11.0**.
 
-Accounts · Application Documents · Applications · Cards · Check Deposits ·
-Counterparties · Customers · Fees · Payments · Transactions
+Accounts · Application Documents · Applications · Authorized Users · Cards ·
+Check Deposits · Counterparties · Customers · Fees · Payments · Transactions
 
 # Test skips and early exits
 
@@ -14,6 +14,10 @@ Not listed: the global token gate (`describeIfToken` / `assumeToken` /
 `:sandbox` / `@requires_token`).
 
 **Cards, Fees, Transactions** — no extra skip in any SDK.
+
+**Authorized Users** `addAuthorizedUsers` / `removeAuthorizedUsers` — no extra
+skip in any SDK (they return a customer resource and the typed clients parse
+it). `listAuthorizedUsers` / `getAuthorizedUser` differ; see below.
 
 | Mark | Meaning |
 | --- | --- |
@@ -110,6 +114,24 @@ These are **not** extra store-list bugs. They **depend on** `listStoreLocations`
 If list 500s, returns empty, or cannot deserialize, generate and image **never run**. Node (and Ruby, if list works) can also abort if **generate itself 500s**.
 
 Fix list (spec + sandbox 500) first; then these two can be asserted for real.
+
+### `listAuthorizedUsers` / `getAuthorizedUser` (new in spec 0.11.0)
+
+The operations are documented as JSON:API **resources**, and the sandbox
+returns `{ type, id, attributes }` (list is an array of those). The spec
+reuses `AuthorizedUserType` — the add-payload object with required
+`fullName` / `email` / `phone` and **no** `type`/`id`/`attributes` — as the
+list item and GET `data`. Typed clients therefore fail while
+**deserializing** a 200, not while sending the request. `getAuthorizedUser`
+also needs an id from list, so it is blocked on the same defect.
+
+This is a spec defect owned by `unit-openapi`. Fix: introduce an
+`AuthorizedUser` resource schema for list/get; keep `AuthorizedUserType` for
+the add body. Then drop the Java abort and the ruby/python raw-body reads.
+
+| Node | Java | Ruby | Python |
+| --- | --- | --- | --- |
+| **Runs.** Axios does not validate required response fields. | **Abort.** Gson `validateJsonElement` rejects a 200 that has `type`/`id`/`attributes` instead of `fullName`/`email`/`phone`. `assumeTrue` bails after the call. GET aborts for the same reason (no id on the typed list item). | **Runs (raw).** The typed model would raise, so the specs read the raw body via `debug_return_type: 'String'`. | **Runs (raw).** Pydantic would raise, so the tests read the raw body via `*_without_preload_content`. |
 
 ### Application Documents (whole slice, new in spec 0.10.0)
 
