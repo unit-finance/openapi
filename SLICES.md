@@ -1,9 +1,10 @@
 # Implemented API slices
 
-From `spec-version.json` (`slices`), OpenAPI tags on `unit-finance/unit-openapi` **0.11.0**.
+From `spec-version.json` (`slices`), OpenAPI tags on `unit-finance/unit-openapi` **0.12.0**.
 
-Accounts · Application Documents · Applications · Authorized Users · Cards ·
-Check Deposits · Counterparties · Customers · Fees · Payments · Transactions
+Accounts · Application Documents · Applications · Authorized Users ·
+Card Fraud Outreach · Cards · Check Deposits · Counterparties · Customers ·
+Fees · Payments · Transactions
 
 # Test skips and early exits
 
@@ -14,6 +15,10 @@ Not listed: the global token gate (`describeIfToken` / `assumeToken` /
 `:sandbox` / `@requires_token`).
 
 **Cards, Fees, Transactions** — no extra skip in any SDK.
+
+**Card Fraud Outreach** `createPolicy` / `getPolicyById` / `updatePolicy` are
+the same abort in every SDK; `listCardFraudCases` / `getCardFraudCaseById` /
+`markCardFraudCaseAsFraud` / `markCardFraudCaseAsNoFraud` differ. See below.
 
 **Authorized Users** `addAuthorizedUsers` / `removeAuthorizedUsers` — no extra
 skip in any SDK (they return a customer resource and the typed clients parse
@@ -40,6 +45,8 @@ it). `listAuthorizedUsers` / `getAuthorizedUser` differ; see below.
 | `createBusinessWalletCustomer` | hard skip | The create body hard-codes `bankName: "Thread"`. This org has no partner bank by that name (**404** “bank was not found”). Which banks exist is org config; this SDK surface has no list-banks operation, so the test is skipped instead of guessing another name. |
 | `archiveCustomer` | hard skip | Spec type `customerArchive`; sandbox wants `archiveCustomer`. |
 | `cancelPayment` | abort on 400/409/422/501 | Creates a **book** payment (settles immediately). Cancel is only for Pending/PendingReview ACH/Wire, so those statuses count as a pass. |
+| `createPolicy` | abort | Create needs three org-provisioned relationships: **email outreach settings**, **message outreach settings**, and **white-label theme**. There is no list operation for any of them, so the suite sends placeholder ids `"0"`. The sandbox then 4xxs (missing/invalid relationships). That is org setup, not an SDK gap. |
+| `getPolicyById` / `updatePolicy` | abort | Both need a policy id. There is **no list-policies** operation, so they depend on **`createPolicy`**. Until the org has those outreach/theme resources, there is nothing to GET or PATCH. |
 
 ---
 
@@ -114,6 +121,19 @@ These are **not** extra store-list bugs. They **depend on** `listStoreLocations`
 If list 500s, returns empty, or cannot deserialize, generate and image **never run**. Node (and Ruby, if list works) can also abort if **generate itself 500s**.
 
 Fix list (spec + sandbox 500) first; then these two can be asserted for real.
+
+### `listCardFraudCases` / `getCardFraudCaseById` / `markCardFraudCaseAsFraud` / `markCardFraudCaseAsNoFraud` (new in spec 0.12.0)
+
+Card fraud cases are **inbound** (the suite cannot mint one). `listCardFraudCases` can return rows; get and mark then use the first Pending case. Two separate problems sit on top of that:
+
+1. **Expired / already-decided cases** — listed rows are often `Expired` with `decision: Pending`. Mark-as-fraud then returns **410 Gone**. Treated as unavailable, not a failed request.
+2. **Spec vs 200 body** — `FraudCaseCardActivityType` marks `updatedAt` **required**, but the sandbox **omits** it on Pending activities. Typed clients fail while **deserializing** a 200, not while sending the request. Get/mark also need an id from list, so they are blocked on the same defect in languages that cannot parse the list.
+
+This is a spec defect owned by `unit-openapi`. Fix: make `FraudCaseCardActivityType.updatedAt` optional. Then drop the Java abort and the ruby/python raw-body reads.
+
+| Node | Java | Ruby | Python |
+| --- | --- | --- | --- |
+| **Runs** list/get (axios does not validate `updatedAt`). **Abort** on mark when the sandbox returns 410/4xx for an expired or already-decided case. | **Abort.** Gson `JsonSyntaxException` on the 200 (`updatedAt` required, omitted). `listCasesOrSkip` returns null; get/mark never run. | **Runs (raw)** for list/get (`debug_return_type: 'String'`). Mark uses the raw list, then **aborts** on 410/4xx. | **Runs (raw)** for list/get (`*_without_preload_content`). Mark uses the raw list, then **aborts** on 410/4xx (and on typed-response validation). |
 
 ### `listAuthorizedUsers` / `getAuthorizedUser` (new in spec 0.11.0)
 

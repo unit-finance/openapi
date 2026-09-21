@@ -73,6 +73,10 @@ import com.unit.finance.sdk.model.CreateIndividualApplicationData;
 import com.unit.finance.sdk.model.CreateIndividualApplicationDataAttributes;
 import com.unit.finance.sdk.model.CreateIndividualApplicationRequest;
 import com.unit.finance.sdk.model.CreatePaymentRequest;
+import com.unit.finance.sdk.model.CreatePolicyData;
+import com.unit.finance.sdk.model.CreatePolicyDataAttributes;
+import com.unit.finance.sdk.model.CreatePolicyDataRelationships;
+import com.unit.finance.sdk.model.CreatePolicyRequest;
 import com.unit.finance.sdk.model.CreateRecurringCreditBookPaymentData;
 import com.unit.finance.sdk.model.CreateRecurringCreditBookPaymentDataAttributes;
 import com.unit.finance.sdk.model.CreateRecurringCreditBookPaymentRequest;
@@ -96,6 +100,9 @@ import com.unit.finance.sdk.model.GenerateCashDepositBarcodeRequest;
 import com.unit.finance.sdk.model.GetExpectedACHCompletionDateData;
 import com.unit.finance.sdk.model.GetExpectedACHCompletionDateDataAttributes;
 import com.unit.finance.sdk.model.GetExpectedAchCompletionDateRequest;
+import com.unit.finance.sdk.model.MarkCardFraudCaseAsFraudData;
+import com.unit.finance.sdk.model.MarkCardFraudCaseAsFraudDataAttributes;
+import com.unit.finance.sdk.model.MarkCardFraudCaseAsFraudRequest;
 import com.unit.finance.sdk.model.OccupationType;
 import com.unit.finance.sdk.model.OfficerRequestType;
 import com.unit.finance.sdk.model.PhoneType;
@@ -147,6 +154,9 @@ import com.unit.finance.sdk.model.UpdateDepositAccountData;
 import com.unit.finance.sdk.model.UpdateDepositAccountDataAttributes;
 import com.unit.finance.sdk.model.UpdateDepositAccountRequest;
 import com.unit.finance.sdk.model.UpdatePaymentRequest;
+import com.unit.finance.sdk.model.UpdatePolicyData;
+import com.unit.finance.sdk.model.UpdatePolicyDataAttributes;
+import com.unit.finance.sdk.model.UpdatePolicyRequest;
 import com.unit.finance.sdk.model.UpdateTagsData;
 import com.unit.finance.sdk.model.UpdateTagsDataAttributes;
 import com.unit.finance.sdk.model.UpdateTagsRequest;
@@ -948,5 +958,57 @@ final class Fixtures {
             .type(SendDrawdownPaymentData.TypeEnum.SEND_WIRE_DRAWDOWN)
             .attributes(attributes);
     return new SendDrawdownPaymentRequest().data(data);
+  }
+
+  // CreatePolicy requires email/message outreach settings and a white-label
+  // theme that a plain sandbox org does not necessarily have. Tests pass
+  // placeholder relationship ids and treat a 4xx/5xx as feature-unavailable.
+  static CreatePolicyRequest createPolicyRequest() {
+    return createPolicyRequest("0", "0", "0");
+  }
+
+  static CreatePolicyRequest createPolicyRequest(
+      String emailOutreachSettingsId, String messageOutreachSettingsId, String whiteLabelThemeId) {
+    CreatePolicyDataAttributes attributes =
+        new CreatePolicyDataAttributes()
+            .contactPhone(usPhone())
+            .contactUrl("https://sdk-test.unit.co")
+            .activitiesLookBackPeriodHours(72)
+            .caseExpirationPeriodHours(72)
+            .numberOfCardActivities(3)
+            .idempotencyKey(RUN + "-fraud-policy-" + UUID.randomUUID().toString().substring(0, 8));
+    CreatePolicyDataRelationships relationships =
+        new CreatePolicyDataRelationships()
+            .emailOutreachSettings(relationship("emailOutreachSettings", emailOutreachSettingsId))
+            .messageOutreachSettings(
+                relationship("messageOutreachSettings", messageOutreachSettingsId))
+            .whiteLabelTheme(relationship("whiteLabelTheme", whiteLabelThemeId));
+    CreatePolicyData data =
+        new CreatePolicyData()
+            .type(CreatePolicyData.TypeEnum.CARD_FRAUD_OUTREACH_POLICY)
+            .attributes(attributes)
+            .relationships(relationships);
+    return new CreatePolicyRequest().data(data);
+  }
+
+  static UpdatePolicyRequest updatePolicyRequest() {
+    UpdatePolicyDataAttributes attributes =
+        new UpdatePolicyDataAttributes().contactUrl("https://sdk-test-updated.unit.co");
+    UpdatePolicyData data =
+        new UpdatePolicyData()
+            .type(UpdatePolicyData.TypeEnum.CARD_FRAUD_OUTREACH_POLICY)
+            .attributes(attributes);
+    return new UpdatePolicyRequest().data(data);
+  }
+
+  static MarkCardFraudCaseAsFraudRequest markCardFraudCaseAsFraudRequest(
+      List<Integer> fraudulentActivityIds) {
+    MarkCardFraudCaseAsFraudDataAttributes attributes =
+        new MarkCardFraudCaseAsFraudDataAttributes().fraudulentActivityIds(fraudulentActivityIds);
+    MarkCardFraudCaseAsFraudData data =
+        new MarkCardFraudCaseAsFraudData()
+            .type(MarkCardFraudCaseAsFraudData.TypeEnum.MARK_AS_FRAUD_REQUEST)
+            .attributes(attributes);
+    return new MarkCardFraudCaseAsFraudRequest().data(data);
   }
 }
