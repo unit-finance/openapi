@@ -8,6 +8,7 @@ import com.unit.finance.sdk.api.ApplicationDocumentsApi;
 import com.unit.finance.sdk.api.ApplicationsApi;
 import com.unit.finance.sdk.api.AuthorizedUsersApi;
 import com.unit.finance.sdk.api.CardFraudOutreachApi;
+import com.unit.finance.sdk.api.CardHolderApiTokensApi;
 import com.unit.finance.sdk.api.CardsApi;
 import com.unit.finance.sdk.api.CheckDepositsApi;
 import com.unit.finance.sdk.api.CounterpartiesApi;
@@ -224,6 +225,11 @@ final class ApiSupport {
   /** Construct a {@code CardFraudOutreachApi} bound to the sandbox. */
   static CardFraudOutreachApi buildCardFraudOutreachApi() {
     return new CardFraudOutreachApi(buildApiClient());
+  }
+
+  /** Construct a {@code CardHolderApiTokensApi} bound to the sandbox. */
+  static CardHolderApiTokensApi buildCardHolderApiTokensApi() {
+    return new CardHolderApiTokensApi(buildApiClient());
   }
 
   /** Block the current thread for sandbox polling (mirrors Node {@code sleep}). */
