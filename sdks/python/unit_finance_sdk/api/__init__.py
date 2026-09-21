@@ -6,6 +6,7 @@ from unit_finance_sdk.api.application_documents_api import ApplicationDocumentsA
 from unit_finance_sdk.api.applications_api import ApplicationsApi
 from unit_finance_sdk.api.authorized_users_api import AuthorizedUsersApi
 from unit_finance_sdk.api.card_fraud_outreach_api import CardFraudOutreachApi
+from unit_finance_sdk.api.card_holder_api_tokens_api import CardHolderAPITokensApi
 from unit_finance_sdk.api.cards_api import CardsApi
 from unit_finance_sdk.api.check_deposits_api import CheckDepositsApi
 from unit_finance_sdk.api.counterparties_api import CounterpartiesApi

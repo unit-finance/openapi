@@ -1,0 +1,30 @@
+# CreateCardholderTokenVerification201ResponseData
+
+
+## Properties
+
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**type** | **str** |  | [optional] 
+**attributes** | [**CreateCardholderTokenVerification201ResponseDataAttributes**](CreateCardholderTokenVerification201ResponseDataAttributes.md) |  | [optional] 
+
+## Example
+
+```python
+from unit_finance_sdk.models.create_cardholder_token_verification201_response_data import CreateCardholderTokenVerification201ResponseData
+
+# TODO update the JSON string below
+json = "{}"
+# create an instance of CreateCardholderTokenVerification201ResponseData from a JSON string
+create_cardholder_token_verification201_response_data_instance = CreateCardholderTokenVerification201ResponseData.from_json(json)
+# print the JSON string representation of the object
+print(CreateCardholderTokenVerification201ResponseData.to_json())
+
+# convert the object into a dict
+create_cardholder_token_verification201_response_data_dict = create_cardholder_token_verification201_response_data_instance.to_dict()
+# create an instance of CreateCardholderTokenVerification201ResponseData from a dict
+create_cardholder_token_verification201_response_data_from_dict = CreateCardholderTokenVerification201ResponseData.from_dict(create_cardholder_token_verification201_response_data_dict)
+```
+[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+
+
