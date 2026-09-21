@@ -41,6 +41,9 @@ docs/ApplicationsApi.md
 docs/ArchiveCustomerData.md
 docs/ArchiveCustomerDataAttributes.md
 docs/ArchiveCustomerRequest.md
+docs/AuthorizationCardFraudCase.md
+docs/AuthorizationCardFraudCaseAttributes.md
+docs/AuthorizationCardFraudCaseRelationships.md
 docs/AuthorizedUserType.md
 docs/AuthorizedUsersApi.md
 docs/BatchRelease.md
@@ -81,6 +84,10 @@ docs/CancelApplicationDataAttributes.md
 docs/CancelApplicationRequest.md
 docs/CancelPayment200Response.md
 docs/CancelPayment200ResponseData.md
+docs/CardFraudOutreachApi.md
+docs/CardFraudOutreachPolicy.md
+docs/CardFraudOutreachPolicyAttributes.md
+docs/CardFraudOutreachPolicyRelationships.md
 docs/CardReversalTransaction.md
 docs/CardReversalTransactionAttributes.md
 docs/CardReversalTransactionRelationships.md
@@ -226,6 +233,11 @@ docs/CreateIndividualVirtualDebitCardRequest.md
 docs/CreatePayment201Response.md
 docs/CreatePayment201ResponseData.md
 docs/CreatePaymentRequest.md
+docs/CreatePolicy201Response.md
+docs/CreatePolicyData.md
+docs/CreatePolicyDataAttributes.md
+docs/CreatePolicyDataRelationships.md
+docs/CreatePolicyRequest.md
 docs/CreateRecurringCreditACHPaymentData.md
 docs/CreateRecurringCreditACHPaymentDataAttributes.md
 docs/CreateRecurringCreditACHPaymentRequest.md
@@ -271,6 +283,7 @@ docs/FeeReversalTransaction.md
 docs/FeeReversalTransactionRelationships.md
 docs/FeeTransaction.md
 docs/FeesApi.md
+docs/FraudCaseCardActivityType.md
 docs/FreezeAccountRequest.md
 docs/FreezeCardData.md
 docs/FreezeCardDataAttributes.md
@@ -297,6 +310,7 @@ docs/GetAvailableDepositProducts200Response.md
 docs/GetAvailableDepositProducts200ResponseDataInner.md
 docs/GetAvailableDepositProducts200ResponseDataInnerAttributes.md
 docs/GetCard200Response.md
+docs/GetCardFraudCaseById200Response.md
 docs/GetCardPinStatus200Response.md
 docs/GetCheckDeposit200Response.md
 docs/GetCounterpartyBalance200Response.md
@@ -329,6 +343,8 @@ docs/ListAccounts200Response.md
 docs/ListAccounts200ResponseDataInner.md
 docs/ListApplicationDocuments200Response.md
 docs/ListAuthorizedUsers200Response.md
+docs/ListCardFraudCases200Response.md
+docs/ListCardFraudCases200ResponseDataInner.md
 docs/ListCards200Response.md
 docs/ListCards200ResponseDataInner.md
 docs/ListCheckDeposits200Response.md
@@ -343,6 +359,9 @@ docs/ListStoreLocations200Response.md
 docs/ListTransactions200Response.md
 docs/ListTransactions200ResponseIncludedInner.md
 docs/ListWireDrawdowns200Response.md
+docs/MarkCardFraudCaseAsFraudData.md
+docs/MarkCardFraudCaseAsFraudDataAttributes.md
+docs/MarkCardFraudCaseAsFraudRequest.md
 docs/Meta.md
 docs/MetaPagination.md
 docs/NegativeBalanceCoverageTransaction.md
@@ -446,6 +465,7 @@ docs/StoreLocationAttributes.md
 docs/ToManyRelationship.md
 docs/TotalAccruedInterestType.md
 docs/Transaction.md
+docs/TransactionCardFraudCase.md
 docs/TransactionsApi.md
 docs/UpdateACHPaymentData.md
 docs/UpdateACHPaymentDataAttributes.md
@@ -511,6 +531,9 @@ docs/UpdateIndividualCustomerRequest.md
 docs/UpdatePayment200Response.md
 docs/UpdatePayment200ResponseData.md
 docs/UpdatePaymentRequest.md
+docs/UpdatePolicyData.md
+docs/UpdatePolicyDataAttributes.md
+docs/UpdatePolicyRequest.md
 docs/UpdateRealtimeReceivedPaymentData.md
 docs/UpdateRealtimeReceivedPaymentRequest.md
 docs/UpdateReceivedPayment200Response.md
@@ -546,6 +569,7 @@ lib/unit_finance_sdk/api/accounts_api.rb
 lib/unit_finance_sdk/api/application_documents_api.rb
 lib/unit_finance_sdk/api/applications_api.rb
 lib/unit_finance_sdk/api/authorized_users_api.rb
+lib/unit_finance_sdk/api/card_fraud_outreach_api.rb
 lib/unit_finance_sdk/api/cards_api.rb
 lib/unit_finance_sdk/api/check_deposits_api.rb
 lib/unit_finance_sdk/api/counterparties_api.rb
@@ -591,6 +615,9 @@ lib/unit_finance_sdk/models/archive_customer_request.rb
 lib/unit_finance_sdk/models/atm_transaction.rb
 lib/unit_finance_sdk/models/atm_transaction_attributes.rb
 lib/unit_finance_sdk/models/atm_transaction_relationships.rb
+lib/unit_finance_sdk/models/authorization_card_fraud_case.rb
+lib/unit_finance_sdk/models/authorization_card_fraud_case_attributes.rb
+lib/unit_finance_sdk/models/authorization_card_fraud_case_relationships.rb
 lib/unit_finance_sdk/models/authorized_user_type.rb
 lib/unit_finance_sdk/models/batch_release.rb
 lib/unit_finance_sdk/models/batch_release_attributes.rb
@@ -630,6 +657,9 @@ lib/unit_finance_sdk/models/cancel_application_data_attributes.rb
 lib/unit_finance_sdk/models/cancel_application_request.rb
 lib/unit_finance_sdk/models/cancel_payment200_response.rb
 lib/unit_finance_sdk/models/cancel_payment200_response_data.rb
+lib/unit_finance_sdk/models/card_fraud_outreach_policy.rb
+lib/unit_finance_sdk/models/card_fraud_outreach_policy_attributes.rb
+lib/unit_finance_sdk/models/card_fraud_outreach_policy_relationships.rb
 lib/unit_finance_sdk/models/card_reversal_transaction.rb
 lib/unit_finance_sdk/models/card_reversal_transaction_attributes.rb
 lib/unit_finance_sdk/models/card_reversal_transaction_relationships.rb
@@ -772,6 +802,11 @@ lib/unit_finance_sdk/models/create_individual_virtual_debit_card_request.rb
 lib/unit_finance_sdk/models/create_payment201_response.rb
 lib/unit_finance_sdk/models/create_payment201_response_data.rb
 lib/unit_finance_sdk/models/create_payment_request.rb
+lib/unit_finance_sdk/models/create_policy201_response.rb
+lib/unit_finance_sdk/models/create_policy_data.rb
+lib/unit_finance_sdk/models/create_policy_data_attributes.rb
+lib/unit_finance_sdk/models/create_policy_data_relationships.rb
+lib/unit_finance_sdk/models/create_policy_request.rb
 lib/unit_finance_sdk/models/create_recurring_credit_ach_payment_data.rb
 lib/unit_finance_sdk/models/create_recurring_credit_ach_payment_data_attributes.rb
 lib/unit_finance_sdk/models/create_recurring_credit_ach_payment_request.rb
@@ -815,6 +850,7 @@ lib/unit_finance_sdk/models/fee_reversal_relationships.rb
 lib/unit_finance_sdk/models/fee_reversal_transaction.rb
 lib/unit_finance_sdk/models/fee_reversal_transaction_relationships.rb
 lib/unit_finance_sdk/models/fee_transaction.rb
+lib/unit_finance_sdk/models/fraud_case_card_activity_type.rb
 lib/unit_finance_sdk/models/freeze_account_request.rb
 lib/unit_finance_sdk/models/freeze_card_data.rb
 lib/unit_finance_sdk/models/freeze_card_data_attributes.rb
@@ -841,6 +877,7 @@ lib/unit_finance_sdk/models/get_available_deposit_products200_response.rb
 lib/unit_finance_sdk/models/get_available_deposit_products200_response_data_inner.rb
 lib/unit_finance_sdk/models/get_available_deposit_products200_response_data_inner_attributes.rb
 lib/unit_finance_sdk/models/get_card200_response.rb
+lib/unit_finance_sdk/models/get_card_fraud_case_by_id200_response.rb
 lib/unit_finance_sdk/models/get_card_pin_status200_response.rb
 lib/unit_finance_sdk/models/get_check_deposit200_response.rb
 lib/unit_finance_sdk/models/get_counterparty_balance200_response.rb
@@ -873,6 +910,8 @@ lib/unit_finance_sdk/models/list_accounts200_response.rb
 lib/unit_finance_sdk/models/list_accounts200_response_data_inner.rb
 lib/unit_finance_sdk/models/list_application_documents200_response.rb
 lib/unit_finance_sdk/models/list_authorized_users200_response.rb
+lib/unit_finance_sdk/models/list_card_fraud_cases200_response.rb
+lib/unit_finance_sdk/models/list_card_fraud_cases200_response_data_inner.rb
 lib/unit_finance_sdk/models/list_cards200_response.rb
 lib/unit_finance_sdk/models/list_cards200_response_data_inner.rb
 lib/unit_finance_sdk/models/list_check_deposits200_response.rb
@@ -887,6 +926,9 @@ lib/unit_finance_sdk/models/list_store_locations200_response.rb
 lib/unit_finance_sdk/models/list_transactions200_response.rb
 lib/unit_finance_sdk/models/list_transactions200_response_included_inner.rb
 lib/unit_finance_sdk/models/list_wire_drawdowns200_response.rb
+lib/unit_finance_sdk/models/mark_card_fraud_case_as_fraud_data.rb
+lib/unit_finance_sdk/models/mark_card_fraud_case_as_fraud_data_attributes.rb
+lib/unit_finance_sdk/models/mark_card_fraud_case_as_fraud_request.rb
 lib/unit_finance_sdk/models/meta.rb
 lib/unit_finance_sdk/models/meta_pagination.rb
 lib/unit_finance_sdk/models/negative_balance_coverage_transaction.rb
@@ -989,6 +1031,7 @@ lib/unit_finance_sdk/models/store_location_attributes.rb
 lib/unit_finance_sdk/models/to_many_relationship.rb
 lib/unit_finance_sdk/models/total_accrued_interest_type.rb
 lib/unit_finance_sdk/models/transaction.rb
+lib/unit_finance_sdk/models/transaction_card_fraud_case.rb
 lib/unit_finance_sdk/models/update_account_request.rb
 lib/unit_finance_sdk/models/update_ach_payment_data.rb
 lib/unit_finance_sdk/models/update_ach_payment_data_attributes.rb
@@ -1053,6 +1096,9 @@ lib/unit_finance_sdk/models/update_individual_customer_request.rb
 lib/unit_finance_sdk/models/update_payment200_response.rb
 lib/unit_finance_sdk/models/update_payment200_response_data.rb
 lib/unit_finance_sdk/models/update_payment_request.rb
+lib/unit_finance_sdk/models/update_policy_data.rb
+lib/unit_finance_sdk/models/update_policy_data_attributes.rb
+lib/unit_finance_sdk/models/update_policy_request.rb
 lib/unit_finance_sdk/models/update_realtime_received_payment_data.rb
 lib/unit_finance_sdk/models/update_realtime_received_payment_request.rb
 lib/unit_finance_sdk/models/update_received_payment200_response.rb

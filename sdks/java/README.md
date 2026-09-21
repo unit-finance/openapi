@@ -1,7 +1,7 @@
 # unit-java-sdk
 
 Unit API
-- API version: 0.11.0
+- API version: 0.12.0
   - Generator version: 7.22.0
 
 JSON:API-compliant banking API.
@@ -154,6 +154,13 @@ Class | Method | HTTP request | Description
 *AuthorizedUsersApi* | [**getAuthorizedUser**](docs/AuthorizedUsersApi.md#getAuthorizedUser) | **GET** /customers/{customerId}/authorized-users/{authorizedUserId} | Get an authorized user
 *AuthorizedUsersApi* | [**listAuthorizedUsers**](docs/AuthorizedUsersApi.md#listAuthorizedUsers) | **GET** /customers/{customerId}/authorized-users | List authorized users
 *AuthorizedUsersApi* | [**removeAuthorizedUsers**](docs/AuthorizedUsersApi.md#removeAuthorizedUsers) | **DELETE** /customers/{customerId}/authorized-users | Remove authorized users
+*CardFraudOutreachApi* | [**createPolicy**](docs/CardFraudOutreachApi.md#createPolicy) | **POST** /fraud-outreach-policies | Create a card fraud outreach policy
+*CardFraudOutreachApi* | [**getCardFraudCaseById**](docs/CardFraudOutreachApi.md#getCardFraudCaseById) | **GET** /card-fraud-cases/{id} | Get a card fraud case by id
+*CardFraudOutreachApi* | [**getPolicyById**](docs/CardFraudOutreachApi.md#getPolicyById) | **GET** /fraud-outreach-policies/{policyId} | Get a card fraud outreach policy by id
+*CardFraudOutreachApi* | [**listCardFraudCases**](docs/CardFraudOutreachApi.md#listCardFraudCases) | **GET** /card-fraud-cases | List card fraud cases
+*CardFraudOutreachApi* | [**markCardFraudCaseAsFraud**](docs/CardFraudOutreachApi.md#markCardFraudCaseAsFraud) | **POST** /card-fraud-cases/{id}/fraud | Mark a card fraud case as fraud
+*CardFraudOutreachApi* | [**markCardFraudCaseAsNoFraud**](docs/CardFraudOutreachApi.md#markCardFraudCaseAsNoFraud) | **POST** /card-fraud-cases/{id}/no-fraud | Mark a card fraud case as no fraud
+*CardFraudOutreachApi* | [**updatePolicy**](docs/CardFraudOutreachApi.md#updatePolicy) | **PATCH** /fraud-outreach-policies/{policyId} | Update a card fraud outreach policy
 *CardsApi* | [**closeCard**](docs/CardsApi.md#closeCard) | **POST** /cards/{cardId}/close | Close a card
 *CardsApi* | [**createCard**](docs/CardsApi.md#createCard) | **POST** /cards | Create a card
 *CardsApi* | [**freezeCard**](docs/CardsApi.md#freezeCard) | **POST** /cards/{cardId}/freeze | Freeze a card
@@ -255,6 +262,9 @@ Class | Method | HTTP request | Description
  - [ArchiveCustomerData](docs/ArchiveCustomerData.md)
  - [ArchiveCustomerDataAttributes](docs/ArchiveCustomerDataAttributes.md)
  - [ArchiveCustomerRequest](docs/ArchiveCustomerRequest.md)
+ - [AuthorizationCardFraudCase](docs/AuthorizationCardFraudCase.md)
+ - [AuthorizationCardFraudCaseAttributes](docs/AuthorizationCardFraudCaseAttributes.md)
+ - [AuthorizationCardFraudCaseRelationships](docs/AuthorizationCardFraudCaseRelationships.md)
  - [AuthorizedUserType](docs/AuthorizedUserType.md)
  - [BatchRelease](docs/BatchRelease.md)
  - [BatchReleaseAttributes](docs/BatchReleaseAttributes.md)
@@ -294,6 +304,9 @@ Class | Method | HTTP request | Description
  - [CancelApplicationRequest](docs/CancelApplicationRequest.md)
  - [CancelPayment200Response](docs/CancelPayment200Response.md)
  - [CancelPayment200ResponseData](docs/CancelPayment200ResponseData.md)
+ - [CardFraudOutreachPolicy](docs/CardFraudOutreachPolicy.md)
+ - [CardFraudOutreachPolicyAttributes](docs/CardFraudOutreachPolicyAttributes.md)
+ - [CardFraudOutreachPolicyRelationships](docs/CardFraudOutreachPolicyRelationships.md)
  - [CardReversalTransaction](docs/CardReversalTransaction.md)
  - [CardReversalTransactionAttributes](docs/CardReversalTransactionAttributes.md)
  - [CardReversalTransactionRelationships](docs/CardReversalTransactionRelationships.md)
@@ -436,6 +449,11 @@ Class | Method | HTTP request | Description
  - [CreatePayment201Response](docs/CreatePayment201Response.md)
  - [CreatePayment201ResponseData](docs/CreatePayment201ResponseData.md)
  - [CreatePaymentRequest](docs/CreatePaymentRequest.md)
+ - [CreatePolicy201Response](docs/CreatePolicy201Response.md)
+ - [CreatePolicyData](docs/CreatePolicyData.md)
+ - [CreatePolicyDataAttributes](docs/CreatePolicyDataAttributes.md)
+ - [CreatePolicyDataRelationships](docs/CreatePolicyDataRelationships.md)
+ - [CreatePolicyRequest](docs/CreatePolicyRequest.md)
  - [CreateRecurringCreditACHPaymentData](docs/CreateRecurringCreditACHPaymentData.md)
  - [CreateRecurringCreditACHPaymentDataAttributes](docs/CreateRecurringCreditACHPaymentDataAttributes.md)
  - [CreateRecurringCreditACHPaymentRequest](docs/CreateRecurringCreditACHPaymentRequest.md)
@@ -479,6 +497,7 @@ Class | Method | HTTP request | Description
  - [FeeReversalTransaction](docs/FeeReversalTransaction.md)
  - [FeeReversalTransactionRelationships](docs/FeeReversalTransactionRelationships.md)
  - [FeeTransaction](docs/FeeTransaction.md)
+ - [FraudCaseCardActivityType](docs/FraudCaseCardActivityType.md)
  - [FreezeAccountRequest](docs/FreezeAccountRequest.md)
  - [FreezeCardData](docs/FreezeCardData.md)
  - [FreezeCardDataAttributes](docs/FreezeCardDataAttributes.md)
@@ -505,6 +524,7 @@ Class | Method | HTTP request | Description
  - [GetAvailableDepositProducts200ResponseDataInner](docs/GetAvailableDepositProducts200ResponseDataInner.md)
  - [GetAvailableDepositProducts200ResponseDataInnerAttributes](docs/GetAvailableDepositProducts200ResponseDataInnerAttributes.md)
  - [GetCard200Response](docs/GetCard200Response.md)
+ - [GetCardFraudCaseById200Response](docs/GetCardFraudCaseById200Response.md)
  - [GetCardPinStatus200Response](docs/GetCardPinStatus200Response.md)
  - [GetCheckDeposit200Response](docs/GetCheckDeposit200Response.md)
  - [GetCounterpartyBalance200Response](docs/GetCounterpartyBalance200Response.md)
@@ -537,6 +557,8 @@ Class | Method | HTTP request | Description
  - [ListAccounts200ResponseDataInner](docs/ListAccounts200ResponseDataInner.md)
  - [ListApplicationDocuments200Response](docs/ListApplicationDocuments200Response.md)
  - [ListAuthorizedUsers200Response](docs/ListAuthorizedUsers200Response.md)
+ - [ListCardFraudCases200Response](docs/ListCardFraudCases200Response.md)
+ - [ListCardFraudCases200ResponseDataInner](docs/ListCardFraudCases200ResponseDataInner.md)
  - [ListCards200Response](docs/ListCards200Response.md)
  - [ListCards200ResponseDataInner](docs/ListCards200ResponseDataInner.md)
  - [ListCheckDeposits200Response](docs/ListCheckDeposits200Response.md)
@@ -551,6 +573,9 @@ Class | Method | HTTP request | Description
  - [ListTransactions200Response](docs/ListTransactions200Response.md)
  - [ListTransactions200ResponseIncludedInner](docs/ListTransactions200ResponseIncludedInner.md)
  - [ListWireDrawdowns200Response](docs/ListWireDrawdowns200Response.md)
+ - [MarkCardFraudCaseAsFraudData](docs/MarkCardFraudCaseAsFraudData.md)
+ - [MarkCardFraudCaseAsFraudDataAttributes](docs/MarkCardFraudCaseAsFraudDataAttributes.md)
+ - [MarkCardFraudCaseAsFraudRequest](docs/MarkCardFraudCaseAsFraudRequest.md)
  - [Meta](docs/Meta.md)
  - [MetaPagination](docs/MetaPagination.md)
  - [NegativeBalanceCoverageTransaction](docs/NegativeBalanceCoverageTransaction.md)
@@ -653,6 +678,7 @@ Class | Method | HTTP request | Description
  - [ToManyRelationship](docs/ToManyRelationship.md)
  - [TotalAccruedInterestType](docs/TotalAccruedInterestType.md)
  - [Transaction](docs/Transaction.md)
+ - [TransactionCardFraudCase](docs/TransactionCardFraudCase.md)
  - [UpdateACHPaymentData](docs/UpdateACHPaymentData.md)
  - [UpdateACHPaymentDataAttributes](docs/UpdateACHPaymentDataAttributes.md)
  - [UpdateACHPaymentRequest](docs/UpdateACHPaymentRequest.md)
@@ -717,6 +743,9 @@ Class | Method | HTTP request | Description
  - [UpdatePayment200Response](docs/UpdatePayment200Response.md)
  - [UpdatePayment200ResponseData](docs/UpdatePayment200ResponseData.md)
  - [UpdatePaymentRequest](docs/UpdatePaymentRequest.md)
+ - [UpdatePolicyData](docs/UpdatePolicyData.md)
+ - [UpdatePolicyDataAttributes](docs/UpdatePolicyDataAttributes.md)
+ - [UpdatePolicyRequest](docs/UpdatePolicyRequest.md)
  - [UpdateRealtimeReceivedPaymentData](docs/UpdateRealtimeReceivedPaymentData.md)
  - [UpdateRealtimeReceivedPaymentRequest](docs/UpdateRealtimeReceivedPaymentRequest.md)
  - [UpdateReceivedPayment200Response](docs/UpdateReceivedPayment200Response.md)

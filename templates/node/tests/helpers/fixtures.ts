@@ -4,6 +4,7 @@ import type {
 	AuthorizedUserType,
 	CreateCheckDepositRequest,
 	CreateCheckDepositSendLinkRequest,
+	CreatePolicyRequest,
 	UpdateCheckDepositRequest,
 	CreateBusinessApplicationRequest,
 	CreateBusinessDebitCardRequest,
@@ -19,8 +20,10 @@ import type {
 	UpdateBusinessCustomerOfficerRequest,
 	UpdateCardRequest,
 	UpdateCounterpartyRequest,
+	MarkCardFraudCaseAsFraudRequest,
 	RemoveAuthorizedUsersRequest,
 	UpdateCustomerRequest,
+	UpdatePolicyRequest,
 } from "../..";
 import {
 	BusinessAnnualRevenueType,
@@ -759,6 +762,70 @@ export function buildRemoveAuthorizedUsersRequest(
 		data: {
 			type: "removeAuthorizedUsers",
 			attributes: { authorizedUsersEmails: emails },
+		},
+	};
+}
+
+// CreatePolicy requires email/message outreach settings and a white-label
+// theme that a plain sandbox org does not necessarily have. Tests pass
+// placeholder relationship ids and treat a 4xx/5xx as feature-unavailable.
+export function buildCreatePolicyRequest(
+	emailOutreachSettingsId = "0",
+	messageOutreachSettingsId = "0",
+	whiteLabelThemeId = "0",
+): CreatePolicyRequest {
+	return {
+		data: {
+			type: "cardFraudOutreachPolicy",
+			attributes: {
+				contactPhone: usPhone(),
+				contactUrl: "https://sdk-test.unit.co",
+				activitiesLookBackPeriodHours: 72,
+				caseExpirationPeriodHours: 72,
+				numberOfCardActivities: 3,
+				idempotencyKey: `${TEST_RUN_ID}-fraud-policy-${Math.random()
+					.toString(36)
+					.slice(2, 10)}`,
+			},
+			relationships: {
+				emailOutreachSettings: {
+					data: {
+						type: "emailOutreachSettings",
+						id: emailOutreachSettingsId,
+					},
+				},
+				messageOutreachSettings: {
+					data: {
+						type: "messageOutreachSettings",
+						id: messageOutreachSettingsId,
+					},
+				},
+				whiteLabelTheme: {
+					data: { type: "whiteLabelTheme", id: whiteLabelThemeId },
+				},
+			},
+		},
+	};
+}
+
+export function buildUpdatePolicyRequest(): UpdatePolicyRequest {
+	return {
+		data: {
+			type: "cardFraudOutreachPolicy",
+			attributes: {
+				contactUrl: "https://sdk-test-updated.unit.co",
+			},
+		},
+	};
+}
+
+export function buildMarkCardFraudCaseAsFraudRequest(
+	fraudulentActivityIds: number[],
+): MarkCardFraudCaseAsFraudRequest {
+	return {
+		data: {
+			type: "markAsFraudRequest",
+			attributes: { fraudulentActivityIds },
 		},
 	};
 }

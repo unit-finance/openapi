@@ -38,6 +38,9 @@ docs/ApplicationsApi.md
 docs/ArchiveCustomerData.md
 docs/ArchiveCustomerDataAttributes.md
 docs/ArchiveCustomerRequest.md
+docs/AuthorizationCardFraudCase.md
+docs/AuthorizationCardFraudCaseAttributes.md
+docs/AuthorizationCardFraudCaseRelationships.md
 docs/AuthorizedUserType.md
 docs/AuthorizedUsersApi.md
 docs/BatchRelease.md
@@ -78,6 +81,10 @@ docs/CancelApplicationDataAttributes.md
 docs/CancelApplicationRequest.md
 docs/CancelPayment200Response.md
 docs/CancelPayment200ResponseData.md
+docs/CardFraudOutreachApi.md
+docs/CardFraudOutreachPolicy.md
+docs/CardFraudOutreachPolicyAttributes.md
+docs/CardFraudOutreachPolicyRelationships.md
 docs/CardReversalTransaction.md
 docs/CardReversalTransactionAttributes.md
 docs/CardReversalTransactionRelationships.md
@@ -223,6 +230,11 @@ docs/CreateIndividualVirtualDebitCardRequest.md
 docs/CreatePayment201Response.md
 docs/CreatePayment201ResponseData.md
 docs/CreatePaymentRequest.md
+docs/CreatePolicy201Response.md
+docs/CreatePolicyData.md
+docs/CreatePolicyDataAttributes.md
+docs/CreatePolicyDataRelationships.md
+docs/CreatePolicyRequest.md
 docs/CreateRecurringCreditACHPaymentData.md
 docs/CreateRecurringCreditACHPaymentDataAttributes.md
 docs/CreateRecurringCreditACHPaymentRequest.md
@@ -268,6 +280,7 @@ docs/FeeReversalTransaction.md
 docs/FeeReversalTransactionRelationships.md
 docs/FeeTransaction.md
 docs/FeesApi.md
+docs/FraudCaseCardActivityType.md
 docs/FreezeAccountRequest.md
 docs/FreezeCardData.md
 docs/FreezeCardDataAttributes.md
@@ -294,6 +307,7 @@ docs/GetAvailableDepositProducts200Response.md
 docs/GetAvailableDepositProducts200ResponseDataInner.md
 docs/GetAvailableDepositProducts200ResponseDataInnerAttributes.md
 docs/GetCard200Response.md
+docs/GetCardFraudCaseById200Response.md
 docs/GetCardPinStatus200Response.md
 docs/GetCheckDeposit200Response.md
 docs/GetCounterpartyBalance200Response.md
@@ -326,6 +340,8 @@ docs/ListAccounts200Response.md
 docs/ListAccounts200ResponseDataInner.md
 docs/ListApplicationDocuments200Response.md
 docs/ListAuthorizedUsers200Response.md
+docs/ListCardFraudCases200Response.md
+docs/ListCardFraudCases200ResponseDataInner.md
 docs/ListCards200Response.md
 docs/ListCards200ResponseDataInner.md
 docs/ListCheckDeposits200Response.md
@@ -340,6 +356,9 @@ docs/ListStoreLocations200Response.md
 docs/ListTransactions200Response.md
 docs/ListTransactions200ResponseIncludedInner.md
 docs/ListWireDrawdowns200Response.md
+docs/MarkCardFraudCaseAsFraudData.md
+docs/MarkCardFraudCaseAsFraudDataAttributes.md
+docs/MarkCardFraudCaseAsFraudRequest.md
 docs/Meta.md
 docs/MetaPagination.md
 docs/NegativeBalanceCoverageTransaction.md
@@ -443,6 +462,7 @@ docs/StoreLocationAttributes.md
 docs/ToManyRelationship.md
 docs/TotalAccruedInterestType.md
 docs/Transaction.md
+docs/TransactionCardFraudCase.md
 docs/TransactionsApi.md
 docs/UpdateACHPaymentData.md
 docs/UpdateACHPaymentDataAttributes.md
@@ -508,6 +528,9 @@ docs/UpdateIndividualCustomerRequest.md
 docs/UpdatePayment200Response.md
 docs/UpdatePayment200ResponseData.md
 docs/UpdatePaymentRequest.md
+docs/UpdatePolicyData.md
+docs/UpdatePolicyDataAttributes.md
+docs/UpdatePolicyRequest.md
 docs/UpdateRealtimeReceivedPaymentData.md
 docs/UpdateRealtimeReceivedPaymentRequest.md
 docs/UpdateReceivedPayment200Response.md
@@ -556,6 +579,7 @@ src/main/java/com/unit/finance/sdk/api/AccountsApi.java
 src/main/java/com/unit/finance/sdk/api/ApplicationDocumentsApi.java
 src/main/java/com/unit/finance/sdk/api/ApplicationsApi.java
 src/main/java/com/unit/finance/sdk/api/AuthorizedUsersApi.java
+src/main/java/com/unit/finance/sdk/api/CardFraudOutreachApi.java
 src/main/java/com/unit/finance/sdk/api/CardsApi.java
 src/main/java/com/unit/finance/sdk/api/CheckDepositsApi.java
 src/main/java/com/unit/finance/sdk/api/CounterpartiesApi.java
@@ -602,6 +626,9 @@ src/main/java/com/unit/finance/sdk/model/ApplicationDocumentAttributes.java
 src/main/java/com/unit/finance/sdk/model/ArchiveCustomerData.java
 src/main/java/com/unit/finance/sdk/model/ArchiveCustomerDataAttributes.java
 src/main/java/com/unit/finance/sdk/model/ArchiveCustomerRequest.java
+src/main/java/com/unit/finance/sdk/model/AuthorizationCardFraudCase.java
+src/main/java/com/unit/finance/sdk/model/AuthorizationCardFraudCaseAttributes.java
+src/main/java/com/unit/finance/sdk/model/AuthorizationCardFraudCaseRelationships.java
 src/main/java/com/unit/finance/sdk/model/AuthorizedUserType.java
 src/main/java/com/unit/finance/sdk/model/BatchRelease.java
 src/main/java/com/unit/finance/sdk/model/BatchReleaseAttributes.java
@@ -641,6 +668,9 @@ src/main/java/com/unit/finance/sdk/model/CancelApplicationDataAttributes.java
 src/main/java/com/unit/finance/sdk/model/CancelApplicationRequest.java
 src/main/java/com/unit/finance/sdk/model/CancelPayment200Response.java
 src/main/java/com/unit/finance/sdk/model/CancelPayment200ResponseData.java
+src/main/java/com/unit/finance/sdk/model/CardFraudOutreachPolicy.java
+src/main/java/com/unit/finance/sdk/model/CardFraudOutreachPolicyAttributes.java
+src/main/java/com/unit/finance/sdk/model/CardFraudOutreachPolicyRelationships.java
 src/main/java/com/unit/finance/sdk/model/CardReversalTransaction.java
 src/main/java/com/unit/finance/sdk/model/CardReversalTransactionAttributes.java
 src/main/java/com/unit/finance/sdk/model/CardReversalTransactionRelationships.java
@@ -783,6 +813,11 @@ src/main/java/com/unit/finance/sdk/model/CreateIndividualVirtualDebitCardRequest
 src/main/java/com/unit/finance/sdk/model/CreatePayment201Response.java
 src/main/java/com/unit/finance/sdk/model/CreatePayment201ResponseData.java
 src/main/java/com/unit/finance/sdk/model/CreatePaymentRequest.java
+src/main/java/com/unit/finance/sdk/model/CreatePolicy201Response.java
+src/main/java/com/unit/finance/sdk/model/CreatePolicyData.java
+src/main/java/com/unit/finance/sdk/model/CreatePolicyDataAttributes.java
+src/main/java/com/unit/finance/sdk/model/CreatePolicyDataRelationships.java
+src/main/java/com/unit/finance/sdk/model/CreatePolicyRequest.java
 src/main/java/com/unit/finance/sdk/model/CreateRecurringCreditACHPaymentData.java
 src/main/java/com/unit/finance/sdk/model/CreateRecurringCreditACHPaymentDataAttributes.java
 src/main/java/com/unit/finance/sdk/model/CreateRecurringCreditACHPaymentRequest.java
@@ -826,6 +861,7 @@ src/main/java/com/unit/finance/sdk/model/FeeReversalRelationships.java
 src/main/java/com/unit/finance/sdk/model/FeeReversalTransaction.java
 src/main/java/com/unit/finance/sdk/model/FeeReversalTransactionRelationships.java
 src/main/java/com/unit/finance/sdk/model/FeeTransaction.java
+src/main/java/com/unit/finance/sdk/model/FraudCaseCardActivityType.java
 src/main/java/com/unit/finance/sdk/model/FreezeAccountRequest.java
 src/main/java/com/unit/finance/sdk/model/FreezeCardData.java
 src/main/java/com/unit/finance/sdk/model/FreezeCardDataAttributes.java
@@ -852,6 +888,7 @@ src/main/java/com/unit/finance/sdk/model/GetAvailableDepositProducts200Response.
 src/main/java/com/unit/finance/sdk/model/GetAvailableDepositProducts200ResponseDataInner.java
 src/main/java/com/unit/finance/sdk/model/GetAvailableDepositProducts200ResponseDataInnerAttributes.java
 src/main/java/com/unit/finance/sdk/model/GetCard200Response.java
+src/main/java/com/unit/finance/sdk/model/GetCardFraudCaseById200Response.java
 src/main/java/com/unit/finance/sdk/model/GetCardPinStatus200Response.java
 src/main/java/com/unit/finance/sdk/model/GetCheckDeposit200Response.java
 src/main/java/com/unit/finance/sdk/model/GetCounterpartyBalance200Response.java
@@ -884,6 +921,8 @@ src/main/java/com/unit/finance/sdk/model/ListAccounts200Response.java
 src/main/java/com/unit/finance/sdk/model/ListAccounts200ResponseDataInner.java
 src/main/java/com/unit/finance/sdk/model/ListApplicationDocuments200Response.java
 src/main/java/com/unit/finance/sdk/model/ListAuthorizedUsers200Response.java
+src/main/java/com/unit/finance/sdk/model/ListCardFraudCases200Response.java
+src/main/java/com/unit/finance/sdk/model/ListCardFraudCases200ResponseDataInner.java
 src/main/java/com/unit/finance/sdk/model/ListCards200Response.java
 src/main/java/com/unit/finance/sdk/model/ListCards200ResponseDataInner.java
 src/main/java/com/unit/finance/sdk/model/ListCheckDeposits200Response.java
@@ -898,6 +937,9 @@ src/main/java/com/unit/finance/sdk/model/ListStoreLocations200Response.java
 src/main/java/com/unit/finance/sdk/model/ListTransactions200Response.java
 src/main/java/com/unit/finance/sdk/model/ListTransactions200ResponseIncludedInner.java
 src/main/java/com/unit/finance/sdk/model/ListWireDrawdowns200Response.java
+src/main/java/com/unit/finance/sdk/model/MarkCardFraudCaseAsFraudData.java
+src/main/java/com/unit/finance/sdk/model/MarkCardFraudCaseAsFraudDataAttributes.java
+src/main/java/com/unit/finance/sdk/model/MarkCardFraudCaseAsFraudRequest.java
 src/main/java/com/unit/finance/sdk/model/Meta.java
 src/main/java/com/unit/finance/sdk/model/MetaPagination.java
 src/main/java/com/unit/finance/sdk/model/NegativeBalanceCoverageTransaction.java
@@ -1000,6 +1042,7 @@ src/main/java/com/unit/finance/sdk/model/StoreLocationAttributes.java
 src/main/java/com/unit/finance/sdk/model/ToManyRelationship.java
 src/main/java/com/unit/finance/sdk/model/TotalAccruedInterestType.java
 src/main/java/com/unit/finance/sdk/model/Transaction.java
+src/main/java/com/unit/finance/sdk/model/TransactionCardFraudCase.java
 src/main/java/com/unit/finance/sdk/model/UpdateACHPaymentData.java
 src/main/java/com/unit/finance/sdk/model/UpdateACHPaymentDataAttributes.java
 src/main/java/com/unit/finance/sdk/model/UpdateACHPaymentRequest.java
@@ -1064,6 +1107,9 @@ src/main/java/com/unit/finance/sdk/model/UpdateIndividualCustomerRequest.java
 src/main/java/com/unit/finance/sdk/model/UpdatePayment200Response.java
 src/main/java/com/unit/finance/sdk/model/UpdatePayment200ResponseData.java
 src/main/java/com/unit/finance/sdk/model/UpdatePaymentRequest.java
+src/main/java/com/unit/finance/sdk/model/UpdatePolicyData.java
+src/main/java/com/unit/finance/sdk/model/UpdatePolicyDataAttributes.java
+src/main/java/com/unit/finance/sdk/model/UpdatePolicyRequest.java
 src/main/java/com/unit/finance/sdk/model/UpdateRealtimeReceivedPaymentData.java
 src/main/java/com/unit/finance/sdk/model/UpdateRealtimeReceivedPaymentRequest.java
 src/main/java/com/unit/finance/sdk/model/UpdateReceivedPayment200Response.java

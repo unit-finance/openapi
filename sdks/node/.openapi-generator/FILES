@@ -43,6 +43,9 @@ docs/ApplicationsApi.md
 docs/ArchiveCustomerData.md
 docs/ArchiveCustomerDataAttributes.md
 docs/ArchiveCustomerRequest.md
+docs/AuthorizationCardFraudCase.md
+docs/AuthorizationCardFraudCaseAttributes.md
+docs/AuthorizationCardFraudCaseRelationships.md
 docs/AuthorizedUserType.md
 docs/AuthorizedUsersApi.md
 docs/BatchRelease.md
@@ -83,6 +86,10 @@ docs/CancelApplicationDataAttributes.md
 docs/CancelApplicationRequest.md
 docs/CancelPayment200Response.md
 docs/CancelPayment200ResponseData.md
+docs/CardFraudOutreachApi.md
+docs/CardFraudOutreachPolicy.md
+docs/CardFraudOutreachPolicyAttributes.md
+docs/CardFraudOutreachPolicyRelationships.md
 docs/CardReversalTransaction.md
 docs/CardReversalTransactionAttributes.md
 docs/CardReversalTransactionRelationships.md
@@ -228,6 +235,11 @@ docs/CreateIndividualVirtualDebitCardRequest.md
 docs/CreatePayment201Response.md
 docs/CreatePayment201ResponseData.md
 docs/CreatePaymentRequest.md
+docs/CreatePolicy201Response.md
+docs/CreatePolicyData.md
+docs/CreatePolicyDataAttributes.md
+docs/CreatePolicyDataRelationships.md
+docs/CreatePolicyRequest.md
 docs/CreateRecurringCreditACHPaymentData.md
 docs/CreateRecurringCreditACHPaymentDataAttributes.md
 docs/CreateRecurringCreditACHPaymentRequest.md
@@ -273,6 +285,7 @@ docs/FeeReversalTransaction.md
 docs/FeeReversalTransactionRelationships.md
 docs/FeeTransaction.md
 docs/FeesApi.md
+docs/FraudCaseCardActivityType.md
 docs/FreezeAccountRequest.md
 docs/FreezeCardData.md
 docs/FreezeCardDataAttributes.md
@@ -299,6 +312,7 @@ docs/GetAvailableDepositProducts200Response.md
 docs/GetAvailableDepositProducts200ResponseDataInner.md
 docs/GetAvailableDepositProducts200ResponseDataInnerAttributes.md
 docs/GetCard200Response.md
+docs/GetCardFraudCaseById200Response.md
 docs/GetCardPinStatus200Response.md
 docs/GetCheckDeposit200Response.md
 docs/GetCounterpartyBalance200Response.md
@@ -331,6 +345,8 @@ docs/ListAccounts200Response.md
 docs/ListAccounts200ResponseDataInner.md
 docs/ListApplicationDocuments200Response.md
 docs/ListAuthorizedUsers200Response.md
+docs/ListCardFraudCases200Response.md
+docs/ListCardFraudCases200ResponseDataInner.md
 docs/ListCards200Response.md
 docs/ListCards200ResponseDataInner.md
 docs/ListCheckDeposits200Response.md
@@ -345,6 +361,9 @@ docs/ListStoreLocations200Response.md
 docs/ListTransactions200Response.md
 docs/ListTransactions200ResponseIncludedInner.md
 docs/ListWireDrawdowns200Response.md
+docs/MarkCardFraudCaseAsFraudData.md
+docs/MarkCardFraudCaseAsFraudDataAttributes.md
+docs/MarkCardFraudCaseAsFraudRequest.md
 docs/Meta.md
 docs/MetaPagination.md
 docs/NegativeBalanceCoverageTransaction.md
@@ -448,6 +467,7 @@ docs/StoreLocationAttributes.md
 docs/ToManyRelationship.md
 docs/TotalAccruedInterestType.md
 docs/Transaction.md
+docs/TransactionCardFraudCase.md
 docs/TransactionsApi.md
 docs/UpdateACHPaymentData.md
 docs/UpdateACHPaymentDataAttributes.md
@@ -513,6 +533,9 @@ docs/UpdateIndividualCustomerRequest.md
 docs/UpdatePayment200Response.md
 docs/UpdatePayment200ResponseData.md
 docs/UpdatePaymentRequest.md
+docs/UpdatePolicyData.md
+docs/UpdatePolicyDataAttributes.md
+docs/UpdatePolicyRequest.md
 docs/UpdateRealtimeReceivedPaymentData.md
 docs/UpdateRealtimeReceivedPaymentRequest.md
 docs/UpdateReceivedPayment200Response.md
