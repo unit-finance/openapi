@@ -12,6 +12,7 @@ from unit_finance_sdk import (
     ApplicationDocumentsApi,
     ApplicationsApi,
     AuthorizedUsersApi,
+    CardFraudOutreachApi,
     CardsApi,
     CheckDepositsApi,
     Configuration,
@@ -98,6 +99,11 @@ def build_application_documents_api() -> ApplicationDocumentsApi:
 def build_authorized_users_api() -> AuthorizedUsersApi:
     """Construct an ``AuthorizedUsersApi`` bound to the sandbox."""
     return AuthorizedUsersApi(ApiClient(_configuration()))
+
+
+def build_card_fraud_outreach_api() -> CardFraudOutreachApi:
+    """Construct a ``CardFraudOutreachApi`` bound to the sandbox."""
+    return CardFraudOutreachApi(ApiClient(_configuration()))
 
 
 def sleep(seconds: float) -> None:
