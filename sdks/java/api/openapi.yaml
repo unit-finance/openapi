@@ -5,7 +5,7 @@ info:
     name: Proprietary
     url: https://www.unit.co/terms-of-service
   title: Unit API
-  version: 0.12.0
+  version: 0.13.0
 servers:
 - url: https://api.s.unit.sh
 security:
@@ -45,6 +45,9 @@ tags:
 - description: "Card fraud cases, their fraud/no-fraud decisions, and the card fraud\
     \ outreach policies that govern them."
   name: Card Fraud Outreach
+- description: "Cardholder bearer tokens for card-scoped API access, and the two-factor\
+    \ verification challenges they require."
+  name: Card Holder API Tokens
 paths:
   /applications:
     get:
@@ -6936,6 +6939,128 @@ paths:
       x-content-type: application/vnd.api+json
       x-accepts:
       - application/vnd.api+json
+  /cards/{cardId}/cardholder/token:
+    post:
+      description: Create a bearer token for a specific card.
+      operationId: createCardholderToken
+      parameters:
+      - explode: false
+        in: path
+        name: cardId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/createCardholderToken_request"
+        required: true
+      responses:
+        "201":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/createCardholderToken_201_response"
+          description: The created cardholder token.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - cards-write
+      summary: Create a cardholder token
+      tags:
+      - Card Holder API Tokens
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /cards/{cardId}/cardholder/token/verification:
+    post:
+      description: "When creating a cardholder token that contains a scope which requires\
+        \ two-factor authentication (see Scopes), it is required to first create a\
+        \ verification challenge that will be sent to the customer."
+      operationId: createCardholderTokenVerification
+      parameters:
+      - explode: false
+        in: path
+        name: cardId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/createCardholderTokenVerification_request"
+        required: true
+      responses:
+        "201":
+          content:
+            application/vnd.api+json:
+              example:
+                data:
+                  type: cardholderTokenVerification
+                  attributes:
+                    verificationToken: i8FWKLBjXEg3TdeK93G3K9PKLzhbT6CRhn/VKkTsm....
+              schema:
+                $ref: "#/components/schemas/createCardholderTokenVerification_201_response"
+          description: The created cardholder token verification.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      summary: Create a cardholder token verification
+      tags:
+      - Card Holder API Tokens
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
 components:
   responses:
     BadRequest:
@@ -12700,6 +12825,38 @@ components:
       - attributes
       - type
       type: object
+    CreateCardholderTokenData:
+      example:
+        type: cardholderToken
+        attributes:
+          scope: cards
+      properties:
+        type:
+          enum:
+          - cardholderToken
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CreateCardholderTokenData_attributes"
+      required:
+      - attributes
+      - type
+      type: object
+    CreateCardholderTokenVerificationData:
+      example:
+        type: cardholderTokenVerification
+        attributes:
+          channel: sms
+      properties:
+        type:
+          enum:
+          - cardholderTokenVerification
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CreateCardholderTokenVerificationData_attributes"
+      required:
+      - attributes
+      - type
+      type: object
     list_200_response_data_inner:
       discriminator:
         mapping:
@@ -13765,6 +13922,69 @@ components:
       properties:
         data:
           $ref: "#/components/schemas/MarkCardFraudCaseAsFraudData"
+      required:
+      - data
+      type: object
+    createCardholderToken_request:
+      properties:
+        data:
+          $ref: "#/components/schemas/CreateCardholderTokenData"
+      required:
+      - data
+      type: object
+    createCardholderToken_201_response_data_attributes:
+      properties:
+        token:
+          description: The token issued for the card.
+          type: string
+        expiresIn:
+          description: The lifetime of the token (in seconds).
+          type: integer
+      type: object
+    createCardholderToken_201_response_data:
+      properties:
+        type:
+          enum:
+          - cardholderToken
+          type: string
+        attributes:
+          $ref: "#/components/schemas/createCardholderToken_201_response_data_attributes"
+      type: object
+    createCardholderToken_201_response:
+      properties:
+        data:
+          $ref: "#/components/schemas/createCardholderToken_201_response_data"
+      required:
+      - data
+      type: object
+    createCardholderTokenVerification_request:
+      properties:
+        data:
+          $ref: "#/components/schemas/CreateCardholderTokenVerificationData"
+      required:
+      - data
+      type: object
+    createCardholderTokenVerification_201_response_data_attributes:
+      properties:
+        verificationToken:
+          description: The verification token to pass to Create Cardholder Token together
+            with the verification code sent to the card holder.
+          example: i8FWKLBjXEg3TdeK93G3K9PKLzhbT6CRhn/VKkTsm....
+          type: string
+      type: object
+    createCardholderTokenVerification_201_response_data:
+      properties:
+        type:
+          enum:
+          - cardholderTokenVerification
+          type: string
+        attributes:
+          $ref: "#/components/schemas/createCardholderTokenVerification_201_response_data_attributes"
+      type: object
+    createCardholderTokenVerification_201_response:
+      properties:
+        data:
+          $ref: "#/components/schemas/createCardholderTokenVerification_201_response_data"
       required:
       - data
       type: object
@@ -19576,6 +19796,62 @@ components:
           type: array
       required:
       - fraudulentActivityIds
+      type: object
+    CreateCardholderTokenData_attributes:
+      properties:
+        scope:
+          description: list of Scopes separated by spaces. Only cards (cards cards-sensitive
+            cards-write cards-sensitive-write) scopes are allowed.
+          example: cards
+          type: string
+        verificationToken:
+          description: Required if scope includes a scope which requires two-factor
+            authentication. Received as a response from Create Cardholder Token Verification.
+          type: string
+        verificationCode:
+          description: Required if scope includes a scope which requires two-factor
+            authentication. 6 digit code sent to the card holder through the desired
+            channel.
+          type: string
+        expiresIn:
+          description: The lifetime of the token (in seconds). Maximum value is 86400
+            (24 hours). Default value is also 24 hours.
+          type: integer
+        upgradableScope:
+          description: list of Scopes separated by spaces. The card holder will be
+            able to upgrade the token to the scopes you provide here.
+          type: string
+      required:
+      - scope
+      - verificationCode
+      - verificationToken
+      type: object
+    CreateCardholderTokenVerificationData_attributes:
+      properties:
+        channel:
+          description: Send a verification code to the card holder through one of
+            the following channels - sms or call.
+          example: sms
+          type: string
+        phone:
+          allOf:
+          - $ref: "#/components/schemas/PhoneType"
+          description: This allows providing the phone number of one of the customer's
+            authorized users. The provided phone must match an authorized user phone
+            and will be used in the One Time Password (OTP) authentication process
+            instead of the business customer contact's phone.
+        appHash:
+          description: "For sms verifications only, 11-character hash string that\
+            \ identifies your app. Appended at the end of your verification SMS body\
+            \ the way that client-side SMS Retriever API expects."
+          type: string
+        language:
+          description: Select the verification language using a 2-letter code. Default
+            is English. See Localization Options for the supported languages and their
+            2-letter code.
+          type: string
+      required:
+      - channel
       type: object
   securitySchemes:
     bearerAuth:
