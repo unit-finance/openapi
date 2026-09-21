@@ -5,7 +5,7 @@ info:
     name: Proprietary
     url: https://www.unit.co/terms-of-service
   title: Unit API
-  version: 0.11.0
+  version: 0.12.0
 servers:
 - url: https://api.s.unit.sh
 security:
@@ -42,6 +42,9 @@ tags:
 - description: "Authorized users on a customer, their creation, listing, retrieval,\
     \ and removal."
   name: Authorized Users
+- description: "Card fraud cases, their fraud/no-fraud decisions, and the card fraud\
+    \ outreach policies that govern them."
+  name: Card Fraud Outreach
 paths:
   /applications:
     get:
@@ -6504,6 +6507,435 @@ paths:
       - Authorized Users
       x-accepts:
       - application/vnd.api+json
+  /fraud-outreach-policies:
+    post:
+      description: Create a card fraud outreach policy.
+      operationId: createPolicy
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/createPolicy_request"
+        required: true
+      responses:
+        "201":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/createPolicy_201_response"
+          description: The created CardFraudOutreachPolicy resource.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      summary: Create a card fraud outreach policy
+      tags:
+      - Card Fraud Outreach
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /fraud-outreach-policies/{policyId}:
+    get:
+      description: Get a card fraud outreach policy by id.
+      operationId: getPolicyById
+      parameters:
+      - explode: false
+        in: path
+        name: policyId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/createPolicy_201_response"
+          description: The requested CardFraudOutreachPolicy resource.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      summary: Get a card fraud outreach policy by id
+      tags:
+      - Card Fraud Outreach
+      x-accepts:
+      - application/vnd.api+json
+    patch:
+      description: Update a card fraud outreach policy.
+      operationId: updatePolicy
+      parameters:
+      - explode: false
+        in: path
+        name: policyId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/updatePolicy_request"
+        required: true
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/createPolicy_201_response"
+          description: The updated CardFraudOutreachPolicy resource.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      summary: Update a card fraud outreach policy
+      tags:
+      - Card Fraud Outreach
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /card-fraud-cases:
+    get:
+      description: List card fraud case resources. Paging can be applied.
+      operationId: listCardFraudCases
+      parameters:
+      - description: Optional. Maximum number of resources that will be returned.
+          Maximum is 10000 resources. See Pagination.
+        explode: true
+        in: query
+        name: "page[limit]"
+        required: false
+        schema:
+          default: "100"
+          type: string
+        style: form
+      - description: Optional. Number of resources to skip. See Pagination.
+        explode: true
+        in: query
+        name: "page[offset]"
+        required: false
+        schema:
+          default: "0"
+          type: string
+        style: form
+      - description: Optional. Filter by card id.
+        explode: true
+        in: query
+        name: "filter[cardId]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filter by account id.
+        explode: true
+        in: query
+        name: "filter[accountId]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filter by customer id.
+        explode: true
+        in: query
+        name: "filter[customerId]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: "Optional. Filter by case status. Can be one of the following\
+          \ values: Created, Active, Closed, Expired."
+        explode: true
+        in: query
+        name: "filter[status][]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: "Optional. Filter by case decision. Can be one of the following\
+          \ values: Pending, Fraud, NoFraud."
+        explode: true
+        in: query
+        name: "filter[decision][]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. sort=createdAt for ascending order or sort=-createdAt
+          (leading minus sign) for descending order.
+        explode: true
+        in: query
+        name: sort
+        required: false
+        schema:
+          default: -createdAt
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/listCardFraudCases_200_response"
+          description: Array of card fraud case resources.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      summary: List card fraud cases
+      tags:
+      - Card Fraud Outreach
+      x-accepts:
+      - application/vnd.api+json
+  /card-fraud-cases/{id}:
+    get:
+      description: Get a card fraud case by id.
+      operationId: getCardFraudCaseById
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/getCardFraudCaseById_200_response"
+          description: Card Fraud Case resource. Can be either Authorization or Transaction
+            as indicated by the type field.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      summary: Get a card fraud case by id
+      tags:
+      - Card Fraud Outreach
+      x-accepts:
+      - application/vnd.api+json
+  /card-fraud-cases/{id}/fraud:
+    post:
+      description: Mark a card fraud case as fraud.
+      operationId: markCardFraudCaseAsFraud
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/markCardFraudCaseAsFraud_request"
+        required: true
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/getCardFraudCaseById_200_response"
+          description: The Card Fraud Case resource updated as Fraud. Can be either
+            Authorization or Transaction as indicated by the type field.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      summary: Mark a card fraud case as fraud
+      tags:
+      - Card Fraud Outreach
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /card-fraud-cases/{id}/no-fraud:
+    post:
+      description: Mark a card fraud case as no fraud.
+      operationId: markCardFraudCaseAsNoFraud
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+        required: false
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/getCardFraudCaseById_200_response"
+          description: The Card Fraud Case resource updated as No Fraud. Can be either
+            Authorization or Transaction as indicated by the type field.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      summary: Mark a card fraud case as no fraud
+      tags:
+      - Card Fraud Outreach
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
 components:
   responses:
     BadRequest:
@@ -12009,6 +12441,265 @@ components:
       - attributes
       - type
       type: object
+    CardFraudOutreachPolicy:
+      description: "`CardFraudOutreachPolicy` is a JSON:API resource, top-level fields:"
+      example:
+        type: cardFraudOutreachPolicy
+        id: "1"
+        attributes:
+          createdAt: 2024-07-30T14:29:29.986Z
+          activitiesLookBackPeriodHours: 72
+          caseExpirationPeriodHours: 72
+          numberOfCardActivities: 3
+          businessRecipient: CardHolder
+          contactPhone:
+            countryCode: "213"
+            number: "5350405030"
+          contactUrl: https://thisIsMyDomain.unit.co
+          fraudRulesSuppressionDays: 1
+          enabled: true
+        relationships:
+          emailOutreachSettings:
+            data:
+              type: emailOutreachSettings
+              id: "10023"
+          messageOutreachSettings:
+            data:
+              type: messageOutreachSettings
+              id: "10022"
+          whiteLabelTheme:
+            data:
+              type: whiteLabelTheme
+              id: "54728"
+      properties:
+        type:
+          enum:
+          - cardFraudOutreachPolicy
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CardFraudOutreachPolicy_attributes"
+        relationships:
+          $ref: "#/components/schemas/CardFraudOutreachPolicy_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    AuthorizationCardFraudCase:
+      description: "`AuthorizationCardFraudCase` is a JSON:API resource, top-level\
+        \ fields:"
+      example:
+        type: authorizationCardFraudCase
+        id: "9"
+        attributes:
+          createdAt: 2024-07-31T11:02:27.355Z
+          status: Closed
+          decision: Fraud
+          expiresAt: 2024-08-03T11:02:27.355Z
+          cardActivities:
+          - id: "15"
+            createdAt: 2024-07-31T11:02:27.355Z
+            activityType: Authorization
+            cardActivityCreatedAt: 2024-07-31T11:02:27.270Z
+            cardActivity: "8082294"
+            location: "Cupertino, CA, US"
+            merchant: Apple Inc.
+            amount: 2500
+            decision: Fraud
+            updatedAt: 2024-07-31T11:04:43.696Z
+          updatedAt: 2024-07-31T11:04:43.696Z
+        relationships:
+          card:
+            data:
+              type: card
+              id: "2200412"
+          account:
+            data:
+              type: account
+              id: "49230"
+          customer:
+            data:
+              type: customer
+              id: "49430"
+          authorization:
+            data:
+              type: authorization
+              id: "8082294"
+      properties:
+        type:
+          enum:
+          - authorizationCardFraudCase
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/AuthorizationCardFraudCase_attributes"
+        relationships:
+          $ref: "#/components/schemas/AuthorizationCardFraudCase_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    TransactionCardFraudCase:
+      description: "`TransactionCardFraudCase` is a JSON:API resource, top-level fields:"
+      example:
+        type: transactionCardFraudCase
+        id: "9"
+        attributes:
+          createdAt: 2024-07-31T11:02:27.355Z
+          status: Closed
+          decision: NoFraud
+          expiresAt: 2024-08-03T11:02:27.355Z
+          cardActivities:
+          - id: "17"
+            createdAt: 2024-07-31T11:02:27.355Z
+            activityType: Transaction
+            cardActivityCreatedAt: 2024-07-30T14:40:07.534Z
+            cardActivity: "8069210"
+            location: "Cupertino, CA, US"
+            merchant: Apple Inc.
+            amount: 100
+            decision: NoFraud
+            updatedAt: 2024-07-31T11:04:43.696Z
+          updatedAt: 2024-07-31T11:04:43.696Z
+        relationships:
+          card:
+            data:
+              type: card
+              id: "2200412"
+          account:
+            data:
+              type: account
+              id: "49230"
+          customer:
+            data:
+              type: customer
+              id: "49430"
+          transaction:
+            data:
+              type: transaction
+              id: "8069210"
+      properties:
+        type:
+          enum:
+          - transactionCardFraudCase
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/AuthorizationCardFraudCase_attributes"
+        relationships:
+          $ref: "#/components/schemas/AuthorizationCardFraudCase_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    FraudCaseCardActivityType:
+      description: Represents a card activity that is part of a TransactionCardFraudCase
+        or AuthorizationCardFraudCase.
+      example:
+        id: "15"
+        createdAt: 2024-07-31T11:02:27.355Z
+        activityType: Authorization
+        cardActivityCreatedAt: 2024-07-31T11:02:27.270Z
+        cardActivity: "8082294"
+        location: "Cupertino, CA, US"
+        merchant: Apple Inc.
+        amount: 2500
+        decision: Fraud
+        updatedAt: 2024-07-31T11:04:43.696Z
+      properties:
+        id:
+          description: The id of the fraud case card activity.
+          type: string
+        createdAt:
+          description: The date the activity was created.
+          format: date-time
+          type: string
+        activityType:
+          description: The type of the activity. Can be either Authorization or Transaction.
+          type: string
+        cardActivityCreatedAt:
+          description: The creation date of the original Authorization or Transaction
+            the activity was created upon.
+          format: date-time
+          type: string
+        cardActivity:
+          description: The id of the original Authorization or Transaction of the
+            activity.
+          type: string
+        location:
+          description: The location in which the activity occurred.
+          type: string
+        merchant:
+          description: The name of the merchant of the activity.
+          type: string
+        amount:
+          description: The amount (in cents) of the activity.
+          type: integer
+        decision:
+          description: "The decision made for the activity. Can be one of Pending,\
+            \ Fraud, NoFraud."
+          type: string
+        updatedAt:
+          description: The date the activity was last updated.
+          format: date-time
+          type: string
+      required:
+      - activityType
+      - amount
+      - cardActivity
+      - cardActivityCreatedAt
+      - createdAt
+      - decision
+      - id
+      - location
+      - merchant
+      - updatedAt
+      type: object
+    CreatePolicyData:
+      properties:
+        type:
+          enum:
+          - cardFraudOutreachPolicy
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CreatePolicyData_attributes"
+        relationships:
+          $ref: "#/components/schemas/CreatePolicyData_relationships"
+      required:
+      - attributes
+      - relationships
+      - type
+      type: object
+    UpdatePolicyData:
+      properties:
+        type:
+          enum:
+          - cardFraudOutreachPolicy
+          type: string
+        attributes:
+          $ref: "#/components/schemas/UpdatePolicyData_attributes"
+      required:
+      - attributes
+      - type
+      type: object
+    MarkCardFraudCaseAsFraudData:
+      properties:
+        type:
+          enum:
+          - markAsFraudRequest
+          type: string
+        attributes:
+          $ref: "#/components/schemas/MarkCardFraudCaseAsFraudData_attributes"
+      required:
+      - attributes
+      - type
+      type: object
     list_200_response_data_inner:
       discriminator:
         mapping:
@@ -13017,6 +13708,63 @@ components:
       properties:
         data:
           $ref: "#/components/schemas/AuthorizedUserType"
+      required:
+      - data
+      type: object
+    createPolicy_request:
+      properties:
+        data:
+          $ref: "#/components/schemas/CreatePolicyData"
+      required:
+      - data
+      type: object
+    createPolicy_201_response:
+      properties:
+        data:
+          $ref: "#/components/schemas/CardFraudOutreachPolicy"
+      required:
+      - data
+      type: object
+    updatePolicy_request:
+      properties:
+        data:
+          $ref: "#/components/schemas/UpdatePolicyData"
+      required:
+      - data
+      type: object
+    listCardFraudCases_200_response_data_inner:
+      discriminator:
+        mapping:
+          authorizationCardFraudCase: "#/components/schemas/AuthorizationCardFraudCase"
+          transactionCardFraudCase: "#/components/schemas/TransactionCardFraudCase"
+        propertyName: type
+      oneOf:
+      - $ref: "#/components/schemas/AuthorizationCardFraudCase"
+      - $ref: "#/components/schemas/TransactionCardFraudCase"
+    listCardFraudCases_200_response:
+      properties:
+        data:
+          description: "Array of card fraud case resources. Each resource can be either\
+            \ Transaction or Authorization, as indicated by the type field."
+          items:
+            $ref: "#/components/schemas/listCardFraudCases_200_response_data_inner"
+          type: array
+        meta:
+          $ref: "#/components/schemas/Meta"
+      required:
+      - data
+      type: object
+    getCardFraudCaseById_200_response:
+      properties:
+        data:
+          $ref: "#/components/schemas/listCardFraudCases_200_response_data_inner"
+      required:
+      - data
+      type: object
+    markCardFraudCaseAsFraud_request:
+      properties:
+        data:
+          $ref: "#/components/schemas/MarkCardFraudCaseAsFraudData"
       required:
       - data
       type: object
@@ -18598,6 +19346,236 @@ components:
           type: array
       required:
       - authorizedUsersEmails
+      type: object
+    CardFraudOutreachPolicy_attributes:
+      properties:
+        createdAt:
+          description: The date the resource was created.
+          format: date-time
+          type: string
+        activitiesLookBackPeriodHours:
+          description: "The period in hours before the card fraud case was created,\
+            \ for which the card fraud case activities were included in the case.\
+            \ Can be one of the following periods: 12, 24, 48, 72"
+          type: integer
+        caseExpirationPeriodHours:
+          description: "The period in hours after the card fraud case was created,\
+            \ after which the card fraud case expires. Can be one of the following\
+            \ periods: 12, 24, 48, 72."
+          type: integer
+        numberOfCardActivities:
+          description: The number of card activities that are included in the card
+            fraud case. Up to 5 activities max.
+          type: integer
+        businessRecipient:
+          description: "For business cards, controls who receives the fraud outreach\
+            \ email. One of: CardHolder or CustomerAndCardHolder. When omitted or\
+            \ null, email goes to the cardholder only."
+          nullable: true
+          type: string
+        contactPhone:
+          allOf:
+          - $ref: "#/components/schemas/PhoneType"
+          description: The client support contact phone number.
+        contactUrl:
+          description: The client support contact URL.
+          type: string
+        enabled:
+          description: Indicates whether the policy is enabled.
+          type: boolean
+      required:
+      - activitiesLookBackPeriodHours
+      - caseExpirationPeriodHours
+      - contactPhone
+      - contactUrl
+      - createdAt
+      - enabled
+      - numberOfCardActivities
+      type: object
+    CardFraudOutreachPolicy_relationships:
+      properties:
+        emailOutreachSettings:
+          $ref: "#/components/schemas/Relationship"
+        whiteLabelTheme:
+          $ref: "#/components/schemas/Relationship"
+      type: object
+    AuthorizationCardFraudCase_attributes:
+      properties:
+        createdAt:
+          description: The date the resource was created.
+          format: date-time
+          type: string
+        status:
+          description: "The status of the card fraud case. Can be one of Created,\
+            \ Active, Closed, Expired."
+          type: string
+        decision:
+          description: "The decision made for the card fraud case. Can be one of Pending,\
+            \ Fraud, NoFraud."
+          type: string
+        expiresAt:
+          description: The date the card fraud case expires.
+          format: date-time
+          type: string
+        cardActivities:
+          description: The card activities associated with the card fraud case.
+          items:
+            $ref: "#/components/schemas/FraudCaseCardActivityType"
+          type: array
+        updatedAt:
+          description: The date the resource was last updated.
+          format: date-time
+          type: string
+      required:
+      - cardActivities
+      - createdAt
+      - decision
+      - expiresAt
+      - status
+      type: object
+    AuthorizationCardFraudCase_relationships:
+      properties:
+        card:
+          $ref: "#/components/schemas/Relationship"
+        account:
+          $ref: "#/components/schemas/Relationship"
+        customer:
+          $ref: "#/components/schemas/Relationship"
+        transaction:
+          $ref: "#/components/schemas/Relationship"
+      type: object
+    CreatePolicyData_attributes:
+      properties:
+        contactPhone:
+          allOf:
+          - $ref: "#/components/schemas/PhoneType"
+          description: The client support contact phone number.
+          example:
+            countryCode: "213"
+            number: "5350405030"
+        contactUrl:
+          description: The client support contact URL. Should be a valid https URL.
+          example: https://thisIsMyDomain.unit.co
+          type: string
+        activitiesLookBackPeriodHours:
+          description: "Optional. The period in hours before the card fraud case was\
+            \ created, for which the card fraud case activities will be included in\
+            \ the case. Can be one of the following periods: 12, 24, 48, 72"
+          example: 72
+          type: integer
+        caseExpirationPeriodHours:
+          description: "Optional. The period in hours after the card fraud case was\
+            \ created, after which the card fraud case expires. Can be one of the\
+            \ following periods: 12, 24, 48, 72"
+          example: 72
+          type: integer
+        numberOfCardActivities:
+          description: Optional. The number of card activities that will be included
+            in the card fraud case. Up to 5 activities max.
+          example: 3
+          type: integer
+        businessRecipient:
+          description: "Optional. For business cards, controls who receives the fraud\
+            \ outreach email. One of: CardHolder (cardholder only; also the behavior\
+            \ when omitted) or CustomerAndCardHolder (cardholder on to, business customer\
+            \ cc'd)."
+          example: CardHolder
+          type: string
+        fraudRulesSuppressionDays:
+          description: Optional. Sets suppression window (1–7 days) for fraud rules
+            following a confirmed legitimate transaction. Up to 7 days maximum.
+          example: 1
+          type: integer
+        idempotencyKey:
+          description: Optional. See Idempotency.
+          type: string
+      required:
+      - contactPhone
+      - contactUrl
+      type: object
+    CreatePolicyData_relationships:
+      properties:
+        emailOutreachSettings:
+          $ref: "#/components/schemas/Relationship"
+        messageOutreachSettings:
+          $ref: "#/components/schemas/Relationship"
+        whiteLabelTheme:
+          $ref: "#/components/schemas/Relationship"
+      required:
+      - emailOutreachSettings
+      - messageOutreachSettings
+      - whiteLabelTheme
+      type: object
+    UpdatePolicyData_attributes:
+      properties:
+        contactPhone:
+          allOf:
+          - $ref: "#/components/schemas/PhoneType"
+          description: The client support contact phone number.
+          example:
+            countryCode: "213"
+            number: "5350405030"
+        contactUrl:
+          description: The client support contact URL. Should be a valid https URL.
+          example: https://thisIsMyDomain.unit.co
+          type: string
+        activitiesLookBackPeriodHours:
+          description: "The period in hours before the card fraud case was created,\
+            \ for which the card fraud case activities will be included in the case.\
+            \ Can be one of the following periods: 12, 24, 48, 72."
+          example: 72
+          type: integer
+        caseExpirationPeriodHours:
+          description: "The period in hours after the card fraud case was created,\
+            \ after which the card fraud case expires. Can be one of the following\
+            \ periods: 12, 24, 48, 72."
+          example: 72
+          type: integer
+        numberOfCardActivities:
+          description: The number of card activities that will be included in the
+            card fraud case. Up to 5 activities max.
+          example: 3
+          type: integer
+        businessRecipient:
+          description: "For business cards, controls who receives the fraud outreach\
+            \ email. One of: CardHolder (cardholder only; also the behavior when omitted)\
+            \ or CustomerAndCardHolder (cardholder on to, business customer cc'd)."
+          example: CardHolder
+          type: string
+        fraudRulesSuppressionDays:
+          description: Sets suppression window (1–7 days) for fraud rules following
+            a confirmed legitimate transaction. Up to 7 days maximum.
+          example: 1
+          type: integer
+        emailOutreachSettings:
+          description: The id of the email outreach settings to be used for the policy.
+          example: "10001"
+          type: string
+        messageOutreachSettings:
+          description: The id of the message outreach settings to be used for the
+            policy.
+          example: "10002"
+          type: string
+        whiteLabelTheme:
+          description: The id of the white-label theme to be used for the policy.
+          example: "100081"
+          type: string
+      type: object
+    MarkCardFraudCaseAsFraudData_attributes:
+      properties:
+        fraudulentActivityIds:
+          description: The ids of the fraudulent activities. The activities are the
+            card activities that are marked as fraudulent. The activities are linked
+            to the card fraud case.
+          example:
+          - 15
+          - 16
+          - 17
+          items:
+            type: integer
+          type: array
+      required:
+      - fraudulentActivityIds
       type: object
   securitySchemes:
     bearerAuth:

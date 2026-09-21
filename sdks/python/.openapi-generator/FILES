@@ -37,6 +37,9 @@ docs/ApplicationsApi.md
 docs/ArchiveCustomerData.md
 docs/ArchiveCustomerDataAttributes.md
 docs/ArchiveCustomerRequest.md
+docs/AuthorizationCardFraudCase.md
+docs/AuthorizationCardFraudCaseAttributes.md
+docs/AuthorizationCardFraudCaseRelationships.md
 docs/AuthorizedUserType.md
 docs/AuthorizedUsersApi.md
 docs/BatchRelease.md
@@ -77,6 +80,10 @@ docs/CancelApplicationDataAttributes.md
 docs/CancelApplicationRequest.md
 docs/CancelPayment200Response.md
 docs/CancelPayment200ResponseData.md
+docs/CardFraudOutreachApi.md
+docs/CardFraudOutreachPolicy.md
+docs/CardFraudOutreachPolicyAttributes.md
+docs/CardFraudOutreachPolicyRelationships.md
 docs/CardReversalTransaction.md
 docs/CardReversalTransactionAttributes.md
 docs/CardReversalTransactionRelationships.md
@@ -222,6 +229,11 @@ docs/CreateIndividualVirtualDebitCardRequest.md
 docs/CreatePayment201Response.md
 docs/CreatePayment201ResponseData.md
 docs/CreatePaymentRequest.md
+docs/CreatePolicy201Response.md
+docs/CreatePolicyData.md
+docs/CreatePolicyDataAttributes.md
+docs/CreatePolicyDataRelationships.md
+docs/CreatePolicyRequest.md
 docs/CreateRecurringCreditACHPaymentData.md
 docs/CreateRecurringCreditACHPaymentDataAttributes.md
 docs/CreateRecurringCreditACHPaymentRequest.md
@@ -267,6 +279,7 @@ docs/FeeReversalTransaction.md
 docs/FeeReversalTransactionRelationships.md
 docs/FeeTransaction.md
 docs/FeesApi.md
+docs/FraudCaseCardActivityType.md
 docs/FreezeAccountRequest.md
 docs/FreezeCardData.md
 docs/FreezeCardDataAttributes.md
@@ -293,6 +306,7 @@ docs/GetAvailableDepositProducts200Response.md
 docs/GetAvailableDepositProducts200ResponseDataInner.md
 docs/GetAvailableDepositProducts200ResponseDataInnerAttributes.md
 docs/GetCard200Response.md
+docs/GetCardFraudCaseById200Response.md
 docs/GetCardPinStatus200Response.md
 docs/GetCheckDeposit200Response.md
 docs/GetCounterpartyBalance200Response.md
@@ -325,6 +339,8 @@ docs/ListAccounts200Response.md
 docs/ListAccounts200ResponseDataInner.md
 docs/ListApplicationDocuments200Response.md
 docs/ListAuthorizedUsers200Response.md
+docs/ListCardFraudCases200Response.md
+docs/ListCardFraudCases200ResponseDataInner.md
 docs/ListCards200Response.md
 docs/ListCards200ResponseDataInner.md
 docs/ListCheckDeposits200Response.md
@@ -339,6 +355,9 @@ docs/ListStoreLocations200Response.md
 docs/ListTransactions200Response.md
 docs/ListTransactions200ResponseIncludedInner.md
 docs/ListWireDrawdowns200Response.md
+docs/MarkCardFraudCaseAsFraudData.md
+docs/MarkCardFraudCaseAsFraudDataAttributes.md
+docs/MarkCardFraudCaseAsFraudRequest.md
 docs/Meta.md
 docs/MetaPagination.md
 docs/NegativeBalanceCoverageTransaction.md
@@ -442,6 +461,7 @@ docs/StoreLocationAttributes.md
 docs/ToManyRelationship.md
 docs/TotalAccruedInterestType.md
 docs/Transaction.md
+docs/TransactionCardFraudCase.md
 docs/TransactionsApi.md
 docs/UpdateACHPaymentData.md
 docs/UpdateACHPaymentDataAttributes.md
@@ -507,6 +527,9 @@ docs/UpdateIndividualCustomerRequest.md
 docs/UpdatePayment200Response.md
 docs/UpdatePayment200ResponseData.md
 docs/UpdatePaymentRequest.md
+docs/UpdatePolicyData.md
+docs/UpdatePolicyDataAttributes.md
+docs/UpdatePolicyRequest.md
 docs/UpdateRealtimeReceivedPaymentData.md
 docs/UpdateRealtimeReceivedPaymentRequest.md
 docs/UpdateReceivedPayment200Response.md
@@ -544,6 +567,7 @@ unit_finance_sdk/api/accounts_api.py
 unit_finance_sdk/api/application_documents_api.py
 unit_finance_sdk/api/applications_api.py
 unit_finance_sdk/api/authorized_users_api.py
+unit_finance_sdk/api/card_fraud_outreach_api.py
 unit_finance_sdk/api/cards_api.py
 unit_finance_sdk/api/check_deposits_api.py
 unit_finance_sdk/api/counterparties_api.py
@@ -590,6 +614,9 @@ unit_finance_sdk/models/archive_customer_request.py
 unit_finance_sdk/models/atm_transaction.py
 unit_finance_sdk/models/atm_transaction_attributes.py
 unit_finance_sdk/models/atm_transaction_relationships.py
+unit_finance_sdk/models/authorization_card_fraud_case.py
+unit_finance_sdk/models/authorization_card_fraud_case_attributes.py
+unit_finance_sdk/models/authorization_card_fraud_case_relationships.py
 unit_finance_sdk/models/authorized_user_type.py
 unit_finance_sdk/models/batch_release.py
 unit_finance_sdk/models/batch_release_attributes.py
@@ -629,6 +656,9 @@ unit_finance_sdk/models/cancel_application_data_attributes.py
 unit_finance_sdk/models/cancel_application_request.py
 unit_finance_sdk/models/cancel_payment200_response.py
 unit_finance_sdk/models/cancel_payment200_response_data.py
+unit_finance_sdk/models/card_fraud_outreach_policy.py
+unit_finance_sdk/models/card_fraud_outreach_policy_attributes.py
+unit_finance_sdk/models/card_fraud_outreach_policy_relationships.py
 unit_finance_sdk/models/card_reversal_transaction.py
 unit_finance_sdk/models/card_reversal_transaction_attributes.py
 unit_finance_sdk/models/card_reversal_transaction_relationships.py
@@ -771,6 +801,11 @@ unit_finance_sdk/models/create_individual_virtual_debit_card_request.py
 unit_finance_sdk/models/create_payment201_response.py
 unit_finance_sdk/models/create_payment201_response_data.py
 unit_finance_sdk/models/create_payment_request.py
+unit_finance_sdk/models/create_policy201_response.py
+unit_finance_sdk/models/create_policy_data.py
+unit_finance_sdk/models/create_policy_data_attributes.py
+unit_finance_sdk/models/create_policy_data_relationships.py
+unit_finance_sdk/models/create_policy_request.py
 unit_finance_sdk/models/create_recurring_credit_ach_payment_data.py
 unit_finance_sdk/models/create_recurring_credit_ach_payment_data_attributes.py
 unit_finance_sdk/models/create_recurring_credit_ach_payment_request.py
@@ -814,6 +849,7 @@ unit_finance_sdk/models/fee_reversal_relationships.py
 unit_finance_sdk/models/fee_reversal_transaction.py
 unit_finance_sdk/models/fee_reversal_transaction_relationships.py
 unit_finance_sdk/models/fee_transaction.py
+unit_finance_sdk/models/fraud_case_card_activity_type.py
 unit_finance_sdk/models/freeze_account_request.py
 unit_finance_sdk/models/freeze_card_data.py
 unit_finance_sdk/models/freeze_card_data_attributes.py
@@ -840,6 +876,7 @@ unit_finance_sdk/models/get_available_deposit_products200_response.py
 unit_finance_sdk/models/get_available_deposit_products200_response_data_inner.py
 unit_finance_sdk/models/get_available_deposit_products200_response_data_inner_attributes.py
 unit_finance_sdk/models/get_card200_response.py
+unit_finance_sdk/models/get_card_fraud_case_by_id200_response.py
 unit_finance_sdk/models/get_card_pin_status200_response.py
 unit_finance_sdk/models/get_check_deposit200_response.py
 unit_finance_sdk/models/get_counterparty_balance200_response.py
@@ -872,6 +909,8 @@ unit_finance_sdk/models/list_accounts200_response.py
 unit_finance_sdk/models/list_accounts200_response_data_inner.py
 unit_finance_sdk/models/list_application_documents200_response.py
 unit_finance_sdk/models/list_authorized_users200_response.py
+unit_finance_sdk/models/list_card_fraud_cases200_response.py
+unit_finance_sdk/models/list_card_fraud_cases200_response_data_inner.py
 unit_finance_sdk/models/list_cards200_response.py
 unit_finance_sdk/models/list_cards200_response_data_inner.py
 unit_finance_sdk/models/list_check_deposits200_response.py
@@ -886,6 +925,9 @@ unit_finance_sdk/models/list_store_locations200_response.py
 unit_finance_sdk/models/list_transactions200_response.py
 unit_finance_sdk/models/list_transactions200_response_included_inner.py
 unit_finance_sdk/models/list_wire_drawdowns200_response.py
+unit_finance_sdk/models/mark_card_fraud_case_as_fraud_data.py
+unit_finance_sdk/models/mark_card_fraud_case_as_fraud_data_attributes.py
+unit_finance_sdk/models/mark_card_fraud_case_as_fraud_request.py
 unit_finance_sdk/models/meta.py
 unit_finance_sdk/models/meta_pagination.py
 unit_finance_sdk/models/negative_balance_coverage_transaction.py
@@ -988,6 +1030,7 @@ unit_finance_sdk/models/store_location_attributes.py
 unit_finance_sdk/models/to_many_relationship.py
 unit_finance_sdk/models/total_accrued_interest_type.py
 unit_finance_sdk/models/transaction.py
+unit_finance_sdk/models/transaction_card_fraud_case.py
 unit_finance_sdk/models/update_account_request.py
 unit_finance_sdk/models/update_ach_payment_data.py
 unit_finance_sdk/models/update_ach_payment_data_attributes.py
@@ -1052,6 +1095,9 @@ unit_finance_sdk/models/update_individual_customer_request.py
 unit_finance_sdk/models/update_payment200_response.py
 unit_finance_sdk/models/update_payment200_response_data.py
 unit_finance_sdk/models/update_payment_request.py
+unit_finance_sdk/models/update_policy_data.py
+unit_finance_sdk/models/update_policy_data_attributes.py
+unit_finance_sdk/models/update_policy_request.py
 unit_finance_sdk/models/update_realtime_received_payment_data.py
 unit_finance_sdk/models/update_realtime_received_payment_request.py
 unit_finance_sdk/models/update_received_payment200_response.py
