@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Unit API",
-    "version": "0.11.0",
+    "version": "0.12.0",
     "description": "JSON:API-compliant banking API.",
     "license": {
       "name": "Proprietary",
@@ -63,6 +63,10 @@
     {
       "name": "Authorized Users",
       "description": "Authorized users on a customer, their creation, listing, retrieval, and removal."
+    },
+    {
+      "name": "Card Fraud Outreach",
+      "description": "Card fraud cases, their fraud/no-fraud decisions, and the card fraud outreach policies that govern them."
     }
   ],
   "paths": {
@@ -9184,6 +9188,591 @@
                 "schema": {
                   "$ref": "#/components/schemas/ErrorDocument"
                 }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fraud-outreach-policies": {
+      "post": {
+        "operationId": "createPolicy",
+        "summary": "Create a card fraud outreach policy",
+        "description": "Create a card fraud outreach policy.",
+        "tags": [
+          "Card Fraud Outreach"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "properties": {
+                  "data": {
+                    "$ref": "#/components/schemas/CreatePolicyData"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The created CardFraudOutreachPolicy resource.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/CardFraudOutreachPolicy"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fraud-outreach-policies/{policyId}": {
+      "parameters": [
+        {
+          "name": "policyId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "getPolicyById",
+        "summary": "Get a card fraud outreach policy by id",
+        "description": "Get a card fraud outreach policy by id.",
+        "tags": [
+          "Card Fraud Outreach"
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested CardFraudOutreachPolicy resource.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/CardFraudOutreachPolicy"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "updatePolicy",
+        "summary": "Update a card fraud outreach policy",
+        "description": "Update a card fraud outreach policy.",
+        "tags": [
+          "Card Fraud Outreach"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "properties": {
+                  "data": {
+                    "$ref": "#/components/schemas/UpdatePolicyData"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The updated CardFraudOutreachPolicy resource.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/CardFraudOutreachPolicy"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/card-fraud-cases": {
+      "get": {
+        "operationId": "listCardFraudCases",
+        "summary": "List card fraud cases",
+        "description": "List card fraud case resources. Paging can be applied.",
+        "tags": [
+          "Card Fraud Outreach"
+        ],
+        "parameters": [
+          {
+            "name": "page[limit]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Maximum number of resources that will be returned. Maximum is 10000 resources. See Pagination.",
+            "schema": {
+              "type": "string",
+              "default": "100"
+            }
+          },
+          {
+            "name": "page[offset]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Number of resources to skip. See Pagination.",
+            "schema": {
+              "type": "string",
+              "default": "0"
+            }
+          },
+          {
+            "name": "filter[cardId]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filter by card id.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[accountId]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filter by account id.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[customerId]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filter by customer id.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[status][]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filter by case status. Can be one of the following values: Created, Active, Closed, Expired.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[decision][]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filter by case decision. Can be one of the following values: Pending, Fraud, NoFraud.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "description": "Optional. sort=createdAt for ascending order or sort=-createdAt (leading minus sign) for descending order.",
+            "schema": {
+              "type": "string",
+              "default": "-createdAt"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of card fraud case resources.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "description": "Array of card fraud case resources. Each resource can be either Transaction or Authorization, as indicated by the type field.",
+                      "items": {
+                        "oneOf": [
+                          {
+                            "$ref": "#/components/schemas/AuthorizationCardFraudCase"
+                          },
+                          {
+                            "$ref": "#/components/schemas/TransactionCardFraudCase"
+                          }
+                        ],
+                        "discriminator": {
+                          "propertyName": "type",
+                          "mapping": {
+                            "authorizationCardFraudCase": "#/components/schemas/AuthorizationCardFraudCase",
+                            "transactionCardFraudCase": "#/components/schemas/TransactionCardFraudCase"
+                          }
+                        }
+                      }
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/card-fraud-cases/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "getCardFraudCaseById",
+        "summary": "Get a card fraud case by id",
+        "description": "Get a card fraud case by id.",
+        "tags": [
+          "Card Fraud Outreach"
+        ],
+        "responses": {
+          "200": {
+            "description": "Card Fraud Case resource. Can be either Authorization or Transaction as indicated by the type field.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "oneOf": [
+                        {
+                          "$ref": "#/components/schemas/AuthorizationCardFraudCase"
+                        },
+                        {
+                          "$ref": "#/components/schemas/TransactionCardFraudCase"
+                        }
+                      ],
+                      "discriminator": {
+                        "propertyName": "type",
+                        "mapping": {
+                          "authorizationCardFraudCase": "#/components/schemas/AuthorizationCardFraudCase",
+                          "transactionCardFraudCase": "#/components/schemas/TransactionCardFraudCase"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/card-fraud-cases/{id}/fraud": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "operationId": "markCardFraudCaseAsFraud",
+        "summary": "Mark a card fraud case as fraud",
+        "description": "Mark a card fraud case as fraud.",
+        "tags": [
+          "Card Fraud Outreach"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "properties": {
+                  "data": {
+                    "$ref": "#/components/schemas/MarkCardFraudCaseAsFraudData"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The Card Fraud Case resource updated as Fraud. Can be either Authorization or Transaction as indicated by the type field.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "oneOf": [
+                        {
+                          "$ref": "#/components/schemas/AuthorizationCardFraudCase"
+                        },
+                        {
+                          "$ref": "#/components/schemas/TransactionCardFraudCase"
+                        }
+                      ],
+                      "discriminator": {
+                        "propertyName": "type",
+                        "mapping": {
+                          "authorizationCardFraudCase": "#/components/schemas/AuthorizationCardFraudCase",
+                          "transactionCardFraudCase": "#/components/schemas/TransactionCardFraudCase"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/card-fraud-cases/{id}/no-fraud": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "operationId": "markCardFraudCaseAsNoFraud",
+        "summary": "Mark a card fraud case as no fraud",
+        "description": "Mark a card fraud case as no fraud.",
+        "tags": [
+          "Card Fraud Outreach"
+        ],
+        "responses": {
+          "200": {
+            "description": "The Card Fraud Case resource updated as No Fraud. Can be either Authorization or Transaction as indicated by the type field.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "oneOf": [
+                        {
+                          "$ref": "#/components/schemas/AuthorizationCardFraudCase"
+                        },
+                        {
+                          "$ref": "#/components/schemas/TransactionCardFraudCase"
+                        }
+                      ],
+                      "discriminator": {
+                        "propertyName": "type",
+                        "mapping": {
+                          "authorizationCardFraudCase": "#/components/schemas/AuthorizationCardFraudCase",
+                          "transactionCardFraudCase": "#/components/schemas/TransactionCardFraudCase"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "type": "object"
               }
             }
           }
@@ -24521,6 +25110,662 @@
                 "description": "The list of authorized users emails to remove from the customer.",
                 "example": [
                   "jared@piedpiper.com"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "CardFraudOutreachPolicy": {
+        "type": "object",
+        "required": [
+          "type",
+          "id",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "cardFraudOutreachPolicy"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "createdAt",
+              "activitiesLookBackPeriodHours",
+              "caseExpirationPeriodHours",
+              "numberOfCardActivities",
+              "contactPhone",
+              "contactUrl",
+              "enabled"
+            ],
+            "properties": {
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the resource was created."
+              },
+              "activitiesLookBackPeriodHours": {
+                "type": "integer",
+                "description": "The period in hours before the card fraud case was created, for which the card fraud case activities were included in the case. Can be one of the following periods: 12, 24, 48, 72"
+              },
+              "caseExpirationPeriodHours": {
+                "type": "integer",
+                "description": "The period in hours after the card fraud case was created, after which the card fraud case expires. Can be one of the following periods: 12, 24, 48, 72."
+              },
+              "numberOfCardActivities": {
+                "type": "integer",
+                "description": "The number of card activities that are included in the card fraud case. Up to 5 activities max."
+              },
+              "businessRecipient": {
+                "type": "string",
+                "nullable": true,
+                "description": "For business cards, controls who receives the fraud outreach email. One of: CardHolder or CustomerAndCardHolder. When omitted or null, email goes to the cardholder only."
+              },
+              "contactPhone": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/PhoneType"
+                  }
+                ],
+                "description": "The client support contact phone number."
+              },
+              "contactUrl": {
+                "type": "string",
+                "description": "The client support contact URL."
+              },
+              "enabled": {
+                "type": "boolean",
+                "description": "Indicates whether the policy is enabled."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "properties": {
+              "emailOutreachSettings": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "whiteLabelTheme": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        },
+        "example": {
+          "type": "cardFraudOutreachPolicy",
+          "id": "1",
+          "attributes": {
+            "createdAt": "2024-07-30T14:29:29.986Z",
+            "activitiesLookBackPeriodHours": 72,
+            "caseExpirationPeriodHours": 72,
+            "numberOfCardActivities": 3,
+            "businessRecipient": "CardHolder",
+            "contactPhone": {
+              "countryCode": "213",
+              "number": "5350405030"
+            },
+            "contactUrl": "https://thisIsMyDomain.unit.co",
+            "fraudRulesSuppressionDays": 1,
+            "enabled": true
+          },
+          "relationships": {
+            "emailOutreachSettings": {
+              "data": {
+                "type": "emailOutreachSettings",
+                "id": "10023"
+              }
+            },
+            "messageOutreachSettings": {
+              "data": {
+                "type": "messageOutreachSettings",
+                "id": "10022"
+              }
+            },
+            "whiteLabelTheme": {
+              "data": {
+                "type": "whiteLabelTheme",
+                "id": "54728"
+              }
+            }
+          }
+        },
+        "description": "`CardFraudOutreachPolicy` is a JSON:API resource, top-level fields:"
+      },
+      "AuthorizationCardFraudCase": {
+        "type": "object",
+        "required": [
+          "type",
+          "id",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "authorizationCardFraudCase"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "createdAt",
+              "status",
+              "decision",
+              "expiresAt",
+              "cardActivities"
+            ],
+            "properties": {
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the resource was created."
+              },
+              "status": {
+                "type": "string",
+                "description": "The status of the card fraud case. Can be one of Created, Active, Closed, Expired."
+              },
+              "decision": {
+                "type": "string",
+                "description": "The decision made for the card fraud case. Can be one of Pending, Fraud, NoFraud."
+              },
+              "expiresAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the card fraud case expires."
+              },
+              "cardActivities": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/FraudCaseCardActivityType"
+                },
+                "description": "The card activities associated with the card fraud case."
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the resource was last updated."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "properties": {
+              "card": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "account": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "customer": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "transaction": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        },
+        "example": {
+          "type": "authorizationCardFraudCase",
+          "id": "9",
+          "attributes": {
+            "createdAt": "2024-07-31T11:02:27.355Z",
+            "status": "Closed",
+            "decision": "Fraud",
+            "expiresAt": "2024-08-03T11:02:27.355Z",
+            "cardActivities": [
+              {
+                "id": "15",
+                "createdAt": "2024-07-31T11:02:27.355Z",
+                "activityType": "Authorization",
+                "cardActivityCreatedAt": "2024-07-31T11:02:27.270Z",
+                "cardActivity": "8082294",
+                "location": "Cupertino, CA, US",
+                "merchant": "Apple Inc.",
+                "amount": 2500,
+                "decision": "Fraud",
+                "updatedAt": "2024-07-31T11:04:43.696Z"
+              }
+            ],
+            "updatedAt": "2024-07-31T11:04:43.696Z"
+          },
+          "relationships": {
+            "card": {
+              "data": {
+                "type": "card",
+                "id": "2200412"
+              }
+            },
+            "account": {
+              "data": {
+                "type": "account",
+                "id": "49230"
+              }
+            },
+            "customer": {
+              "data": {
+                "type": "customer",
+                "id": "49430"
+              }
+            },
+            "authorization": {
+              "data": {
+                "type": "authorization",
+                "id": "8082294"
+              }
+            }
+          }
+        },
+        "description": "`AuthorizationCardFraudCase` is a JSON:API resource, top-level fields:"
+      },
+      "TransactionCardFraudCase": {
+        "type": "object",
+        "required": [
+          "type",
+          "id",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "transactionCardFraudCase"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "createdAt",
+              "status",
+              "decision",
+              "expiresAt",
+              "cardActivities"
+            ],
+            "properties": {
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the resource was created."
+              },
+              "status": {
+                "type": "string",
+                "description": "The status of the card fraud case. Can be one of Created, Active, Closed, Expired."
+              },
+              "decision": {
+                "type": "string",
+                "description": "The decision made for the card fraud case. Can be one of Pending, Fraud, NoFraud."
+              },
+              "expiresAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the card fraud case expires."
+              },
+              "cardActivities": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/FraudCaseCardActivityType"
+                },
+                "description": "The card activities associated with the card fraud case."
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the resource was last updated."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "properties": {
+              "card": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "account": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "customer": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "transaction": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        },
+        "example": {
+          "type": "transactionCardFraudCase",
+          "id": "9",
+          "attributes": {
+            "createdAt": "2024-07-31T11:02:27.355Z",
+            "status": "Closed",
+            "decision": "NoFraud",
+            "expiresAt": "2024-08-03T11:02:27.355Z",
+            "cardActivities": [
+              {
+                "id": "17",
+                "createdAt": "2024-07-31T11:02:27.355Z",
+                "activityType": "Transaction",
+                "cardActivityCreatedAt": "2024-07-30T14:40:07.534Z",
+                "cardActivity": "8069210",
+                "location": "Cupertino, CA, US",
+                "merchant": "Apple Inc.",
+                "amount": 100,
+                "decision": "NoFraud",
+                "updatedAt": "2024-07-31T11:04:43.696Z"
+              }
+            ],
+            "updatedAt": "2024-07-31T11:04:43.696Z"
+          },
+          "relationships": {
+            "card": {
+              "data": {
+                "type": "card",
+                "id": "2200412"
+              }
+            },
+            "account": {
+              "data": {
+                "type": "account",
+                "id": "49230"
+              }
+            },
+            "customer": {
+              "data": {
+                "type": "customer",
+                "id": "49430"
+              }
+            },
+            "transaction": {
+              "data": {
+                "type": "transaction",
+                "id": "8069210"
+              }
+            }
+          }
+        },
+        "description": "`TransactionCardFraudCase` is a JSON:API resource, top-level fields:"
+      },
+      "FraudCaseCardActivityType": {
+        "type": "object",
+        "required": [
+          "id",
+          "createdAt",
+          "activityType",
+          "cardActivityCreatedAt",
+          "cardActivity",
+          "location",
+          "merchant",
+          "amount",
+          "decision",
+          "updatedAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The id of the fraud case card activity."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The date the activity was created."
+          },
+          "activityType": {
+            "type": "string",
+            "description": "The type of the activity. Can be either Authorization or Transaction."
+          },
+          "cardActivityCreatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The creation date of the original Authorization or Transaction the activity was created upon."
+          },
+          "cardActivity": {
+            "type": "string",
+            "description": "The id of the original Authorization or Transaction of the activity."
+          },
+          "location": {
+            "type": "string",
+            "description": "The location in which the activity occurred."
+          },
+          "merchant": {
+            "type": "string",
+            "description": "The name of the merchant of the activity."
+          },
+          "amount": {
+            "type": "integer",
+            "description": "The amount (in cents) of the activity."
+          },
+          "decision": {
+            "type": "string",
+            "description": "The decision made for the activity. Can be one of Pending, Fraud, NoFraud."
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The date the activity was last updated."
+          }
+        },
+        "example": {
+          "id": "15",
+          "createdAt": "2024-07-31T11:02:27.355Z",
+          "activityType": "Authorization",
+          "cardActivityCreatedAt": "2024-07-31T11:02:27.270Z",
+          "cardActivity": "8082294",
+          "location": "Cupertino, CA, US",
+          "merchant": "Apple Inc.",
+          "amount": 2500,
+          "decision": "Fraud",
+          "updatedAt": "2024-07-31T11:04:43.696Z"
+        },
+        "description": "Represents a card activity that is part of a TransactionCardFraudCase or AuthorizationCardFraudCase."
+      },
+      "CreatePolicyData": {
+        "type": "object",
+        "required": [
+          "type",
+          "attributes",
+          "relationships"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "cardFraudOutreachPolicy"
+            ]
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "contactPhone",
+              "contactUrl"
+            ],
+            "properties": {
+              "contactPhone": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/PhoneType"
+                  }
+                ],
+                "description": "The client support contact phone number.",
+                "example": {
+                  "countryCode": "213",
+                  "number": "5350405030"
+                }
+              },
+              "contactUrl": {
+                "type": "string",
+                "description": "The client support contact URL. Should be a valid https URL.",
+                "example": "https://thisIsMyDomain.unit.co"
+              },
+              "activitiesLookBackPeriodHours": {
+                "type": "integer",
+                "description": "Optional. The period in hours before the card fraud case was created, for which the card fraud case activities will be included in the case. Can be one of the following periods: 12, 24, 48, 72",
+                "example": 72
+              },
+              "caseExpirationPeriodHours": {
+                "type": "integer",
+                "description": "Optional. The period in hours after the card fraud case was created, after which the card fraud case expires. Can be one of the following periods: 12, 24, 48, 72",
+                "example": 72
+              },
+              "numberOfCardActivities": {
+                "type": "integer",
+                "description": "Optional. The number of card activities that will be included in the card fraud case. Up to 5 activities max.",
+                "example": 3
+              },
+              "businessRecipient": {
+                "type": "string",
+                "description": "Optional. For business cards, controls who receives the fraud outreach email. One of: CardHolder (cardholder only; also the behavior when omitted) or CustomerAndCardHolder (cardholder on to, business customer cc'd).",
+                "example": "CardHolder"
+              },
+              "fraudRulesSuppressionDays": {
+                "type": "integer",
+                "description": "Optional. Sets suppression window (1–7 days) for fraud rules following a confirmed legitimate transaction. Up to 7 days maximum.",
+                "example": 1
+              },
+              "idempotencyKey": {
+                "type": "string",
+                "description": "Optional. See Idempotency."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "required": [
+              "emailOutreachSettings",
+              "messageOutreachSettings",
+              "whiteLabelTheme"
+            ],
+            "properties": {
+              "emailOutreachSettings": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "messageOutreachSettings": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "whiteLabelTheme": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        }
+      },
+      "UpdatePolicyData": {
+        "type": "object",
+        "required": [
+          "type",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "cardFraudOutreachPolicy"
+            ]
+          },
+          "attributes": {
+            "type": "object",
+            "properties": {
+              "contactPhone": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/PhoneType"
+                  }
+                ],
+                "description": "The client support contact phone number.",
+                "example": {
+                  "countryCode": "213",
+                  "number": "5350405030"
+                }
+              },
+              "contactUrl": {
+                "type": "string",
+                "description": "The client support contact URL. Should be a valid https URL.",
+                "example": "https://thisIsMyDomain.unit.co"
+              },
+              "activitiesLookBackPeriodHours": {
+                "type": "integer",
+                "description": "The period in hours before the card fraud case was created, for which the card fraud case activities will be included in the case. Can be one of the following periods: 12, 24, 48, 72.",
+                "example": 72
+              },
+              "caseExpirationPeriodHours": {
+                "type": "integer",
+                "description": "The period in hours after the card fraud case was created, after which the card fraud case expires. Can be one of the following periods: 12, 24, 48, 72.",
+                "example": 72
+              },
+              "numberOfCardActivities": {
+                "type": "integer",
+                "description": "The number of card activities that will be included in the card fraud case. Up to 5 activities max.",
+                "example": 3
+              },
+              "businessRecipient": {
+                "type": "string",
+                "description": "For business cards, controls who receives the fraud outreach email. One of: CardHolder (cardholder only; also the behavior when omitted) or CustomerAndCardHolder (cardholder on to, business customer cc'd).",
+                "example": "CardHolder"
+              },
+              "fraudRulesSuppressionDays": {
+                "type": "integer",
+                "description": "Sets suppression window (1–7 days) for fraud rules following a confirmed legitimate transaction. Up to 7 days maximum.",
+                "example": 1
+              },
+              "emailOutreachSettings": {
+                "type": "string",
+                "description": "The id of the email outreach settings to be used for the policy.",
+                "example": "10001"
+              },
+              "messageOutreachSettings": {
+                "type": "string",
+                "description": "The id of the message outreach settings to be used for the policy.",
+                "example": "10002"
+              },
+              "whiteLabelTheme": {
+                "type": "string",
+                "description": "The id of the white-label theme to be used for the policy.",
+                "example": "100081"
+              }
+            }
+          }
+        }
+      },
+      "MarkCardFraudCaseAsFraudData": {
+        "type": "object",
+        "required": [
+          "type",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "markAsFraudRequest"
+            ]
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "fraudulentActivityIds"
+            ],
+            "properties": {
+              "fraudulentActivityIds": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                },
+                "description": "The ids of the fraudulent activities. The activities are the card activities that are marked as fraudulent. The activities are linked to the card fraud case.",
+                "example": [
+                  15,
+                  16,
+                  17
                 ]
               }
             }
