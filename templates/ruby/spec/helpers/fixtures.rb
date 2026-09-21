@@ -655,6 +655,32 @@ module Helpers
       }
     end
 
+    def create_cardholder_token_verification_request
+      {
+        'data' => {
+          'type' => 'cardholderTokenVerification',
+          'attributes' => { 'channel' => 'sms' }
+        }
+      }
+    end
+
+    # The spec marks `verificationToken` / `verificationCode` required even for
+    # the plain `cards` scope. The code is a 6-digit OTP delivered to the card
+    # holder out of band, so the suite can only send a placeholder.
+    def create_cardholder_token_request(verification_token, verification_code = '000000')
+      {
+        'data' => {
+          'type' => 'cardholderToken',
+          'attributes' => {
+            'scope' => 'cards',
+            'verificationToken' => verification_token,
+            'verificationCode' => verification_code,
+            'expiresIn' => 3600
+          }
+        }
+      }
+    end
+
     def create_batch_releases_request
       {
         'data' => {

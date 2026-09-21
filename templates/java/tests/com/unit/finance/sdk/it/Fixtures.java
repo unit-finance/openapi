@@ -54,6 +54,12 @@ import com.unit.finance.sdk.model.CreateBusinessWalletCustomerData;
 import com.unit.finance.sdk.model.CreateBusinessWalletCustomerDataAttributes;
 import com.unit.finance.sdk.model.CreateBusinessWalletCustomerRequest;
 import com.unit.finance.sdk.model.CreateCardRequest;
+import com.unit.finance.sdk.model.CreateCardholderTokenData;
+import com.unit.finance.sdk.model.CreateCardholderTokenDataAttributes;
+import com.unit.finance.sdk.model.CreateCardholderTokenRequest;
+import com.unit.finance.sdk.model.CreateCardholderTokenVerificationData;
+import com.unit.finance.sdk.model.CreateCardholderTokenVerificationDataAttributes;
+import com.unit.finance.sdk.model.CreateCardholderTokenVerificationRequest;
 import com.unit.finance.sdk.model.CreateDepositAccountData;
 import com.unit.finance.sdk.model.CreateDepositAccountDataAttributes;
 import com.unit.finance.sdk.model.CreateDepositAccountDataRelationships;
@@ -1010,5 +1016,34 @@ final class Fixtures {
             .type(MarkCardFraudCaseAsFraudData.TypeEnum.MARK_AS_FRAUD_REQUEST)
             .attributes(attributes);
     return new MarkCardFraudCaseAsFraudRequest().data(data);
+  }
+
+  static CreateCardholderTokenVerificationRequest createCardholderTokenVerificationRequest() {
+    CreateCardholderTokenVerificationDataAttributes attributes =
+        new CreateCardholderTokenVerificationDataAttributes().channel("sms");
+    CreateCardholderTokenVerificationData data =
+        new CreateCardholderTokenVerificationData()
+            .type(CreateCardholderTokenVerificationData.TypeEnum.CARDHOLDER_TOKEN_VERIFICATION)
+            .attributes(attributes);
+    return new CreateCardholderTokenVerificationRequest().data(data);
+  }
+
+  /**
+   * The spec marks {@code verificationToken} / {@code verificationCode} required even for the
+   * plain {@code cards} scope. The code is a 6-digit OTP delivered to the card holder out of
+   * band, so the suite can only send a placeholder.
+   */
+  static CreateCardholderTokenRequest createCardholderTokenRequest(String verificationToken) {
+    CreateCardholderTokenDataAttributes attributes =
+        new CreateCardholderTokenDataAttributes()
+            .scope("cards")
+            .verificationToken(verificationToken)
+            .verificationCode("000000")
+            .expiresIn(3600);
+    CreateCardholderTokenData data =
+        new CreateCardholderTokenData()
+            .type(CreateCardholderTokenData.TypeEnum.CARDHOLDER_TOKEN)
+            .attributes(attributes);
+    return new CreateCardholderTokenRequest().data(data);
   }
 }

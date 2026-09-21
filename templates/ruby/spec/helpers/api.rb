@@ -80,6 +80,10 @@ module Helpers
       UnitFinanceSdk::CardFraudOutreachApi.new(UnitFinanceSdk::ApiClient.new(configuration))
     end
 
+    def build_card_holder_api_tokens_api
+      UnitFinanceSdk::CardHolderAPITokensApi.new(UnitFinanceSdk::ApiClient.new(configuration))
+    end
+
     def sleep(seconds)
       Kernel.sleep(seconds)
     end
