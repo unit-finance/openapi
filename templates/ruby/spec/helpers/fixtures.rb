@@ -607,6 +607,54 @@ module Helpers
       }
     end
 
+    # CreatePolicy requires email/message outreach settings and a white-label
+    # theme that a plain sandbox org does not necessarily have. Tests pass
+    # placeholder relationship ids and treat a 4xx/5xx as feature-unavailable.
+    def create_policy_request(email_outreach_settings_id = '0', message_outreach_settings_id = '0', white_label_theme_id = '0')
+      {
+        'data' => {
+          'type' => 'cardFraudOutreachPolicy',
+          'attributes' => {
+            'contactPhone' => US_PHONE,
+            'contactUrl' => 'https://sdk-test.unit.co',
+            'activitiesLookBackPeriodHours' => 72,
+            'caseExpirationPeriodHours' => 72,
+            'numberOfCardActivities' => 3,
+            'idempotencyKey' => "#{Helpers::Api::TEST_RUN_ID}-fraud-policy-#{SecureRandom.hex(4)}"
+          },
+          'relationships' => {
+            'emailOutreachSettings' => {
+              'data' => { 'type' => 'emailOutreachSettings', 'id' => email_outreach_settings_id }
+            },
+            'messageOutreachSettings' => {
+              'data' => { 'type' => 'messageOutreachSettings', 'id' => message_outreach_settings_id }
+            },
+            'whiteLabelTheme' => {
+              'data' => { 'type' => 'whiteLabelTheme', 'id' => white_label_theme_id }
+            }
+          }
+        }
+      }
+    end
+
+    def update_policy_request
+      {
+        'data' => {
+          'type' => 'cardFraudOutreachPolicy',
+          'attributes' => { 'contactUrl' => 'https://sdk-test-updated.unit.co' }
+        }
+      }
+    end
+
+    def mark_card_fraud_case_as_fraud_request(fraudulent_activity_ids)
+      {
+        'data' => {
+          'type' => 'markAsFraudRequest',
+          'attributes' => { 'fraudulentActivityIds' => fraudulent_activity_ids }
+        }
+      }
+    end
+
     def create_batch_releases_request
       {
         'data' => {

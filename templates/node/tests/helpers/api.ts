@@ -3,6 +3,7 @@ import {
 	ApplicationDocumentsApi,
 	ApplicationsApi,
 	AuthorizedUsersApi,
+	CardFraudOutreachApi,
 	CardsApi,
 	CheckDepositsApi,
 	Configuration,
@@ -69,6 +70,10 @@ export function buildApplicationDocumentsApi(): ApplicationDocumentsApi {
 
 export function buildAuthorizedUsersApi(): AuthorizedUsersApi {
 	return new AuthorizedUsersApi(configuration());
+}
+
+export function buildCardFraudOutreachApi(): CardFraudOutreachApi {
+	return new CardFraudOutreachApi(configuration());
 }
 
 /**

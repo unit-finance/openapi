@@ -76,6 +76,10 @@ module Helpers
       UnitFinanceSdk::AuthorizedUsersApi.new(UnitFinanceSdk::ApiClient.new(configuration))
     end
 
+    def build_card_fraud_outreach_api
+      UnitFinanceSdk::CardFraudOutreachApi.new(UnitFinanceSdk::ApiClient.new(configuration))
+    end
+
     def sleep(seconds)
       Kernel.sleep(seconds)
     end

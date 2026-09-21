@@ -1,10 +1,7 @@
 name: Regenerate SDKs on spec release
 on:
-  # TEMPORARILY DISABLED: automatic spec-release regeneration is turned off.
-  # Re-enable by uncommenting the `repository_dispatch:` trigger below. Until
-  # then this workflow only runs via manual `workflow_dispatch`.
-  # repository_dispatch:
-  #   types: [spec-released]
+  repository_dispatch:
+    types: [spec-released]
   workflow_dispatch:
     inputs:
       spec_version:
@@ -14,13 +11,59 @@ on:
         description: 'Cursor model for the test-authoring agent (e.g. composer-2.5, auto)'
         required: false
         default: composer-2.5
+      force:
+        description: 'Regenerate even for a patch-level spec bump'
+        type: boolean
+        required: false
+        default: false
 
 permissions:
   contents: write
   pull-requests: write
 
 jobs:
+  # Spec releases fire on every patch, but a patch bump is by definition a
+  # non-breaking, additive-free change: regenerating for it would open a PR
+  # whose only diff is the pinned version string. Gate on the major/minor pair
+  # so only 0.1.x -> 0.2.0 or 0.x -> 1.0.0 style bumps regenerate.
+  gate:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.ver.outputs.version }}
+      proceed: ${{ steps.ver.outputs.proceed }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Resolve target spec version
+        id: ver
+        env:
+          FORCE: ${{ github.event.inputs.force }}
+        run: |
+          VERSION="${{ github.event.client_payload.spec_version || github.event.inputs.spec_version }}"
+          if [ -z "$VERSION" ]; then
+            echo "::error::No spec version supplied in dispatch payload or workflow input"; exit 1
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+          CURRENT="$(node -p "require('./spec-version.json').version")"
+          NEW="${VERSION#v}"
+          if [ "$FORCE" = "true" ]; then
+            echo "Forced: regenerating for $CURRENT -> $NEW regardless of bump level."
+            echo "proceed=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Compare only major.minor; equal pairs mean a patch (or no-op) bump.
+          if [ "$(echo "$CURRENT" | cut -d. -f1,2)" = "$(echo "$NEW" | cut -d. -f1,2)" ]; then
+            echo "::notice::Skipping regeneration: $CURRENT -> $NEW is a patch-level bump."
+            echo "proceed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "proceed=true" >> "$GITHUB_OUTPUT"
+          fi
+
   regenerate:
+    needs: gate
+    if: needs.gate.outputs.proceed == 'true'
     runs-on: ubuntu-latest
     # Job-level so the agent step's `if` can test for the key (step-level env is
     # not visible to that step's own `if`, and secrets can't be used in `if`).
@@ -44,15 +87,6 @@ jobs:
         with:
           ruby-version: '3.2'
 
-      - name: Resolve target spec version
-        id: ver
-        run: |
-          VERSION="${{ github.event.client_payload.spec_version || github.event.inputs.spec_version }}"
-          if [ -z "$VERSION" ]; then
-            echo "::error::No spec version supplied in dispatch payload or workflow input"; exit 1
-          fi
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-
       - name: Install
         run: npm ci
 
@@ -62,7 +96,7 @@ jobs:
       # version onto every SDK manifest.
       - name: Bump spec-version.json
         run: |
-          npm run set-spec-version -- "${{ steps.ver.outputs.version }}"
+          npm run set-spec-version -- "${{ needs.gate.outputs.version }}"
           cat spec-version.json
 
       # Force a fresh spec download. `spec/openapi.bundled.json` is committed, so
@@ -173,16 +207,16 @@ jobs:
           # gets validated automatically. Use a fine-grained PAT scoped to this
           # repo with Contents + Pull requests: read & write.
           token: ${{ secrets.SDK_BOT_TOKEN }}
-          branch: spec/regenerate-${{ steps.ver.outputs.version }}
+          branch: spec/regenerate-${{ needs.gate.outputs.version }}
           # Open as a draft when test authoring failed, so the PR is clearly not
           # ready to merge until the missing tests are written by hand.
           draft: ${{ steps.author.outcome == 'failure' }}
-          title: "Regenerate SDKs for spec ${{ steps.ver.outputs.version }}"
-          commit-message: "chore: regenerate SDKs for unit-openapi ${{ steps.ver.outputs.version }}"
+          title: "Regenerate SDKs for spec ${{ needs.gate.outputs.version }}"
+          commit-message: "chore: regenerate SDKs for unit-openapi ${{ needs.gate.outputs.version }}"
           body: |
             Automated regeneration triggered by a new `unit-openapi` spec release.
 
-            - Spec version: `${{ steps.ver.outputs.version }}`
+            - Spec version: `${{ needs.gate.outputs.version }}`
             - Updates `spec-version.json` and all committed SDKs under `sdks/`.
 
             **Slice changes**

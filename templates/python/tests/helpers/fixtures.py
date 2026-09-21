@@ -55,12 +55,14 @@ from unit_finance_sdk import (
     CreateFeeRequest,
     CreateIndividualApplicationRequest,
     CreatePaymentRequest,
+    CreatePolicyRequest,
     CreateRecurringCreditBookPaymentRequest,
     CreateRecurringPaymentRequest,
     FreezeAccountRequest,
     FreezeCardRequest,
     FreezeDepositAccountRequest,
     GetExpectedAchCompletionDateRequest,
+    MarkCardFraudCaseAsFraudRequest,
     RemoveAuthorizedUsersRequest,
     ReplaceCardRequest,
     ReverseFeeRequest,
@@ -78,6 +80,7 @@ from unit_finance_sdk import (
     UpdateCustomerRequest,
     UpdateDepositAccountRequest,
     UpdatePaymentRequest,
+    UpdatePolicyRequest,
     UpdateTagsRequest,
     UpdateTransactionRequest,
 )
@@ -954,3 +957,66 @@ def build_remove_authorized_users_request(
         },
     }
     return RemoveAuthorizedUsersRequest.from_dict(body)
+
+
+# CreatePolicy requires email/message outreach settings and a white-label
+# theme that a plain sandbox org does not necessarily have. Tests pass
+# placeholder relationship ids and treat a 4xx/5xx as feature-unavailable.
+def build_create_policy_request(
+    email_outreach_settings_id: str = "0",
+    message_outreach_settings_id: str = "0",
+    white_label_theme_id: str = "0",
+) -> CreatePolicyRequest:
+    body = {
+        "data": {
+            "type": "cardFraudOutreachPolicy",
+            "attributes": {
+                "contactPhone": _us_phone(),
+                "contactUrl": "https://sdk-test.unit.co",
+                "activitiesLookBackPeriodHours": 72,
+                "caseExpirationPeriodHours": 72,
+                "numberOfCardActivities": 3,
+                "idempotencyKey": f"{TEST_RUN_ID}-fraud-policy-{uuid.uuid4().hex[:8]}",
+            },
+            "relationships": {
+                "emailOutreachSettings": {
+                    "data": {
+                        "type": "emailOutreachSettings",
+                        "id": email_outreach_settings_id,
+                    }
+                },
+                "messageOutreachSettings": {
+                    "data": {
+                        "type": "messageOutreachSettings",
+                        "id": message_outreach_settings_id,
+                    }
+                },
+                "whiteLabelTheme": {
+                    "data": {"type": "whiteLabelTheme", "id": white_label_theme_id}
+                },
+            },
+        },
+    }
+    return CreatePolicyRequest.from_dict(body)
+
+
+def build_update_policy_request() -> UpdatePolicyRequest:
+    body = {
+        "data": {
+            "type": "cardFraudOutreachPolicy",
+            "attributes": {"contactUrl": "https://sdk-test-updated.unit.co"},
+        },
+    }
+    return UpdatePolicyRequest.from_dict(body)
+
+
+def build_mark_card_fraud_case_as_fraud_request(
+    fraudulent_activity_ids: List[int],
+) -> MarkCardFraudCaseAsFraudRequest:
+    body = {
+        "data": {
+            "type": "markAsFraudRequest",
+            "attributes": {"fraudulentActivityIds": fraudulent_activity_ids},
+        },
+    }
+    return MarkCardFraudCaseAsFraudRequest.from_dict(body)
