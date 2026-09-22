@@ -1,7 +1,7 @@
 # unit-java-sdk
 
 Unit API
-- API version: 0.12.0
+- API version: 0.14.0
   - Generator version: 7.22.0
 
 JSON:API-compliant banking API.
@@ -161,6 +161,8 @@ Class | Method | HTTP request | Description
 *CardFraudOutreachApi* | [**markCardFraudCaseAsFraud**](docs/CardFraudOutreachApi.md#markCardFraudCaseAsFraud) | **POST** /card-fraud-cases/{id}/fraud | Mark a card fraud case as fraud
 *CardFraudOutreachApi* | [**markCardFraudCaseAsNoFraud**](docs/CardFraudOutreachApi.md#markCardFraudCaseAsNoFraud) | **POST** /card-fraud-cases/{id}/no-fraud | Mark a card fraud case as no fraud
 *CardFraudOutreachApi* | [**updatePolicy**](docs/CardFraudOutreachApi.md#updatePolicy) | **PATCH** /fraud-outreach-policies/{policyId} | Update a card fraud outreach policy
+*CardHolderApiTokensApi* | [**createCardholderToken**](docs/CardHolderApiTokensApi.md#createCardholderToken) | **POST** /cards/{cardId}/cardholder/token | Create a cardholder token
+*CardHolderApiTokensApi* | [**createCardholderTokenVerification**](docs/CardHolderApiTokensApi.md#createCardholderTokenVerification) | **POST** /cards/{cardId}/cardholder/token/verification | Create a cardholder token verification
 *CardsApi* | [**closeCard**](docs/CardsApi.md#closeCard) | **POST** /cards/{cardId}/close | Close a card
 *CardsApi* | [**createCard**](docs/CardsApi.md#createCard) | **POST** /cards | Create a card
 *CardsApi* | [**freezeCard**](docs/CardsApi.md#freezeCard) | **POST** /cards/{cardId}/freeze | Freeze a card
@@ -173,6 +175,13 @@ Class | Method | HTTP request | Description
 *CardsApi* | [**reportCardStolen**](docs/CardsApi.md#reportCardStolen) | **POST** /cards/{cardId}/report-stolen | Report card stolen
 *CardsApi* | [**unfreezeCard**](docs/CardsApi.md#unfreezeCard) | **POST** /cards/{cardId}/unfreeze | Unfreeze a card
 *CardsApi* | [**updateCard**](docs/CardsApi.md#updateCard) | **PATCH** /cards/{cardId} | Update a card
+*CardsAddToMobileWalletApi* | [**getMobileWalletPayload**](docs/CardsAddToMobileWalletApi.md#getMobileWalletPayload) | **POST** /cards/{cardId}/mobile-wallet-payload | Get mobile wallet payload
+*CardsAtmLocationsApi* | [**listAtmLocations**](docs/CardsAtmLocationsApi.md#listAtmLocations) | **GET** /atm-locations | List ATM locations
+*CardsAuthorizationRequestsApi* | [**getAuthorizationRequestById**](docs/CardsAuthorizationRequestsApi.md#getAuthorizationRequestById) | **GET** /authorization-requests/{id} | Get an authorization request by id
+*CardsAuthorizationRequestsApi* | [**listAuthorizationRequests**](docs/CardsAuthorizationRequestsApi.md#listAuthorizationRequests) | **GET** /authorization-requests | List authorization requests
+*CardsAuthorizationsApi* | [**getAuthorization**](docs/CardsAuthorizationsApi.md#getAuthorization) | **GET** /authorizations/{id} | Get an authorization
+*CardsAuthorizationsApi* | [**listAuthorizations**](docs/CardsAuthorizationsApi.md#listAuthorizations) | **GET** /authorizations | List authorizations
+*CardsAuthorizationsApi* | [**releaseAuthorization**](docs/CardsAuthorizationsApi.md#releaseAuthorization) | **POST** /authorizations/{id}/release | Release an authorization
 *CheckDepositsApi* | [**clearCheckDeposit**](docs/CheckDepositsApi.md#clearCheckDeposit) | **POST** /check-deposits/{checkDepositId}/clear | Clear a check deposit
 *CheckDepositsApi* | [**confirmCheckDepositDetails**](docs/CheckDepositsApi.md#confirmCheckDepositDetails) | **POST** /check-deposits/{checkDepositId}/confirm | Confirm check deposit details
 *CheckDepositsApi* | [**createCheckDeposit**](docs/CheckDepositsApi.md#createCheckDeposit) | **POST** /check-deposits | Create a check deposit
@@ -236,6 +245,8 @@ Class | Method | HTTP request | Description
  - [ACHReceivedPayment](docs/ACHReceivedPayment.md)
  - [ACHReceivedPaymentAttributes](docs/ACHReceivedPaymentAttributes.md)
  - [ACHReceivedPaymentRelationships](docs/ACHReceivedPaymentRelationships.md)
+ - [ATMLocation](docs/ATMLocation.md)
+ - [ATMLocationAttributes](docs/ATMLocationAttributes.md)
  - [ATMTransaction](docs/ATMTransaction.md)
  - [ATMTransactionAttributes](docs/ATMTransactionAttributes.md)
  - [ATMTransactionRelationships](docs/ATMTransactionRelationships.md)
@@ -262,9 +273,15 @@ Class | Method | HTTP request | Description
  - [ArchiveCustomerData](docs/ArchiveCustomerData.md)
  - [ArchiveCustomerDataAttributes](docs/ArchiveCustomerDataAttributes.md)
  - [ArchiveCustomerRequest](docs/ArchiveCustomerRequest.md)
+ - [AtmAuthorizationRequest](docs/AtmAuthorizationRequest.md)
+ - [AtmAuthorizationRequestAttributes](docs/AtmAuthorizationRequestAttributes.md)
+ - [AtmAuthorizationRequestRelationships](docs/AtmAuthorizationRequestRelationships.md)
+ - [Authorization](docs/Authorization.md)
+ - [AuthorizationAttributes](docs/AuthorizationAttributes.md)
  - [AuthorizationCardFraudCase](docs/AuthorizationCardFraudCase.md)
  - [AuthorizationCardFraudCaseAttributes](docs/AuthorizationCardFraudCaseAttributes.md)
  - [AuthorizationCardFraudCaseRelationships](docs/AuthorizationCardFraudCaseRelationships.md)
+ - [AuthorizationRelationships](docs/AuthorizationRelationships.md)
  - [AuthorizedUserType](docs/AuthorizedUserType.md)
  - [BatchRelease](docs/BatchRelease.md)
  - [BatchReleaseAttributes](docs/BatchReleaseAttributes.md)
@@ -314,6 +331,8 @@ Class | Method | HTTP request | Description
  - [CardTransactionAttributes](docs/CardTransactionAttributes.md)
  - [CardTransactionAttributesCardVerificationData](docs/CardTransactionAttributesCardVerificationData.md)
  - [CardTransactionAttributesMerchant](docs/CardTransactionAttributesMerchant.md)
+ - [CardTransactionAuthorizationRequest](docs/CardTransactionAuthorizationRequest.md)
+ - [CardTransactionAuthorizationRequestAttributes](docs/CardTransactionAuthorizationRequestAttributes.md)
  - [CardTransactionRelationships](docs/CardTransactionRelationships.md)
  - [CashDepositBarcode](docs/CashDepositBarcode.md)
  - [CashDepositBarcodeAttributes](docs/CashDepositBarcodeAttributes.md)
@@ -407,6 +426,18 @@ Class | Method | HTTP request | Description
  - [CreateCard201Response](docs/CreateCard201Response.md)
  - [CreateCard201ResponseData](docs/CreateCard201ResponseData.md)
  - [CreateCardRequest](docs/CreateCardRequest.md)
+ - [CreateCardholderToken201Response](docs/CreateCardholderToken201Response.md)
+ - [CreateCardholderToken201ResponseData](docs/CreateCardholderToken201ResponseData.md)
+ - [CreateCardholderToken201ResponseDataAttributes](docs/CreateCardholderToken201ResponseDataAttributes.md)
+ - [CreateCardholderTokenData](docs/CreateCardholderTokenData.md)
+ - [CreateCardholderTokenDataAttributes](docs/CreateCardholderTokenDataAttributes.md)
+ - [CreateCardholderTokenRequest](docs/CreateCardholderTokenRequest.md)
+ - [CreateCardholderTokenVerification201Response](docs/CreateCardholderTokenVerification201Response.md)
+ - [CreateCardholderTokenVerification201ResponseData](docs/CreateCardholderTokenVerification201ResponseData.md)
+ - [CreateCardholderTokenVerification201ResponseDataAttributes](docs/CreateCardholderTokenVerification201ResponseDataAttributes.md)
+ - [CreateCardholderTokenVerificationData](docs/CreateCardholderTokenVerificationData.md)
+ - [CreateCardholderTokenVerificationDataAttributes](docs/CreateCardholderTokenVerificationDataAttributes.md)
+ - [CreateCardholderTokenVerificationRequest](docs/CreateCardholderTokenVerificationRequest.md)
  - [CreateCheckDeposit201Response](docs/CreateCheckDeposit201Response.md)
  - [CreateCheckDepositData](docs/CreateCheckDepositData.md)
  - [CreateCheckDepositDataAttributes](docs/CreateCheckDepositDataAttributes.md)
@@ -519,6 +550,8 @@ Class | Method | HTTP request | Description
  - [GetAccountBalanceHistory200Response](docs/GetAccountBalanceHistory200Response.md)
  - [GetAccountLimits200Response](docs/GetAccountLimits200Response.md)
  - [GetAccountLimits200ResponseData](docs/GetAccountLimits200ResponseData.md)
+ - [GetAuthorization200Response](docs/GetAuthorization200Response.md)
+ - [GetAuthorizationRequestById200Response](docs/GetAuthorizationRequestById200Response.md)
  - [GetAuthorizedUser200Response](docs/GetAuthorizedUser200Response.md)
  - [GetAvailableDepositProducts200Response](docs/GetAvailableDepositProducts200Response.md)
  - [GetAvailableDepositProducts200ResponseDataInner](docs/GetAvailableDepositProducts200ResponseDataInner.md)
@@ -534,9 +567,14 @@ Class | Method | HTTP request | Description
  - [GetExpectedAchCompletionDate200Response](docs/GetExpectedAchCompletionDate200Response.md)
  - [GetExpectedAchCompletionDate200ResponseData](docs/GetExpectedAchCompletionDate200ResponseData.md)
  - [GetExpectedAchCompletionDateRequest](docs/GetExpectedAchCompletionDateRequest.md)
+ - [GetMobileWalletPayload200Response](docs/GetMobileWalletPayload200Response.md)
+ - [GetMobileWalletPayloadData](docs/GetMobileWalletPayloadData.md)
+ - [GetMobileWalletPayloadDataAttributes](docs/GetMobileWalletPayloadDataAttributes.md)
+ - [GetMobileWalletPayloadRequest](docs/GetMobileWalletPayloadRequest.md)
  - [GetReceivedPayment200Response](docs/GetReceivedPayment200Response.md)
  - [GetTransaction200Response](docs/GetTransaction200Response.md)
  - [GetWireDrawdown200Response](docs/GetWireDrawdown200Response.md)
+ - [HealthcareAmountsType](docs/HealthcareAmountsType.md)
  - [IndividualApplication](docs/IndividualApplication.md)
  - [IndividualApplicationAttributes](docs/IndividualApplicationAttributes.md)
  - [IndividualApplicationRelationships](docs/IndividualApplicationRelationships.md)
@@ -556,6 +594,10 @@ Class | Method | HTTP request | Description
  - [ListAccounts200Response](docs/ListAccounts200Response.md)
  - [ListAccounts200ResponseDataInner](docs/ListAccounts200ResponseDataInner.md)
  - [ListApplicationDocuments200Response](docs/ListApplicationDocuments200Response.md)
+ - [ListAtmLocations200Response](docs/ListAtmLocations200Response.md)
+ - [ListAuthorizationRequests200Response](docs/ListAuthorizationRequests200Response.md)
+ - [ListAuthorizationRequests200ResponseDataInner](docs/ListAuthorizationRequests200ResponseDataInner.md)
+ - [ListAuthorizations200Response](docs/ListAuthorizations200Response.md)
  - [ListAuthorizedUsers200Response](docs/ListAuthorizedUsers200Response.md)
  - [ListCardFraudCases200Response](docs/ListCardFraudCases200Response.md)
  - [ListCardFraudCases200ResponseDataInner](docs/ListCardFraudCases200ResponseDataInner.md)
@@ -578,6 +620,8 @@ Class | Method | HTTP request | Description
  - [MarkCardFraudCaseAsFraudRequest](docs/MarkCardFraudCaseAsFraudRequest.md)
  - [Meta](docs/Meta.md)
  - [MetaPagination](docs/MetaPagination.md)
+ - [MobileWalletPayload](docs/MobileWalletPayload.md)
+ - [MobileWalletPayloadAttributes](docs/MobileWalletPayloadAttributes.md)
  - [NegativeBalanceCoverageTransaction](docs/NegativeBalanceCoverageTransaction.md)
  - [NumberOfEmployeesType](docs/NumberOfEmployeesType.md)
  - [OccupationType](docs/OccupationType.md)
@@ -598,6 +642,9 @@ Class | Method | HTTP request | Description
  - [PinStatus](docs/PinStatus.md)
  - [PinStatusAttributes](docs/PinStatusAttributes.md)
  - [ProductType](docs/ProductType.md)
+ - [PurchaseAuthorizationRequest](docs/PurchaseAuthorizationRequest.md)
+ - [PurchaseAuthorizationRequestAttributes](docs/PurchaseAuthorizationRequestAttributes.md)
+ - [PurchaseAuthorizationRequestRelationships](docs/PurchaseAuthorizationRequestRelationships.md)
  - [PurchaseTransaction](docs/PurchaseTransaction.md)
  - [PurchaseTransactionAttributes](docs/PurchaseTransactionAttributes.md)
  - [PurchaseTransactionAttributesMerchant](docs/PurchaseTransactionAttributesMerchant.md)

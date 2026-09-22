@@ -5,7 +5,7 @@ info:
     name: Proprietary
     url: https://www.unit.co/terms-of-service
   title: Unit API
-  version: 0.12.0
+  version: 0.14.0
 servers:
 - url: https://api.s.unit.sh
 security:
@@ -45,6 +45,20 @@ tags:
 - description: "Card fraud cases, their fraud/no-fraud decisions, and the card fraud\
     \ outreach policies that govern them."
   name: Card Fraud Outreach
+- description: "Cardholder bearer tokens for card-scoped API access, and the two-factor\
+    \ verification challenges they require."
+  name: Card Holder API Tokens
+- description: Encrypted mobile wallet payloads used to provision a card into a mobile
+    wallet.
+  name: Cards Add To Mobile Wallet
+- description: "ATM locations searchable by address, coordinates, or postal code."
+  name: Cards ATM Locations
+- description: "Card authorization requests awaiting or holding a decision, for purchases,\
+    \ card transactions, and ATM withdrawals."
+  name: Cards Authorization Requests
+- description: "Card authorization holds placed on an account, including releasing\
+    \ them."
+  name: Cards Authorizations
 paths:
   /applications:
     get:
@@ -6936,6 +6950,668 @@ paths:
       x-content-type: application/vnd.api+json
       x-accepts:
       - application/vnd.api+json
+  /cards/{cardId}/cardholder/token:
+    post:
+      description: Create a bearer token for a specific card.
+      operationId: createCardholderToken
+      parameters:
+      - explode: false
+        in: path
+        name: cardId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/createCardholderToken_request"
+        required: true
+      responses:
+        "201":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/createCardholderToken_201_response"
+          description: The created cardholder token.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - cards-write
+      summary: Create a cardholder token
+      tags:
+      - Card Holder API Tokens
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /cards/{cardId}/cardholder/token/verification:
+    post:
+      description: "When creating a cardholder token that contains a scope which requires\
+        \ two-factor authentication (see Scopes), it is required to first create a\
+        \ verification challenge that will be sent to the customer."
+      operationId: createCardholderTokenVerification
+      parameters:
+      - explode: false
+        in: path
+        name: cardId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/createCardholderTokenVerification_request"
+        required: true
+      responses:
+        "201":
+          content:
+            application/vnd.api+json:
+              example:
+                data:
+                  type: cardholderTokenVerification
+                  attributes:
+                    verificationToken: i8FWKLBjXEg3TdeK93G3K9PKLzhbT6CRhn/VKkTsm....
+              schema:
+                $ref: "#/components/schemas/createCardholderTokenVerification_201_response"
+          description: The created cardholder token verification.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      summary: Create a cardholder token verification
+      tags:
+      - Card Holder API Tokens
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /cards/{cardId}/mobile-wallet-payload:
+    post:
+      description: Get the mobile wallet encrypted payload for the specified card.
+        The encrypted payload is unique per issuance and is required as part of the
+        SDK integration.
+      operationId: getMobileWalletPayload
+      parameters:
+      - explode: false
+        in: path
+        name: cardId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/getMobileWalletPayload_request"
+        required: true
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              example:
+                data:
+                  type: mobileWalletPayload
+                  attributes:
+                    payload: eyJhbGciOi...
+              schema:
+                $ref: "#/components/schemas/getMobileWalletPayload_200_response"
+          description: A JSON object containing the encrypted payload.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - cards
+      servers:
+      - url: https://secure.api.s.unit.sh
+      summary: Get mobile wallet payload
+      tags:
+      - Cards Add To Mobile Wallet
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /atm-locations:
+    get:
+      description: "List ATM locations by address, by coordinates, or by postal code."
+      operationId: listAtmLocations
+      parameters:
+      - description: Filters the results by the specified address.
+        explode: true
+        in: query
+        name: "filter[address]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Filters the results by the specified coordinates.
+        explode: true
+        in: query
+        name: "filter[coordinates]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Filters the results by the specified postal code.
+        explode: true
+        in: query
+        name: "filter[postalCode]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Filters the results by the search radius (in miles). Default
+          and max values are 100.
+        explode: true
+        in: query
+        name: "filter[searchRadius]"
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/listAtmLocations_200_response"
+          description: Array of ATM Location resources.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - cards
+      summary: List ATM locations
+      tags:
+      - Cards ATM Locations
+      x-accepts:
+      - application/vnd.api+json
+  /authorization-requests:
+    get:
+      description: List authorization requests. Filtering and paging can be applied.
+      operationId: listAuthorizationRequests
+      parameters:
+      - description: Optional. Maximum number of resources that will be returned.
+          Maximum is 1000 resources.
+        explode: true
+        in: query
+        name: "page[limit]"
+        required: false
+        schema:
+          default: "100"
+          type: string
+        style: form
+      - description: Optional. Number of resources to skip.
+        explode: true
+        in: query
+        name: "page[offset]"
+        required: false
+        schema:
+          default: "0"
+          type: string
+        style: form
+      - description: Optional. Filters the results by the specified account id.
+        explode: true
+        in: query
+        name: "filter[accountId]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filters the results by the specified customer id.
+        explode: true
+        in: query
+        name: "filter[customerId]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filter result by their 4-digit ISO 18245 merchant category
+          code (MCC).
+        explode: true
+        in: query
+        name: "filter[merchantCategoryCode][]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filters the result that have an amount that is *higher
+          or equal to* the specified amount (in cents). e.g. 5000
+        explode: true
+        in: query
+        name: "filter[fromAmount]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filters the result that have an amount that is *lower
+          or equal to* the specified amount (in cents). e.g. 7000
+        explode: true
+        in: query
+        name: "filter[toAmount]"
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/listAuthorizationRequests_200_response"
+          description: Array of authorization request resources.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - authorization-requests
+      summary: List authorization requests
+      tags:
+      - Cards Authorization Requests
+      x-accepts:
+      - application/vnd.api+json
+  /authorization-requests/{id}:
+    get:
+      description: Get an authorization request resource by id.
+      operationId: getAuthorizationRequestById
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/getAuthorizationRequestById_200_response"
+          description: Authorization Request resource.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - authorization-requests
+      summary: Get an authorization request by id
+      tags:
+      - Cards Authorization Requests
+      x-accepts:
+      - application/vnd.api+json
+  /authorizations:
+    get:
+      description: List authorizations. Filtering and sorting can be applied. Paging
+        is available only when filtering by customer id or account id.
+      operationId: listAuthorizations
+      parameters:
+      - description: Optional. Maximum number of resources that will be returned.
+          Maximum is 1000 resources.
+        explode: true
+        in: query
+        name: "page[limit]"
+        required: false
+        schema:
+          default: "100"
+          type: string
+        style: form
+      - description: Optional. Number of resources to skip.
+        explode: true
+        in: query
+        name: "page[offset]"
+        required: false
+        schema:
+          default: "0"
+          type: string
+        style: form
+      - description: Optional. Filters the results by the specified account id.
+        explode: true
+        in: query
+        name: "filter[accountId]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: "Optional. Filter the results by account type (deposit, credit)."
+        explode: true
+        in: query
+        name: "filter[accountType]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filters the results by the specified customer id.
+        explode: true
+        in: query
+        name: "filter[customerId]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filters the results by the specified card id.
+        explode: true
+        in: query
+        name: "filter[cardId]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filters the Authorizations that occurred *after* the
+          specified date. e.g. 2020-01-13T16:01:19.346Z
+        explode: true
+        in: query
+        name: "filter[since]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filters the Authorizations that occurred *before* the
+          specified date. e.g. 2020-01-02T20:06:23.486Z
+        explode: true
+        in: query
+        name: "filter[until]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Include authorizations from all statuses.
+        explode: true
+        in: query
+        name: "filter[includeNonAuthorized]"
+        required: false
+        schema:
+          default: "false"
+          type: string
+        style: form
+      - description: Optional. Filter authorizations by Authorization Status.
+        explode: true
+        in: query
+        name: "filter[status]"
+        required: false
+        schema:
+          default: Authorized
+          type: string
+        style: form
+      - description: Optional. Filter authorizations by their 4-digit ISO 18245 merchant
+          category code (MCC).
+        explode: true
+        in: query
+        name: "filter[merchantCategoryCode][]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filters the Authorizations that have an amount that
+          is *higher or equal to* the specified amount (in cents). e.g. 5000
+        explode: true
+        in: query
+        name: "filter[fromAmount]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filters the Authorizations that have an amount that
+          is *lower or equal to* the specified amount (in cents). e.g. 7000
+        explode: true
+        in: query
+        name: "filter[toAmount]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Leave empty or provide sort=createdAt for ascending
+          order. Provide sort=-createdAt (leading minus sign) for descending order.
+        explode: true
+        in: query
+        name: sort
+        required: false
+        schema:
+          default: -createdAt
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/listAuthorizations_200_response"
+          description: Array of authorization resources.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error
+      security:
+      - bearerAuth:
+        - authorizations
+      summary: List authorizations
+      tags:
+      - Cards Authorizations
+      x-accepts:
+      - application/vnd.api+json
+  /authorizations/{id}:
+    get:
+      description: Get an authorization resource by id.
+      operationId: getAuthorization
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: Optional. Include authorizations from all statuses.
+        explode: true
+        in: query
+        name: "filter[includeNonAuthorized]"
+        required: false
+        schema:
+          default: "false"
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/getAuthorization_200_response"
+          description: Authorization resource.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error
+      security:
+      - bearerAuth:
+        - authorizations
+      summary: Get an authorization
+      tags:
+      - Cards Authorizations
+      x-accepts:
+      - application/vnd.api+json
+  /authorizations/{id}/release:
+    post:
+      description: Manually release an authorization that is in `Authorized` status.
+        This removes the authorization hold from the account so the **available**
+        balance increases by the authorization amount (subject to other pending activity).
+      operationId: releaseAuthorization
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+        required: false
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/getAuthorization_200_response"
+          description: Updated authorization.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error
+      security:
+      - bearerAuth:
+        - authorizations
+      summary: Release an authorization
+      tags:
+      - Cards Authorizations
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
 components:
   responses:
     BadRequest:
@@ -12700,6 +13376,347 @@ components:
       - attributes
       - type
       type: object
+    CreateCardholderTokenData:
+      example:
+        type: cardholderToken
+        attributes:
+          scope: cards
+      properties:
+        type:
+          enum:
+          - cardholderToken
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CreateCardholderTokenData_attributes"
+      required:
+      - attributes
+      - type
+      type: object
+    CreateCardholderTokenVerificationData:
+      example:
+        type: cardholderTokenVerification
+        attributes:
+          channel: sms
+      properties:
+        type:
+          enum:
+          - cardholderTokenVerification
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CreateCardholderTokenVerificationData_attributes"
+      required:
+      - attributes
+      - type
+      type: object
+    MobileWalletPayload:
+      example:
+        type: mobileWalletPayload
+        attributes:
+          payload: eyJhbGciOi...
+      properties:
+        type:
+          enum:
+          - mobileWalletPayload
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/MobileWalletPayload_attributes"
+      required:
+      - attributes
+      - type
+      type: object
+    ATMLocation:
+      example:
+        type: atmLocation
+        attributes:
+          network: Allpoint
+          locationName: SPEEDWAY
+          coordinates:
+            longitude: -73.93041
+            latitude: 42.79894
+          address:
+            street: 229 S BRANDYWINE AVE
+            city: SCHENECTADY
+            state: NY
+            postalCode: "12307"
+            country: US
+          distance: 1.07
+          surchargeFree: true
+          acceptDeposits: false
+      properties:
+        type:
+          enum:
+          - atmLocation
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/ATMLocation_attributes"
+      required:
+      - attributes
+      - type
+      type: object
+    GetMobileWalletPayloadData:
+      example:
+        attributes:
+          signedNonce: eyJle...
+      properties:
+        attributes:
+          $ref: "#/components/schemas/GetMobileWalletPayloadData_attributes"
+      required:
+      - attributes
+      type: object
+    PurchaseAuthorizationRequest:
+      description: "`PurchaseAuthorizationRequest` is a JSON:API resource, top-level\
+        \ fields:"
+      example:
+        type: purchaseAuthorizationRequest
+        id: "1"
+        attributes:
+          createdAt: 2021-06-22T13:39:17.018Z
+          amount: 2500
+          status: Approved
+          outcome: Approved
+          partialApprovalAllowed: false
+          merchant:
+            name: Apple Inc.
+            type: 1000
+            category: ""
+            location: "Cupertino, CA"
+            id: "311204598883"
+          recurring: false
+          paymentMethod: Contactless
+          digitalWallet: Apple
+          cardVerificationData:
+            verificationMethod: CVV2
+          ecommerce: true
+          cardPresent: false
+          cardNetwork: Visa
+          currencyConversion:
+            originalCurrency: EUR
+            amountInOriginalCurrency: 1000
+            fxRate: "1.164"
+          isInternational: true
+        relationships:
+          customer:
+            data:
+              type: customer
+              id: "10000"
+          account:
+            data:
+              type: account
+              id: "10001"
+          card:
+            data:
+              type: card
+              id: "7"
+      properties:
+        type:
+          enum:
+          - purchaseAuthorizationRequest
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/PurchaseAuthorizationRequest_attributes"
+        relationships:
+          $ref: "#/components/schemas/PurchaseAuthorizationRequest_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    CardTransactionAuthorizationRequest:
+      description: "`CardTransactionAuthorizationRequest` is a JSON:API resource,\
+        \ top-level fields:"
+      example:
+        type: cardTransactionAuthorizationRequest
+        id: "1"
+        attributes:
+          createdAt: 2021-06-22T13:39:17.018Z
+          amount: 2500
+          status: Pending
+          partialApprovalAllowed: false
+          merchant:
+            name: Apple Inc.
+            type: 1000
+            category: ""
+            location: "Cupertino, CA"
+            id: "311204598883"
+          recurring: false
+          paymentMethod: Contactless
+          digitalWallet: Apple
+          cardVerificationData:
+            verificationMethod: CVV2
+          cardNetwork: Visa
+          currencyConversion:
+            originalCurrency: EUR
+            amountInOriginalCurrency: 1000
+            fxRate: "1.164"
+          isInternational: true
+        relationships:
+          customer:
+            data:
+              type: customer
+              id: "10000"
+          account:
+            data:
+              type: account
+              id: "10001"
+          card:
+            data:
+              type: card
+              id: "7"
+      properties:
+        type:
+          enum:
+          - cardTransactionAuthorizationRequest
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CardTransactionAuthorizationRequest_attributes"
+        relationships:
+          $ref: "#/components/schemas/PurchaseAuthorizationRequest_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    AtmAuthorizationRequest:
+      description: "`AtmAuthorizationRequest` is a JSON:API resource representing\
+        \ an ATM authorization request. Top-level fields:"
+      example:
+        type: atmAuthorizationRequest
+        id: "1"
+        attributes:
+          createdAt: 2021-06-24T08:10:08.081Z
+          amount: 2000
+          status: Approved
+          outcome: Approved
+          direction: Debit
+          atmName: ATM Name
+          atmLocation: 123 Main St
+          surcharge: 250
+          tags: {}
+        relationships:
+          account:
+            data:
+              type: account
+              id: "10001"
+          customer:
+            data:
+              type: customer
+              id: "10000"
+          card:
+            data:
+              type: card
+              id: "7"
+      properties:
+        type:
+          enum:
+          - atmAuthorizationRequest
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/AtmAuthorizationRequest_attributes"
+        relationships:
+          $ref: "#/components/schemas/AtmAuthorizationRequest_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    HealthcareAmountsType:
+      example:
+        dentalAmount: 0
+        transitAmount: 0
+        visionOpticalAmount: 2000
+        prescriptionRXAmount: 0
+        clinicOtherQualifiedMedicalAmount: 0
+        totalHealthcareAmount: 2000
+      properties:
+        dentalAmount:
+          description: Dental expense (cents).
+          type: integer
+        transitAmount:
+          description: Transit expense (cents).
+          type: integer
+        visionOpticalAmount:
+          description: Vision expense (cents).
+          type: integer
+        prescriptionRXAmount:
+          description: Prescription drugs expense (cents).
+          type: integer
+        clinicOtherQualifiedMedicalAmount:
+          description: Misc medical expense (cents).
+          type: integer
+        totalHealthcareAmount:
+          description: Total medical expense (cents).
+          type: integer
+      required:
+      - clinicOtherQualifiedMedicalAmount
+      - dentalAmount
+      - prescriptionRXAmount
+      - totalHealthcareAmount
+      - transitAmount
+      - visionOpticalAmount
+      type: object
+    Authorization:
+      description: "`Authorization` is a JSON:API resource, top-level fields:"
+      example:
+        type: authorization
+        id: "97"
+        attributes:
+          createdAt: 2021-02-21T07:29:42.447Z
+          amount: 2000
+          cardLast4Digits: "0019"
+          status: Authorized
+          cardDecisionSource: Org
+          merchant:
+            name: Europcar Mobility Group
+            type: 3381
+            category: EUROP CAR
+            location: "Cupertino, CA"
+            id: "029859000085093"
+          recurring: false
+          paymentMethod: Contactless
+          digitalWallet: Apple
+          cardVerificationData:
+            verificationMethod: CVV2
+          cardNetwork: Visa
+          summary: 'Europcar Mobility Group |**0019 '
+        relationships:
+          customer:
+            data:
+              type: customer
+              id: "10000"
+          account:
+            data:
+              type: account
+              id: "10001"
+          card:
+            data:
+              type: card
+              id: "10501"
+      properties:
+        type:
+          enum:
+          - authorization
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/Authorization_attributes"
+        relationships:
+          $ref: "#/components/schemas/Authorization_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
     list_200_response_data_inner:
       discriminator:
         mapping:
@@ -13765,6 +14782,142 @@ components:
       properties:
         data:
           $ref: "#/components/schemas/MarkCardFraudCaseAsFraudData"
+      required:
+      - data
+      type: object
+    createCardholderToken_request:
+      properties:
+        data:
+          $ref: "#/components/schemas/CreateCardholderTokenData"
+      required:
+      - data
+      type: object
+    createCardholderToken_201_response_data_attributes:
+      properties:
+        token:
+          description: The token issued for the card.
+          type: string
+        expiresIn:
+          description: The lifetime of the token (in seconds).
+          type: integer
+      type: object
+    createCardholderToken_201_response_data:
+      properties:
+        type:
+          enum:
+          - cardholderToken
+          type: string
+        attributes:
+          $ref: "#/components/schemas/createCardholderToken_201_response_data_attributes"
+      type: object
+    createCardholderToken_201_response:
+      properties:
+        data:
+          $ref: "#/components/schemas/createCardholderToken_201_response_data"
+      required:
+      - data
+      type: object
+    createCardholderTokenVerification_request:
+      properties:
+        data:
+          $ref: "#/components/schemas/CreateCardholderTokenVerificationData"
+      required:
+      - data
+      type: object
+    createCardholderTokenVerification_201_response_data_attributes:
+      properties:
+        verificationToken:
+          description: The verification token to pass to Create Cardholder Token together
+            with the verification code sent to the card holder.
+          example: i8FWKLBjXEg3TdeK93G3K9PKLzhbT6CRhn/VKkTsm....
+          type: string
+      type: object
+    createCardholderTokenVerification_201_response_data:
+      properties:
+        type:
+          enum:
+          - cardholderTokenVerification
+          type: string
+        attributes:
+          $ref: "#/components/schemas/createCardholderTokenVerification_201_response_data_attributes"
+      type: object
+    createCardholderTokenVerification_201_response:
+      properties:
+        data:
+          $ref: "#/components/schemas/createCardholderTokenVerification_201_response_data"
+      required:
+      - data
+      type: object
+    getMobileWalletPayload_request:
+      properties:
+        data:
+          $ref: "#/components/schemas/GetMobileWalletPayloadData"
+      required:
+      - data
+      type: object
+    getMobileWalletPayload_200_response:
+      properties:
+        data:
+          allOf:
+          - $ref: "#/components/schemas/MobileWalletPayload"
+          description: A JSON object containing the encrypted payload.
+      required:
+      - data
+      type: object
+    listAtmLocations_200_response:
+      properties:
+        data:
+          description: Array of ATM Location resources.
+          items:
+            $ref: "#/components/schemas/ATMLocation"
+          type: array
+      required:
+      - data
+      type: object
+    listAuthorizationRequests_200_response_data_inner:
+      discriminator:
+        mapping:
+          purchaseAuthorizationRequest: "#/components/schemas/PurchaseAuthorizationRequest"
+          cardTransactionAuthorizationRequest: "#/components/schemas/CardTransactionAuthorizationRequest"
+          atmAuthorizationRequest: "#/components/schemas/AtmAuthorizationRequest"
+        propertyName: type
+      oneOf:
+      - $ref: "#/components/schemas/PurchaseAuthorizationRequest"
+      - $ref: "#/components/schemas/CardTransactionAuthorizationRequest"
+      - $ref: "#/components/schemas/AtmAuthorizationRequest"
+    listAuthorizationRequests_200_response:
+      properties:
+        data:
+          description: Array of authorization request resources.
+          items:
+            $ref: "#/components/schemas/listAuthorizationRequests_200_response_data_inner"
+          type: array
+      required:
+      - data
+      type: object
+    getAuthorizationRequestById_200_response:
+      properties:
+        data:
+          $ref: "#/components/schemas/listAuthorizationRequests_200_response_data_inner"
+      required:
+      - data
+      type: object
+    listAuthorizations_200_response:
+      properties:
+        data:
+          description: Array of authorization resources.
+          items:
+            $ref: "#/components/schemas/Authorization"
+          type: array
+        meta:
+          $ref: "#/components/schemas/Meta"
+      required:
+      - data
+      type: object
+    getAuthorization_200_response:
+      properties:
+        data:
+          $ref: "#/components/schemas/Authorization"
       required:
       - data
       type: object
@@ -19576,6 +20729,418 @@ components:
           type: array
       required:
       - fraudulentActivityIds
+      type: object
+    CreateCardholderTokenData_attributes:
+      properties:
+        scope:
+          description: list of Scopes separated by spaces. Only cards (cards cards-sensitive
+            cards-write cards-sensitive-write) scopes are allowed.
+          example: cards
+          type: string
+        verificationToken:
+          description: Required if scope includes a scope which requires two-factor
+            authentication. Received as a response from Create Cardholder Token Verification.
+          type: string
+        verificationCode:
+          description: Required if scope includes a scope which requires two-factor
+            authentication. 6 digit code sent to the card holder through the desired
+            channel.
+          type: string
+        expiresIn:
+          description: The lifetime of the token (in seconds). Maximum value is 86400
+            (24 hours). Default value is also 24 hours.
+          type: integer
+        upgradableScope:
+          description: list of Scopes separated by spaces. The card holder will be
+            able to upgrade the token to the scopes you provide here.
+          type: string
+      required:
+      - scope
+      - verificationCode
+      - verificationToken
+      type: object
+    CreateCardholderTokenVerificationData_attributes:
+      properties:
+        channel:
+          description: Send a verification code to the card holder through one of
+            the following channels - sms or call.
+          example: sms
+          type: string
+        phone:
+          allOf:
+          - $ref: "#/components/schemas/PhoneType"
+          description: This allows providing the phone number of one of the customer's
+            authorized users. The provided phone must match an authorized user phone
+            and will be used in the One Time Password (OTP) authentication process
+            instead of the business customer contact's phone.
+        appHash:
+          description: "For sms verifications only, 11-character hash string that\
+            \ identifies your app. Appended at the end of your verification SMS body\
+            \ the way that client-side SMS Retriever API expects."
+          type: string
+        language:
+          description: Select the verification language using a 2-letter code. Default
+            is English. See Localization Options for the supported languages and their
+            2-letter code.
+          type: string
+      required:
+      - channel
+      type: object
+    MobileWalletPayload_attributes:
+      properties:
+        payload:
+          description: Encrypted payload.
+          type: string
+      type: object
+    ATMLocation_attributes:
+      properties:
+        network:
+          description: Name of the ATM network.
+          type: string
+        locationName:
+          description: Name of the ATM's location.
+          type: string
+        coordinates:
+          allOf:
+          - $ref: "#/components/schemas/CoordinatesType"
+          description: "Coordinates (latitude, longitude) of the ATM."
+        address:
+          allOf:
+          - $ref: "#/components/schemas/AddressType"
+          description: Address of the ATM.
+        distance:
+          description: Distance to the ATM (in miles).
+          type: number
+        surchargeFree:
+          description: Indicates if the ATM is surcharge free.
+          type: boolean
+        acceptDeposits:
+          description: Indicates if the ATM accepts deposits.
+          type: boolean
+      required:
+      - acceptDeposits
+      - address
+      - coordinates
+      - distance
+      - locationName
+      - network
+      - surchargeFree
+      type: object
+    GetMobileWalletPayloadData_attributes:
+      properties:
+        signedNonce:
+          description: The signedNonce received from the Visa SDK
+          example: eyJle...
+          type: string
+      required:
+      - signedNonce
+      type: object
+    PurchaseAuthorizationRequest_attributes:
+      properties:
+        createdAt:
+          description: The date the authorization request was created.
+          format: date-time
+          type: string
+        amount:
+          description: The amount (cents) of the authorization request.
+          type: integer
+        status:
+          description: "The status of the authorization request. Either Pending, Approved\
+            \ or Declined."
+          type: string
+        outcome:
+          description: "What your programmatic integration produced when the request\
+            \ reached a terminal decision. See Understanding authorization decisions.\
+            \ One of Approved, Declined, PostTimeout, PostError, WaitTimeout."
+          type: string
+        partialApprovalAllowed:
+          description: Indicates whether the authorization request supports partial
+            amount approval.
+          type: boolean
+        approvedAmount:
+          description: The amount (cents) that was approved. Available only when status
+            is Approved.
+          type: integer
+        declineReason:
+          description: "The reason the authorization request was declined. One of\
+            \ AccountClosed, CardExceedsAmountLimit, DoNotHonor, InsufficientFunds,\
+            \ InvalidMerchant, ReferToCardIssuer, RestrictedCard, Timeout, TransactionNotPermittedToCardholder.\
+            \ Available only when status is Declined"
+          type: string
+        merchant:
+          $ref: "#/components/schemas/PurchaseTransaction_attributes_merchant"
+        recurring:
+          description: Indicates whether the authorization is recurring
+          type: boolean
+        ecommerce:
+          description: Indicates whether the transaction was created over an electronic
+            network (primarily the internet).
+          type: boolean
+        cardPresent:
+          description: Indicates whether the card was present when the transaction
+            was created.
+          type: boolean
+        paymentMethod:
+          description: "The payment method used, one of: Manual, Swipe, Contactless,\
+            \ ChipAndPin, Stored, Other."
+          type: string
+        digitalWallet:
+          description: "The type of digital wallet used, one of: Google, Apple, Other."
+          type: string
+        cardVerificationData:
+          $ref: "#/components/schemas/CardTransaction_attributes_cardVerificationData"
+        cardNetwork:
+          description: "The card network used, one of: Visa, Interlink, Accel, Allpoint,\
+            \ Other."
+          type: string
+        healthcareAmounts:
+          allOf:
+          - $ref: "#/components/schemas/HealthcareAmountsType"
+          description: IIAS related data for FSA/HRA enabled cards.
+        tags:
+          additionalProperties: true
+          description: "Optional, See Tags. If specified when approving the authorization\
+            \ request."
+          type: object
+        cashWithdrawalAmount:
+          description: Cash withdrawal amount
+          type: integer
+        currencyConversion:
+          allOf:
+          - $ref: "#/components/schemas/CurrencyConversionType"
+          description: When original currency for transaction is not USD.
+        isInternational:
+          description: Indicates whether the transaction is international.
+          type: boolean
+      required:
+      - amount
+      - createdAt
+      - partialApprovalAllowed
+      - recurring
+      - status
+      - tags
+      type: object
+    PurchaseAuthorizationRequest_relationships:
+      properties:
+        account:
+          $ref: "#/components/schemas/Relationship"
+        customer:
+          $ref: "#/components/schemas/Relationship"
+        customers:
+          $ref: "#/components/schemas/Relationship"
+        card:
+          $ref: "#/components/schemas/Relationship"
+        fundingAccount:
+          $ref: "#/components/schemas/Relationship"
+      type: object
+    CardTransactionAuthorizationRequest_attributes:
+      properties:
+        createdAt:
+          description: The date the authorization request was created.
+          format: date-time
+          type: string
+        amount:
+          description: The amount (cents) of the authorization request.
+          type: integer
+        status:
+          description: "The status of the authorization request. Either Pending, Approved\
+            \ or Declined."
+          type: string
+        partialApprovalAllowed:
+          description: Indicates whether the authorization request supports partial
+            amount approval.
+          type: boolean
+        approvedAmount:
+          description: The amount (cents) that was approved. Available only when status
+            is Approved.
+          type: integer
+        declineReason:
+          description: "The reason the authorization request was declined. One of\
+            \ AccountClosed, CardExceedsAmountLimit, DoNotHonor, InsufficientFunds,\
+            \ InvalidMerchant, ReferToCardIssuer, RestrictedCard, Timeout, TransactionNotPermittedToCardholder.\
+            \ Available only when status is Declined"
+          type: string
+        merchant:
+          $ref: "#/components/schemas/PurchaseTransaction_attributes_merchant"
+        recurring:
+          description: Indicates whether the authorization is recurring
+          type: boolean
+        paymentMethod:
+          description: "The payment method used, one of: Manual, Swipe, Contactless,\
+            \ ChipAndPin, Stored, Other."
+          type: string
+        digitalWallet:
+          description: "The type of digital wallet used, one of: Google, Apple, Other."
+          type: string
+        cardVerificationData:
+          $ref: "#/components/schemas/CardTransaction_attributes_cardVerificationData"
+        cardNetwork:
+          description: "The card network used, one of: Visa, Interlink, Accel, Allpoint,\
+            \ Other."
+          type: string
+        tags:
+          additionalProperties: true
+          description: "Optional, See Tags. If specified when approving the authorization\
+            \ request."
+          type: object
+        currencyConversion:
+          allOf:
+          - $ref: "#/components/schemas/CurrencyConversionType"
+          description: When original currency for transaction is not USD.
+        isInternational:
+          description: Indicates whether the transaction is international.
+          type: boolean
+      required:
+      - amount
+      - createdAt
+      - partialApprovalAllowed
+      - recurring
+      - status
+      - tags
+      type: object
+    AtmAuthorizationRequest_attributes:
+      properties:
+        createdAt:
+          description: The date the resource was created.
+          format: date-time
+          type: string
+        amount:
+          description: The amount (cents) of the authorization request.
+          type: integer
+        status:
+          description: The status of the authorization request.
+          type: string
+        outcome:
+          description: What your programmatic integration produced when the request
+            reached a terminal decision. See Understanding authorization decisions.
+          type: string
+        direction:
+          description: The direction of the transaction (Credit or Debit).
+          type: string
+        atmName:
+          description: The name of the ATM.
+          type: string
+        atmLocation:
+          description: The location of the ATM.
+          type: string
+        surcharge:
+          description: The surcharge amount in cents.
+          type: integer
+        tags:
+          additionalProperties: true
+          description: "See Tags. When the authorization request was auto-completed\
+            \ using the timeout strategy, this field may also contain decision_source\
+            \ and timeout_strategy; prefer the outcome attribute for new integrations."
+          type: object
+      required:
+      - amount
+      - atmLocation
+      - atmName
+      - createdAt
+      - direction
+      - status
+      - surcharge
+      - tags
+      type: object
+    AtmAuthorizationRequest_relationships:
+      properties:
+        account:
+          $ref: "#/components/schemas/Relationship"
+        customer:
+          $ref: "#/components/schemas/Relationship"
+        card:
+          $ref: "#/components/schemas/Relationship"
+      type: object
+    Authorization_attributes:
+      properties:
+        createdAt:
+          description: The date the authorization was created.
+          format: date-time
+          type: string
+        amount:
+          description: The amount (cents) of the authorization.
+          type: integer
+        cardLast4Digits:
+          description: The last 4 digits of the debit card involved in the authorization.
+          type: string
+        status:
+          description: "One of Authorized, Completed, Canceled, Declined, see Authorization\
+            \ Statuses."
+          type: string
+        cardDecisionSource:
+          description: "Who made the final card authorization decision. See Understanding\
+            \ authorization decisions. One of Org, Unit, Network, TimeoutApprove,\
+            \ TimeoutDecline, DefaultApprove, InternalError, IssuerStandIn."
+          type: string
+        declineReason:
+          description: The reason the authorization was declined. Available only when
+            status is Declined
+          type: string
+        declineDescription:
+          description: A human-readable description providing additional detail about
+            the decline. Only present on some declined authorizations.
+          type: string
+        declinedBy:
+          description: "The entity that declined the authorization. One of Visa, Org,\
+            \ or Unit. Available only when status is Declined."
+          type: string
+        merchant:
+          $ref: "#/components/schemas/PurchaseTransaction_attributes_merchant"
+        recurring:
+          description: Indicates whether the authorization is recurring
+          type: boolean
+        paymentMethod:
+          description: "The payment method used, one of: Manual, Swipe, Contactless,\
+            \ ChipAndPin, Stored, Other."
+          type: string
+        digitalWallet:
+          description: "The type of digital wallet used, one of: Google, Apple, Other."
+          type: string
+        cardVerificationData:
+          $ref: "#/components/schemas/CardTransaction_attributes_cardVerificationData"
+        cardNetwork:
+          description: "The card network used, one of: Visa, Interlink, Accel, Allpoint,\
+            \ Other."
+          type: string
+        tags:
+          additionalProperties: true
+          description: See Tags. Inherited from the authorization request tags (see
+            Tag Inheritance).
+          type: object
+        cashWithdrawalAmount:
+          description: Cash withdrawal amount
+          type: integer
+        summary:
+          description: Summary of the authorization.
+          type: string
+        richMerchantData:
+          allOf:
+          - $ref: "#/components/schemas/RichMerchantDataType"
+          description: Full merchant information.
+        currencyConversion:
+          allOf:
+          - $ref: "#/components/schemas/CurrencyConversionType"
+          description: When original currency for transaction is not USD
+      required:
+      - amount
+      - cardLast4Digits
+      - createdAt
+      - recurring
+      - status
+      - tags
+      type: object
+    Authorization_relationships:
+      properties:
+        account:
+          $ref: "#/components/schemas/Relationship"
+        customer:
+          $ref: "#/components/schemas/Relationship"
+        card:
+          $ref: "#/components/schemas/Relationship"
+        customers:
+          $ref: "#/components/schemas/Relationship"
+        authorizationRequest:
+          $ref: "#/components/schemas/Relationship"
       type: object
   securitySchemes:
     bearerAuth:

@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Unit API",
-    "version": "0.12.0",
+    "version": "0.14.0",
     "description": "JSON:API-compliant banking API.",
     "license": {
       "name": "Proprietary",
@@ -67,6 +67,26 @@
     {
       "name": "Card Fraud Outreach",
       "description": "Card fraud cases, their fraud/no-fraud decisions, and the card fraud outreach policies that govern them."
+    },
+    {
+      "name": "Card Holder API Tokens",
+      "description": "Cardholder bearer tokens for card-scoped API access, and the two-factor verification challenges they require."
+    },
+    {
+      "name": "Cards Add To Mobile Wallet",
+      "description": "Encrypted mobile wallet payloads used to provision a card into a mobile wallet."
+    },
+    {
+      "name": "Cards ATM Locations",
+      "description": "ATM locations searchable by address, coordinates, or postal code."
+    },
+    {
+      "name": "Cards Authorization Requests",
+      "description": "Card authorization requests awaiting or holding a decision, for purchases, card transactions, and ATM withdrawals."
+    },
+    {
+      "name": "Cards Authorizations",
+      "description": "Card authorization holds placed on an account, including releasing them."
     }
   ],
   "paths": {
@@ -9758,6 +9778,964 @@
           },
           "default": {
             "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cards/{cardId}/cardholder/token": {
+      "parameters": [
+        {
+          "name": "cardId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "operationId": "createCardholderToken",
+        "summary": "Create a cardholder token",
+        "description": "Create a bearer token for a specific card.",
+        "tags": [
+          "Card Holder API Tokens"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "cards-write"
+            ]
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "properties": {
+                  "data": {
+                    "$ref": "#/components/schemas/CreateCardholderTokenData"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The created cardholder token.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "cardholderToken"
+                          ]
+                        },
+                        "attributes": {
+                          "type": "object",
+                          "properties": {
+                            "token": {
+                              "type": "string",
+                              "description": "The token issued for the card."
+                            },
+                            "expiresIn": {
+                              "type": "integer",
+                              "description": "The lifetime of the token (in seconds)."
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cards/{cardId}/cardholder/token/verification": {
+      "parameters": [
+        {
+          "name": "cardId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "operationId": "createCardholderTokenVerification",
+        "summary": "Create a cardholder token verification",
+        "description": "When creating a cardholder token that contains a scope which requires two-factor authentication (see Scopes), it is required to first create a verification challenge that will be sent to the customer.",
+        "tags": [
+          "Card Holder API Tokens"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "properties": {
+                  "data": {
+                    "$ref": "#/components/schemas/CreateCardholderTokenVerificationData"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The created cardholder token verification.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "cardholderTokenVerification"
+                          ]
+                        },
+                        "attributes": {
+                          "type": "object",
+                          "properties": {
+                            "verificationToken": {
+                              "type": "string",
+                              "description": "The verification token to pass to Create Cardholder Token together with the verification code sent to the card holder.",
+                              "example": "i8FWKLBjXEg3TdeK93G3K9PKLzhbT6CRhn/VKkTsm...."
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "data": {
+                    "type": "cardholderTokenVerification",
+                    "attributes": {
+                      "verificationToken": "i8FWKLBjXEg3TdeK93G3K9PKLzhbT6CRhn/VKkTsm...."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cards/{cardId}/mobile-wallet-payload": {
+      "parameters": [
+        {
+          "name": "cardId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "operationId": "getMobileWalletPayload",
+        "summary": "Get mobile wallet payload",
+        "description": "Get the mobile wallet encrypted payload for the specified card. The encrypted payload is unique per issuance and is required as part of the SDK integration.",
+        "tags": [
+          "Cards Add To Mobile Wallet"
+        ],
+        "servers": [
+          {
+            "url": "https://secure.api.s.unit.sh"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "cards"
+            ]
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "properties": {
+                  "data": {
+                    "$ref": "#/components/schemas/GetMobileWalletPayloadData"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "A JSON object containing the encrypted payload.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/MobileWalletPayload"
+                        }
+                      ],
+                      "description": "A JSON object containing the encrypted payload."
+                    }
+                  }
+                },
+                "example": {
+                  "data": {
+                    "type": "mobileWalletPayload",
+                    "attributes": {
+                      "payload": "eyJhbGciOi..."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/atm-locations": {
+      "get": {
+        "operationId": "listAtmLocations",
+        "summary": "List ATM locations",
+        "description": "List ATM locations by address, by coordinates, or by postal code.",
+        "tags": [
+          "Cards ATM Locations"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "cards"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "filter[address]",
+            "in": "query",
+            "required": false,
+            "description": "Filters the results by the specified address.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[coordinates]",
+            "in": "query",
+            "required": false,
+            "description": "Filters the results by the specified coordinates.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[postalCode]",
+            "in": "query",
+            "required": false,
+            "description": "Filters the results by the specified postal code.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[searchRadius]",
+            "in": "query",
+            "required": false,
+            "description": "Filters the results by the search radius (in miles). Default and max values are 100.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of ATM Location resources.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ATMLocation"
+                      },
+                      "description": "Array of ATM Location resources."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/authorization-requests": {
+      "get": {
+        "operationId": "listAuthorizationRequests",
+        "summary": "List authorization requests",
+        "description": "List authorization requests. Filtering and paging can be applied.",
+        "tags": [
+          "Cards Authorization Requests"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "authorization-requests"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page[limit]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Maximum number of resources that will be returned. Maximum is 1000 resources.",
+            "schema": {
+              "type": "string",
+              "default": "100"
+            }
+          },
+          {
+            "name": "page[offset]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Number of resources to skip.",
+            "schema": {
+              "type": "string",
+              "default": "0"
+            }
+          },
+          {
+            "name": "filter[accountId]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the results by the specified account id.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[customerId]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the results by the specified customer id.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[merchantCategoryCode][]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filter result by their 4-digit ISO 18245 merchant category code (MCC).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[fromAmount]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the result that have an amount that is *higher or equal to* the specified amount (in cents). e.g. 5000",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[toAmount]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the result that have an amount that is *lower or equal to* the specified amount (in cents). e.g. 7000",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of authorization request resources.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "description": "Array of authorization request resources.",
+                      "items": {
+                        "oneOf": [
+                          {
+                            "$ref": "#/components/schemas/PurchaseAuthorizationRequest"
+                          },
+                          {
+                            "$ref": "#/components/schemas/CardTransactionAuthorizationRequest"
+                          },
+                          {
+                            "$ref": "#/components/schemas/AtmAuthorizationRequest"
+                          }
+                        ],
+                        "discriminator": {
+                          "propertyName": "type",
+                          "mapping": {
+                            "purchaseAuthorizationRequest": "#/components/schemas/PurchaseAuthorizationRequest",
+                            "cardTransactionAuthorizationRequest": "#/components/schemas/CardTransactionAuthorizationRequest",
+                            "atmAuthorizationRequest": "#/components/schemas/AtmAuthorizationRequest"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/authorization-requests/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "getAuthorizationRequestById",
+        "summary": "Get an authorization request by id",
+        "description": "Get an authorization request resource by id.",
+        "tags": [
+          "Cards Authorization Requests"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "authorization-requests"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorization Request resource.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "oneOf": [
+                        {
+                          "$ref": "#/components/schemas/PurchaseAuthorizationRequest"
+                        },
+                        {
+                          "$ref": "#/components/schemas/CardTransactionAuthorizationRequest"
+                        },
+                        {
+                          "$ref": "#/components/schemas/AtmAuthorizationRequest"
+                        }
+                      ],
+                      "discriminator": {
+                        "propertyName": "type",
+                        "mapping": {
+                          "purchaseAuthorizationRequest": "#/components/schemas/PurchaseAuthorizationRequest",
+                          "cardTransactionAuthorizationRequest": "#/components/schemas/CardTransactionAuthorizationRequest",
+                          "atmAuthorizationRequest": "#/components/schemas/AtmAuthorizationRequest"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/authorizations": {
+      "get": {
+        "operationId": "listAuthorizations",
+        "summary": "List authorizations",
+        "description": "List authorizations. Filtering and sorting can be applied. Paging is available only when filtering by customer id or account id.",
+        "tags": [
+          "Cards Authorizations"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "authorizations"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page[limit]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Maximum number of resources that will be returned. Maximum is 1000 resources.",
+            "schema": {
+              "type": "string",
+              "default": "100"
+            }
+          },
+          {
+            "name": "page[offset]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Number of resources to skip.",
+            "schema": {
+              "type": "string",
+              "default": "0"
+            }
+          },
+          {
+            "name": "filter[accountId]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the results by the specified account id.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[accountType]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filter the results by account type (deposit, credit).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[customerId]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the results by the specified customer id.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[cardId]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the results by the specified card id.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[since]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the Authorizations that occurred *after* the specified date. e.g. 2020-01-13T16:01:19.346Z",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[until]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the Authorizations that occurred *before* the specified date. e.g. 2020-01-02T20:06:23.486Z",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[includeNonAuthorized]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Include authorizations from all statuses.",
+            "schema": {
+              "type": "string",
+              "default": "false"
+            }
+          },
+          {
+            "name": "filter[status]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filter authorizations by Authorization Status.",
+            "schema": {
+              "type": "string",
+              "default": "Authorized"
+            }
+          },
+          {
+            "name": "filter[merchantCategoryCode][]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filter authorizations by their 4-digit ISO 18245 merchant category code (MCC).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[fromAmount]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the Authorizations that have an amount that is *higher or equal to* the specified amount (in cents). e.g. 5000",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[toAmount]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the Authorizations that have an amount that is *lower or equal to* the specified amount (in cents). e.g. 7000",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Leave empty or provide sort=createdAt for ascending order. Provide sort=-createdAt (leading minus sign) for descending order.",
+            "schema": {
+              "type": "string",
+              "default": "-createdAt"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of authorization resources.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Authorization"
+                      },
+                      "description": "Array of authorization resources."
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/authorizations/{id}": {
+      "get": {
+        "operationId": "getAuthorization",
+        "summary": "Get an authorization",
+        "description": "Get an authorization resource by id.",
+        "tags": [
+          "Cards Authorizations"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "authorizations"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[includeNonAuthorized]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Include authorizations from all statuses.",
+            "schema": {
+              "type": "string",
+              "default": "false"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorization resource.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Authorization"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/authorizations/{id}/release": {
+      "post": {
+        "operationId": "releaseAuthorization",
+        "summary": "Release an authorization",
+        "description": "Manually release an authorization that is in `Authorized` status. This removes the authorization hold from the account so the **available** balance increases by the authorization amount (subject to other pending activity).",
+        "tags": [
+          "Cards Authorizations"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "authorizations"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated authorization.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Authorization"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
             "content": {
               "application/vnd.api+json": {
                 "schema": {
@@ -25771,6 +26749,1066 @@
             }
           }
         }
+      },
+      "CreateCardholderTokenData": {
+        "type": "object",
+        "required": [
+          "type",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "cardholderToken"
+            ]
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "scope",
+              "verificationToken",
+              "verificationCode"
+            ],
+            "properties": {
+              "scope": {
+                "type": "string",
+                "description": "list of Scopes separated by spaces. Only cards (cards cards-sensitive cards-write cards-sensitive-write) scopes are allowed.",
+                "example": "cards"
+              },
+              "verificationToken": {
+                "type": "string",
+                "description": "Required if scope includes a scope which requires two-factor authentication. Received as a response from Create Cardholder Token Verification."
+              },
+              "verificationCode": {
+                "type": "string",
+                "description": "Required if scope includes a scope which requires two-factor authentication. 6 digit code sent to the card holder through the desired channel."
+              },
+              "expiresIn": {
+                "type": "integer",
+                "description": "The lifetime of the token (in seconds). Maximum value is 86400 (24 hours). Default value is also 24 hours."
+              },
+              "upgradableScope": {
+                "type": "string",
+                "description": "list of Scopes separated by spaces. The card holder will be able to upgrade the token to the scopes you provide here."
+              }
+            }
+          }
+        },
+        "example": {
+          "type": "cardholderToken",
+          "attributes": {
+            "scope": "cards"
+          }
+        }
+      },
+      "CreateCardholderTokenVerificationData": {
+        "type": "object",
+        "required": [
+          "type",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "cardholderTokenVerification"
+            ]
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "channel"
+            ],
+            "properties": {
+              "channel": {
+                "type": "string",
+                "description": "Send a verification code to the card holder through one of the following channels - sms or call.",
+                "example": "sms"
+              },
+              "phone": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/PhoneType"
+                  }
+                ],
+                "description": "This allows providing the phone number of one of the customer's authorized users. The provided phone must match an authorized user phone and will be used in the One Time Password (OTP) authentication process instead of the business customer contact's phone."
+              },
+              "appHash": {
+                "type": "string",
+                "description": "For sms verifications only, 11-character hash string that identifies your app. Appended at the end of your verification SMS body the way that client-side SMS Retriever API expects."
+              },
+              "language": {
+                "type": "string",
+                "description": "Select the verification language using a 2-letter code. Default is English. See Localization Options for the supported languages and their 2-letter code."
+              }
+            }
+          }
+        },
+        "example": {
+          "type": "cardholderTokenVerification",
+          "attributes": {
+            "channel": "sms"
+          }
+        }
+      },
+      "MobileWalletPayload": {
+        "type": "object",
+        "required": [
+          "type",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "mobileWalletPayload"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "object",
+            "properties": {
+              "payload": {
+                "type": "string",
+                "description": "Encrypted payload."
+              }
+            }
+          }
+        },
+        "example": {
+          "type": "mobileWalletPayload",
+          "attributes": {
+            "payload": "eyJhbGciOi..."
+          }
+        }
+      },
+      "ATMLocation": {
+        "type": "object",
+        "required": [
+          "type",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "atmLocation"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "network",
+              "locationName",
+              "coordinates",
+              "address",
+              "distance",
+              "surchargeFree",
+              "acceptDeposits"
+            ],
+            "properties": {
+              "network": {
+                "type": "string",
+                "description": "Name of the ATM network."
+              },
+              "locationName": {
+                "type": "string",
+                "description": "Name of the ATM's location."
+              },
+              "coordinates": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CoordinatesType"
+                  }
+                ],
+                "description": "Coordinates (latitude, longitude) of the ATM."
+              },
+              "address": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/AddressType"
+                  }
+                ],
+                "description": "Address of the ATM."
+              },
+              "distance": {
+                "type": "number",
+                "description": "Distance to the ATM (in miles)."
+              },
+              "surchargeFree": {
+                "type": "boolean",
+                "description": "Indicates if the ATM is surcharge free."
+              },
+              "acceptDeposits": {
+                "type": "boolean",
+                "description": "Indicates if the ATM accepts deposits."
+              }
+            }
+          }
+        },
+        "example": {
+          "type": "atmLocation",
+          "attributes": {
+            "network": "Allpoint",
+            "locationName": "SPEEDWAY",
+            "coordinates": {
+              "longitude": -73.93041,
+              "latitude": 42.79894
+            },
+            "address": {
+              "street": "229 S BRANDYWINE AVE",
+              "city": "SCHENECTADY",
+              "state": "NY",
+              "postalCode": "12307",
+              "country": "US"
+            },
+            "distance": 1.07,
+            "surchargeFree": true,
+            "acceptDeposits": false
+          }
+        }
+      },
+      "GetMobileWalletPayloadData": {
+        "type": "object",
+        "required": [
+          "attributes"
+        ],
+        "properties": {
+          "attributes": {
+            "type": "object",
+            "required": [
+              "signedNonce"
+            ],
+            "properties": {
+              "signedNonce": {
+                "type": "string",
+                "description": "The signedNonce received from the Visa SDK",
+                "example": "eyJle..."
+              }
+            }
+          }
+        },
+        "example": {
+          "attributes": {
+            "signedNonce": "eyJle..."
+          }
+        }
+      },
+      "PurchaseAuthorizationRequest": {
+        "type": "object",
+        "required": [
+          "type",
+          "id",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "purchaseAuthorizationRequest"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "createdAt",
+              "amount",
+              "status",
+              "partialApprovalAllowed",
+              "recurring",
+              "tags"
+            ],
+            "properties": {
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the authorization request was created."
+              },
+              "amount": {
+                "type": "integer",
+                "description": "The amount (cents) of the authorization request."
+              },
+              "status": {
+                "type": "string",
+                "description": "The status of the authorization request. Either Pending, Approved or Declined."
+              },
+              "outcome": {
+                "type": "string",
+                "description": "What your programmatic integration produced when the request reached a terminal decision. See Understanding authorization decisions. One of Approved, Declined, PostTimeout, PostError, WaitTimeout."
+              },
+              "partialApprovalAllowed": {
+                "type": "boolean",
+                "description": "Indicates whether the authorization request supports partial amount approval."
+              },
+              "approvedAmount": {
+                "type": "integer",
+                "description": "The amount (cents) that was approved. Available only when status is Approved."
+              },
+              "declineReason": {
+                "type": "string",
+                "description": "The reason the authorization request was declined. One of AccountClosed, CardExceedsAmountLimit, DoNotHonor, InsufficientFunds, InvalidMerchant, ReferToCardIssuer, RestrictedCard, Timeout, TransactionNotPermittedToCardholder. Available only when status is Declined"
+              },
+              "merchant": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "type",
+                  "category"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "The name of the merchant."
+                  },
+                  "type": {
+                    "type": "integer",
+                    "description": "The 4-digit ISO 18245 merchant category code (MCC)."
+                  },
+                  "category": {
+                    "type": "string",
+                    "description": "The merchant category, described by the MCC code (see this reference for the list of category descriptions)."
+                  },
+                  "location": {
+                    "type": "string",
+                    "description": "The location (city, state, etc.) of the merchant."
+                  },
+                  "id": {
+                    "type": "string",
+                    "description": "The unique network merchant identifier."
+                  }
+                }
+              },
+              "recurring": {
+                "type": "boolean",
+                "description": "Indicates whether the authorization is recurring"
+              },
+              "ecommerce": {
+                "type": "boolean",
+                "description": "Indicates whether the transaction was created over an electronic network (primarily the internet)."
+              },
+              "cardPresent": {
+                "type": "boolean",
+                "description": "Indicates whether the card was present when the transaction was created."
+              },
+              "paymentMethod": {
+                "type": "string",
+                "description": "The payment method used, one of: Manual, Swipe, Contactless, ChipAndPin, Stored, Other."
+              },
+              "digitalWallet": {
+                "type": "string",
+                "description": "The type of digital wallet used, one of: Google, Apple, Other."
+              },
+              "cardVerificationData": {
+                "type": "object",
+                "properties": {
+                  "verificationMethod": {
+                    "type": "string",
+                    "description": "The verification method used, one of: Address, CVV2, AddressAndCVV2."
+                  }
+                }
+              },
+              "cardNetwork": {
+                "type": "string",
+                "description": "The card network used, one of: Visa, Interlink, Accel, Allpoint, Other."
+              },
+              "healthcareAmounts": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/HealthcareAmountsType"
+                  }
+                ],
+                "description": "IIAS related data for FSA/HRA enabled cards."
+              },
+              "tags": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "Optional, See Tags. If specified when approving the authorization request."
+              },
+              "cashWithdrawalAmount": {
+                "type": "integer",
+                "description": "Cash withdrawal amount"
+              },
+              "currencyConversion": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CurrencyConversionType"
+                  }
+                ],
+                "description": "When original currency for transaction is not USD."
+              },
+              "isInternational": {
+                "type": "boolean",
+                "description": "Indicates whether the transaction is international."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "properties": {
+              "account": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "customer": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "customers": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "card": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "fundingAccount": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        },
+        "example": {
+          "type": "purchaseAuthorizationRequest",
+          "id": "1",
+          "attributes": {
+            "createdAt": "2021-06-22T13:39:17.018Z",
+            "amount": 2500,
+            "status": "Approved",
+            "outcome": "Approved",
+            "partialApprovalAllowed": false,
+            "merchant": {
+              "name": "Apple Inc.",
+              "type": 1000,
+              "category": "",
+              "location": "Cupertino, CA",
+              "id": "311204598883"
+            },
+            "recurring": false,
+            "paymentMethod": "Contactless",
+            "digitalWallet": "Apple",
+            "cardVerificationData": {
+              "verificationMethod": "CVV2"
+            },
+            "ecommerce": true,
+            "cardPresent": false,
+            "cardNetwork": "Visa",
+            "currencyConversion": {
+              "originalCurrency": "EUR",
+              "amountInOriginalCurrency": 1000,
+              "fxRate": "1.164"
+            },
+            "isInternational": true
+          },
+          "relationships": {
+            "customer": {
+              "data": {
+                "type": "customer",
+                "id": "10000"
+              }
+            },
+            "account": {
+              "data": {
+                "type": "account",
+                "id": "10001"
+              }
+            },
+            "card": {
+              "data": {
+                "type": "card",
+                "id": "7"
+              }
+            }
+          }
+        },
+        "description": "`PurchaseAuthorizationRequest` is a JSON:API resource, top-level fields:"
+      },
+      "CardTransactionAuthorizationRequest": {
+        "type": "object",
+        "required": [
+          "type",
+          "id",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "cardTransactionAuthorizationRequest"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "createdAt",
+              "amount",
+              "status",
+              "partialApprovalAllowed",
+              "recurring",
+              "tags"
+            ],
+            "properties": {
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the authorization request was created."
+              },
+              "amount": {
+                "type": "integer",
+                "description": "The amount (cents) of the authorization request."
+              },
+              "status": {
+                "type": "string",
+                "description": "The status of the authorization request. Either Pending, Approved or Declined."
+              },
+              "partialApprovalAllowed": {
+                "type": "boolean",
+                "description": "Indicates whether the authorization request supports partial amount approval."
+              },
+              "approvedAmount": {
+                "type": "integer",
+                "description": "The amount (cents) that was approved. Available only when status is Approved."
+              },
+              "declineReason": {
+                "type": "string",
+                "description": "The reason the authorization request was declined. One of AccountClosed, CardExceedsAmountLimit, DoNotHonor, InsufficientFunds, InvalidMerchant, ReferToCardIssuer, RestrictedCard, Timeout, TransactionNotPermittedToCardholder. Available only when status is Declined"
+              },
+              "merchant": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "type",
+                  "category"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "The name of the merchant."
+                  },
+                  "type": {
+                    "type": "integer",
+                    "description": "The 4-digit ISO 18245 merchant category code (MCC)."
+                  },
+                  "category": {
+                    "type": "string",
+                    "description": "The merchant category, described by the MCC code (see this reference for the list of category descriptions)."
+                  },
+                  "location": {
+                    "type": "string",
+                    "description": "The location (city, state, etc.) of the merchant."
+                  },
+                  "id": {
+                    "type": "string",
+                    "description": "The unique network merchant identifier."
+                  }
+                }
+              },
+              "recurring": {
+                "type": "boolean",
+                "description": "Indicates whether the authorization is recurring"
+              },
+              "paymentMethod": {
+                "type": "string",
+                "description": "The payment method used, one of: Manual, Swipe, Contactless, ChipAndPin, Stored, Other."
+              },
+              "digitalWallet": {
+                "type": "string",
+                "description": "The type of digital wallet used, one of: Google, Apple, Other."
+              },
+              "cardVerificationData": {
+                "type": "object",
+                "properties": {
+                  "verificationMethod": {
+                    "type": "string",
+                    "description": "The verification method used, one of: Address, CVV2, AddressAndCVV2."
+                  }
+                }
+              },
+              "cardNetwork": {
+                "type": "string",
+                "description": "The card network used, one of: Visa, Interlink, Accel, Allpoint, Other."
+              },
+              "tags": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "Optional, See Tags. If specified when approving the authorization request."
+              },
+              "currencyConversion": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CurrencyConversionType"
+                  }
+                ],
+                "description": "When original currency for transaction is not USD."
+              },
+              "isInternational": {
+                "type": "boolean",
+                "description": "Indicates whether the transaction is international."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "properties": {
+              "account": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "customer": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "customers": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "card": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "fundingAccount": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        },
+        "example": {
+          "type": "cardTransactionAuthorizationRequest",
+          "id": "1",
+          "attributes": {
+            "createdAt": "2021-06-22T13:39:17.018Z",
+            "amount": 2500,
+            "status": "Pending",
+            "partialApprovalAllowed": false,
+            "merchant": {
+              "name": "Apple Inc.",
+              "type": 1000,
+              "category": "",
+              "location": "Cupertino, CA",
+              "id": "311204598883"
+            },
+            "recurring": false,
+            "paymentMethod": "Contactless",
+            "digitalWallet": "Apple",
+            "cardVerificationData": {
+              "verificationMethod": "CVV2"
+            },
+            "cardNetwork": "Visa",
+            "currencyConversion": {
+              "originalCurrency": "EUR",
+              "amountInOriginalCurrency": 1000,
+              "fxRate": "1.164"
+            },
+            "isInternational": true
+          },
+          "relationships": {
+            "customer": {
+              "data": {
+                "type": "customer",
+                "id": "10000"
+              }
+            },
+            "account": {
+              "data": {
+                "type": "account",
+                "id": "10001"
+              }
+            },
+            "card": {
+              "data": {
+                "type": "card",
+                "id": "7"
+              }
+            }
+          }
+        },
+        "description": "`CardTransactionAuthorizationRequest` is a JSON:API resource, top-level fields:"
+      },
+      "AtmAuthorizationRequest": {
+        "type": "object",
+        "required": [
+          "type",
+          "id",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "atmAuthorizationRequest"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "createdAt",
+              "amount",
+              "status",
+              "direction",
+              "atmName",
+              "atmLocation",
+              "surcharge",
+              "tags"
+            ],
+            "properties": {
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the resource was created."
+              },
+              "amount": {
+                "type": "integer",
+                "description": "The amount (cents) of the authorization request."
+              },
+              "status": {
+                "type": "string",
+                "description": "The status of the authorization request."
+              },
+              "outcome": {
+                "type": "string",
+                "description": "What your programmatic integration produced when the request reached a terminal decision. See Understanding authorization decisions."
+              },
+              "direction": {
+                "type": "string",
+                "description": "The direction of the transaction (Credit or Debit)."
+              },
+              "atmName": {
+                "type": "string",
+                "description": "The name of the ATM."
+              },
+              "atmLocation": {
+                "type": "string",
+                "description": "The location of the ATM."
+              },
+              "surcharge": {
+                "type": "integer",
+                "description": "The surcharge amount in cents."
+              },
+              "tags": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "See Tags. When the authorization request was auto-completed using the timeout strategy, this field may also contain decision_source and timeout_strategy; prefer the outcome attribute for new integrations."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "properties": {
+              "account": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "customer": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "card": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        },
+        "example": {
+          "type": "atmAuthorizationRequest",
+          "id": "1",
+          "attributes": {
+            "createdAt": "2021-06-24T08:10:08.081Z",
+            "amount": 2000,
+            "status": "Approved",
+            "outcome": "Approved",
+            "direction": "Debit",
+            "atmName": "ATM Name",
+            "atmLocation": "123 Main St",
+            "surcharge": 250,
+            "tags": {}
+          },
+          "relationships": {
+            "account": {
+              "data": {
+                "type": "account",
+                "id": "10001"
+              }
+            },
+            "customer": {
+              "data": {
+                "type": "customer",
+                "id": "10000"
+              }
+            },
+            "card": {
+              "data": {
+                "type": "card",
+                "id": "7"
+              }
+            }
+          }
+        },
+        "description": "`AtmAuthorizationRequest` is a JSON:API resource representing an ATM authorization request. Top-level fields:"
+      },
+      "HealthcareAmountsType": {
+        "type": "object",
+        "required": [
+          "dentalAmount",
+          "transitAmount",
+          "visionOpticalAmount",
+          "prescriptionRXAmount",
+          "clinicOtherQualifiedMedicalAmount",
+          "totalHealthcareAmount"
+        ],
+        "properties": {
+          "dentalAmount": {
+            "type": "integer",
+            "description": "Dental expense (cents)."
+          },
+          "transitAmount": {
+            "type": "integer",
+            "description": "Transit expense (cents)."
+          },
+          "visionOpticalAmount": {
+            "type": "integer",
+            "description": "Vision expense (cents)."
+          },
+          "prescriptionRXAmount": {
+            "type": "integer",
+            "description": "Prescription drugs expense (cents)."
+          },
+          "clinicOtherQualifiedMedicalAmount": {
+            "type": "integer",
+            "description": "Misc medical expense (cents)."
+          },
+          "totalHealthcareAmount": {
+            "type": "integer",
+            "description": "Total medical expense (cents)."
+          }
+        },
+        "example": {
+          "dentalAmount": 0,
+          "transitAmount": 0,
+          "visionOpticalAmount": 2000,
+          "prescriptionRXAmount": 0,
+          "clinicOtherQualifiedMedicalAmount": 0,
+          "totalHealthcareAmount": 2000
+        }
+      },
+      "Authorization": {
+        "type": "object",
+        "required": [
+          "type",
+          "id",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "authorization"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "createdAt",
+              "amount",
+              "cardLast4Digits",
+              "status",
+              "recurring",
+              "tags"
+            ],
+            "properties": {
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the authorization was created."
+              },
+              "amount": {
+                "type": "integer",
+                "description": "The amount (cents) of the authorization."
+              },
+              "cardLast4Digits": {
+                "type": "string",
+                "description": "The last 4 digits of the debit card involved in the authorization."
+              },
+              "status": {
+                "type": "string",
+                "description": "One of Authorized, Completed, Canceled, Declined, see Authorization Statuses."
+              },
+              "cardDecisionSource": {
+                "type": "string",
+                "description": "Who made the final card authorization decision. See Understanding authorization decisions. One of Org, Unit, Network, TimeoutApprove, TimeoutDecline, DefaultApprove, InternalError, IssuerStandIn."
+              },
+              "declineReason": {
+                "type": "string",
+                "description": "The reason the authorization was declined. Available only when status is Declined"
+              },
+              "declineDescription": {
+                "type": "string",
+                "description": "A human-readable description providing additional detail about the decline. Only present on some declined authorizations."
+              },
+              "declinedBy": {
+                "type": "string",
+                "description": "The entity that declined the authorization. One of Visa, Org, or Unit. Available only when status is Declined."
+              },
+              "merchant": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "type",
+                  "category"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "The name of the merchant."
+                  },
+                  "type": {
+                    "type": "integer",
+                    "description": "The 4-digit ISO 18245 merchant category code (MCC)."
+                  },
+                  "category": {
+                    "type": "string",
+                    "description": "The merchant category, described by the MCC code (see this reference for the list of category descriptions)."
+                  },
+                  "location": {
+                    "type": "string",
+                    "description": "The location (city, state, etc.) of the merchant."
+                  },
+                  "id": {
+                    "type": "string",
+                    "description": "The unique network merchant identifier."
+                  }
+                }
+              },
+              "recurring": {
+                "type": "boolean",
+                "description": "Indicates whether the authorization is recurring"
+              },
+              "paymentMethod": {
+                "type": "string",
+                "description": "The payment method used, one of: Manual, Swipe, Contactless, ChipAndPin, Stored, Other."
+              },
+              "digitalWallet": {
+                "type": "string",
+                "description": "The type of digital wallet used, one of: Google, Apple, Other."
+              },
+              "cardVerificationData": {
+                "type": "object",
+                "properties": {
+                  "verificationMethod": {
+                    "type": "string",
+                    "description": "The verification method used, one of: Address, CVV2, AddressAndCVV2."
+                  }
+                }
+              },
+              "cardNetwork": {
+                "type": "string",
+                "description": "The card network used, one of: Visa, Interlink, Accel, Allpoint, Other."
+              },
+              "tags": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "See Tags. Inherited from the authorization request tags (see Tag Inheritance)."
+              },
+              "cashWithdrawalAmount": {
+                "type": "integer",
+                "description": "Cash withdrawal amount"
+              },
+              "summary": {
+                "type": "string",
+                "description": "Summary of the authorization."
+              },
+              "richMerchantData": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/RichMerchantDataType"
+                  }
+                ],
+                "description": "Full merchant information."
+              },
+              "currencyConversion": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CurrencyConversionType"
+                  }
+                ],
+                "description": "When original currency for transaction is not USD"
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "properties": {
+              "account": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "customer": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "card": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "customers": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "authorizationRequest": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        },
+        "example": {
+          "type": "authorization",
+          "id": "97",
+          "attributes": {
+            "createdAt": "2021-02-21T07:29:42.447Z",
+            "amount": 2000,
+            "cardLast4Digits": "0019",
+            "status": "Authorized",
+            "cardDecisionSource": "Org",
+            "merchant": {
+              "name": "Europcar Mobility Group",
+              "type": 3381,
+              "category": "EUROP CAR",
+              "location": "Cupertino, CA",
+              "id": "029859000085093"
+            },
+            "recurring": false,
+            "paymentMethod": "Contactless",
+            "digitalWallet": "Apple",
+            "cardVerificationData": {
+              "verificationMethod": "CVV2"
+            },
+            "cardNetwork": "Visa",
+            "summary": "Europcar Mobility Group |**0019 "
+          },
+          "relationships": {
+            "customer": {
+              "data": {
+                "type": "customer",
+                "id": "10000"
+              }
+            },
+            "account": {
+              "data": {
+                "type": "account",
+                "id": "10001"
+              }
+            },
+            "card": {
+              "data": {
+                "type": "card",
+                "id": "10501"
+              }
+            }
+          }
+        },
+        "description": "`Authorization` is a JSON:API resource, top-level fields:"
       }
     },
     "responses": {
