@@ -5,7 +5,11 @@ import {
 	AuthorizedUsersApi,
 	CardFraudOutreachApi,
 	CardHolderAPITokensApi,
+	CardsAddToMobileWalletApi,
 	CardsApi,
+	CardsATMLocationsApi,
+	CardsAuthorizationRequestsApi,
+	CardsAuthorizationsApi,
 	CheckDepositsApi,
 	Configuration,
 	CounterpartiesApi,
@@ -79,6 +83,22 @@ export function buildCardFraudOutreachApi(): CardFraudOutreachApi {
 
 export function buildCardHolderApiTokensApi(): CardHolderAPITokensApi {
 	return new CardHolderAPITokensApi(configuration());
+}
+
+export function buildCardsAtmLocationsApi(): CardsATMLocationsApi {
+	return new CardsATMLocationsApi(configuration());
+}
+
+export function buildCardsAddToMobileWalletApi(): CardsAddToMobileWalletApi {
+	return new CardsAddToMobileWalletApi(configuration());
+}
+
+export function buildCardsAuthorizationRequestsApi(): CardsAuthorizationRequestsApi {
+	return new CardsAuthorizationRequestsApi(configuration());
+}
+
+export function buildCardsAuthorizationsApi(): CardsAuthorizationsApi {
+	return new CardsAuthorizationsApi(configuration());
 }
 
 /**

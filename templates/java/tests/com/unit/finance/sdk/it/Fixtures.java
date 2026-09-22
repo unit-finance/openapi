@@ -60,6 +60,9 @@ import com.unit.finance.sdk.model.CreateCardholderTokenRequest;
 import com.unit.finance.sdk.model.CreateCardholderTokenVerificationData;
 import com.unit.finance.sdk.model.CreateCardholderTokenVerificationDataAttributes;
 import com.unit.finance.sdk.model.CreateCardholderTokenVerificationRequest;
+import com.unit.finance.sdk.model.GetMobileWalletPayloadData;
+import com.unit.finance.sdk.model.GetMobileWalletPayloadDataAttributes;
+import com.unit.finance.sdk.model.GetMobileWalletPayloadRequest;
 import com.unit.finance.sdk.model.CreateDepositAccountData;
 import com.unit.finance.sdk.model.CreateDepositAccountDataAttributes;
 import com.unit.finance.sdk.model.CreateDepositAccountDataRelationships;
@@ -1045,5 +1048,16 @@ final class Fixtures {
             .type(CreateCardholderTokenData.TypeEnum.CARDHOLDER_TOKEN)
             .attributes(attributes);
     return new CreateCardholderTokenRequest().data(data);
+  }
+
+  /**
+   * {@code signedNonce} is issued by the Visa in-app SDK. The suite cannot mint one, so tests
+   * send the spec example and treat a 4xx as unavailable.
+   */
+  static GetMobileWalletPayloadRequest getMobileWalletPayloadRequest() {
+    GetMobileWalletPayloadDataAttributes attributes =
+        new GetMobileWalletPayloadDataAttributes().signedNonce("eyJle...");
+    return new GetMobileWalletPayloadRequest()
+        .data(new GetMobileWalletPayloadData().attributes(attributes));
   }
 }
