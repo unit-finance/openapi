@@ -37,6 +37,8 @@ docs/ApplicationDocument.md
 docs/ApplicationDocumentAttributes.md
 docs/ApplicationDocumentsApi.md
 docs/ApplicationsApi.md
+docs/ApproveCheckPaymentAdditionalVerificationData.md
+docs/ApproveCheckPaymentAdditionalVerificationRequest.md
 docs/ArchiveCustomerData.md
 docs/ArchiveCustomerDataAttributes.md
 docs/ArchiveCustomerRequest.md
@@ -126,8 +128,12 @@ docs/CheckDepositTransaction.md
 docs/CheckDepositTransactionAttributes.md
 docs/CheckDepositTransactionRelationships.md
 docs/CheckDepositsApi.md
+docs/CheckPayment.md
+docs/CheckPaymentAttributes.md
+docs/CheckPaymentCounterpartyType.md
 docs/CheckPaymentTransaction.md
 docs/CheckPaymentTransactionRelationships.md
+docs/CheckPaymentsApi.md
 docs/ClearAchDebitPayment200Response.md
 docs/CloseAccountRequest.md
 docs/CloseCard200Response.md
@@ -339,6 +345,7 @@ docs/GetCard200Response.md
 docs/GetCardFraudCaseById200Response.md
 docs/GetCardPinStatus200Response.md
 docs/GetCheckDeposit200Response.md
+docs/GetCheckPayment200Response.md
 docs/GetCounterpartyBalance200Response.md
 docs/GetCustomer200Response.md
 docs/GetExpectedACHCompletionDateData.md
@@ -383,6 +390,7 @@ docs/ListCardFraudCases200ResponseDataInner.md
 docs/ListCards200Response.md
 docs/ListCards200ResponseDataInner.md
 docs/ListCheckDeposits200Response.md
+docs/ListCheckPayments200Response.md
 docs/ListCounterparties200Response.md
 docs/ListCustomers200Response.md
 docs/ListCustomers200ResponseDataInner.md
@@ -409,6 +417,11 @@ docs/OfficerAttributes.md
 docs/OfficerRelationships.md
 docs/OfficerRequestType.md
 docs/OfficerType.md
+docs/OriginateCheckPaymentMailPhysicalCheck201Response.md
+docs/OriginateCheckPaymentMailPhysicalCheckData.md
+docs/OriginateCheckPaymentMailPhysicalCheckDataAttributes.md
+docs/OriginateCheckPaymentMailPhysicalCheckDataRelationships.md
+docs/OriginateCheckPaymentMailPhysicalCheckRequest.md
 docs/OriginatedACHTransaction.md
 docs/OriginatedACHTransactionAttributes.md
 docs/OriginatedACHTransactionRelationships.md
@@ -469,6 +482,9 @@ docs/ReplaceCardDataAttributes.md
 docs/ReplaceCardRequest.md
 docs/RequestedProductType.md
 docs/ResourceIdentifier.md
+docs/ReturnCheckPaymentData.md
+docs/ReturnCheckPaymentDataAttributes.md
+docs/ReturnCheckPaymentRequest.md
 docs/ReturnedACHTransaction.md
 docs/ReturnedACHTransactionAttributes.md
 docs/ReturnedACHTransactionRelationships.md
@@ -630,6 +646,7 @@ src/main/java/com/unit/finance/sdk/api/CardsAtmLocationsApi.java
 src/main/java/com/unit/finance/sdk/api/CardsAuthorizationRequestsApi.java
 src/main/java/com/unit/finance/sdk/api/CardsAuthorizationsApi.java
 src/main/java/com/unit/finance/sdk/api/CheckDepositsApi.java
+src/main/java/com/unit/finance/sdk/api/CheckPaymentsApi.java
 src/main/java/com/unit/finance/sdk/api/CounterpartiesApi.java
 src/main/java/com/unit/finance/sdk/api/CustomersApi.java
 src/main/java/com/unit/finance/sdk/api/FeesApi.java
@@ -673,6 +690,8 @@ src/main/java/com/unit/finance/sdk/model/AnnualIncomeType.java
 src/main/java/com/unit/finance/sdk/model/AnnualRevenueType.java
 src/main/java/com/unit/finance/sdk/model/ApplicationDocument.java
 src/main/java/com/unit/finance/sdk/model/ApplicationDocumentAttributes.java
+src/main/java/com/unit/finance/sdk/model/ApproveCheckPaymentAdditionalVerificationData.java
+src/main/java/com/unit/finance/sdk/model/ApproveCheckPaymentAdditionalVerificationRequest.java
 src/main/java/com/unit/finance/sdk/model/ArchiveCustomerData.java
 src/main/java/com/unit/finance/sdk/model/ArchiveCustomerDataAttributes.java
 src/main/java/com/unit/finance/sdk/model/ArchiveCustomerRequest.java
@@ -753,6 +772,9 @@ src/main/java/com/unit/finance/sdk/model/CheckDepositRelationships.java
 src/main/java/com/unit/finance/sdk/model/CheckDepositTransaction.java
 src/main/java/com/unit/finance/sdk/model/CheckDepositTransactionAttributes.java
 src/main/java/com/unit/finance/sdk/model/CheckDepositTransactionRelationships.java
+src/main/java/com/unit/finance/sdk/model/CheckPayment.java
+src/main/java/com/unit/finance/sdk/model/CheckPaymentAttributes.java
+src/main/java/com/unit/finance/sdk/model/CheckPaymentCounterpartyType.java
 src/main/java/com/unit/finance/sdk/model/CheckPaymentTransaction.java
 src/main/java/com/unit/finance/sdk/model/CheckPaymentTransactionRelationships.java
 src/main/java/com/unit/finance/sdk/model/ClearAchDebitPayment200Response.java
@@ -963,6 +985,7 @@ src/main/java/com/unit/finance/sdk/model/GetCard200Response.java
 src/main/java/com/unit/finance/sdk/model/GetCardFraudCaseById200Response.java
 src/main/java/com/unit/finance/sdk/model/GetCardPinStatus200Response.java
 src/main/java/com/unit/finance/sdk/model/GetCheckDeposit200Response.java
+src/main/java/com/unit/finance/sdk/model/GetCheckPayment200Response.java
 src/main/java/com/unit/finance/sdk/model/GetCounterpartyBalance200Response.java
 src/main/java/com/unit/finance/sdk/model/GetCustomer200Response.java
 src/main/java/com/unit/finance/sdk/model/GetExpectedACHCompletionDateData.java
@@ -1007,6 +1030,7 @@ src/main/java/com/unit/finance/sdk/model/ListCardFraudCases200ResponseDataInner.
 src/main/java/com/unit/finance/sdk/model/ListCards200Response.java
 src/main/java/com/unit/finance/sdk/model/ListCards200ResponseDataInner.java
 src/main/java/com/unit/finance/sdk/model/ListCheckDeposits200Response.java
+src/main/java/com/unit/finance/sdk/model/ListCheckPayments200Response.java
 src/main/java/com/unit/finance/sdk/model/ListCounterparties200Response.java
 src/main/java/com/unit/finance/sdk/model/ListCustomers200Response.java
 src/main/java/com/unit/finance/sdk/model/ListCustomers200ResponseDataInner.java
@@ -1033,6 +1057,11 @@ src/main/java/com/unit/finance/sdk/model/OfficerAttributes.java
 src/main/java/com/unit/finance/sdk/model/OfficerRelationships.java
 src/main/java/com/unit/finance/sdk/model/OfficerRequestType.java
 src/main/java/com/unit/finance/sdk/model/OfficerType.java
+src/main/java/com/unit/finance/sdk/model/OriginateCheckPaymentMailPhysicalCheck201Response.java
+src/main/java/com/unit/finance/sdk/model/OriginateCheckPaymentMailPhysicalCheckData.java
+src/main/java/com/unit/finance/sdk/model/OriginateCheckPaymentMailPhysicalCheckDataAttributes.java
+src/main/java/com/unit/finance/sdk/model/OriginateCheckPaymentMailPhysicalCheckDataRelationships.java
+src/main/java/com/unit/finance/sdk/model/OriginateCheckPaymentMailPhysicalCheckRequest.java
 src/main/java/com/unit/finance/sdk/model/OriginatedACHTransaction.java
 src/main/java/com/unit/finance/sdk/model/OriginatedACHTransactionAttributes.java
 src/main/java/com/unit/finance/sdk/model/OriginatedACHTransactionRelationships.java
@@ -1092,6 +1121,9 @@ src/main/java/com/unit/finance/sdk/model/ReplaceCardDataAttributes.java
 src/main/java/com/unit/finance/sdk/model/ReplaceCardRequest.java
 src/main/java/com/unit/finance/sdk/model/RequestedProductType.java
 src/main/java/com/unit/finance/sdk/model/ResourceIdentifier.java
+src/main/java/com/unit/finance/sdk/model/ReturnCheckPaymentData.java
+src/main/java/com/unit/finance/sdk/model/ReturnCheckPaymentDataAttributes.java
+src/main/java/com/unit/finance/sdk/model/ReturnCheckPaymentRequest.java
 src/main/java/com/unit/finance/sdk/model/ReturnedACHTransaction.java
 src/main/java/com/unit/finance/sdk/model/ReturnedACHTransactionAttributes.java
 src/main/java/com/unit/finance/sdk/model/ReturnedACHTransactionRelationships.java
