@@ -20,6 +20,7 @@ from unit_finance_sdk import (
     CardsAuthorizationRequestsApi,
     CardsAuthorizationsApi,
     CheckDepositsApi,
+    CheckPaymentsApi,
     Configuration,
     CounterpartiesApi,
     CustomersApi,
@@ -89,6 +90,11 @@ def build_customers_api() -> CustomersApi:
 def build_check_deposits_api() -> CheckDepositsApi:
     """Construct a ``CheckDepositsApi`` bound to the sandbox."""
     return CheckDepositsApi(ApiClient(_configuration()))
+
+
+def build_check_payments_api() -> CheckPaymentsApi:
+    """Construct a ``CheckPaymentsApi`` bound to the sandbox."""
+    return CheckPaymentsApi(ApiClient(_configuration()))
 
 
 def build_counterparties_api() -> CounterpartiesApi:

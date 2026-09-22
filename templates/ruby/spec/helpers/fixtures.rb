@@ -10,6 +10,7 @@
 # This sidesteps the union-wrapping the Python suite needs, where a raw dict
 # coerces to an empty union.
 
+require 'date'
 require 'securerandom'
 require_relative 'api'
 
@@ -288,6 +289,48 @@ module Helpers
         'data' => {
           'type' => 'accountHold',
           'attributes' => { 'amount' => amount }
+        }
+      }
+    end
+
+    def originate_check_payment_request(account_id, customer_id)
+      send_date = (Date.today + 30).iso8601
+      {
+        'data' => {
+          'type' => 'checkPayment',
+          'attributes' => {
+            'amount' => 1000,
+            'description' => 'SDK integration test check payment',
+            'idempotencyKey' => "#{Helpers::Api::TEST_RUN_ID}-check-payment-#{SecureRandom.hex(4)}",
+            'sendDate' => send_date,
+            'counterparty' => {
+              'name' => 'April Oneil',
+              'address' => US_ADDRESS
+            },
+            'tags' => base_tags
+          },
+          'relationships' => {
+            'account' => { 'data' => { 'type' => 'account', 'id' => account_id } },
+            'customer' => { 'data' => { 'type' => 'customer', 'id' => customer_id } }
+          }
+        }
+      }
+    end
+
+    def return_check_payment_request
+      {
+        'data' => {
+          'type' => 'checkPaymentReturn',
+          'attributes' => { 'reason' => 'StopPayment' }
+        }
+      }
+    end
+
+    def approve_check_payment_additional_verification_request
+      {
+        'data' => {
+          'type' => 'additionalVerification',
+          'attributes' => {}
         }
       }
     end

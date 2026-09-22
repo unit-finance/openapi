@@ -42,6 +42,8 @@ docs/ApplicationDocument.md
 docs/ApplicationDocumentAttributes.md
 docs/ApplicationDocumentsApi.md
 docs/ApplicationsApi.md
+docs/ApproveCheckPaymentAdditionalVerificationData.md
+docs/ApproveCheckPaymentAdditionalVerificationRequest.md
 docs/ArchiveCustomerData.md
 docs/ArchiveCustomerDataAttributes.md
 docs/ArchiveCustomerRequest.md
@@ -131,8 +133,12 @@ docs/CheckDepositTransaction.md
 docs/CheckDepositTransactionAttributes.md
 docs/CheckDepositTransactionRelationships.md
 docs/CheckDepositsApi.md
+docs/CheckPayment.md
+docs/CheckPaymentAttributes.md
+docs/CheckPaymentCounterpartyType.md
 docs/CheckPaymentTransaction.md
 docs/CheckPaymentTransactionRelationships.md
+docs/CheckPaymentsApi.md
 docs/ClearAchDebitPayment200Response.md
 docs/CloseAccountRequest.md
 docs/CloseCard200Response.md
@@ -344,6 +350,7 @@ docs/GetCard200Response.md
 docs/GetCardFraudCaseById200Response.md
 docs/GetCardPinStatus200Response.md
 docs/GetCheckDeposit200Response.md
+docs/GetCheckPayment200Response.md
 docs/GetCounterpartyBalance200Response.md
 docs/GetCustomer200Response.md
 docs/GetExpectedACHCompletionDateData.md
@@ -388,6 +395,7 @@ docs/ListCardFraudCases200ResponseDataInner.md
 docs/ListCards200Response.md
 docs/ListCards200ResponseDataInner.md
 docs/ListCheckDeposits200Response.md
+docs/ListCheckPayments200Response.md
 docs/ListCounterparties200Response.md
 docs/ListCustomers200Response.md
 docs/ListCustomers200ResponseDataInner.md
@@ -414,6 +422,11 @@ docs/OfficerAttributes.md
 docs/OfficerRelationships.md
 docs/OfficerRequestType.md
 docs/OfficerType.md
+docs/OriginateCheckPaymentMailPhysicalCheck201Response.md
+docs/OriginateCheckPaymentMailPhysicalCheckData.md
+docs/OriginateCheckPaymentMailPhysicalCheckDataAttributes.md
+docs/OriginateCheckPaymentMailPhysicalCheckDataRelationships.md
+docs/OriginateCheckPaymentMailPhysicalCheckRequest.md
 docs/OriginatedACHTransaction.md
 docs/OriginatedACHTransactionAttributes.md
 docs/OriginatedACHTransactionRelationships.md
@@ -474,6 +487,9 @@ docs/ReplaceCardDataAttributes.md
 docs/ReplaceCardRequest.md
 docs/RequestedProductType.md
 docs/ResourceIdentifier.md
+docs/ReturnCheckPaymentData.md
+docs/ReturnCheckPaymentDataAttributes.md
+docs/ReturnCheckPaymentRequest.md
 docs/ReturnedACHTransaction.md
 docs/ReturnedACHTransactionAttributes.md
 docs/ReturnedACHTransactionRelationships.md
