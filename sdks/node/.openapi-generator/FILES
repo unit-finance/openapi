@@ -90,6 +90,7 @@ docs/CardFraudOutreachApi.md
 docs/CardFraudOutreachPolicy.md
 docs/CardFraudOutreachPolicyAttributes.md
 docs/CardFraudOutreachPolicyRelationships.md
+docs/CardHolderAPITokensApi.md
 docs/CardReversalTransaction.md
 docs/CardReversalTransactionAttributes.md
 docs/CardReversalTransactionRelationships.md
@@ -193,6 +194,18 @@ docs/CreateBusinessWalletCustomerRequest.md
 docs/CreateCard201Response.md
 docs/CreateCard201ResponseData.md
 docs/CreateCardRequest.md
+docs/CreateCardholderToken201Response.md
+docs/CreateCardholderToken201ResponseData.md
+docs/CreateCardholderToken201ResponseDataAttributes.md
+docs/CreateCardholderTokenData.md
+docs/CreateCardholderTokenDataAttributes.md
+docs/CreateCardholderTokenRequest.md
+docs/CreateCardholderTokenVerification201Response.md
+docs/CreateCardholderTokenVerification201ResponseData.md
+docs/CreateCardholderTokenVerification201ResponseDataAttributes.md
+docs/CreateCardholderTokenVerificationData.md
+docs/CreateCardholderTokenVerificationDataAttributes.md
+docs/CreateCardholderTokenVerificationRequest.md
 docs/CreateCheckDeposit201Response.md
 docs/CreateCheckDepositData.md
 docs/CreateCheckDepositDataAttributes.md

@@ -1,10 +1,10 @@
 # Implemented API slices
 
-From `spec-version.json` (`slices`), OpenAPI tags on `unit-finance/unit-openapi` **0.12.0**.
+From `spec-version.json` (`slices`), OpenAPI tags on `unit-finance/unit-openapi` **0.13.0**.
 
 Accounts · Application Documents · Applications · Authorized Users ·
-Card Fraud Outreach · Cards · Check Deposits · Counterparties · Customers ·
-Fees · Payments · Transactions
+Card Fraud Outreach · Card Holder API Tokens · Cards · Check Deposits ·
+Counterparties · Customers · Fees · Payments · Transactions
 
 # Test skips and early exits
 
@@ -15,6 +15,10 @@ Not listed: the global token gate (`describeIfToken` / `assumeToken` /
 `:sandbox` / `@requires_token`).
 
 **Cards, Fees, Transactions** — no extra skip in any SDK.
+
+**Card Holder API Tokens** `createCardholderTokenVerification` — no extra skip
+in any SDK (the sandbox issues the OTP challenge and returns 201). Its sibling
+`createCardholderToken` is the same abort in every SDK; see below.
 
 **Card Fraud Outreach** `createPolicy` / `getPolicyById` / `updatePolicy` are
 the same abort in every SDK; `listCardFraudCases` / `getCardFraudCaseById` /
@@ -47,6 +51,7 @@ it). `listAuthorizedUsers` / `getAuthorizedUser` differ; see below.
 | `cancelPayment` | abort on 400/409/422/501 | Creates a **book** payment (settles immediately). Cancel is only for Pending/PendingReview ACH/Wire, so those statuses count as a pass. |
 | `createPolicy` | abort | Create needs three org-provisioned relationships: **email outreach settings**, **message outreach settings**, and **white-label theme**. There is no list operation for any of them, so the suite sends placeholder ids `"0"`. The sandbox then 4xxs (missing/invalid relationships). That is org setup, not an SDK gap. |
 | `getPolicyById` / `updatePolicy` | abort | Both need a policy id. There is **no list-policies** operation, so they depend on **`createPolicy`**. Until the org has those outreach/theme resources, there is nothing to GET or PATCH. |
+| `createCardholderToken` (new in spec 0.13.0) | abort | The spec marks `verificationToken` and `verificationCode` **required** on `CreateCardholderTokenData.attributes`, but they are only needed for 2FA scopes: the sandbox answers **201** to a scope-only body (`{ scope: "cards" }`). The generated models cannot express that body, and the 6-digit `verificationCode` is an OTP delivered to the card holder over SMS, so the suites can only send a placeholder — which the sandbox rejects with **404 `verification_failed`**. Spec defect owned by `unit-openapi`: make both fields optional. A second defect sits behind it — the 201 body's `data.type` is **`cardholderBearerToken`** while the spec enum says `cardholderToken`, so the strict-typed clients would fail to parse a success once the first fix lands. |
 
 ---
 

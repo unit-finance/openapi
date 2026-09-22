@@ -10,6 +10,8 @@ import type {
 	CreateBusinessDebitCardRequest,
 	CreateBusinessVirtualDebitCardRequest,
 	CreateBusinessWalletCustomerRequest,
+	CreateCardholderTokenRequest,
+	CreateCardholderTokenVerificationRequest,
 	CreateCounterpartyRequest,
 	CreateIndividualApplicationRequest,
 	CreateSoleProprietorApplicationRequest,
@@ -814,6 +816,37 @@ export function buildUpdatePolicyRequest(): UpdatePolicyRequest {
 			type: "cardFraudOutreachPolicy",
 			attributes: {
 				contactUrl: "https://sdk-test-updated.unit.co",
+			},
+		},
+	};
+}
+
+export function buildCreateCardholderTokenVerificationRequest(): CreateCardholderTokenVerificationRequest {
+	return {
+		data: {
+			type: "cardholderTokenVerification",
+			attributes: { channel: "sms" },
+		},
+	};
+}
+
+/**
+ * The spec marks `verificationToken` / `verificationCode` required even for the
+ * plain `cards` scope. The code is a 6-digit OTP delivered to the card holder
+ * out of band, so the suite can only send a placeholder.
+ */
+export function buildCreateCardholderTokenRequest(
+	verificationToken: string,
+	verificationCode = "000000",
+): CreateCardholderTokenRequest {
+	return {
+		data: {
+			type: "cardholderToken",
+			attributes: {
+				scope: "cards",
+				verificationToken,
+				verificationCode,
+				expiresIn: 3600,
 			},
 		},
 	};

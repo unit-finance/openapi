@@ -4,6 +4,7 @@ import {
 	ApplicationsApi,
 	AuthorizedUsersApi,
 	CardFraudOutreachApi,
+	CardHolderAPITokensApi,
 	CardsApi,
 	CheckDepositsApi,
 	Configuration,
@@ -74,6 +75,10 @@ export function buildAuthorizedUsersApi(): AuthorizedUsersApi {
 
 export function buildCardFraudOutreachApi(): CardFraudOutreachApi {
 	return new CardFraudOutreachApi(configuration());
+}
+
+export function buildCardHolderApiTokensApi(): CardHolderAPITokensApi {
+	return new CardHolderAPITokensApi(configuration());
 }
 
 /**
