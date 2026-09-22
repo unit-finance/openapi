@@ -2,8 +2,11 @@ import type {
 	AddAuthorizedUsersRequest,
 	ArchiveCustomerRequest,
 	AuthorizedUserType,
+	ApproveCheckPaymentAdditionalVerificationRequest,
 	CreateCheckDepositRequest,
 	CreateCheckDepositSendLinkRequest,
+	OriginateCheckPaymentMailPhysicalCheckRequest,
+	ReturnCheckPaymentRequest,
 	CreatePolicyRequest,
 	UpdateCheckDepositRequest,
 	CreateBusinessApplicationRequest,
@@ -604,6 +607,58 @@ export function buildUpdateBusinessCustomerOfficerRequest(): UpdateBusinessCusto
 		data: {
 			type: "officer",
 			attributes: { occupation: "ArchitectOrEngineer" },
+		},
+	};
+}
+
+function futureSendDate(): string {
+	const date = new Date();
+	date.setUTCDate(date.getUTCDate() + 30);
+	return date.toISOString().slice(0, 10);
+}
+
+export function buildOriginateCheckPaymentRequest(
+	accountId: string,
+	customerId: string,
+): OriginateCheckPaymentMailPhysicalCheckRequest {
+	return {
+		data: {
+			type: "checkPayment",
+			attributes: {
+				amount: 1000,
+				description: "SDK integration test check payment",
+				idempotencyKey: `${TEST_RUN_ID}-check-payment-${Math.random()
+					.toString(36)
+					.slice(2, 10)}`,
+				sendDate: futureSendDate(),
+				counterparty: {
+					name: "April Oneil",
+					address: usAddress(),
+				},
+				tags: baseTags(),
+			},
+			relationships: {
+				account: { data: { type: "account", id: accountId } },
+				customer: { data: { type: "customer", id: customerId } },
+			},
+		},
+	};
+}
+
+export function buildReturnCheckPaymentRequest(): ReturnCheckPaymentRequest {
+	return {
+		data: {
+			type: "checkPaymentReturn",
+			attributes: { reason: "StopPayment" },
+		},
+	};
+}
+
+export function buildApproveCheckPaymentAdditionalVerificationRequest(): ApproveCheckPaymentAdditionalVerificationRequest {
+	return {
+		data: {
+			type: "additionalVerification",
+			attributes: {},
 		},
 	};
 }

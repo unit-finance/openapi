@@ -26,6 +26,9 @@ import com.unit.finance.sdk.model.CreateAccountHoldData;
 import com.unit.finance.sdk.model.CreateAccountHoldDataAttributes;
 import com.unit.finance.sdk.model.CreateAccountHoldRequest;
 import com.unit.finance.sdk.model.CreateAccountRequest;
+import com.unit.finance.sdk.model.ApproveCheckPaymentAdditionalVerificationData;
+import com.unit.finance.sdk.model.ApproveCheckPaymentAdditionalVerificationRequest;
+import com.unit.finance.sdk.model.CheckPaymentCounterpartyType;
 import com.unit.finance.sdk.model.CreateCheckDepositData;
 import com.unit.finance.sdk.model.CreateCheckDepositDataAttributes;
 import com.unit.finance.sdk.model.CreateCheckDepositRequest;
@@ -33,6 +36,13 @@ import com.unit.finance.sdk.model.CreateCheckDepositSendLinkData;
 import com.unit.finance.sdk.model.CreateCheckDepositSendLinkDataAttributes;
 import com.unit.finance.sdk.model.CreateCheckDepositSendLinkDataRelationships;
 import com.unit.finance.sdk.model.CreateCheckDepositSendLinkRequest;
+import com.unit.finance.sdk.model.OriginateCheckPaymentMailPhysicalCheckData;
+import com.unit.finance.sdk.model.OriginateCheckPaymentMailPhysicalCheckDataAttributes;
+import com.unit.finance.sdk.model.OriginateCheckPaymentMailPhysicalCheckDataRelationships;
+import com.unit.finance.sdk.model.OriginateCheckPaymentMailPhysicalCheckRequest;
+import com.unit.finance.sdk.model.ReturnCheckPaymentData;
+import com.unit.finance.sdk.model.ReturnCheckPaymentDataAttributes;
+import com.unit.finance.sdk.model.ReturnCheckPaymentRequest;
 import com.unit.finance.sdk.model.UpdateCheckDepositRequest;
 import com.unit.finance.sdk.model.UpdateData;
 import com.unit.finance.sdk.model.UpdateDataAttributes;
@@ -544,6 +554,46 @@ final class Fixtures {
             .attributes(attributes)
             .relationships(new CreateFeeDataRelationships().account(relationship("account", accountId)));
     return new CreateAccountHoldRequest().data(data);
+  }
+
+  static OriginateCheckPaymentMailPhysicalCheckRequest originateCheckPaymentRequest(
+      String accountId, String customerId) {
+    CheckPaymentCounterpartyType counterparty =
+        new CheckPaymentCounterpartyType().name("April Oneil").address(usAddress());
+    OriginateCheckPaymentMailPhysicalCheckDataAttributes attributes =
+        new OriginateCheckPaymentMailPhysicalCheckDataAttributes()
+            .amount(1000)
+            .description("SDK integration test check payment")
+            .idempotencyKey(ApiSupport.TEST_RUN_ID + "-check-payment-" + UUID.randomUUID())
+            .sendDate(LocalDate.now(ZoneOffset.UTC).plusDays(30))
+            .counterparty(counterparty)
+            .tags(baseTags());
+    OriginateCheckPaymentMailPhysicalCheckDataRelationships relationships =
+        new OriginateCheckPaymentMailPhysicalCheckDataRelationships()
+            .account(relationship("account", accountId))
+            .customer(relationship("customer", customerId));
+    OriginateCheckPaymentMailPhysicalCheckData data =
+        new OriginateCheckPaymentMailPhysicalCheckData()
+            .type(OriginateCheckPaymentMailPhysicalCheckData.TypeEnum.CHECK_PAYMENT)
+            .attributes(attributes)
+            .relationships(relationships);
+    return new OriginateCheckPaymentMailPhysicalCheckRequest().data(data);
+  }
+
+  static ReturnCheckPaymentRequest returnCheckPaymentRequest() {
+    ReturnCheckPaymentData data =
+        new ReturnCheckPaymentData()
+            .type(ReturnCheckPaymentData.TypeEnum.CHECK_PAYMENT_RETURN)
+            .attributes(new ReturnCheckPaymentDataAttributes().reason("StopPayment"));
+    return new ReturnCheckPaymentRequest().data(data);
+  }
+
+  static ApproveCheckPaymentAdditionalVerificationRequest
+      approveCheckPaymentAdditionalVerificationRequest() {
+    ApproveCheckPaymentAdditionalVerificationData data =
+        new ApproveCheckPaymentAdditionalVerificationData()
+            .type(ApproveCheckPaymentAdditionalVerificationData.TypeEnum.ADDITIONAL_VERIFICATION);
+    return new ApproveCheckPaymentAdditionalVerificationRequest().data(data);
   }
 
   // A check deposit is created against an existing account; `amount` and

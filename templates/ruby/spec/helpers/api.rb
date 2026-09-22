@@ -64,6 +64,10 @@ module Helpers
       UnitFinanceSdk::CheckDepositsApi.new(UnitFinanceSdk::ApiClient.new(configuration))
     end
 
+    def build_check_payments_api
+      UnitFinanceSdk::CheckPaymentsApi.new(UnitFinanceSdk::ApiClient.new(configuration))
+    end
+
     def build_counterparties_api
       UnitFinanceSdk::CounterpartiesApi.new(UnitFinanceSdk::ApiClient.new(configuration))
     end
