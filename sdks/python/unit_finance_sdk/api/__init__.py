@@ -8,6 +8,10 @@ from unit_finance_sdk.api.authorized_users_api import AuthorizedUsersApi
 from unit_finance_sdk.api.card_fraud_outreach_api import CardFraudOutreachApi
 from unit_finance_sdk.api.card_holder_api_tokens_api import CardHolderAPITokensApi
 from unit_finance_sdk.api.cards_api import CardsApi
+from unit_finance_sdk.api.cards_atm_locations_api import CardsATMLocationsApi
+from unit_finance_sdk.api.cards_add_to_mobile_wallet_api import CardsAddToMobileWalletApi
+from unit_finance_sdk.api.cards_authorization_requests_api import CardsAuthorizationRequestsApi
+from unit_finance_sdk.api.cards_authorizations_api import CardsAuthorizationsApi
 from unit_finance_sdk.api.check_deposits_api import CheckDepositsApi
 from unit_finance_sdk.api.counterparties_api import CounterpartiesApi
 from unit_finance_sdk.api.customers_api import CustomersApi
