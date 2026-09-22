@@ -14,7 +14,11 @@ from unit_finance_sdk import (
     AuthorizedUsersApi,
     CardFraudOutreachApi,
     CardHolderAPITokensApi,
+    CardsAddToMobileWalletApi,
     CardsApi,
+    CardsATMLocationsApi,
+    CardsAuthorizationRequestsApi,
+    CardsAuthorizationsApi,
     CheckDepositsApi,
     Configuration,
     CounterpartiesApi,
@@ -110,6 +114,26 @@ def build_card_fraud_outreach_api() -> CardFraudOutreachApi:
 def build_card_holder_api_tokens_api() -> CardHolderAPITokensApi:
     """Construct a ``CardHolderAPITokensApi`` bound to the sandbox."""
     return CardHolderAPITokensApi(ApiClient(_configuration()))
+
+
+def build_cards_atm_locations_api() -> CardsATMLocationsApi:
+    """Construct a ``CardsATMLocationsApi`` bound to the sandbox."""
+    return CardsATMLocationsApi(ApiClient(_configuration()))
+
+
+def build_cards_add_to_mobile_wallet_api() -> CardsAddToMobileWalletApi:
+    """Construct a ``CardsAddToMobileWalletApi`` bound to the sandbox."""
+    return CardsAddToMobileWalletApi(ApiClient(_configuration()))
+
+
+def build_cards_authorization_requests_api() -> CardsAuthorizationRequestsApi:
+    """Construct a ``CardsAuthorizationRequestsApi`` bound to the sandbox."""
+    return CardsAuthorizationRequestsApi(ApiClient(_configuration()))
+
+
+def build_cards_authorizations_api() -> CardsAuthorizationsApi:
+    """Construct a ``CardsAuthorizationsApi`` bound to the sandbox."""
+    return CardsAuthorizationsApi(ApiClient(_configuration()))
 
 
 def sleep(seconds: float) -> None:

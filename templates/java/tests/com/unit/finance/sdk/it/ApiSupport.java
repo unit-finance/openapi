@@ -9,7 +9,11 @@ import com.unit.finance.sdk.api.ApplicationsApi;
 import com.unit.finance.sdk.api.AuthorizedUsersApi;
 import com.unit.finance.sdk.api.CardFraudOutreachApi;
 import com.unit.finance.sdk.api.CardHolderApiTokensApi;
+import com.unit.finance.sdk.api.CardsAddToMobileWalletApi;
 import com.unit.finance.sdk.api.CardsApi;
+import com.unit.finance.sdk.api.CardsAtmLocationsApi;
+import com.unit.finance.sdk.api.CardsAuthorizationRequestsApi;
+import com.unit.finance.sdk.api.CardsAuthorizationsApi;
 import com.unit.finance.sdk.api.CheckDepositsApi;
 import com.unit.finance.sdk.api.CounterpartiesApi;
 import com.unit.finance.sdk.api.CustomersApi;
@@ -230,6 +234,26 @@ final class ApiSupport {
   /** Construct a {@code CardHolderApiTokensApi} bound to the sandbox. */
   static CardHolderApiTokensApi buildCardHolderApiTokensApi() {
     return new CardHolderApiTokensApi(buildApiClient());
+  }
+
+  /** Construct a {@code CardsAtmLocationsApi} bound to the sandbox. */
+  static CardsAtmLocationsApi buildCardsAtmLocationsApi() {
+    return new CardsAtmLocationsApi(buildApiClient());
+  }
+
+  /** Construct a {@code CardsAddToMobileWalletApi} bound to the sandbox. */
+  static CardsAddToMobileWalletApi buildCardsAddToMobileWalletApi() {
+    return new CardsAddToMobileWalletApi(buildApiClient());
+  }
+
+  /** Construct a {@code CardsAuthorizationRequestsApi} bound to the sandbox. */
+  static CardsAuthorizationRequestsApi buildCardsAuthorizationRequestsApi() {
+    return new CardsAuthorizationRequestsApi(buildApiClient());
+  }
+
+  /** Construct a {@code CardsAuthorizationsApi} bound to the sandbox. */
+  static CardsAuthorizationsApi buildCardsAuthorizationsApi() {
+    return new CardsAuthorizationsApi(buildApiClient());
   }
 
   /** Block the current thread for sandbox polling (mirrors Node {@code sleep}). */

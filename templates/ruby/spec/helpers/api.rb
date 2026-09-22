@@ -84,6 +84,22 @@ module Helpers
       UnitFinanceSdk::CardHolderAPITokensApi.new(UnitFinanceSdk::ApiClient.new(configuration))
     end
 
+    def build_cards_atm_locations_api
+      UnitFinanceSdk::CardsATMLocationsApi.new(UnitFinanceSdk::ApiClient.new(configuration))
+    end
+
+    def build_cards_add_to_mobile_wallet_api
+      UnitFinanceSdk::CardsAddToMobileWalletApi.new(UnitFinanceSdk::ApiClient.new(configuration))
+    end
+
+    def build_cards_authorization_requests_api
+      UnitFinanceSdk::CardsAuthorizationRequestsApi.new(UnitFinanceSdk::ApiClient.new(configuration))
+    end
+
+    def build_cards_authorizations_api
+      UnitFinanceSdk::CardsAuthorizationsApi.new(UnitFinanceSdk::ApiClient.new(configuration))
+    end
+
     def sleep(seconds)
       Kernel.sleep(seconds)
     end
