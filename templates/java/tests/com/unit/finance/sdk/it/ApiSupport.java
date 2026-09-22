@@ -15,6 +15,7 @@ import com.unit.finance.sdk.api.CardsAtmLocationsApi;
 import com.unit.finance.sdk.api.CardsAuthorizationRequestsApi;
 import com.unit.finance.sdk.api.CardsAuthorizationsApi;
 import com.unit.finance.sdk.api.CheckDepositsApi;
+import com.unit.finance.sdk.api.CheckPaymentsApi;
 import com.unit.finance.sdk.api.CounterpartiesApi;
 import com.unit.finance.sdk.api.CustomersApi;
 import com.unit.finance.sdk.api.FeesApi;
@@ -209,6 +210,11 @@ final class ApiSupport {
   /** Construct a {@code CheckDepositsApi} bound to the sandbox. */
   static CheckDepositsApi buildCheckDepositsApi() {
     return new CheckDepositsApi(buildApiClient());
+  }
+
+  /** Construct a {@code CheckPaymentsApi} bound to the sandbox. */
+  static CheckPaymentsApi buildCheckPaymentsApi() {
+    return new CheckPaymentsApi(buildApiClient());
   }
 
   /** Construct a {@code CounterpartiesApi} bound to the sandbox. */

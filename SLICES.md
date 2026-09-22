@@ -1,11 +1,12 @@
 # Implemented API slices
 
-From `spec-version.json` (`slices`), OpenAPI tags on `unit-finance/unit-openapi` **0.14.0**.
+From `spec-version.json` (`slices`), OpenAPI tags on `unit-finance/unit-openapi` **0.15.0**.
 
 Accounts · Application Documents · Applications · Authorized Users ·
 Card Fraud Outreach · Card Holder API Tokens · Cards · Cards ATM Locations ·
 Cards Add To Mobile Wallet · Cards Authorization Requests · Cards Authorizations ·
-Check Deposits · Counterparties · Customers · Fees · Payments · Transactions
+Check Deposits · Check Payments · Counterparties · Customers · Fees · Payments ·
+Transactions
 
 # Test skips and early exits
 
@@ -16,6 +17,11 @@ Not listed: the global token gate (`describeIfToken` / `assumeToken` /
 `:sandbox` / `@requires_token`).
 
 **Cards, Cards ATM Locations, Fees, Transactions** — no extra skip in any SDK.
+
+**Check Payments** `originateCheckPaymentMailPhysicalCheck` / `cancelCheckPayment`
+are the same abort in every SDK; `listCheckPayments` / `getCheckPayment` /
+`getCheckImage` / `returnCheckPayment` /
+`approveCheckPaymentAdditionalVerification` differ. See below.
 
 **Cards Add To Mobile Wallet** `getMobileWalletPayload` — no extra skip in any
 SDK (the POST returns 200). The spec types `attributes.payload` as a **string**;
@@ -67,10 +73,34 @@ it). `listAuthorizedUsers` / `getAuthorizedUser` differ; see below.
 | `getPolicyById` / `updatePolicy` | abort | Both need a policy id. There is **no list-policies** operation, so they depend on **`createPolicy`**. Until the org has those outreach/theme resources, there is nothing to GET or PATCH. |
 | `createCardholderToken` (new in spec 0.13.0) | abort | The spec marks `verificationToken` and `verificationCode` **required** on `CreateCardholderTokenData.attributes`, but they are only needed for 2FA scopes: the sandbox answers **201** to a scope-only body (`{ scope: "cards" }`). The generated models cannot express that body, and the 6-digit `verificationCode` is an OTP delivered to the card holder over SMS, so the suites can only send a placeholder — which the sandbox rejects with **404 `verification_failed`**. Spec defect owned by `unit-openapi`: make both fields optional. A second defect sits behind it — the 201 body's `data.type` is **`cardholderBearerToken`** while the spec enum says `cardholderToken`, so the strict-typed clients would fail to parse a success once the first fix lands. |
 | `listAtmLocations` (new in spec 0.14.0) | runs | GET `/atm-locations` with `filter[postalCode]=11375` returns 200 and a JSON:API array. |
+| `originateCheckPaymentMailPhysicalCheck` (new in spec 0.15.0) | abort | The POST is valid (funded deposit account, US payee, future `sendDate`). The sandbox may **400/403** when mailed checks are off for the org bank agreement. Tests treat that as unavailable instead of failing. |
+| `cancelCheckPayment` | abort | Cancel is only legal while status is **`Pending`**. The suite originates a future-dated check then POSTs cancel. A 4xx (already in production, feature off, or not pending) is treated as unavailable. |
 
 ---
 
 ## Where SDKs differ
+
+### `listCheckPayments` / `getCheckPayment` / `getCheckImage` / `returnCheckPayment` / `approveCheckPaymentAdditionalVerification` (new in spec 0.15.0)
+
+`CheckPayment.attributes.counterparty` is marked **required**. Historical
+inbound rows from `GET /check-payments` often **omit** it, so typed clients
+fail while **deserializing** a 200 list. Node axios does not validate that
+field, so list **runs**. Get uses an originated id when create succeeded;
+typed get/originate can still abort if the 201/200 omits `counterparty`.
+
+`getCheckImage` needs a produced **printed** or **deposited** JPEG. A freshly
+originated check has neither, so the sandbox **404s**. `returnCheckPayment` is
+for inbound checks still inside `returnCutoffTime`, not originated mailed
+checks. `approveCheckPaymentAdditionalVerification` needs
+`additionalVerificationStatus=Required`. Those three **abort** on 4xx in every
+SDK.
+
+Spec defect owned by `unit-openapi`: make `CheckPayment.attributes.counterparty`
+optional. Then drop the Java abort and the ruby skip / python abort on list/get.
+
+| Node | Java | Ruby | Python |
+| --- | --- | --- | --- |
+| **Runs** list. **Abort** get/image/return/approve when originate is unavailable or the call 4xxs. | **Abort** list (`counterparty` required, omitted). Get **aborts** if originate failed or Gson rejects the 200. Image/return/approve **abort** on 4xx. | **Skip** list when the Ruby model raises (`counterparty cannot be nil`). Get **skips** on the same deserialize error. Image/return/approve **abort** on 4xx. | **Abort** list/get when Pydantic rejects the 200. Image/return/approve **abort** on 4xx. |
 
 ### `listAuthorizationRequests` / `getAuthorizationRequestById` (new in spec 0.14.0)
 

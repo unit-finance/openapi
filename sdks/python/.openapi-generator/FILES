@@ -36,6 +36,8 @@ docs/ApplicationDocument.md
 docs/ApplicationDocumentAttributes.md
 docs/ApplicationDocumentsApi.md
 docs/ApplicationsApi.md
+docs/ApproveCheckPaymentAdditionalVerificationData.md
+docs/ApproveCheckPaymentAdditionalVerificationRequest.md
 docs/ArchiveCustomerData.md
 docs/ArchiveCustomerDataAttributes.md
 docs/ArchiveCustomerRequest.md
@@ -125,8 +127,12 @@ docs/CheckDepositTransaction.md
 docs/CheckDepositTransactionAttributes.md
 docs/CheckDepositTransactionRelationships.md
 docs/CheckDepositsApi.md
+docs/CheckPayment.md
+docs/CheckPaymentAttributes.md
+docs/CheckPaymentCounterpartyType.md
 docs/CheckPaymentTransaction.md
 docs/CheckPaymentTransactionRelationships.md
+docs/CheckPaymentsApi.md
 docs/ClearAchDebitPayment200Response.md
 docs/CloseAccountRequest.md
 docs/CloseCard200Response.md
@@ -338,6 +344,7 @@ docs/GetCard200Response.md
 docs/GetCardFraudCaseById200Response.md
 docs/GetCardPinStatus200Response.md
 docs/GetCheckDeposit200Response.md
+docs/GetCheckPayment200Response.md
 docs/GetCounterpartyBalance200Response.md
 docs/GetCustomer200Response.md
 docs/GetExpectedACHCompletionDateData.md
@@ -382,6 +389,7 @@ docs/ListCardFraudCases200ResponseDataInner.md
 docs/ListCards200Response.md
 docs/ListCards200ResponseDataInner.md
 docs/ListCheckDeposits200Response.md
+docs/ListCheckPayments200Response.md
 docs/ListCounterparties200Response.md
 docs/ListCustomers200Response.md
 docs/ListCustomers200ResponseDataInner.md
@@ -408,6 +416,11 @@ docs/OfficerAttributes.md
 docs/OfficerRelationships.md
 docs/OfficerRequestType.md
 docs/OfficerType.md
+docs/OriginateCheckPaymentMailPhysicalCheck201Response.md
+docs/OriginateCheckPaymentMailPhysicalCheckData.md
+docs/OriginateCheckPaymentMailPhysicalCheckDataAttributes.md
+docs/OriginateCheckPaymentMailPhysicalCheckDataRelationships.md
+docs/OriginateCheckPaymentMailPhysicalCheckRequest.md
 docs/OriginatedACHTransaction.md
 docs/OriginatedACHTransactionAttributes.md
 docs/OriginatedACHTransactionRelationships.md
@@ -468,6 +481,9 @@ docs/ReplaceCardDataAttributes.md
 docs/ReplaceCardRequest.md
 docs/RequestedProductType.md
 docs/ResourceIdentifier.md
+docs/ReturnCheckPaymentData.md
+docs/ReturnCheckPaymentDataAttributes.md
+docs/ReturnCheckPaymentRequest.md
 docs/ReturnedACHTransaction.md
 docs/ReturnedACHTransactionAttributes.md
 docs/ReturnedACHTransactionRelationships.md
@@ -618,6 +634,7 @@ unit_finance_sdk/api/cards_atm_locations_api.py
 unit_finance_sdk/api/cards_authorization_requests_api.py
 unit_finance_sdk/api/cards_authorizations_api.py
 unit_finance_sdk/api/check_deposits_api.py
+unit_finance_sdk/api/check_payments_api.py
 unit_finance_sdk/api/counterparties_api.py
 unit_finance_sdk/api/customers_api.py
 unit_finance_sdk/api/fees_api.py
@@ -656,6 +673,8 @@ unit_finance_sdk/models/annual_income_type.py
 unit_finance_sdk/models/annual_revenue_type.py
 unit_finance_sdk/models/application_document.py
 unit_finance_sdk/models/application_document_attributes.py
+unit_finance_sdk/models/approve_check_payment_additional_verification_data.py
+unit_finance_sdk/models/approve_check_payment_additional_verification_request.py
 unit_finance_sdk/models/archive_customer_data.py
 unit_finance_sdk/models/archive_customer_data_attributes.py
 unit_finance_sdk/models/archive_customer_request.py
@@ -741,6 +760,9 @@ unit_finance_sdk/models/check_deposit_relationships.py
 unit_finance_sdk/models/check_deposit_transaction.py
 unit_finance_sdk/models/check_deposit_transaction_attributes.py
 unit_finance_sdk/models/check_deposit_transaction_relationships.py
+unit_finance_sdk/models/check_payment.py
+unit_finance_sdk/models/check_payment_attributes.py
+unit_finance_sdk/models/check_payment_counterparty_type.py
 unit_finance_sdk/models/check_payment_transaction.py
 unit_finance_sdk/models/check_payment_transaction_relationships.py
 unit_finance_sdk/models/clear_ach_debit_payment200_response.py
@@ -951,6 +973,7 @@ unit_finance_sdk/models/get_card200_response.py
 unit_finance_sdk/models/get_card_fraud_case_by_id200_response.py
 unit_finance_sdk/models/get_card_pin_status200_response.py
 unit_finance_sdk/models/get_check_deposit200_response.py
+unit_finance_sdk/models/get_check_payment200_response.py
 unit_finance_sdk/models/get_counterparty_balance200_response.py
 unit_finance_sdk/models/get_customer200_response.py
 unit_finance_sdk/models/get_expected_ach_completion_date200_response.py
@@ -995,6 +1018,7 @@ unit_finance_sdk/models/list_card_fraud_cases200_response_data_inner.py
 unit_finance_sdk/models/list_cards200_response.py
 unit_finance_sdk/models/list_cards200_response_data_inner.py
 unit_finance_sdk/models/list_check_deposits200_response.py
+unit_finance_sdk/models/list_check_payments200_response.py
 unit_finance_sdk/models/list_counterparties200_response.py
 unit_finance_sdk/models/list_customers200_response.py
 unit_finance_sdk/models/list_customers200_response_data_inner.py
@@ -1021,6 +1045,11 @@ unit_finance_sdk/models/officer_attributes.py
 unit_finance_sdk/models/officer_relationships.py
 unit_finance_sdk/models/officer_request_type.py
 unit_finance_sdk/models/officer_type.py
+unit_finance_sdk/models/originate_check_payment_mail_physical_check201_response.py
+unit_finance_sdk/models/originate_check_payment_mail_physical_check_data.py
+unit_finance_sdk/models/originate_check_payment_mail_physical_check_data_attributes.py
+unit_finance_sdk/models/originate_check_payment_mail_physical_check_data_relationships.py
+unit_finance_sdk/models/originate_check_payment_mail_physical_check_request.py
 unit_finance_sdk/models/originated_ach_transaction.py
 unit_finance_sdk/models/originated_ach_transaction_attributes.py
 unit_finance_sdk/models/originated_ach_transaction_relationships.py
@@ -1080,6 +1109,9 @@ unit_finance_sdk/models/replace_card_data_attributes.py
 unit_finance_sdk/models/replace_card_request.py
 unit_finance_sdk/models/requested_product_type.py
 unit_finance_sdk/models/resource_identifier.py
+unit_finance_sdk/models/return_check_payment_data.py
+unit_finance_sdk/models/return_check_payment_data_attributes.py
+unit_finance_sdk/models/return_check_payment_request.py
 unit_finance_sdk/models/returned_ach_transaction.py
 unit_finance_sdk/models/returned_ach_transaction_attributes.py
 unit_finance_sdk/models/returned_ach_transaction_relationships.py

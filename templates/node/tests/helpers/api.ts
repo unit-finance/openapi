@@ -11,6 +11,7 @@ import {
 	CardsAuthorizationRequestsApi,
 	CardsAuthorizationsApi,
 	CheckDepositsApi,
+	CheckPaymentsApi,
 	Configuration,
 	CounterpartiesApi,
 	CustomersApi,
@@ -63,6 +64,10 @@ export function buildCustomersApi(): CustomersApi {
 
 export function buildCheckDepositsApi(): CheckDepositsApi {
 	return new CheckDepositsApi(configuration());
+}
+
+export function buildCheckPaymentsApi(): CheckPaymentsApi {
+	return new CheckPaymentsApi(configuration());
 }
 
 export function buildCounterpartiesApi(): CounterpartiesApi {
