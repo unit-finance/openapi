@@ -5,7 +5,7 @@ info:
     name: Proprietary
     url: https://www.unit.co/terms-of-service
   title: Unit API
-  version: 0.14.0
+  version: 0.15.0
 servers:
 - url: https://api.s.unit.sh
 security:
@@ -36,6 +36,9 @@ tags:
 - description: "Check deposits into accounts, their images, clearing, confirmation,\
     \ and shareable deposit links."
   name: Check Deposits
+- description: "Physical check payments originated, listed, retrieved, imaged, canceled,\
+    \ returned, and approved for additional verification."
+  name: Check Payments
 - description: "ACH counterparties, their creation from account/routing numbers or\
     \ Plaid tokens, balances, and lifecycle."
   name: Counterparties
@@ -5889,6 +5892,539 @@ paths:
       summary: Create a check deposit send link
       tags:
       - Check Deposits
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /check-payments:
+    get:
+      description: "List check payments resources. Filtering, paging and sorting can\
+        \ be applied."
+      operationId: listCheckPayments
+      parameters:
+      - description: Maximum number of resources that will be returned. Maximum is
+          1000 resources. See Pagination.
+        explode: true
+        in: query
+        name: "page[limit]"
+        required: false
+        schema:
+          default: "100"
+          type: string
+        style: form
+      - description: Number of resources to skip. See Pagination.
+        explode: true
+        in: query
+        name: "page[offset]"
+        required: false
+        schema:
+          default: "0"
+          type: string
+        style: form
+      - description: Optional. Filters the results by the specified account id.
+        explode: true
+        in: query
+        name: "filter[accountId]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filters the results by the specified customer id.
+        explode: true
+        in: query
+        name: "filter[customerId]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filter check payments by Tags.
+        explode: true
+        in: query
+        name: "filter[tags]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Leave empty or provide sort=createdAt for ascending
+          order. Provide sort=-createdAt (leading minus sign) for descending order.
+        explode: true
+        in: query
+        name: sort
+        required: false
+        schema:
+          default: -createdAt
+          type: string
+        style: form
+      - description: Optional. Filters *before* the specified date. e.g. 2021-06-01
+        explode: true
+        in: query
+        name: "filter[since]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filters *after* the specified date. e.g. 2021-07-01
+        explode: true
+        in: query
+        name: "filter[until]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: "Optional. Filter by status (New, Pending, Canceled,Rejected,\
+          \ InDelivery, InProduction,Delivered, ReturnedToSender, Pending, Processed,\
+          \ PendingReview,MarkedForReturn, Returned, `). Usage example: *filter[status][0]=Processed*"
+        explode: true
+        in: query
+        name: "filter[status][]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filters the Check Payment that have an amount that
+          is *higher or equal to* the specified amount (in cents). e.g. 5000
+        explode: true
+        in: query
+        name: "filter[fromAmount]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filters the Check Payment that have an amount that
+          is *lower or equal to* the specified amount (in cents). e.g. 7000
+        explode: true
+        in: query
+        name: "filter[toAmount]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filter Check Payments by check number (trimming leading
+          zeros).
+        explode: true
+        in: query
+        name: "filter[checkNumber]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: "Optional. A comma-separated list of related resources to include\
+          \ in the response. Related resources include: customer, account, transaction.\
+          \ See Getting Related Resources"
+        explode: true
+        in: query
+        name: include
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/listCheckPayments_200_response"
+          description: Array of check payment resources.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - check-payments
+      summary: List check payments
+      tags:
+      - Check Payments
+      x-accepts:
+      - application/vnd.api+json
+    post:
+      description: Creates a physical check. The check will be printed and mailed
+        to the US recipient specified in the request. Originated check payments can
+        be set to be sent immediately or scheduled for a future date.
+      operationId: originateCheckPaymentMailPhysicalCheck
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/OriginateCheckPaymentMailPhysicalCheckRequest"
+        required: true
+      responses:
+        "201":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/originateCheckPaymentMailPhysicalCheck_201_response"
+          description: Creates a physical check. The check will be printed and mailed
+            to the US recipient specified in the request. Originated check payments
+            can be set to be sent immediately or scheduled for a future date.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - check-payments-write
+      summary: Originate a check payment
+      tags:
+      - Check Payments
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /check-payments/{checkPaymentId}:
+    get:
+      description: Get a check payment by id.
+      operationId: getCheckPayment
+      parameters:
+      - explode: false
+        in: path
+        name: checkPaymentId
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: "Optional. A comma-separated list of related resources to include\
+          \ in the response. Related resources include: customer, account, transaction.\
+          \ See Getting Related Resources"
+        explode: true
+        in: query
+        name: include
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/getCheckPayment_200_response"
+          description: CheckPayment resource.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - check-payments
+      summary: Get a check payment by id
+      tags:
+      - Check Payments
+      x-accepts:
+      - application/vnd.api+json
+  /check-payments/{checkPaymentId}/{side}/{type}:
+    get:
+      description: "Get a check payment image by check payment id, side (front or\
+        \ back), and type (printed or deposited)."
+      operationId: getCheckImage
+      parameters:
+      - explode: false
+        in: path
+        name: checkPaymentId
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: "Check side: front or back."
+        explode: false
+        in: path
+        name: side
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: "Image type: printed or deposited."
+        explode: false
+        in: path
+        name: type
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            image/jpeg:
+              schema:
+                format: binary
+                type: string
+          description: The check payment image.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - check-payments
+      summary: Get a check payment image
+      tags:
+      - Check Payments
+      x-accepts:
+      - application/vnd.api+json
+      - image/jpeg
+  /check-payments/{checkPaymentId}/cancel:
+    post:
+      description: "Cancels a previously processed check payment. Only check payments\
+        \ in status `Pending` can be canceled. If cancelation was successful, the\
+        \ check status will change to `Canceled` and a checkPayment.canceled will\
+        \ be fired."
+      operationId: cancelCheckPayment
+      parameters:
+      - explode: false
+        in: path
+        name: checkPaymentId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+        required: false
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/originateCheckPaymentMailPhysicalCheck_201_response"
+          description: The canceled payment.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - check-payments-write
+      summary: Cancel a check payment
+      tags:
+      - Check Payments
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /check-payments/{checkPaymentId}/return:
+    post:
+      description: "Create a return as long as it happens before the `returnCutoffTime`,\
+        \ the Check Payment status will be set to `MarkedForReturn`. A CheckPayment.markedForReturn\
+        \ event is raised when the request is completed successfully."
+      operationId: returnCheckPayment
+      parameters:
+      - explode: false
+        in: path
+        name: checkPaymentId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/ReturnCheckPaymentRequest"
+        required: true
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/originateCheckPaymentMailPhysicalCheck_201_response"
+          description: CheckPayment resource.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - check-payments-write
+      summary: Return a check payment
+      tags:
+      - Check Payments
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /check-payments/{checkPaymentId}/approve:
+    post:
+      description: "When a Check Payment requires additional verification, its `additionalVerificationStatus`\
+        \ will be set to `Required`. In this case, a CheckPayment.additionalVerificationRequired\
+        \ event will be triggered."
+      operationId: approveCheckPaymentAdditionalVerification
+      parameters:
+      - explode: false
+        in: path
+        name: checkPaymentId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/ApproveCheckPaymentAdditionalVerificationRequest"
+        required: true
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/originateCheckPaymentMailPhysicalCheck_201_response"
+          description: CheckPayment resource.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - check-payments-write
+      summary: Approve check payment additional verification
+      tags:
+      - Check Payments
       x-content-type: application/vnd.api+json
       x-accepts:
       - application/vnd.api+json
@@ -12962,6 +13498,157 @@ components:
       - relationships
       - type
       type: object
+    CheckPayment:
+      description: "`CheckPayment` is a JSON:API resource, top-level fields:"
+      example:
+        type: checkPayment
+        id: "3"
+        attributes:
+          createdAt: 2023-02-21T11:31:03.704Z
+          updatedAt: 2023-02-21T11:31:03.704Z
+          amount: 10000
+          sendAt: 2023-09-10T12:50:00.704Z
+          description: Check Payment | 0322
+          status: Processed
+          deliveryStatus: Delivered
+          trackedAt: 2023-02-23T11:31:03.704Z
+          postalCode: "94303"
+          checkNumber: "0322"
+          onUsAuxiliary: "0322"
+          onUs: 864800000002/
+          counterparty:
+            name: John Doe
+            address:
+              street: 5230 Newell Rd
+              city: Palo Alto
+              state: CA
+              postalCode: "94303"
+          counterpartyRoutingNumber: "051402372"
+          returnCutoffTime: 2023-03-23T15:50:00.000Z
+          additionalVerificationStatus: Required
+        relationships:
+          account:
+            data:
+              type: account
+              id: "75002"
+          customer:
+            data:
+              type: customer
+              id: "100425"
+          customers:
+            data:
+            - type: customer
+              id: "10001"
+          transaction:
+            data:
+              type: transaction
+              id: "123423"
+      properties:
+        type:
+          enum:
+          - checkPayment
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CheckPayment_attributes"
+        relationships:
+          $ref: "#/components/schemas/CheckDeposit_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    CheckPaymentCounterpartyType:
+      example:
+        name: John Doe
+        counterpartyMoved: true
+        address:
+          street: 20 Ingram St
+          street2: "Apt #10"
+          city: Forest Hills
+          state: NY
+          postalCode: "11375"
+          country: US
+      properties:
+        name:
+          description: The name of the person or company that owns the bank account.
+            Cannot exceed 40 characters.
+          type: string
+        address:
+          allOf:
+          - $ref: "#/components/schemas/AddressType"
+          description: The payee's address. The length of street and street2 combined
+            cannot exceed 50 characters.
+        counterpartyMoved:
+          description: True if the counterparty's address has been modified to correspond
+            with a National Change of Address applied on the address. See guide for
+            further information.
+          type: boolean
+      required:
+      - address
+      - name
+      type: object
+    OriginateCheckPaymentMailPhysicalCheckData:
+      properties:
+        type:
+          enum:
+          - checkPayment
+          type: string
+        attributes:
+          $ref: "#/components/schemas/OriginateCheckPaymentMailPhysicalCheckData_attributes"
+        relationships:
+          $ref: "#/components/schemas/OriginateCheckPaymentMailPhysicalCheckData_relationships"
+      required:
+      - attributes
+      - relationships
+      - type
+      type: object
+    OriginateCheckPaymentMailPhysicalCheckRequest:
+      properties:
+        data:
+          $ref: "#/components/schemas/OriginateCheckPaymentMailPhysicalCheckData"
+      required:
+      - data
+      type: object
+    ReturnCheckPaymentData:
+      properties:
+        type:
+          enum:
+          - checkPaymentReturn
+          type: string
+        attributes:
+          $ref: "#/components/schemas/ReturnCheckPaymentData_attributes"
+      required:
+      - attributes
+      - type
+      type: object
+    ReturnCheckPaymentRequest:
+      properties:
+        data:
+          $ref: "#/components/schemas/ReturnCheckPaymentData"
+      required:
+      - data
+      type: object
+    ApproveCheckPaymentAdditionalVerificationData:
+      properties:
+        type:
+          enum:
+          - additionalVerification
+          type: string
+        attributes:
+          type: object
+      required:
+      - attributes
+      - type
+      type: object
+    ApproveCheckPaymentAdditionalVerificationRequest:
+      properties:
+        data:
+          $ref: "#/components/schemas/ApproveCheckPaymentAdditionalVerificationData"
+      required:
+      - data
+      type: object
     ACHCounterparty:
       description: "`ACHCounterparty` is a JSON:API resource, top-level fields:"
       example:
@@ -14658,6 +15345,41 @@ components:
       properties:
         data:
           $ref: "#/components/schemas/createCheckDepositSendLink_201_response_data"
+      required:
+      - data
+      type: object
+    listCheckPayments_200_response:
+      properties:
+        data:
+          items:
+            $ref: "#/components/schemas/CheckPayment"
+          type: array
+        included:
+          description: Array of resources requested by the include query parameter.
+          items:
+            $ref: "#/components/schemas/DepositAccount"
+          type: array
+        meta:
+          $ref: "#/components/schemas/Meta"
+      required:
+      - data
+      type: object
+    originateCheckPaymentMailPhysicalCheck_201_response:
+      properties:
+        data:
+          $ref: "#/components/schemas/CheckPayment"
+      required:
+      - data
+      type: object
+    getCheckPayment_200_response:
+      properties:
+        data:
+          $ref: "#/components/schemas/CheckPayment"
+        included:
+          description: Array of resources requested by the include query parameter.
+          items:
+            $ref: "#/components/schemas/DepositAccount"
+          type: array
       required:
       - data
       type: object
@@ -20305,6 +21027,178 @@ components:
       - account
       - authorizedUser
       - whiteLabelTheme
+      type: object
+    CheckPayment_attributes:
+      properties:
+        createdAt:
+          description: The date the resource was created.
+          format: date-time
+          type: string
+        updatedAt:
+          description: The date the resource was updated.
+          format: date-time
+          type: string
+        status:
+          description: "One of New, Pending, PendingCancellation, Canceled,InDelivery,\
+            \ Delivered, ReturnedToSender, Processed, PendingReview, MarkedForReturn,\
+            \ Returned, Rejected."
+          type: string
+        amount:
+          description: The amount (cents) of the check deposit.
+          type: integer
+        description:
+          description: Description of the Check Payment.
+          type: string
+        checkNumber:
+          description: The serial number printed at the bottom of the check
+          type: string
+        originated:
+          description: True for checks originated through Unit
+          type: boolean
+        onUs:
+          type: string
+        onUsAuxiliary:
+          type: string
+        counterpartyRoutingNumber:
+          description: The routing number of the party that deposited the Check.
+          type: string
+        returnStatusReason:
+          description: The reason the Check Payment has been marked for return or
+            returned. See Check Payment return reasons.
+          type: string
+        rejectReason:
+          type: string
+        pendingReviewReasons:
+          description: "List of reasons as to why the Check Payment is in pending\
+            \ review status, more reasons may be added in the future, current possible\
+            \ reasons: SoftLimit."
+          items:
+            type: string
+          type: array
+        returnCutoffTime:
+          description: The last time when a return will be accepted using the return
+            Check Payment endpoint.
+          format: date-time
+          type: string
+        additionalVerificationStatus:
+          description: "Optional. One of 'Required', 'NotRequired' or 'Approved',\
+            \ when Requires an additional verification will be required, see Approve\
+            \ Additional Verification."
+          type: string
+        tags:
+          additionalProperties: true
+          description: See Tags.
+          type: object
+        deliveryStatus:
+          description: "One of Mailed, InLocalArea, Delivered, Rerouted, ReturnedToSender.\
+            \ Available once check status is InDelivery"
+          type: string
+        trackedAt:
+          description: The date of the last delivery status update.
+          format: date-time
+          type: string
+        postalCode:
+          description: The location of the last delivery status update.
+          type: string
+        expirationDate:
+          description: "check expiration date, formatted YYYY-MM--DD, e.g \"2020-05-01\"\
+            ."
+          format: date
+          type: string
+        expectedDelivery:
+          description: "check expected delivery date, formatted YYYY-MM--DD, e.g \"\
+            2020-05-01\"."
+          format: date
+          type: string
+        sendAt:
+          description: The date and time in which the check is to be sent.
+          format: date-time
+          type: string
+        counterparty:
+          allOf:
+          - $ref: "#/components/schemas/CheckPaymentCounterpartyType"
+          description: The receiving party of the check.
+        memo:
+          description: Text included on the memo line of the check.
+          type: string
+      required:
+      - amount
+      - counterparty
+      - createdAt
+      - description
+      - status
+      - updatedAt
+      type: object
+    OriginateCheckPaymentMailPhysicalCheckData_attributes:
+      properties:
+        amount:
+          description: The amount (in cents). Must be less than 100000000000
+          example: 1000
+          type: integer
+        memo:
+          description: Check payment memo. This will be printed on the check (maximum
+            of 40 characters)
+          example: October paycheck
+          type: string
+        sendDate:
+          description: "Date only (e.g. 2022-06-23). The date the check will be submitted\
+            \ to the processor. Up to 180 days in the future. If left null or in the\
+            \ past, will default to today."
+          format: date
+          nullable: true
+          type: string
+        counterparty:
+          allOf:
+          - $ref: "#/components/schemas/CheckPaymentCounterpartyType"
+          description: The payee's details . street and street2 combined may contain
+            up to 50 characters. country must be "US".
+          example:
+            name: April Oneil
+            address:
+              street: 20 Ingram St
+              city: Forest Hills
+              state: CA
+              postalCode: "11375"
+              country: US
+        description:
+          description: An internal description (maximum of 255 characters). This will
+            not be printed on the check.
+          example: October paycheck
+          type: string
+        idempotencyKey:
+          description: See Idempotency.
+          example: asdfghjkl
+          type: string
+        tags:
+          additionalProperties: true
+          description: See Tags. Tags that will be copied to any transaction that
+            this payment creates (see Tag Inheritance).
+          type: object
+      required:
+      - amount
+      - counterparty
+      - description
+      - idempotencyKey
+      type: object
+    OriginateCheckPaymentMailPhysicalCheckData_relationships:
+      properties:
+        account:
+          $ref: "#/components/schemas/Relationship"
+        customer:
+          $ref: "#/components/schemas/Relationship"
+      required:
+      - account
+      - customer
+      type: object
+    ReturnCheckPaymentData_attributes:
+      properties:
+        reason:
+          description: The reason for returning the Check Payment. See valid reasons
+            under the **Valid via Return API?** column.
+          example: StopPayment
+          type: string
+      required:
+      - reason
       type: object
     ACHCounterparty_attributes:
       properties:

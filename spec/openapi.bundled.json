@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Unit API",
-    "version": "0.14.0",
+    "version": "0.15.0",
     "description": "JSON:API-compliant banking API.",
     "license": {
       "name": "Proprietary",
@@ -55,6 +55,10 @@
     {
       "name": "Check Deposits",
       "description": "Check deposits into accounts, their images, clearing, confirmation, and shareable deposit links."
+    },
+    {
+      "name": "Check Payments",
+      "description": "Physical check payments originated, listed, retrieved, imaged, canceled, returned, and approved for additional verification."
     },
     {
       "name": "Counterparties",
@@ -8384,6 +8388,650 @@
                           ]
                         }
                       }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/check-payments": {
+      "post": {
+        "operationId": "originateCheckPaymentMailPhysicalCheck",
+        "summary": "Originate a check payment",
+        "description": "Creates a physical check. The check will be printed and mailed to the US recipient specified in the request. Originated check payments can be set to be sent immediately or scheduled for a future date.",
+        "tags": [
+          "Check Payments"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "check-payments-write"
+            ]
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OriginateCheckPaymentMailPhysicalCheckRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Creates a physical check. The check will be printed and mailed to the US recipient specified in the request. Originated check payments can be set to be sent immediately or scheduled for a future date.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/CheckPayment"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "listCheckPayments",
+        "summary": "List check payments",
+        "description": "List check payments resources. Filtering, paging and sorting can be applied.",
+        "tags": [
+          "Check Payments"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "check-payments"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page[limit]",
+            "in": "query",
+            "required": false,
+            "description": "Maximum number of resources that will be returned. Maximum is 1000 resources. See Pagination.",
+            "schema": {
+              "type": "string",
+              "default": "100"
+            }
+          },
+          {
+            "name": "page[offset]",
+            "in": "query",
+            "required": false,
+            "description": "Number of resources to skip. See Pagination.",
+            "schema": {
+              "type": "string",
+              "default": "0"
+            }
+          },
+          {
+            "name": "filter[accountId]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the results by the specified account id.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[customerId]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the results by the specified customer id.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[tags]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filter check payments by Tags.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Leave empty or provide sort=createdAt for ascending order. Provide sort=-createdAt (leading minus sign) for descending order.",
+            "schema": {
+              "type": "string",
+              "default": "-createdAt"
+            }
+          },
+          {
+            "name": "filter[since]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters *before* the specified date. e.g. 2021-06-01",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[until]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters *after* the specified date. e.g. 2021-07-01",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[status][]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filter by status (New, Pending, Canceled,Rejected, InDelivery, InProduction,Delivered, ReturnedToSender, Pending, Processed, PendingReview,MarkedForReturn, Returned, `). Usage example: *filter[status][0]=Processed*",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[fromAmount]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the Check Payment that have an amount that is *higher or equal to* the specified amount (in cents). e.g. 5000",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[toAmount]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the Check Payment that have an amount that is *lower or equal to* the specified amount (in cents). e.g. 7000",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[checkNumber]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filter Check Payments by check number (trimming leading zeros).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "include",
+            "in": "query",
+            "required": false,
+            "description": "Optional. A comma-separated list of related resources to include in the response. Related resources include: customer, account, transaction. See Getting Related Resources",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of check payment resources.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/CheckPayment"
+                      }
+                    },
+                    "included": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/DepositAccount"
+                      },
+                      "description": "Array of resources requested by the include query parameter."
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/check-payments/{checkPaymentId}": {
+      "parameters": [
+        {
+          "name": "checkPaymentId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "getCheckPayment",
+        "summary": "Get a check payment by id",
+        "description": "Get a check payment by id.",
+        "tags": [
+          "Check Payments"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "check-payments"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "include",
+            "in": "query",
+            "required": false,
+            "description": "Optional. A comma-separated list of related resources to include in the response. Related resources include: customer, account, transaction. See Getting Related Resources",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "CheckPayment resource.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/CheckPayment"
+                    },
+                    "included": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/DepositAccount"
+                      },
+                      "description": "Array of resources requested by the include query parameter."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/check-payments/{checkPaymentId}/{side}/{type}": {
+      "parameters": [
+        {
+          "name": "checkPaymentId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "side",
+          "in": "path",
+          "required": true,
+          "description": "Check side: front or back.",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "type",
+          "in": "path",
+          "required": true,
+          "description": "Image type: printed or deposited.",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "getCheckImage",
+        "summary": "Get a check payment image",
+        "description": "Get a check payment image by check payment id, side (front or back), and type (printed or deposited).",
+        "tags": [
+          "Check Payments"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "check-payments"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The check payment image.",
+            "content": {
+              "image/jpeg": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/check-payments/{checkPaymentId}/cancel": {
+      "parameters": [
+        {
+          "name": "checkPaymentId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "operationId": "cancelCheckPayment",
+        "summary": "Cancel a check payment",
+        "description": "Cancels a previously processed check payment. Only check payments in status `Pending` can be canceled. If cancelation was successful, the check status will change to `Canceled` and a checkPayment.canceled will be fired.",
+        "tags": [
+          "Check Payments"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "check-payments-write"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The canceled payment.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/CheckPayment"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/check-payments/{checkPaymentId}/return": {
+      "parameters": [
+        {
+          "name": "checkPaymentId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "operationId": "returnCheckPayment",
+        "summary": "Return a check payment",
+        "description": "Create a return as long as it happens before the `returnCutoffTime`, the Check Payment status will be set to `MarkedForReturn`. A CheckPayment.markedForReturn event is raised when the request is completed successfully.",
+        "tags": [
+          "Check Payments"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "check-payments-write"
+            ]
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReturnCheckPaymentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "CheckPayment resource.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/CheckPayment"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/check-payments/{checkPaymentId}/approve": {
+      "parameters": [
+        {
+          "name": "checkPaymentId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "operationId": "approveCheckPaymentAdditionalVerification",
+        "summary": "Approve check payment additional verification",
+        "description": "When a Check Payment requires additional verification, its `additionalVerificationStatus` will be set to `Required`. In this case, a CheckPayment.additionalVerificationRequired event will be triggered.",
+        "tags": [
+          "Check Payments"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "check-payments-write"
+            ]
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApproveCheckPaymentAdditionalVerificationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "CheckPayment resource.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/CheckPayment"
                     }
                   }
                 }
@@ -25624,6 +26272,429 @@
                 "$ref": "#/components/schemas/Relationship"
               }
             }
+          }
+        }
+      },
+      "CheckPayment": {
+        "type": "object",
+        "required": [
+          "type",
+          "id",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "checkPayment"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "createdAt",
+              "updatedAt",
+              "status",
+              "amount",
+              "description",
+              "counterparty"
+            ],
+            "properties": {
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the resource was created."
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the resource was updated."
+              },
+              "status": {
+                "type": "string",
+                "description": "One of New, Pending, PendingCancellation, Canceled,InDelivery, Delivered, ReturnedToSender, Processed, PendingReview, MarkedForReturn, Returned, Rejected."
+              },
+              "amount": {
+                "type": "integer",
+                "description": "The amount (cents) of the check deposit."
+              },
+              "description": {
+                "type": "string",
+                "description": "Description of the Check Payment."
+              },
+              "checkNumber": {
+                "type": "string",
+                "description": "The serial number printed at the bottom of the check"
+              },
+              "originated": {
+                "type": "boolean",
+                "description": "True for checks originated through Unit"
+              },
+              "onUs": {
+                "type": "string"
+              },
+              "onUsAuxiliary": {
+                "type": "string"
+              },
+              "counterpartyRoutingNumber": {
+                "type": "string",
+                "description": "The routing number of the party that deposited the Check."
+              },
+              "returnStatusReason": {
+                "type": "string",
+                "description": "The reason the Check Payment has been marked for return or returned. See Check Payment return reasons."
+              },
+              "rejectReason": {
+                "type": "string"
+              },
+              "pendingReviewReasons": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "List of reasons as to why the Check Payment is in pending review status, more reasons may be added in the future, current possible reasons: SoftLimit."
+              },
+              "returnCutoffTime": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The last time when a return will be accepted using the return Check Payment endpoint."
+              },
+              "additionalVerificationStatus": {
+                "type": "string",
+                "description": "Optional. One of 'Required', 'NotRequired' or 'Approved', when Requires an additional verification will be required, see Approve Additional Verification."
+              },
+              "tags": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "See Tags."
+              },
+              "deliveryStatus": {
+                "type": "string",
+                "description": "One of Mailed, InLocalArea, Delivered, Rerouted, ReturnedToSender. Available once check status is InDelivery"
+              },
+              "trackedAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date of the last delivery status update."
+              },
+              "postalCode": {
+                "type": "string",
+                "description": "The location of the last delivery status update."
+              },
+              "expirationDate": {
+                "type": "string",
+                "format": "date",
+                "description": "check expiration date, formatted YYYY-MM--DD, e.g \"2020-05-01\"."
+              },
+              "expectedDelivery": {
+                "type": "string",
+                "format": "date",
+                "description": "check expected delivery date, formatted YYYY-MM--DD, e.g \"2020-05-01\"."
+              },
+              "sendAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date and time in which the check is to be sent."
+              },
+              "counterparty": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CheckPaymentCounterpartyType"
+                  }
+                ],
+                "description": "The receiving party of the check."
+              },
+              "memo": {
+                "type": "string",
+                "description": "Text included on the memo line of the check."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "properties": {
+              "account": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "customer": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "customers": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "transaction": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        },
+        "example": {
+          "type": "checkPayment",
+          "id": "3",
+          "attributes": {
+            "createdAt": "2023-02-21T11:31:03.704Z",
+            "updatedAt": "2023-02-21T11:31:03.704Z",
+            "amount": 10000,
+            "sendAt": "2023-09-10T12:50:00.704Z",
+            "description": "Check Payment | 0322",
+            "status": "Processed",
+            "deliveryStatus": "Delivered",
+            "trackedAt": "2023-02-23T11:31:03.704Z",
+            "postalCode": "94303",
+            "checkNumber": "0322",
+            "onUsAuxiliary": "0322",
+            "onUs": "864800000002/",
+            "counterparty": {
+              "name": "John Doe",
+              "address": {
+                "street": "5230 Newell Rd",
+                "city": "Palo Alto",
+                "state": "CA",
+                "postalCode": "94303"
+              }
+            },
+            "counterpartyRoutingNumber": "051402372",
+            "returnCutoffTime": "2023-03-23T15:50:00.000Z",
+            "additionalVerificationStatus": "Required"
+          },
+          "relationships": {
+            "account": {
+              "data": {
+                "type": "account",
+                "id": "75002"
+              }
+            },
+            "customer": {
+              "data": {
+                "type": "customer",
+                "id": "100425"
+              }
+            },
+            "customers": {
+              "data": [
+                {
+                  "type": "customer",
+                  "id": "10001"
+                }
+              ]
+            },
+            "transaction": {
+              "data": {
+                "type": "transaction",
+                "id": "123423"
+              }
+            }
+          }
+        },
+        "description": "`CheckPayment` is a JSON:API resource, top-level fields:"
+      },
+      "CheckPaymentCounterpartyType": {
+        "type": "object",
+        "required": [
+          "name",
+          "address"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the person or company that owns the bank account. Cannot exceed 40 characters."
+          },
+          "address": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AddressType"
+              }
+            ],
+            "description": "The payee's address. The length of street and street2 combined cannot exceed 50 characters."
+          },
+          "counterpartyMoved": {
+            "type": "boolean",
+            "description": "True if the counterparty's address has been modified to correspond with a National Change of Address applied on the address. See guide for further information."
+          }
+        },
+        "example": {
+          "name": "John Doe",
+          "counterpartyMoved": true,
+          "address": {
+            "street": "20 Ingram St",
+            "street2": "Apt #10",
+            "city": "Forest Hills",
+            "state": "NY",
+            "postalCode": "11375",
+            "country": "US"
+          }
+        }
+      },
+      "OriginateCheckPaymentMailPhysicalCheckData": {
+        "type": "object",
+        "required": [
+          "type",
+          "attributes",
+          "relationships"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "checkPayment"
+            ]
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "amount",
+              "counterparty",
+              "description",
+              "idempotencyKey"
+            ],
+            "properties": {
+              "amount": {
+                "type": "integer",
+                "description": "The amount (in cents). Must be less than 100000000000",
+                "example": 1000
+              },
+              "memo": {
+                "type": "string",
+                "description": "Check payment memo. This will be printed on the check (maximum of 40 characters)",
+                "example": "October paycheck"
+              },
+              "sendDate": {
+                "type": "string",
+                "format": "date",
+                "nullable": true,
+                "description": "Date only (e.g. 2022-06-23). The date the check will be submitted to the processor. Up to 180 days in the future. If left null or in the past, will default to today."
+              },
+              "counterparty": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CheckPaymentCounterpartyType"
+                  }
+                ],
+                "description": "The payee's details . street and street2 combined may contain up to 50 characters. country must be \"US\".",
+                "example": {
+                  "name": "April Oneil",
+                  "address": {
+                    "street": "20 Ingram St",
+                    "city": "Forest Hills",
+                    "state": "CA",
+                    "postalCode": "11375",
+                    "country": "US"
+                  }
+                }
+              },
+              "description": {
+                "type": "string",
+                "description": "An internal description (maximum of 255 characters). This will not be printed on the check.",
+                "example": "October paycheck"
+              },
+              "idempotencyKey": {
+                "type": "string",
+                "description": "See Idempotency.",
+                "example": "asdfghjkl"
+              },
+              "tags": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "See Tags. Tags that will be copied to any transaction that this payment creates (see Tag Inheritance)."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "required": [
+              "account",
+              "customer"
+            ],
+            "properties": {
+              "account": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "customer": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        }
+      },
+      "OriginateCheckPaymentMailPhysicalCheckRequest": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/OriginateCheckPaymentMailPhysicalCheckData"
+          }
+        }
+      },
+      "ReturnCheckPaymentData": {
+        "type": "object",
+        "required": [
+          "type",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "checkPaymentReturn"
+            ]
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "reason"
+            ],
+            "properties": {
+              "reason": {
+                "type": "string",
+                "description": "The reason for returning the Check Payment. See valid reasons under the **Valid via Return API?** column.",
+                "example": "StopPayment"
+              }
+            }
+          }
+        }
+      },
+      "ReturnCheckPaymentRequest": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/ReturnCheckPaymentData"
+          }
+        }
+      },
+      "ApproveCheckPaymentAdditionalVerificationData": {
+        "type": "object",
+        "required": [
+          "type",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "additionalVerification"
+            ]
+          },
+          "attributes": {
+            "type": "object"
+          }
+        }
+      },
+      "ApproveCheckPaymentAdditionalVerificationRequest": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/ApproveCheckPaymentAdditionalVerificationData"
           }
         }
       },

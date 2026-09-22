@@ -1,7 +1,7 @@
 # unit-java-sdk
 
 Unit API
-- API version: 0.14.0
+- API version: 0.15.0
   - Generator version: 7.22.0
 
 JSON:API-compliant banking API.
@@ -193,6 +193,13 @@ Class | Method | HTTP request | Description
 *CheckDepositsApi* | [**updateCheckDeposit**](docs/CheckDepositsApi.md#updateCheckDeposit) | **PATCH** /check-deposits/{checkDepositId} | Update a check deposit
 *CheckDepositsApi* | [**uploadCheckDepositBackImage**](docs/CheckDepositsApi.md#uploadCheckDepositBackImage) | **PUT** /check-deposits/{checkDepositId}/back | Upload a check deposit back image
 *CheckDepositsApi* | [**uploadCheckDepositFrontImage**](docs/CheckDepositsApi.md#uploadCheckDepositFrontImage) | **PUT** /check-deposits/{checkDepositId}/front | Upload a check deposit front image
+*CheckPaymentsApi* | [**approveCheckPaymentAdditionalVerification**](docs/CheckPaymentsApi.md#approveCheckPaymentAdditionalVerification) | **POST** /check-payments/{checkPaymentId}/approve | Approve check payment additional verification
+*CheckPaymentsApi* | [**cancelCheckPayment**](docs/CheckPaymentsApi.md#cancelCheckPayment) | **POST** /check-payments/{checkPaymentId}/cancel | Cancel a check payment
+*CheckPaymentsApi* | [**getCheckImage**](docs/CheckPaymentsApi.md#getCheckImage) | **GET** /check-payments/{checkPaymentId}/{side}/{type} | Get a check payment image
+*CheckPaymentsApi* | [**getCheckPayment**](docs/CheckPaymentsApi.md#getCheckPayment) | **GET** /check-payments/{checkPaymentId} | Get a check payment by id
+*CheckPaymentsApi* | [**listCheckPayments**](docs/CheckPaymentsApi.md#listCheckPayments) | **GET** /check-payments | List check payments
+*CheckPaymentsApi* | [**originateCheckPaymentMailPhysicalCheck**](docs/CheckPaymentsApi.md#originateCheckPaymentMailPhysicalCheck) | **POST** /check-payments | Originate a check payment
+*CheckPaymentsApi* | [**returnCheckPayment**](docs/CheckPaymentsApi.md#returnCheckPayment) | **POST** /check-payments/{checkPaymentId}/return | Return a check payment
 *CounterpartiesApi* | [**createCounterparty**](docs/CounterpartiesApi.md#createCounterparty) | **POST** /counterparties | Create a counterparty
 *CounterpartiesApi* | [**deleteCounterparty**](docs/CounterpartiesApi.md#deleteCounterparty) | **DELETE** /counterparties/{counterpartyId} | Delete a counterparty
 *CounterpartiesApi* | [**getCounterparty**](docs/CounterpartiesApi.md#getCounterparty) | **GET** /counterparties/{counterpartyId} | Get a counterparty by id
@@ -270,6 +277,8 @@ Class | Method | HTTP request | Description
  - [AnnualRevenueType](docs/AnnualRevenueType.md)
  - [ApplicationDocument](docs/ApplicationDocument.md)
  - [ApplicationDocumentAttributes](docs/ApplicationDocumentAttributes.md)
+ - [ApproveCheckPaymentAdditionalVerificationData](docs/ApproveCheckPaymentAdditionalVerificationData.md)
+ - [ApproveCheckPaymentAdditionalVerificationRequest](docs/ApproveCheckPaymentAdditionalVerificationRequest.md)
  - [ArchiveCustomerData](docs/ArchiveCustomerData.md)
  - [ArchiveCustomerDataAttributes](docs/ArchiveCustomerDataAttributes.md)
  - [ArchiveCustomerRequest](docs/ArchiveCustomerRequest.md)
@@ -350,6 +359,9 @@ Class | Method | HTTP request | Description
  - [CheckDepositTransaction](docs/CheckDepositTransaction.md)
  - [CheckDepositTransactionAttributes](docs/CheckDepositTransactionAttributes.md)
  - [CheckDepositTransactionRelationships](docs/CheckDepositTransactionRelationships.md)
+ - [CheckPayment](docs/CheckPayment.md)
+ - [CheckPaymentAttributes](docs/CheckPaymentAttributes.md)
+ - [CheckPaymentCounterpartyType](docs/CheckPaymentCounterpartyType.md)
  - [CheckPaymentTransaction](docs/CheckPaymentTransaction.md)
  - [CheckPaymentTransactionRelationships](docs/CheckPaymentTransactionRelationships.md)
  - [ClearAchDebitPayment200Response](docs/ClearAchDebitPayment200Response.md)
@@ -560,6 +572,7 @@ Class | Method | HTTP request | Description
  - [GetCardFraudCaseById200Response](docs/GetCardFraudCaseById200Response.md)
  - [GetCardPinStatus200Response](docs/GetCardPinStatus200Response.md)
  - [GetCheckDeposit200Response](docs/GetCheckDeposit200Response.md)
+ - [GetCheckPayment200Response](docs/GetCheckPayment200Response.md)
  - [GetCounterpartyBalance200Response](docs/GetCounterpartyBalance200Response.md)
  - [GetCustomer200Response](docs/GetCustomer200Response.md)
  - [GetExpectedACHCompletionDateData](docs/GetExpectedACHCompletionDateData.md)
@@ -604,6 +617,7 @@ Class | Method | HTTP request | Description
  - [ListCards200Response](docs/ListCards200Response.md)
  - [ListCards200ResponseDataInner](docs/ListCards200ResponseDataInner.md)
  - [ListCheckDeposits200Response](docs/ListCheckDeposits200Response.md)
+ - [ListCheckPayments200Response](docs/ListCheckPayments200Response.md)
  - [ListCounterparties200Response](docs/ListCounterparties200Response.md)
  - [ListCustomers200Response](docs/ListCustomers200Response.md)
  - [ListCustomers200ResponseDataInner](docs/ListCustomers200ResponseDataInner.md)
@@ -630,6 +644,11 @@ Class | Method | HTTP request | Description
  - [OfficerRelationships](docs/OfficerRelationships.md)
  - [OfficerRequestType](docs/OfficerRequestType.md)
  - [OfficerType](docs/OfficerType.md)
+ - [OriginateCheckPaymentMailPhysicalCheck201Response](docs/OriginateCheckPaymentMailPhysicalCheck201Response.md)
+ - [OriginateCheckPaymentMailPhysicalCheckData](docs/OriginateCheckPaymentMailPhysicalCheckData.md)
+ - [OriginateCheckPaymentMailPhysicalCheckDataAttributes](docs/OriginateCheckPaymentMailPhysicalCheckDataAttributes.md)
+ - [OriginateCheckPaymentMailPhysicalCheckDataRelationships](docs/OriginateCheckPaymentMailPhysicalCheckDataRelationships.md)
+ - [OriginateCheckPaymentMailPhysicalCheckRequest](docs/OriginateCheckPaymentMailPhysicalCheckRequest.md)
  - [OriginatedACHTransaction](docs/OriginatedACHTransaction.md)
  - [OriginatedACHTransactionAttributes](docs/OriginatedACHTransactionAttributes.md)
  - [OriginatedACHTransactionRelationships](docs/OriginatedACHTransactionRelationships.md)
@@ -689,6 +708,9 @@ Class | Method | HTTP request | Description
  - [ReplaceCardRequest](docs/ReplaceCardRequest.md)
  - [RequestedProductType](docs/RequestedProductType.md)
  - [ResourceIdentifier](docs/ResourceIdentifier.md)
+ - [ReturnCheckPaymentData](docs/ReturnCheckPaymentData.md)
+ - [ReturnCheckPaymentDataAttributes](docs/ReturnCheckPaymentDataAttributes.md)
+ - [ReturnCheckPaymentRequest](docs/ReturnCheckPaymentRequest.md)
  - [ReturnedACHTransaction](docs/ReturnedACHTransaction.md)
  - [ReturnedACHTransactionAttributes](docs/ReturnedACHTransactionAttributes.md)
  - [ReturnedACHTransactionRelationships](docs/ReturnedACHTransactionRelationships.md)
