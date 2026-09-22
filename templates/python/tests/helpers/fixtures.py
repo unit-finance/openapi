@@ -29,10 +29,12 @@ How they are then handed to the API depends on the endpoint's request type:
 
 import time
 import uuid
+from datetime import date, timedelta
 from typing import Any, Dict, List, Optional
 
 from unit_finance_sdk import (
     AddAuthorizedUsersRequest,
+    ApproveCheckPaymentAdditionalVerificationRequest,
     ArchiveCustomerRequest,
     CloseAccountRequest,
     CloseDepositAccountRequest,
@@ -66,8 +68,10 @@ from unit_finance_sdk import (
     GetExpectedAchCompletionDateRequest,
     GetMobileWalletPayloadRequest,
     MarkCardFraudCaseAsFraudRequest,
+    OriginateCheckPaymentMailPhysicalCheckRequest,
     RemoveAuthorizedUsersRequest,
     ReplaceCardRequest,
+    ReturnCheckPaymentRequest,
     ReverseFeeRequest,
     UpdateAccountRequest,
     UpdateApplicationRequest,
@@ -417,6 +421,55 @@ def build_release_account_hold_request(amount: int = 500) -> Dict[str, Any]:
             "attributes": {"amount": amount},
         },
     }
+
+
+def build_originate_check_payment_request(
+    account_id: str, customer_id: str
+) -> OriginateCheckPaymentMailPhysicalCheckRequest:
+    send_date = (date.today() + timedelta(days=30)).isoformat()
+    body = {
+        "data": {
+            "type": "checkPayment",
+            "attributes": {
+                "amount": 1000,
+                "description": "SDK integration test check payment",
+                "idempotencyKey": f"{TEST_RUN_ID}-check-payment-{uuid.uuid4().hex[:8]}",
+                "sendDate": send_date,
+                "counterparty": {
+                    "name": "April Oneil",
+                    "address": _us_address(),
+                },
+                "tags": _base_tags(),
+            },
+            "relationships": {
+                "account": {"data": {"type": "account", "id": account_id}},
+                "customer": {"data": {"type": "customer", "id": customer_id}},
+            },
+        },
+    }
+    return OriginateCheckPaymentMailPhysicalCheckRequest.from_dict(body)
+
+
+def build_return_check_payment_request() -> ReturnCheckPaymentRequest:
+    body = {
+        "data": {
+            "type": "checkPaymentReturn",
+            "attributes": {"reason": "StopPayment"},
+        },
+    }
+    return ReturnCheckPaymentRequest.from_dict(body)
+
+
+def build_approve_check_payment_additional_verification_request() -> (
+    ApproveCheckPaymentAdditionalVerificationRequest
+):
+    body = {
+        "data": {
+            "type": "additionalVerification",
+            "attributes": {},
+        },
+    }
+    return ApproveCheckPaymentAdditionalVerificationRequest.from_dict(body)
 
 
 # A check deposit is created against an existing account; `amount` and

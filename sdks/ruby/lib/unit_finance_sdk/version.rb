@@ -11,5 +11,5 @@ Generator version: 7.22.0
 =end
 
 module UnitFinanceSdk
-  VERSION = '0.15.0'
+  VERSION = '0.15.1'
 end
