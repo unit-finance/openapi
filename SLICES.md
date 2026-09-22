@@ -1,10 +1,11 @@
 # Implemented API slices
 
-From `spec-version.json` (`slices`), OpenAPI tags on `unit-finance/unit-openapi` **0.13.0**.
+From `spec-version.json` (`slices`), OpenAPI tags on `unit-finance/unit-openapi` **0.14.0**.
 
 Accounts · Application Documents · Applications · Authorized Users ·
-Card Fraud Outreach · Card Holder API Tokens · Cards · Check Deposits ·
-Counterparties · Customers · Fees · Payments · Transactions
+Card Fraud Outreach · Card Holder API Tokens · Cards · Cards ATM Locations ·
+Cards Add To Mobile Wallet · Cards Authorization Requests · Cards Authorizations ·
+Check Deposits · Counterparties · Customers · Fees · Payments · Transactions
 
 # Test skips and early exits
 
@@ -14,7 +15,14 @@ Templates: `templates/node/tests/`, `templates/java/tests/`,
 Not listed: the global token gate (`describeIfToken` / `assumeToken` /
 `:sandbox` / `@requires_token`).
 
-**Cards, Fees, Transactions** — no extra skip in any SDK.
+**Cards, Cards ATM Locations, Fees, Transactions** — no extra skip in any SDK.
+
+**Cards Add To Mobile Wallet** `getMobileWalletPayload` — no extra skip in any
+SDK (the POST returns 200). The spec types `attributes.payload` as a **string**;
+the sandbox returns an **object**. Node asserts the field is present; the
+strict-typed clients still parse the envelope because `payload` is not
+required. Spec defect owned by `unit-openapi`: type `payload` as an object (or
+make it a free-form value).
 
 **Card Holder API Tokens** `createCardholderTokenVerification` — no extra skip
 in any SDK (the sandbox issues the OTP challenge and returns 201). Its sibling
@@ -27,6 +35,12 @@ the same abort in every SDK; `listCardFraudCases` / `getCardFraudCaseById` /
 **Authorized Users** `addAuthorizedUsers` / `removeAuthorizedUsers` — no extra
 skip in any SDK (they return a customer resource and the typed clients parse
 it). `listAuthorizedUsers` / `getAuthorizedUser` differ; see below.
+
+**Cards Authorization Requests** `listAuthorizationRequests` /
+`getAuthorizationRequestById` differ; see below.
+
+**Cards Authorizations** `listAuthorizations` / `getAuthorization` /
+`releaseAuthorization` differ; see below.
 
 | Mark | Meaning |
 | --- | --- |
@@ -52,10 +66,50 @@ it). `listAuthorizedUsers` / `getAuthorizedUser` differ; see below.
 | `createPolicy` | abort | Create needs three org-provisioned relationships: **email outreach settings**, **message outreach settings**, and **white-label theme**. There is no list operation for any of them, so the suite sends placeholder ids `"0"`. The sandbox then 4xxs (missing/invalid relationships). That is org setup, not an SDK gap. |
 | `getPolicyById` / `updatePolicy` | abort | Both need a policy id. There is **no list-policies** operation, so they depend on **`createPolicy`**. Until the org has those outreach/theme resources, there is nothing to GET or PATCH. |
 | `createCardholderToken` (new in spec 0.13.0) | abort | The spec marks `verificationToken` and `verificationCode` **required** on `CreateCardholderTokenData.attributes`, but they are only needed for 2FA scopes: the sandbox answers **201** to a scope-only body (`{ scope: "cards" }`). The generated models cannot express that body, and the 6-digit `verificationCode` is an OTP delivered to the card holder over SMS, so the suites can only send a placeholder — which the sandbox rejects with **404 `verification_failed`**. Spec defect owned by `unit-openapi`: make both fields optional. A second defect sits behind it — the 201 body's `data.type` is **`cardholderBearerToken`** while the spec enum says `cardholderToken`, so the strict-typed clients would fail to parse a success once the first fix lands. |
+| `listAtmLocations` (new in spec 0.14.0) | runs | GET `/atm-locations` with `filter[postalCode]=11375` returns 200 and a JSON:API array. |
 
 ---
 
 ## Where SDKs differ
+
+### `listAuthorizationRequests` / `getAuthorizationRequestById` (new in spec 0.14.0)
+
+Authorization requests are **inbound** (Purchase Approval intercepts a card
+auth; the suite cannot mint one). `listAuthorizationRequests` can return rows;
+GET then uses the first id. An empty list is normal. When rows exist, two spec
+defects owned by `unit-openapi` break the typed clients while **deserializing**
+a 200:
+
+1. `PurchaseAuthorizationRequest` / sibling variants mark `tags` **required**;
+   the sandbox **omits** it.
+2. Java's generated `oneOf` then matches **0** of
+   `purchaseAuthorizationRequest` / `cardTransactionAuthorizationRequest` /
+   `atmAuthorizationRequest`.
+
+Fix: make `tags` optional on the authorization-request attribute objects. Then
+drop the Java abort and the ruby skip / python abort.
+
+| Node | Java | Ruby | Python |
+| --- | --- | --- | --- |
+| **Runs** list. **Abort** GET if the list is empty. Axios does not validate `tags`. | **Abort** list (`oneOf` 0 matches / `tags` omitted). GET **aborts** if list is empty or the typed list cannot yield an id; otherwise GET **runs**. | **Skip** list when the Ruby model raises (`tags cannot be nil`). GET **aborts** if empty, **skips** if the typed list/GET raises. | **Abort** list/GET when Pydantic rejects the 200. **Skip** GET if the list is empty. |
+
+### `listAuthorizations` / `getAuthorization` / `releaseAuthorization` (new in spec 0.14.0)
+
+Authorizations are also **inbound** (a card purchase). The sandbox org already
+has historical rows, so list is not empty — but `Authorization.attributes.tags`
+is marked **required** and the sandbox **omits** it. Typed clients fail while
+deserializing the 200, so get/release never run in those languages. Node axios
+does not validate `tags`, so list/get **run**. Release is only legal while
+status is `Authorized`; a listed row can still **403**, which Node treats as
+unavailable rather than a failed request.
+
+This is a spec defect owned by `unit-openapi`. Fix: make
+`Authorization.attributes.tags` optional. Then drop the Java abort and the
+ruby skip / python abort.
+
+| Node | Java | Ruby | Python |
+| --- | --- | --- | --- |
+| **Runs** list/get. **Abort** release on 4xx (403 here: not releasable). | **Abort.** Gson `validateJsonElement` rejects a 200 (`tags` required, omitted). Get/release never run. | **Skip** when the Ruby model raises (`tags cannot be nil`). | **Abort** when Pydantic rejects the 200. **Skip** get/release if the (typed) list is empty. |
 
 ### `updateBusinessCustomerOfficer`
 

@@ -12,6 +12,7 @@ import type {
 	CreateBusinessWalletCustomerRequest,
 	CreateCardholderTokenRequest,
 	CreateCardholderTokenVerificationRequest,
+	GetMobileWalletPayloadRequest,
 	CreateCounterpartyRequest,
 	CreateIndividualApplicationRequest,
 	CreateSoleProprietorApplicationRequest,
@@ -848,6 +849,20 @@ export function buildCreateCardholderTokenRequest(
 				verificationCode,
 				expiresIn: 3600,
 			},
+		},
+	};
+}
+
+/**
+ * `signedNonce` is issued by the Visa in-app SDK. The suite cannot mint one,
+ * so tests send the spec example and treat a 4xx as unavailable.
+ */
+export function buildGetMobileWalletPayloadRequest(
+	signedNonce = "eyJle...",
+): GetMobileWalletPayloadRequest {
+	return {
+		data: {
+			attributes: { signedNonce },
 		},
 	};
 }

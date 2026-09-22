@@ -64,6 +64,7 @@ from unit_finance_sdk import (
     FreezeCardRequest,
     FreezeDepositAccountRequest,
     GetExpectedAchCompletionDateRequest,
+    GetMobileWalletPayloadRequest,
     MarkCardFraudCaseAsFraudRequest,
     RemoveAuthorizedUsersRequest,
     ReplaceCardRequest,
@@ -1058,3 +1059,19 @@ def build_create_cardholder_token_request(
         },
     }
     return CreateCardholderTokenRequest.from_dict(body)
+
+
+def build_get_mobile_wallet_payload_request(
+    signed_nonce: str = "eyJle...",
+) -> GetMobileWalletPayloadRequest:
+    """Build a mobile-wallet payload body.
+
+    ``signedNonce`` is issued by the Visa in-app SDK. The suite cannot mint
+    one, so tests send the spec example and treat a 4xx as unavailable.
+    """
+    body = {
+        "data": {
+            "attributes": {"signedNonce": signed_nonce},
+        },
+    }
+    return GetMobileWalletPayloadRequest.from_dict(body)
