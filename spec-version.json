@@ -1,8 +1,8 @@
 {
   "$comment": "Pins the unit-openapi spec version the committed SDKs were generated from. The dispatch-driven regeneration PR bumps `version`; `fetch-spec` downloads the matching bundled spec. Keep `version` in sync with the spec/openapi.json `info.version` in the unit-openapi repo. `sdkVersion` is the shared published package and GitHub Release version for every language SDK; bump it for packaging-only releases. Regeneration raises `sdkVersion` when the new spec is newer. `slices` is derived automatically by `fetch-spec` from the materialized spec's tags — do not edit by hand. When the spec is materialized from a local file or URL rather than the pinned release, `fetch-spec` also syncs `version` from the spec's own `info.version`.",
   "repo": "unit-finance/unit-openapi",
-  "version": "0.13.0",
-  "sdkVersion": "0.13.1",
+  "version": "0.14.0",
+  "sdkVersion": "0.14.0",
   "assetName": "openapi.bundled.json",
   "slices": [
     "Accounts",
@@ -12,6 +12,10 @@
     "Card Fraud Outreach",
     "Card Holder API Tokens",
     "Cards",
+    "Cards ATM Locations",
+    "Cards Add To Mobile Wallet",
+    "Cards Authorization Requests",
+    "Cards Authorizations",
     "Check Deposits",
     "Counterparties",
     "Customers",
