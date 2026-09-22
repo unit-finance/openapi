@@ -1,7 +1,7 @@
 # unit-java-sdk
 
 Unit API
-- API version: 0.12.0
+- API version: 0.13.0
   - Generator version: 7.22.0
 
 JSON:API-compliant banking API.
@@ -161,6 +161,8 @@ Class | Method | HTTP request | Description
 *CardFraudOutreachApi* | [**markCardFraudCaseAsFraud**](docs/CardFraudOutreachApi.md#markCardFraudCaseAsFraud) | **POST** /card-fraud-cases/{id}/fraud | Mark a card fraud case as fraud
 *CardFraudOutreachApi* | [**markCardFraudCaseAsNoFraud**](docs/CardFraudOutreachApi.md#markCardFraudCaseAsNoFraud) | **POST** /card-fraud-cases/{id}/no-fraud | Mark a card fraud case as no fraud
 *CardFraudOutreachApi* | [**updatePolicy**](docs/CardFraudOutreachApi.md#updatePolicy) | **PATCH** /fraud-outreach-policies/{policyId} | Update a card fraud outreach policy
+*CardHolderApiTokensApi* | [**createCardholderToken**](docs/CardHolderApiTokensApi.md#createCardholderToken) | **POST** /cards/{cardId}/cardholder/token | Create a cardholder token
+*CardHolderApiTokensApi* | [**createCardholderTokenVerification**](docs/CardHolderApiTokensApi.md#createCardholderTokenVerification) | **POST** /cards/{cardId}/cardholder/token/verification | Create a cardholder token verification
 *CardsApi* | [**closeCard**](docs/CardsApi.md#closeCard) | **POST** /cards/{cardId}/close | Close a card
 *CardsApi* | [**createCard**](docs/CardsApi.md#createCard) | **POST** /cards | Create a card
 *CardsApi* | [**freezeCard**](docs/CardsApi.md#freezeCard) | **POST** /cards/{cardId}/freeze | Freeze a card
@@ -407,6 +409,18 @@ Class | Method | HTTP request | Description
  - [CreateCard201Response](docs/CreateCard201Response.md)
  - [CreateCard201ResponseData](docs/CreateCard201ResponseData.md)
  - [CreateCardRequest](docs/CreateCardRequest.md)
+ - [CreateCardholderToken201Response](docs/CreateCardholderToken201Response.md)
+ - [CreateCardholderToken201ResponseData](docs/CreateCardholderToken201ResponseData.md)
+ - [CreateCardholderToken201ResponseDataAttributes](docs/CreateCardholderToken201ResponseDataAttributes.md)
+ - [CreateCardholderTokenData](docs/CreateCardholderTokenData.md)
+ - [CreateCardholderTokenDataAttributes](docs/CreateCardholderTokenDataAttributes.md)
+ - [CreateCardholderTokenRequest](docs/CreateCardholderTokenRequest.md)
+ - [CreateCardholderTokenVerification201Response](docs/CreateCardholderTokenVerification201Response.md)
+ - [CreateCardholderTokenVerification201ResponseData](docs/CreateCardholderTokenVerification201ResponseData.md)
+ - [CreateCardholderTokenVerification201ResponseDataAttributes](docs/CreateCardholderTokenVerification201ResponseDataAttributes.md)
+ - [CreateCardholderTokenVerificationData](docs/CreateCardholderTokenVerificationData.md)
+ - [CreateCardholderTokenVerificationDataAttributes](docs/CreateCardholderTokenVerificationDataAttributes.md)
+ - [CreateCardholderTokenVerificationRequest](docs/CreateCardholderTokenVerificationRequest.md)
  - [CreateCheckDeposit201Response](docs/CreateCheckDeposit201Response.md)
  - [CreateCheckDepositData](docs/CreateCheckDepositData.md)
  - [CreateCheckDepositDataAttributes](docs/CreateCheckDepositDataAttributes.md)

@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Unit API",
-    "version": "0.12.0",
+    "version": "0.13.0",
     "description": "JSON:API-compliant banking API.",
     "license": {
       "name": "Proprietary",
@@ -67,6 +67,10 @@
     {
       "name": "Card Fraud Outreach",
       "description": "Card fraud cases, their fraud/no-fraud decisions, and the card fraud outreach policies that govern them."
+    },
+    {
+      "name": "Card Holder API Tokens",
+      "description": "Cardholder bearer tokens for card-scoped API access, and the two-factor verification challenges they require."
     }
   ],
   "paths": {
@@ -9773,6 +9777,214 @@
             "application/vnd.api+json": {
               "schema": {
                 "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cards/{cardId}/cardholder/token": {
+      "parameters": [
+        {
+          "name": "cardId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "operationId": "createCardholderToken",
+        "summary": "Create a cardholder token",
+        "description": "Create a bearer token for a specific card.",
+        "tags": [
+          "Card Holder API Tokens"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "cards-write"
+            ]
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "properties": {
+                  "data": {
+                    "$ref": "#/components/schemas/CreateCardholderTokenData"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The created cardholder token.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "cardholderToken"
+                          ]
+                        },
+                        "attributes": {
+                          "type": "object",
+                          "properties": {
+                            "token": {
+                              "type": "string",
+                              "description": "The token issued for the card."
+                            },
+                            "expiresIn": {
+                              "type": "integer",
+                              "description": "The lifetime of the token (in seconds)."
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cards/{cardId}/cardholder/token/verification": {
+      "parameters": [
+        {
+          "name": "cardId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "operationId": "createCardholderTokenVerification",
+        "summary": "Create a cardholder token verification",
+        "description": "When creating a cardholder token that contains a scope which requires two-factor authentication (see Scopes), it is required to first create a verification challenge that will be sent to the customer.",
+        "tags": [
+          "Card Holder API Tokens"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "properties": {
+                  "data": {
+                    "$ref": "#/components/schemas/CreateCardholderTokenVerificationData"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The created cardholder token verification.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "cardholderTokenVerification"
+                          ]
+                        },
+                        "attributes": {
+                          "type": "object",
+                          "properties": {
+                            "verificationToken": {
+                              "type": "string",
+                              "description": "The verification token to pass to Create Cardholder Token together with the verification code sent to the card holder.",
+                              "example": "i8FWKLBjXEg3TdeK93G3K9PKLzhbT6CRhn/VKkTsm...."
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "data": {
+                    "type": "cardholderTokenVerification",
+                    "attributes": {
+                      "verificationToken": "i8FWKLBjXEg3TdeK93G3K9PKLzhbT6CRhn/VKkTsm...."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
               }
             }
           }
@@ -25769,6 +25981,108 @@
                 ]
               }
             }
+          }
+        }
+      },
+      "CreateCardholderTokenData": {
+        "type": "object",
+        "required": [
+          "type",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "cardholderToken"
+            ]
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "scope",
+              "verificationToken",
+              "verificationCode"
+            ],
+            "properties": {
+              "scope": {
+                "type": "string",
+                "description": "list of Scopes separated by spaces. Only cards (cards cards-sensitive cards-write cards-sensitive-write) scopes are allowed.",
+                "example": "cards"
+              },
+              "verificationToken": {
+                "type": "string",
+                "description": "Required if scope includes a scope which requires two-factor authentication. Received as a response from Create Cardholder Token Verification."
+              },
+              "verificationCode": {
+                "type": "string",
+                "description": "Required if scope includes a scope which requires two-factor authentication. 6 digit code sent to the card holder through the desired channel."
+              },
+              "expiresIn": {
+                "type": "integer",
+                "description": "The lifetime of the token (in seconds). Maximum value is 86400 (24 hours). Default value is also 24 hours."
+              },
+              "upgradableScope": {
+                "type": "string",
+                "description": "list of Scopes separated by spaces. The card holder will be able to upgrade the token to the scopes you provide here."
+              }
+            }
+          }
+        },
+        "example": {
+          "type": "cardholderToken",
+          "attributes": {
+            "scope": "cards"
+          }
+        }
+      },
+      "CreateCardholderTokenVerificationData": {
+        "type": "object",
+        "required": [
+          "type",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "cardholderTokenVerification"
+            ]
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "channel"
+            ],
+            "properties": {
+              "channel": {
+                "type": "string",
+                "description": "Send a verification code to the card holder through one of the following channels - sms or call.",
+                "example": "sms"
+              },
+              "phone": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/PhoneType"
+                  }
+                ],
+                "description": "This allows providing the phone number of one of the customer's authorized users. The provided phone must match an authorized user phone and will be used in the One Time Password (OTP) authentication process instead of the business customer contact's phone."
+              },
+              "appHash": {
+                "type": "string",
+                "description": "For sms verifications only, 11-character hash string that identifies your app. Appended at the end of your verification SMS body the way that client-side SMS Retriever API expects."
+              },
+              "language": {
+                "type": "string",
+                "description": "Select the verification language using a 2-letter code. Default is English. See Localization Options for the supported languages and their 2-letter code."
+              }
+            }
+          }
+        },
+        "example": {
+          "type": "cardholderTokenVerification",
+          "attributes": {
+            "channel": "sms"
           }
         }
       }
