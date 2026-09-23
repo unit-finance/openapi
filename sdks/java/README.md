@@ -1,7 +1,7 @@
 # unit-java-sdk
 
 Unit API
-- API version: 0.15.0
+- API version: 0.16.0
   - Generator version: 7.22.0
 
 JSON:API-compliant banking API.
@@ -206,6 +206,13 @@ Class | Method | HTTP request | Description
 *CounterpartiesApi* | [**getCounterpartyBalance**](docs/CounterpartiesApi.md#getCounterpartyBalance) | **GET** /counterparties/{counterpartyId}/balance | Get a counterparty balance by id
 *CounterpartiesApi* | [**listCounterparties**](docs/CounterpartiesApi.md#listCounterparties) | **GET** /counterparties | List counterparties
 *CounterpartiesApi* | [**updateCounterparty**](docs/CounterpartiesApi.md#updateCounterparty) | **PATCH** /counterparties/{counterpartyId} | Update a counterparty
+*CreditApplicationsApi* | [**createCreditApplication**](docs/CreditApplicationsApi.md#createCreditApplication) | **POST** /credit-applications | Create a credit application
+*CreditApplicationsApi* | [**getCreditApplication**](docs/CreditApplicationsApi.md#getCreditApplication) | **GET** /credit-applications/{creditApplicationId} | Get a credit application by id
+*CreditApplicationsApi* | [**listCreditApplications**](docs/CreditApplicationsApi.md#listCreditApplications) | **GET** /credit-applications | List credit applications
+*CreditApplicationsApi* | [**updateCreditApplication**](docs/CreditApplicationsApi.md#updateCreditApplication) | **PATCH** /credit-applications/{creditApplicationId} | Update a credit application
+*CreditDecisionsApi* | [**createCreditDecision**](docs/CreditDecisionsApi.md#createCreditDecision) | **POST** /credit-decisions | Create a credit decision
+*CreditDecisionsApi* | [**getCreditDecision**](docs/CreditDecisionsApi.md#getCreditDecision) | **GET** /credit-decisions/{id} | Get a credit decision by id
+*CreditDecisionsApi* | [**listCreditDecisions**](docs/CreditDecisionsApi.md#listCreditDecisions) | **GET** /credit-decisions | List credit decisions
 *CustomersApi* | [**archiveCustomer**](docs/CustomersApi.md#archiveCustomer) | **POST** /customers/{customerId}/archive | Archive a customer
 *CustomersApi* | [**createBusinessWalletCustomer**](docs/CustomersApi.md#createBusinessWalletCustomer) | **POST** /customers | Create a business wallet customer
 *CustomersApi* | [**getCustomer**](docs/CustomersApi.md#getCustomer) | **GET** /customers/{customerId} | Get a customer
@@ -279,6 +286,9 @@ Class | Method | HTTP request | Description
  - [ApplicationDocumentAttributes](docs/ApplicationDocumentAttributes.md)
  - [ApproveCheckPaymentAdditionalVerificationData](docs/ApproveCheckPaymentAdditionalVerificationData.md)
  - [ApproveCheckPaymentAdditionalVerificationRequest](docs/ApproveCheckPaymentAdditionalVerificationRequest.md)
+ - [ApprovedCreditLimitDecision](docs/ApprovedCreditLimitDecision.md)
+ - [ApprovedCreditLimitDecisionAttributes](docs/ApprovedCreditLimitDecisionAttributes.md)
+ - [ApprovedCreditLimitDecisionRelationships](docs/ApprovedCreditLimitDecisionRelationships.md)
  - [ArchiveCustomerData](docs/ArchiveCustomerData.md)
  - [ArchiveCustomerDataAttributes](docs/ArchiveCustomerDataAttributes.md)
  - [ArchiveCustomerRequest](docs/ArchiveCustomerRequest.md)
@@ -408,6 +418,10 @@ Class | Method | HTTP request | Description
  - [CreateApplication201ResponseIncludedInner](docs/CreateApplication201ResponseIncludedInner.md)
  - [CreateApplicationDocument200Response](docs/CreateApplicationDocument200Response.md)
  - [CreateApplicationRequest](docs/CreateApplicationRequest.md)
+ - [CreateApprovedCreditLimitDecisionData](docs/CreateApprovedCreditLimitDecisionData.md)
+ - [CreateApprovedCreditLimitDecisionDataAttributes](docs/CreateApprovedCreditLimitDecisionDataAttributes.md)
+ - [CreateApprovedCreditLimitDecisionDataRelationships](docs/CreateApprovedCreditLimitDecisionDataRelationships.md)
+ - [CreateApprovedCreditLimitDecisionRequest](docs/CreateApprovedCreditLimitDecisionRequest.md)
  - [CreateBatchReleases201Response](docs/CreateBatchReleases201Response.md)
  - [CreateBatchReleasesData](docs/CreateBatchReleasesData.md)
  - [CreateBatchReleasesDataAttributes](docs/CreateBatchReleasesDataAttributes.md)
@@ -471,10 +485,24 @@ Class | Method | HTTP request | Description
  - [CreateCreditAccountData](docs/CreateCreditAccountData.md)
  - [CreateCreditAccountDataAttributes](docs/CreateCreditAccountDataAttributes.md)
  - [CreateCreditAccountRequest](docs/CreateCreditAccountRequest.md)
+ - [CreateCreditApplication201Response](docs/CreateCreditApplication201Response.md)
+ - [CreateCreditApplicationRequest](docs/CreateCreditApplicationRequest.md)
+ - [CreateCreditDecision201Response](docs/CreateCreditDecision201Response.md)
+ - [CreateCreditDecisionRequest](docs/CreateCreditDecisionRequest.md)
+ - [CreateDeniedCreditApplicationDecisionData](docs/CreateDeniedCreditApplicationDecisionData.md)
+ - [CreateDeniedCreditApplicationDecisionDataAttributes](docs/CreateDeniedCreditApplicationDecisionDataAttributes.md)
+ - [CreateDeniedCreditApplicationDecisionRequest](docs/CreateDeniedCreditApplicationDecisionRequest.md)
+ - [CreateDeniedCreditLimitDecisionData](docs/CreateDeniedCreditLimitDecisionData.md)
+ - [CreateDeniedCreditLimitDecisionDataAttributes](docs/CreateDeniedCreditLimitDecisionDataAttributes.md)
+ - [CreateDeniedCreditLimitDecisionRequest](docs/CreateDeniedCreditLimitDecisionRequest.md)
  - [CreateDepositAccountData](docs/CreateDepositAccountData.md)
  - [CreateDepositAccountDataAttributes](docs/CreateDepositAccountDataAttributes.md)
  - [CreateDepositAccountDataRelationships](docs/CreateDepositAccountDataRelationships.md)
  - [CreateDepositAccountRequest](docs/CreateDepositAccountRequest.md)
+ - [CreateExistingCreditApplicationData](docs/CreateExistingCreditApplicationData.md)
+ - [CreateExistingCreditApplicationDataAttributes](docs/CreateExistingCreditApplicationDataAttributes.md)
+ - [CreateExistingCreditApplicationDataRelationships](docs/CreateExistingCreditApplicationDataRelationships.md)
+ - [CreateExistingCreditApplicationRequest](docs/CreateExistingCreditApplicationRequest.md)
  - [CreateFee201Response](docs/CreateFee201Response.md)
  - [CreateFeeData](docs/CreateFeeData.md)
  - [CreateFeeDataAttributes](docs/CreateFeeDataAttributes.md)
@@ -489,6 +517,16 @@ Class | Method | HTTP request | Description
  - [CreateIndividualVirtualDebitCardData](docs/CreateIndividualVirtualDebitCardData.md)
  - [CreateIndividualVirtualDebitCardDataAttributes](docs/CreateIndividualVirtualDebitCardDataAttributes.md)
  - [CreateIndividualVirtualDebitCardRequest](docs/CreateIndividualVirtualDebitCardRequest.md)
+ - [CreateManualReviewCreditApplicationDecisionData](docs/CreateManualReviewCreditApplicationDecisionData.md)
+ - [CreateManualReviewCreditApplicationDecisionDataAttributes](docs/CreateManualReviewCreditApplicationDecisionDataAttributes.md)
+ - [CreateManualReviewCreditApplicationDecisionRequest](docs/CreateManualReviewCreditApplicationDecisionRequest.md)
+ - [CreateManualReviewCreditLimitDecisionData](docs/CreateManualReviewCreditLimitDecisionData.md)
+ - [CreateManualReviewCreditLimitDecisionDataAttributes](docs/CreateManualReviewCreditLimitDecisionDataAttributes.md)
+ - [CreateManualReviewCreditLimitDecisionRequest](docs/CreateManualReviewCreditLimitDecisionRequest.md)
+ - [CreateOnboardingCreditApplicationData](docs/CreateOnboardingCreditApplicationData.md)
+ - [CreateOnboardingCreditApplicationDataAttributes](docs/CreateOnboardingCreditApplicationDataAttributes.md)
+ - [CreateOnboardingCreditApplicationDataRelationships](docs/CreateOnboardingCreditApplicationDataRelationships.md)
+ - [CreateOnboardingCreditApplicationRequest](docs/CreateOnboardingCreditApplicationRequest.md)
  - [CreatePayment201Response](docs/CreatePayment201Response.md)
  - [CreatePayment201ResponseData](docs/CreatePayment201ResponseData.md)
  - [CreatePaymentRequest](docs/CreatePaymentRequest.md)
@@ -519,6 +557,10 @@ Class | Method | HTTP request | Description
  - [CreditAccountAttributes](docs/CreditAccountAttributes.md)
  - [CreditAccountRelationships](docs/CreditAccountRelationships.md)
  - [CurrencyConversionType](docs/CurrencyConversionType.md)
+ - [DeniedCreditApplicationDecision](docs/DeniedCreditApplicationDecision.md)
+ - [DeniedCreditApplicationDecisionAttributes](docs/DeniedCreditApplicationDecisionAttributes.md)
+ - [DeniedCreditApplicationDecisionRelationships](docs/DeniedCreditApplicationDecisionRelationships.md)
+ - [DeniedCreditLimitDecision](docs/DeniedCreditLimitDecision.md)
  - [DepositAccount](docs/DepositAccount.md)
  - [DepositAccountAttributes](docs/DepositAccountAttributes.md)
  - [DepositAccountRelationships](docs/DepositAccountRelationships.md)
@@ -531,6 +573,9 @@ Class | Method | HTTP request | Description
  - [ErrorDocument](docs/ErrorDocument.md)
  - [ErrorDocumentErrorsInner](docs/ErrorDocumentErrorsInner.md)
  - [ErrorDocumentErrorsInnerSource](docs/ErrorDocumentErrorsInnerSource.md)
+ - [ExistingCustomerCreditApplication](docs/ExistingCustomerCreditApplication.md)
+ - [ExistingCustomerCreditApplicationAttributes](docs/ExistingCustomerCreditApplicationAttributes.md)
+ - [ExistingCustomerCreditApplicationRelationships](docs/ExistingCustomerCreditApplicationRelationships.md)
  - [Fee](docs/Fee.md)
  - [FeeAttributes](docs/FeeAttributes.md)
  - [FeeRelationships](docs/FeeRelationships.md)
@@ -619,6 +664,10 @@ Class | Method | HTTP request | Description
  - [ListCheckDeposits200Response](docs/ListCheckDeposits200Response.md)
  - [ListCheckPayments200Response](docs/ListCheckPayments200Response.md)
  - [ListCounterparties200Response](docs/ListCounterparties200Response.md)
+ - [ListCreditApplications200Response](docs/ListCreditApplications200Response.md)
+ - [ListCreditApplications200ResponseDataInner](docs/ListCreditApplications200ResponseDataInner.md)
+ - [ListCreditDecisions200Response](docs/ListCreditDecisions200Response.md)
+ - [ListCreditDecisions200ResponseDataInner](docs/ListCreditDecisions200ResponseDataInner.md)
  - [ListCustomers200Response](docs/ListCustomers200Response.md)
  - [ListCustomers200ResponseDataInner](docs/ListCustomers200ResponseDataInner.md)
  - [ListReceivedPayments200Response](docs/ListReceivedPayments200Response.md)
@@ -629,6 +678,10 @@ Class | Method | HTTP request | Description
  - [ListTransactions200Response](docs/ListTransactions200Response.md)
  - [ListTransactions200ResponseIncludedInner](docs/ListTransactions200ResponseIncludedInner.md)
  - [ListWireDrawdowns200Response](docs/ListWireDrawdowns200Response.md)
+ - [ManualReviewCreditApplicationDecision](docs/ManualReviewCreditApplicationDecision.md)
+ - [ManualReviewCreditApplicationDecisionAttributes](docs/ManualReviewCreditApplicationDecisionAttributes.md)
+ - [ManualReviewCreditLimitDecision](docs/ManualReviewCreditLimitDecision.md)
+ - [ManualReviewCreditLimitDecisionAttributes](docs/ManualReviewCreditLimitDecisionAttributes.md)
  - [MarkCardFraudCaseAsFraudData](docs/MarkCardFraudCaseAsFraudData.md)
  - [MarkCardFraudCaseAsFraudDataAttributes](docs/MarkCardFraudCaseAsFraudDataAttributes.md)
  - [MarkCardFraudCaseAsFraudRequest](docs/MarkCardFraudCaseAsFraudRequest.md)
@@ -644,6 +697,8 @@ Class | Method | HTTP request | Description
  - [OfficerRelationships](docs/OfficerRelationships.md)
  - [OfficerRequestType](docs/OfficerRequestType.md)
  - [OfficerType](docs/OfficerType.md)
+ - [OnboardingCreditApplication](docs/OnboardingCreditApplication.md)
+ - [OnboardingCreditApplicationRelationships](docs/OnboardingCreditApplicationRelationships.md)
  - [OriginateCheckPaymentMailPhysicalCheck201Response](docs/OriginateCheckPaymentMailPhysicalCheck201Response.md)
  - [OriginateCheckPaymentMailPhysicalCheckData](docs/OriginateCheckPaymentMailPhysicalCheckData.md)
  - [OriginateCheckPaymentMailPhysicalCheckDataAttributes](docs/OriginateCheckPaymentMailPhysicalCheckDataAttributes.md)
@@ -796,6 +851,9 @@ Class | Method | HTTP request | Description
  - [UpdateCreditAccountData](docs/UpdateCreditAccountData.md)
  - [UpdateCreditAccountDataAttributes](docs/UpdateCreditAccountDataAttributes.md)
  - [UpdateCreditAccountRequest](docs/UpdateCreditAccountRequest.md)
+ - [UpdateCreditApplicationData](docs/UpdateCreditApplicationData.md)
+ - [UpdateCreditApplicationDataAttributes](docs/UpdateCreditApplicationDataAttributes.md)
+ - [UpdateCreditApplicationRequest](docs/UpdateCreditApplicationRequest.md)
  - [UpdateCustomer200Response](docs/UpdateCustomer200Response.md)
  - [UpdateCustomerRequest](docs/UpdateCustomerRequest.md)
  - [UpdateData](docs/UpdateData.md)

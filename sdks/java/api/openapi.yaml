@@ -5,7 +5,7 @@ info:
     name: Proprietary
     url: https://www.unit.co/terms-of-service
   title: Unit API
-  version: 0.15.0
+  version: 0.16.0
 servers:
 - url: https://api.s.unit.sh
 security:
@@ -62,6 +62,11 @@ tags:
 - description: "Card authorization holds placed on an account, including releasing\
     \ them."
   name: Cards Authorizations
+- description: Credit applications submitted for underwriting under a lending program.
+  name: Credit Applications
+- description: "Credit decisions recorded against credit applications, for credit\
+    \ limit and credit application evaluations."
+  name: Credit Decisions
 paths:
   /applications:
     get:
@@ -8148,6 +8153,499 @@ paths:
       x-content-type: application/vnd.api+json
       x-accepts:
       - application/vnd.api+json
+  /credit-applications:
+    get:
+      description: List credit applications resources. Paging can be applied.
+      operationId: listCreditApplications
+      parameters:
+      - description: Optional. Maximum number of resources that will be returned.
+          Maximum is 1000 resources. See Pagination.
+        explode: true
+        in: query
+        name: "page[limit]"
+        required: false
+        schema:
+          default: "100"
+          type: string
+        style: form
+      - description: Optional. Number of resources to skip. See Pagination.
+        explode: true
+        in: query
+        name: "page[offset]"
+        required: false
+        schema:
+          default: "0"
+          type: string
+        style: form
+      - description: Optional. Search resources by lending program id.
+        explode: true
+        in: query
+        name: "filter[lendingProgramId]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Search resources by organization id.
+        explode: true
+        in: query
+        name: "filter[orgId]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Search resources by bank id.
+        explode: true
+        in: query
+        name: "filter[bankId]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Search resources by application id.
+        explode: true
+        in: query
+        name: "filter[applicationId]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Search resources by customer id.
+        explode: true
+        in: query
+        name: "filter[customerId]"
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/listCreditApplications_200_response"
+          description: Array of credit application resources.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - credit-applications-read
+      summary: List credit applications
+      tags:
+      - Credit Applications
+      x-accepts:
+      - application/vnd.api+json
+    post:
+      description: "Create a credit application. The request body is one of CreateExistingCreditApplicationRequest\
+        \ (an existing customer, related to a customer) or CreateOnboardingCreditApplicationRequest\
+        \ (a customer being onboarded, related to an application)."
+      operationId: createCreditApplication
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/createCreditApplication_request"
+        required: true
+      responses:
+        "201":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/createCreditApplication_201_response"
+          description: The returned resource after the operation was completed.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - credit-applications-write
+      summary: Create a credit application
+      tags:
+      - Credit Applications
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /credit-applications/{creditApplicationId}:
+    get:
+      description: Get a credit application resource by id.
+      operationId: getCreditApplication
+      parameters:
+      - explode: false
+        in: path
+        name: creditApplicationId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/createCreditApplication_201_response"
+          description: A credit application resource.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - credit-applications-read
+      summary: Get a credit application by id
+      tags:
+      - Credit Applications
+      x-accepts:
+      - application/vnd.api+json
+    patch:
+      description: Update a credit application.
+      operationId: updateCreditApplication
+      parameters:
+      - explode: false
+        in: path
+        name: creditApplicationId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/UpdateCreditApplicationRequest"
+        required: true
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/createCreditApplication_201_response"
+          description: The requested resource after the operation was completed.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      summary: Update a credit application
+      tags:
+      - Credit Applications
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /credit-decisions:
+    get:
+      description: List credit decision resources. Paging can be applied.
+      operationId: listCreditDecisions
+      parameters:
+      - description: Optional. Maximum number of resources that will be returned.
+          Maximum is 1000 resources. See Pagination.
+        explode: true
+        in: query
+        name: "page[limit]"
+        required: false
+        schema:
+          default: "100"
+          type: string
+        style: form
+      - description: Optional. Number of resources to skip. See Pagination.
+        explode: true
+        in: query
+        name: "page[offset]"
+        required: false
+        schema:
+          default: "0"
+          type: string
+        style: form
+      - description: Optional. Filters the results by the specified org id.
+        explode: true
+        in: query
+        name: "filter[orgId]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filters the results by the specified customer id.
+        explode: true
+        in: query
+        name: "filter[customerId]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filters the results by the specified account id.
+        explode: true
+        in: query
+        name: "filter[accountId]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filters the results by the specified application id.
+        explode: true
+        in: query
+        name: "filter[applicationId]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filters the results by the specified bank id.
+        explode: true
+        in: query
+        name: "filter[bankId]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filters the results by the specified decision (one
+          of Approved or Denied).
+        explode: true
+        in: query
+        name: "filter[decision]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filters the results by the specified evaluation type
+          (one of CreditLimit or CreditApplication).
+        explode: true
+        in: query
+        name: "filter[evaluationType]"
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/listCreditDecisions_200_response"
+          description: Array of credit-decisions resources.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - credit-decisions
+      summary: List credit decisions
+      tags:
+      - Credit Decisions
+      x-accepts:
+      - application/vnd.api+json
+    post:
+      description: "Create a credit decision for a credit application. The request\
+        \ body is one of CreateApprovedCreditLimitDecisionRequest (an approved decision\
+        \ for an existing customer), CreateDeniedCreditLimitDecisionRequest (a denied\
+        \ decision for an existing customer), CreateManualReviewCreditLimitDecisionRequest\
+        \ (a manual review decision for an existing customer), CreateDeniedCreditApplicationDecisionRequest\
+        \ (a denied decision before a customer exists) or CreateManualReviewCreditApplicationDecisionRequest\
+        \ (a manual review decision before a customer exists)."
+      operationId: createCreditDecision
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/createCreditDecision_request"
+        required: true
+      responses:
+        "201":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/createCreditDecision_201_response"
+          description: The returned resource after the operation was completed.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - credit-decisions-write
+      summary: Create a credit decision
+      tags:
+      - Credit Decisions
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /credit-decisions/{id}:
+    get:
+      description: Get a credit decision resource by id.
+      operationId: getCreditDecision
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/createCreditDecision_201_response"
+          description: A credit decision resource.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - credit-decisions
+      summary: Get a credit decision by id
+      tags:
+      - Credit Decisions
+      x-accepts:
+      - application/vnd.api+json
 components:
   responses:
     BadRequest:
@@ -14404,6 +14902,448 @@ components:
       - id
       - type
       type: object
+    ExistingCustomerCreditApplication:
+      description: "`ExistingCustomerCreditApplication` is a JSON:API resource, top-level\
+        \ fields:"
+      example:
+        type: existingCustomerCreditApplication
+        id: "12"
+        attributes:
+          createdAt: 2024-02-18T12:33:32.158Z
+          status: Pending
+          aggregatorAccessTokens: []
+          annualIncome: 1
+          numberOfEmployees: One
+          yearsInBusiness: 4
+          additionalUnderwritingData:
+            dad: dada
+        relationships:
+          customer:
+            data:
+              type: customer
+              id: "10002"
+          lendingProgram:
+            data:
+              type: lendingProgram
+              id: "1"
+      properties:
+        type:
+          enum:
+          - existingCustomerCreditApplication
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/ExistingCustomerCreditApplication_attributes"
+        relationships:
+          $ref: "#/components/schemas/ExistingCustomerCreditApplication_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    OnboardingCreditApplication:
+      description: "`OnboardingCreditApplication` is a JSON:API resource, top-level\
+        \ fields:"
+      example:
+        type: onboardingCustomerCreditApplication
+        id: "10"
+        attributes:
+          createdAt: 2024-02-18T11:19:44.838Z
+          status: Created
+          aggregatorAccessTokens: []
+          annualIncome: null
+          numberOfEmployees: null
+          yearsInBusiness: null
+          additionalUnderwritingData: null
+        relationships:
+          application:
+            data:
+              type: application
+              id: "10002"
+          lendingProgram:
+            data:
+              type: lendingProgram
+              id: "1"
+      properties:
+        type:
+          enum:
+          - onboardingCustomerCreditApplication
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/ExistingCustomerCreditApplication_attributes"
+        relationships:
+          $ref: "#/components/schemas/OnboardingCreditApplication_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    CreateExistingCreditApplicationData:
+      properties:
+        type:
+          enum:
+          - createExistingCustomerCreditApplication
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CreateExistingCreditApplicationData_attributes"
+        relationships:
+          $ref: "#/components/schemas/CreateExistingCreditApplicationData_relationships"
+      required:
+      - attributes
+      - relationships
+      - type
+      type: object
+    CreateExistingCreditApplicationRequest:
+      properties:
+        data:
+          $ref: "#/components/schemas/CreateExistingCreditApplicationData"
+      required:
+      - data
+      type: object
+    CreateOnboardingCreditApplicationData:
+      properties:
+        type:
+          enum:
+          - createOnboardingCustomerCreditApplication
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CreateOnboardingCreditApplicationData_attributes"
+        relationships:
+          $ref: "#/components/schemas/CreateOnboardingCreditApplicationData_relationships"
+      required:
+      - attributes
+      - relationships
+      - type
+      type: object
+    CreateOnboardingCreditApplicationRequest:
+      properties:
+        data:
+          $ref: "#/components/schemas/CreateOnboardingCreditApplicationData"
+      required:
+      - data
+      type: object
+    UpdateCreditApplicationData:
+      properties:
+        type:
+          enum:
+          - patchCreditApplication
+          type: string
+        attributes:
+          $ref: "#/components/schemas/UpdateCreditApplicationData_attributes"
+      required:
+      - attributes
+      - type
+      type: object
+    UpdateCreditApplicationRequest:
+      properties:
+        data:
+          $ref: "#/components/schemas/UpdateCreditApplicationData"
+      required:
+      - data
+      type: object
+    ApprovedCreditLimitDecision:
+      example:
+        type: approvedCreditLimitDecision
+        id: "1"
+        attributes:
+          createdAt: 2023-07-04T15:21:11.688Z
+          externalApplicationId: A1234
+          evaluationType: CreditLimit
+          submissionTimestamp: 2023-09-19T09:10:09.206Z
+          decisionTimestamp: 2023-09-19T09:10:09.206Z
+          decision: Approved
+          policyException: true
+          policyExceptionReason: Executive approval
+          additionalUnderwritingData:
+            someKey1: someValue1
+            someKey2: someValue2
+            someKey3: someValue3
+        relationships:
+          account:
+            data:
+              type: account
+              id: "10005"
+      properties:
+        type:
+          enum:
+          - approvedCreditLimitDecision
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/ApprovedCreditLimitDecision_attributes"
+        relationships:
+          $ref: "#/components/schemas/ApprovedCreditLimitDecision_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    DeniedCreditLimitDecision:
+      example:
+        type: deniedCreditLimitDecision
+        id: "1"
+        attributes:
+          createdAt: 2023-07-04T15:21:11.688Z
+          externalApplicationId: A1234
+          evaluationType: CreditLimit
+          submissionTimestamp: 2023-09-19T09:10:09.206Z
+          decisionTimestamp: 2023-09-19T09:10:09.206Z
+          decision: Denied
+          policyException: true
+          policyExceptionReason: Executive approval
+          additionalUnderwritingData:
+            someKey1: someValue1
+            someKey2: someValue2
+            someKey3: someValue3
+        relationships:
+          account:
+            data:
+              type: account
+              id: "10005"
+      properties:
+        type:
+          enum:
+          - deniedCreditLimitDecision
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/ApprovedCreditLimitDecision_attributes"
+        relationships:
+          $ref: "#/components/schemas/ApprovedCreditLimitDecision_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    ManualReviewCreditLimitDecision:
+      example:
+        type: manualReviewCreditLimitDecision
+        id: "1"
+        attributes:
+          createdAt: 2023-07-04T15:21:11.688Z
+          externalApplicationId: A1234
+          evaluationType: CreditLimit
+          submissionTimestamp: 2023-09-19T09:10:09.206Z
+          decisionTimestamp: 2023-09-19T09:10:09.206Z
+          decision: ManualReview
+          policyException: true
+          policyExceptionReason: Executive approval
+          additionalUnderwritingData:
+            someKey1: someValue1
+            someKey2: someValue2
+            someKey3: someValue3
+        relationships:
+          account:
+            data:
+              type: account
+              id: "10005"
+      properties:
+        type:
+          enum:
+          - manualReviewCreditLimitDecision
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/ManualReviewCreditLimitDecision_attributes"
+        relationships:
+          $ref: "#/components/schemas/ApprovedCreditLimitDecision_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    DeniedCreditApplicationDecision:
+      example:
+        type: deniedCreditApplicationDecision
+        id: "1"
+        attributes:
+          createdAt: 2023-07-04T15:21:11.688Z
+          externalApplicationId: A1234
+          evaluationType: CreditApplication
+          submissionTimestamp: 2023-09-19T09:10:09.206Z
+          decisionTimestamp: 2023-09-19T09:10:09.206Z
+          decision: Denied
+          policyException: true
+          policyExceptionReason: Executive approval
+          additionalUnderwritingData:
+            someKey1: someValue1
+            someKey2: someValue2
+            someKey3: someValue3
+        relationships:
+          application:
+            data:
+              type: application
+              id: "10005"
+      properties:
+        type:
+          enum:
+          - deniedCreditApplicationDecision
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/DeniedCreditApplicationDecision_attributes"
+        relationships:
+          $ref: "#/components/schemas/DeniedCreditApplicationDecision_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    ManualReviewCreditApplicationDecision:
+      example:
+        type: manualReviewCreditApplicationDecision
+        id: "1"
+        attributes:
+          createdAt: 2023-07-04T15:21:11.688Z
+          externalApplicationId: A1234
+          evaluationType: CreditApplication
+          submissionTimestamp: 2023-09-19T09:10:09.206Z
+          decisionTimestamp: 2023-09-19T09:10:09.206Z
+          decision: ManualReview
+          policyException: true
+          policyExceptionReason: Executive approval
+          additionalUnderwritingData:
+            someKey1: someValue1
+            someKey2: someValue2
+            someKey3: someValue3
+        relationships:
+          application:
+            data:
+              type: application
+              id: "10005"
+      properties:
+        type:
+          enum:
+          - manualReviewCreditApplicationDecision
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/ManualReviewCreditApplicationDecision_attributes"
+        relationships:
+          $ref: "#/components/schemas/DeniedCreditApplicationDecision_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+    CreateApprovedCreditLimitDecisionData:
+      properties:
+        type:
+          enum:
+          - approvedCreditLimitDecision
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CreateApprovedCreditLimitDecisionData_attributes"
+        relationships:
+          $ref: "#/components/schemas/CreateApprovedCreditLimitDecisionData_relationships"
+      required:
+      - attributes
+      - relationships
+      - type
+      type: object
+    CreateApprovedCreditLimitDecisionRequest:
+      properties:
+        data:
+          $ref: "#/components/schemas/CreateApprovedCreditLimitDecisionData"
+      required:
+      - data
+      type: object
+    CreateDeniedCreditLimitDecisionData:
+      properties:
+        type:
+          enum:
+          - deniedCreditLimitDecision
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CreateDeniedCreditLimitDecisionData_attributes"
+        relationships:
+          $ref: "#/components/schemas/CreateApprovedCreditLimitDecisionData_relationships"
+      required:
+      - attributes
+      - relationships
+      - type
+      type: object
+    CreateDeniedCreditLimitDecisionRequest:
+      properties:
+        data:
+          $ref: "#/components/schemas/CreateDeniedCreditLimitDecisionData"
+      required:
+      - data
+      type: object
+    CreateManualReviewCreditLimitDecisionData:
+      properties:
+        type:
+          enum:
+          - manualReviewCreditLimitDecision
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CreateManualReviewCreditLimitDecisionData_attributes"
+        relationships:
+          $ref: "#/components/schemas/CreateApprovedCreditLimitDecisionData_relationships"
+      required:
+      - attributes
+      - relationships
+      - type
+      type: object
+    CreateManualReviewCreditLimitDecisionRequest:
+      properties:
+        data:
+          $ref: "#/components/schemas/CreateManualReviewCreditLimitDecisionData"
+      required:
+      - data
+      type: object
+    CreateDeniedCreditApplicationDecisionData:
+      properties:
+        type:
+          enum:
+          - deniedCreditApplicationDecision
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CreateDeniedCreditApplicationDecisionData_attributes"
+        relationships:
+          $ref: "#/components/schemas/CreateApprovedCreditLimitDecisionData_relationships"
+      required:
+      - attributes
+      - relationships
+      - type
+      type: object
+    CreateDeniedCreditApplicationDecisionRequest:
+      properties:
+        data:
+          $ref: "#/components/schemas/CreateDeniedCreditApplicationDecisionData"
+      required:
+      - data
+      type: object
+    CreateManualReviewCreditApplicationDecisionData:
+      properties:
+        type:
+          enum:
+          - manualReviewCreditApplicationDecision
+          type: string
+        attributes:
+          $ref: "#/components/schemas/CreateManualReviewCreditApplicationDecisionData_attributes"
+        relationships:
+          $ref: "#/components/schemas/CreateApprovedCreditLimitDecisionData_relationships"
+      required:
+      - attributes
+      - relationships
+      - type
+      type: object
+    CreateManualReviewCreditApplicationDecisionRequest:
+      properties:
+        data:
+          $ref: "#/components/schemas/CreateManualReviewCreditApplicationDecisionData"
+      required:
+      - data
+      type: object
     list_200_response_data_inner:
       discriminator:
         mapping:
@@ -15640,6 +16580,73 @@ components:
       properties:
         data:
           $ref: "#/components/schemas/Authorization"
+      required:
+      - data
+      type: object
+    listCreditApplications_200_response_data_inner:
+      discriminator:
+        mapping:
+          existingCustomerCreditApplication: "#/components/schemas/ExistingCustomerCreditApplication"
+          onboardingCustomerCreditApplication: "#/components/schemas/OnboardingCreditApplication"
+        propertyName: type
+      oneOf:
+      - $ref: "#/components/schemas/ExistingCustomerCreditApplication"
+      - $ref: "#/components/schemas/OnboardingCreditApplication"
+    listCreditApplications_200_response:
+      properties:
+        data:
+          items:
+            $ref: "#/components/schemas/listCreditApplications_200_response_data_inner"
+          type: array
+      required:
+      - data
+      type: object
+    createCreditApplication_request:
+      oneOf:
+      - $ref: "#/components/schemas/CreateExistingCreditApplicationRequest"
+      - $ref: "#/components/schemas/CreateOnboardingCreditApplicationRequest"
+    createCreditApplication_201_response:
+      properties:
+        data:
+          $ref: "#/components/schemas/listCreditApplications_200_response_data_inner"
+      required:
+      - data
+      type: object
+    listCreditDecisions_200_response_data_inner:
+      discriminator:
+        mapping:
+          approvedCreditLimitDecision: "#/components/schemas/ApprovedCreditLimitDecision"
+          deniedCreditLimitDecision: "#/components/schemas/DeniedCreditLimitDecision"
+          manualReviewCreditLimitDecision: "#/components/schemas/ManualReviewCreditLimitDecision"
+          deniedCreditApplicationDecision: "#/components/schemas/DeniedCreditApplicationDecision"
+          manualReviewCreditApplicationDecision: "#/components/schemas/ManualReviewCreditApplicationDecision"
+        propertyName: type
+      oneOf:
+      - $ref: "#/components/schemas/ApprovedCreditLimitDecision"
+      - $ref: "#/components/schemas/DeniedCreditLimitDecision"
+      - $ref: "#/components/schemas/ManualReviewCreditLimitDecision"
+      - $ref: "#/components/schemas/DeniedCreditApplicationDecision"
+      - $ref: "#/components/schemas/ManualReviewCreditApplicationDecision"
+    listCreditDecisions_200_response:
+      properties:
+        data:
+          items:
+            $ref: "#/components/schemas/listCreditDecisions_200_response_data_inner"
+          type: array
+      required:
+      - data
+      type: object
+    createCreditDecision_request:
+      oneOf:
+      - $ref: "#/components/schemas/CreateApprovedCreditLimitDecisionRequest"
+      - $ref: "#/components/schemas/CreateDeniedCreditLimitDecisionRequest"
+      - $ref: "#/components/schemas/CreateManualReviewCreditLimitDecisionRequest"
+      - $ref: "#/components/schemas/CreateDeniedCreditApplicationDecisionRequest"
+      - $ref: "#/components/schemas/CreateManualReviewCreditApplicationDecisionRequest"
+    createCreditDecision_201_response:
+      properties:
+        data:
+          $ref: "#/components/schemas/listCreditDecisions_200_response_data_inner"
       required:
       - data
       type: object
@@ -22035,6 +23042,619 @@ components:
           $ref: "#/components/schemas/Relationship"
         authorizationRequest:
           $ref: "#/components/schemas/Relationship"
+      type: object
+    ExistingCustomerCreditApplication_attributes:
+      properties:
+        createdAt:
+          description: The date the resource was created.
+          format: date-time
+          type: string
+        status:
+          description: "The status of the credit application. One of Created, Pending,\
+            \ Approved, Denied, Canceled."
+          type: string
+        aggregatorAccessTokens:
+          description: Array of aggregator access tokens which are Plaid (or other
+            account linking platform) integration tokens. See Plaid processor token
+          items:
+            type: string
+          type: array
+        annualIncome:
+          description: The annual income of the applicant.
+          nullable: true
+          type: integer
+        numberOfEmployees:
+          allOf:
+          - $ref: "#/components/schemas/NumberOfEmployeesType"
+          description: Number of employees of the business.
+          nullable: true
+          type: string
+        yearsInBusiness:
+          description: Number of years the business has been in operation.
+          nullable: true
+          type: integer
+        additionalUnderwritingData:
+          additionalProperties: true
+          description: Object containing key-value pairs of underwriting data per
+            credit policy.
+          nullable: true
+          type: object
+      required:
+      - createdAt
+      - status
+      type: object
+    ExistingCustomerCreditApplication_relationships:
+      properties:
+        customer:
+          $ref: "#/components/schemas/Relationship"
+        lendingProgram:
+          $ref: "#/components/schemas/Relationship"
+      type: object
+    OnboardingCreditApplication_relationships:
+      properties:
+        application:
+          $ref: "#/components/schemas/Relationship"
+        lendingProgram:
+          $ref: "#/components/schemas/Relationship"
+      type: object
+    CreateExistingCreditApplicationData_attributes:
+      properties:
+        aggregatorAccessTokens:
+          description: Array of aggregator access tokens which are Plaid (or other
+            account linking platform) integration tokens. See Plaid processor token
+          items:
+            type: string
+          type: array
+        annualIncome:
+          description: The annual income of the applicant.
+          example: 1
+          type: integer
+        numberOfEmployees:
+          allOf:
+          - $ref: "#/components/schemas/BusinessNumberOfEmployeesType"
+          description: Number of employees of the business.
+          example: One
+        yearsInBusiness:
+          description: Number of years the business has been in operation.
+          example: 4
+          type: integer
+        additionalUnderwritingData:
+          additionalProperties: true
+          description: Object containing key-value pairs of underwriting data per
+            credit policy.
+          example:
+            dad: dada
+          type: object
+        idempotencyKey:
+          description: See Idempotency.
+          type: string
+      type: object
+    CreateExistingCreditApplicationData_relationships:
+      properties:
+        customer:
+          $ref: "#/components/schemas/Relationship"
+        lendingProgram:
+          $ref: "#/components/schemas/Relationship"
+      required:
+      - customer
+      - lendingProgram
+      type: object
+    CreateOnboardingCreditApplicationData_attributes:
+      properties:
+        aggregatorAccessTokens:
+          description: Array of aggregator access tokens which are Plaid (or other
+            account linking platform) integration tokens. See Plaid processor token
+          items:
+            type: string
+          type: array
+        annualIncome:
+          description: The annual income of the applicant.
+          type: integer
+        numberOfEmployees:
+          allOf:
+          - $ref: "#/components/schemas/BusinessNumberOfEmployeesType"
+          description: Number of employees of the business.
+        yearsInBusiness:
+          description: Number of years the business has been in operation.
+          type: integer
+        additionalUnderwritingData:
+          additionalProperties: true
+          description: Object containing key-value pairs of underwriting data per
+            credit policy.
+          type: object
+        idempotencyKey:
+          description: See Idempotency.
+          type: string
+      type: object
+    CreateOnboardingCreditApplicationData_relationships:
+      properties:
+        application:
+          $ref: "#/components/schemas/Relationship"
+        lendingProgram:
+          $ref: "#/components/schemas/Relationship"
+      required:
+      - application
+      - lendingProgram
+      type: object
+    UpdateCreditApplicationData_attributes:
+      properties:
+        aggregatorAccessTokens:
+          description: Array of aggregator access tokens which are Plaid (or other
+            account linking platform) integration tokens. See Plaid processor token
+          items:
+            type: string
+          type: array
+        annualIncome:
+          description: The annual income of the applicant.
+          type: integer
+        numberOfEmployees:
+          allOf:
+          - $ref: "#/components/schemas/BusinessNumberOfEmployeesType"
+          description: Number of employees of the business.
+          example: Between2And5
+        yearsInBusiness:
+          description: Number of years the business has been in operation.
+          type: integer
+        additionalUnderwritingData:
+          additionalProperties: true
+          description: Object containing key-value pairs of underwriting data per
+            credit policy.
+          type: object
+      type: object
+    ApprovedCreditLimitDecision_attributes:
+      properties:
+        createdAt:
+          description: The date the resource was created.
+          format: date-time
+          type: string
+        externalApplicationId:
+          description: Identifier for client's credit evaluation related to this decision.
+            Max 200 char.
+          type: string
+        evaluationType:
+          description: The type of credit decision. This is always CreditLimit.
+          type: string
+        submissionTimestamp:
+          description: Timestamp when the corresponding credit application was submitted.
+          format: date-time
+          type: string
+        decisionTimestamp:
+          description: Timestamp when the credit decision was made.
+          format: date-time
+          type: string
+        decision:
+          description: The Decision for this credit application.
+          type: string
+        policyException:
+          description: One of true or false.
+          type: boolean
+        policyExceptionReason:
+          description: Conditional if policyException is true. Brief description of
+            reason for policy exception. Max 200 char.
+          type: string
+        additionalUnderwritingData:
+          additionalProperties: true
+          description: Object containing key-value pairs of underwriting data per
+            credit policy.
+          type: object
+      required:
+      - createdAt
+      - decision
+      - decisionTimestamp
+      - evaluationType
+      - externalApplicationId
+      - policyException
+      - submissionTimestamp
+      type: object
+    ApprovedCreditLimitDecision_relationships:
+      properties:
+        account:
+          $ref: "#/components/schemas/Relationship"
+        creditApplication:
+          $ref: "#/components/schemas/Relationship"
+      type: object
+    ManualReviewCreditLimitDecision_attributes:
+      properties:
+        createdAt:
+          description: The date the resource was created.
+          format: date-time
+          type: string
+        externalApplicationId:
+          description: Identifier for client's credit evaluation related to this decision.
+            Max 200 char.
+          type: string
+        evaluationType:
+          description: The type of credit decision. This is always CreditLimit.
+          type: string
+        submissionTimestamp:
+          description: Timestamp when the corresponding credit application was submitted.
+          format: date-time
+          type: string
+        decisionTimestamp:
+          description: Timestamp when the credit decision was made.
+          format: date-time
+          type: string
+        decision:
+          description: The Decision for this credit application. This is always ManualReview.
+          type: string
+        policyException:
+          description: One of true or false.
+          type: boolean
+        policyExceptionReason:
+          description: Conditional if policyException is true. Brief description of
+            reason for policy exception. Max 200 char.
+          type: string
+        additionalUnderwritingData:
+          additionalProperties: true
+          description: Object containing key-value pairs of underwriting data per
+            credit policy.
+          type: object
+      required:
+      - createdAt
+      - decision
+      - decisionTimestamp
+      - evaluationType
+      - externalApplicationId
+      - policyException
+      - submissionTimestamp
+      type: object
+    DeniedCreditApplicationDecision_attributes:
+      properties:
+        createdAt:
+          description: The date the resource was created.
+          format: date-time
+          type: string
+        externalApplicationId:
+          description: Identifier for client's credit evaluation related to this decision.
+            Max 200 char.
+          type: string
+        evaluationType:
+          description: The type of credit decision. This is always CreditApplication.
+          type: string
+        submissionTimestamp:
+          description: Timestamp when the corresponding credit application was submitted.
+          format: date-time
+          type: string
+        decisionTimestamp:
+          description: Timestamp when the credit decision was made.
+          format: date-time
+          type: string
+        decision:
+          description: The Decision for this credit application.
+          type: string
+        policyException:
+          description: One of true or false.
+          type: boolean
+        policyExceptionReason:
+          description: Conditional if policyException is true. Brief description of
+            reason for policy exception. Max 200 char.
+          type: string
+        additionalUnderwritingData:
+          additionalProperties: true
+          description: Object containing key-value pairs of underwriting data per
+            credit policy.
+          type: object
+      required:
+      - createdAt
+      - decision
+      - decisionTimestamp
+      - evaluationType
+      - externalApplicationId
+      - policyException
+      - submissionTimestamp
+      type: object
+    DeniedCreditApplicationDecision_relationships:
+      properties:
+        application:
+          $ref: "#/components/schemas/Relationship"
+        creditApplication:
+          $ref: "#/components/schemas/Relationship"
+      type: object
+    ManualReviewCreditApplicationDecision_attributes:
+      properties:
+        createdAt:
+          description: The date the resource was created.
+          format: date-time
+          type: string
+        externalApplicationId:
+          description: Identifier for client's credit evaluation related to this decision.
+            Max 200 char.
+          type: string
+        evaluationType:
+          description: The type of credit decision. This is always CreditApplication.
+          type: string
+        submissionTimestamp:
+          description: Timestamp when the corresponding credit application was submitted.
+          format: date-time
+          type: string
+        decisionTimestamp:
+          description: Timestamp when the credit decision was made.
+          format: date-time
+          type: string
+        decision:
+          description: The Decision for this credit application. This is always ManualReview.
+          type: string
+        policyException:
+          description: One of true or false.
+          type: boolean
+        policyExceptionReason:
+          description: Conditional if policyException is true. Brief description of
+            reason for policy exception. Max 200 char.
+          type: string
+        additionalUnderwritingData:
+          additionalProperties: true
+          description: Object containing key-value pairs of underwriting data per
+            credit policy.
+          type: object
+      required:
+      - createdAt
+      - decision
+      - decisionTimestamp
+      - evaluationType
+      - externalApplicationId
+      - policyException
+      - submissionTimestamp
+      type: object
+    CreateApprovedCreditLimitDecisionData_attributes:
+      properties:
+        externalApplicationId:
+          description: Identifier for client's credit evaluation related to this decision.
+            Max 200 char.
+          example: A1234
+          type: string
+        submissionTimestamp:
+          description: Timestamp when the corresponding credit application was submitted.
+          example: 2023-09-19T09:10:09.206Z
+          format: date-time
+          type: string
+        decisionTimestamp:
+          description: Timestamp when the credit decision was made.
+          example: 2023-09-19T09:10:09.206Z
+          format: date-time
+          type: string
+        creditLimit:
+          description: Credit limit for application as evaluated per policy. In cents.
+          example: 1000000
+          type: integer
+        policyException:
+          description: One of true or false.
+          example: true
+          type: boolean
+        policyExceptionReason:
+          description: Conditional if policyException is true. Brief description of
+            reason for policy exception. Max 200 char.
+          example: Executive approval
+          type: string
+        additionalUnderwritingData:
+          additionalProperties: true
+          description: Object containing key-value pairs of underwriting data per
+            credit policy.
+          example:
+            someKey1: someValue1
+            someKey2: someValue2
+            someKey3: someValue3
+          type: object
+        idempotencyKey:
+          description: See Idempotency.
+          example: 3q1a3sbe-se12-4603-8ed0-820923389fb1
+          type: string
+      required:
+      - additionalUnderwritingData
+      - creditLimit
+      - decisionTimestamp
+      - externalApplicationId
+      - policyException
+      - policyExceptionReason
+      - submissionTimestamp
+      type: object
+    CreateApprovedCreditLimitDecisionData_relationships:
+      properties:
+        creditApplication:
+          $ref: "#/components/schemas/Relationship"
+      required:
+      - creditApplication
+      type: object
+    CreateDeniedCreditLimitDecisionData_attributes:
+      properties:
+        externalApplicationId:
+          description: Identifier for client's credit evaluation related to this decision.
+            Max 200 char.
+          example: A1234
+          type: string
+        submissionTimestamp:
+          description: Timestamp when the corresponding credit application was submitted.
+          example: 2023-09-19T09:10:09.206Z
+          format: date-time
+          type: string
+        decisionTimestamp:
+          description: Timestamp when the credit decision was made.
+          example: 2023-09-19T09:10:09.206Z
+          format: date-time
+          type: string
+        policyException:
+          description: One of true or false.
+          example: true
+          type: boolean
+        policyExceptionReason:
+          description: Conditional if policyException is true. Brief description of
+            reason for policy exception. Max 200 char.
+          example: Executive approval
+          type: string
+        additionalUnderwritingData:
+          additionalProperties: true
+          description: Object containing key-value pairs of underwriting data per
+            credit policy.
+          example:
+            someKey1: someValue1
+            someKey2: someValue2
+            someKey3: someValue3
+          type: object
+        decisionReason:
+          description: Reason for denial per credit policy. Max 200 char.
+          example: this is a decline reason
+          type: string
+        adverseActionReasons:
+          description: Array of strings representing Adverse action reasons (must
+            have at least one). Max 200 char per reason.
+          example:
+          - adverse action reason 1
+          - adverse action reason 2
+          items:
+            type: string
+          type: array
+        idempotencyKey:
+          description: See Idempotency.
+          example: 3q1a3sbe-se12-4603-8ed0-820923389fb1
+          type: string
+      required:
+      - additionalUnderwritingData
+      - adverseActionReasons
+      - decisionReason
+      - decisionTimestamp
+      - externalApplicationId
+      - policyException
+      - policyExceptionReason
+      - submissionTimestamp
+      type: object
+    CreateManualReviewCreditLimitDecisionData_attributes:
+      properties:
+        externalApplicationId:
+          description: Identifier for client's credit evaluation related to this decision.
+            Max 200 char.
+          example: A1234
+          type: string
+        submissionTimestamp:
+          description: Timestamp when the corresponding credit application was submitted.
+          example: 2023-09-19T09:10:09.206Z
+          format: date-time
+          type: string
+        decisionTimestamp:
+          description: Timestamp when the credit decision was made.
+          example: 2023-09-19T09:10:09.206Z
+          format: date-time
+          type: string
+        policyException:
+          description: One of true or false.
+          example: true
+          type: boolean
+        policyExceptionReason:
+          description: Conditional if policyException is true. Brief description of
+            reason for policy exception. Max 200 char.
+          example: Executive approval
+          type: string
+        additionalUnderwritingData:
+          additionalProperties: true
+          description: Object containing key-value pairs of underwriting data per
+            credit policy.
+          example:
+            someKey1: someValue1
+            someKey2: someValue2
+            someKey3: someValue3
+          type: object
+        idempotencyKey:
+          description: See Idempotency.
+          example: 3q1a3sbe-se12-4603-8ed0-820923389fb1
+          type: string
+      required:
+      - additionalUnderwritingData
+      - decisionTimestamp
+      - externalApplicationId
+      - policyException
+      - policyExceptionReason
+      - submissionTimestamp
+      type: object
+    CreateDeniedCreditApplicationDecisionData_attributes:
+      properties:
+        externalApplicationId:
+          description: Identifier for client's credit evaluation related to this decision.
+            Max 200 char.
+          example: A1234
+          type: string
+        submissionTimestamp:
+          description: Timestamp when the corresponding credit application was submitted.
+          example: 2023-09-19T09:10:09.206Z
+          format: date-time
+          type: string
+        decisionTimestamp:
+          description: Timestamp when the credit decision was made.
+          example: 2023-09-19T09:10:09.206Z
+          format: date-time
+          type: string
+        decisionReason:
+          description: Reason for denial per credit policy. Max 200 char.
+          example: this is a decline reason
+          type: string
+        adverseActionReasons:
+          description: Array of strings representing Adverse action reasons (must
+            have at least one). Max 200 char per reason.
+          example:
+          - adverse action reason 1
+          - adverse action reason 2
+          items:
+            type: string
+          type: array
+        policyException:
+          description: One of true or false.
+          example: false
+          type: boolean
+        policyExceptionReason:
+          description: Conditional if policyException is true. Brief description of
+            reason for policy exception. Max 200 char.
+          type: string
+        additionalUnderwritingData:
+          additionalProperties: true
+          description: Object containing key-value pairs of underwriting data per
+            credit policy.
+          example:
+            someKey1: someValue1
+            someKey2: someValue2
+            someKey3: someValue3
+          type: object
+        idempotencyKey:
+          description: See Idempotency.
+          example: 3q1a3sbe-se12-4603-8ed0-820923389fb1
+          type: string
+      required:
+      - additionalUnderwritingData
+      - adverseActionReasons
+      - decisionReason
+      - decisionTimestamp
+      - externalApplicationId
+      - policyException
+      - policyExceptionReason
+      - submissionTimestamp
+      type: object
+    CreateManualReviewCreditApplicationDecisionData_attributes:
+      properties:
+        externalApplicationId:
+          description: Identifier for client's credit evaluation related to this decision.
+            Max 200 char.
+          example: A1234
+          type: string
+        submissionTimestamp:
+          description: Timestamp when the corresponding credit application was submitted.
+          example: 2023-09-19T09:10:09.206Z
+          format: date-time
+          type: string
+        decisionTimestamp:
+          description: Timestamp when the credit decision was made.
+          example: 2023-09-19T09:10:09.206Z
+          format: date-time
+          type: string
+        policyException:
+          description: One of true or false.
+          example: false
+          type: boolean
+        policyExceptionReason:
+          description: Conditional if policyException is true. Brief description of
+            reason for policy
+          type: string
+      required:
+      - decisionTimestamp
+      - externalApplicationId
+      - policyException
+      - policyExceptionReason
+      - submissionTimestamp
       type: object
   securitySchemes:
     bearerAuth:
