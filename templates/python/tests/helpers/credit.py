@@ -79,10 +79,11 @@ def create_credit_application_or_skip() -> Optional[Tuple[int, Any]]:
 
 
 def get_credit_application_id() -> Optional[str]:
-    """A credit application id for get/update/decision to reuse.
+    """A credit application id for get/decision to reuse.
 
-    Prefer one this run created so the update suite never patches an unrelated
-    org resource; fall back to an existing one.
+    Prefer one this run created so the suites never touch an unrelated org
+    resource; fall back to an existing one. The update suite deliberately does
+    NOT share this one -- see ``get_patchable_credit_application_id``.
     """
     global _cached_application_id, _application_id_resolved
     if _application_id_resolved:
@@ -100,6 +101,32 @@ def get_credit_application_id() -> Optional[str]:
             _cached_application_id = item_id
             break
     return _cached_application_id
+
+
+def get_patchable_credit_application_id() -> Optional[str]:
+    """A credit application the update suite may PATCH.
+
+    Recording an approved decision flips an application to ``Approved``, and the
+    API then refuses the PATCH with 400
+    ``not_supported_for_credit_application_status``. Sharing one application
+    between the update and create-decision suites therefore makes the run
+    order-dependent -- which is exactly how this broke on CI for Java, where
+    Surefire's filesystem order put the decision first. So the update suite
+    always mints its own application and only ever falls back to one still in
+    ``Pending``.
+    """
+    created = create_credit_application_or_skip()
+    if created is not None:
+        created_id = getattr(unwrap(created[1].data), "id", None)
+        if isinstance(created_id, str):
+            return created_id
+    for item in list_credit_applications_or_skip() or []:
+        resource = unwrap(item)
+        status = getattr(getattr(resource, "attributes", None), "status", None)
+        item_id = getattr(resource, "id", None)
+        if status is not None and str(status) == "Pending" and isinstance(item_id, str):
+            return item_id
+    return None
 
 
 def list_credit_decisions_or_skip() -> Optional[List[Any]]:

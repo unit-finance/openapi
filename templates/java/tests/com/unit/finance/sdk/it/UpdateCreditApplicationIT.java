@@ -14,7 +14,9 @@ class UpdateCreditApplicationIT {
   @Test
   void patchesTheUnderwritingAttributesOfACreditApplication() throws Exception {
     ApiSupport.assumeToken();
-    String applicationId = Credit.applicationId();
+    // A dedicated application: an approved decision would flip the shared one
+    // to `Approved`, which the API refuses to PATCH.
+    String applicationId = Credit.patchableApplicationId();
     if (applicationId == null) {
       return;
     }

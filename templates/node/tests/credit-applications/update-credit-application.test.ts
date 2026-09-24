@@ -1,10 +1,12 @@
 import { buildCreditApplicationsApi, describeIfToken } from "../helpers/api";
-import { getCreditApplicationId } from "../helpers/credit";
+import { getPatchableCreditApplicationId } from "../helpers/credit";
 import { buildUpdateCreditApplicationRequest } from "../helpers/fixtures";
 
 describeIfToken("CreditApplicationsApi.updateCreditApplication", () => {
 	it("patches the underwriting attributes of a credit application", async () => {
-		const creditApplicationId = await getCreditApplicationId();
+		// A dedicated application: an approved decision would flip the shared one
+		// to `Approved`, which the API refuses to PATCH.
+		const creditApplicationId = await getPatchableCreditApplicationId();
 		if (!creditApplicationId) return;
 
 		const api = buildCreditApplicationsApi();

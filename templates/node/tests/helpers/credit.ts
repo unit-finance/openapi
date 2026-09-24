@@ -103,9 +103,12 @@ export async function createCreditApplicationOrSkip(
 let cachedApplicationId: Promise<string | null> | null = null;
 
 /**
- * A credit application id for get/update/decision to reuse. Prefer one this
- * run created so the update suite never patches an unrelated org resource;
- * fall back to an existing one. `null` when neither is available.
+ * A credit application id for get/decision to reuse. Prefer one this run
+ * created so the suites never touch an unrelated org resource; fall back to an
+ * existing one. `null` when neither is available.
+ *
+ * The update suite deliberately does NOT share this one — see
+ * `getPatchableCreditApplicationId`.
  */
 export function getCreditApplicationId(): Promise<string | null> {
 	if (cachedApplicationId) return cachedApplicationId;
@@ -118,6 +121,36 @@ export function getCreditApplicationId(): Promise<string | null> {
 		return first && typeof first.id === "string" ? first.id : null;
 	})();
 	return cachedApplicationId;
+}
+
+function statusOf(item: Record<string, unknown>): string | undefined {
+	const attributes = item.attributes;
+	if (!attributes || typeof attributes !== "object") return undefined;
+	const status = (attributes as { status?: unknown }).status;
+	return typeof status === "string" ? status : undefined;
+}
+
+/**
+ * A credit application the update suite may PATCH.
+ *
+ * Recording an approved decision flips an application to `Approved`, and the
+ * API then refuses the PATCH with **400
+ * `not_supported_for_credit_application_status`**. Sharing one application
+ * between the update and create-decision suites therefore makes the run
+ * order-dependent — which is exactly how this broke on CI, where Surefire's
+ * filesystem order put the decision first. So the update suite always mints
+ * its own application and only ever falls back to one still in `Pending`.
+ */
+export async function getPatchableCreditApplicationId(): Promise<string | null> {
+	const created = await createCreditApplicationOrSkip();
+	const createdId = created?.data.data?.id;
+	if (typeof createdId === "string") return createdId;
+	for (const item of (await listCreditApplicationsOrSkip()) ?? []) {
+		if (statusOf(item) === "Pending" && typeof item.id === "string") {
+			return item.id;
+		}
+	}
+	return null;
 }
 
 export async function listCreditDecisionsOrSkip(
