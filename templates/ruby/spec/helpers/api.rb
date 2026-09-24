@@ -13,6 +13,13 @@ module Helpers
     # artifacts can be filtered out of the sandbox later.
     TEST_RUN_ID = "sdk-ruby-#{Time.now.to_i.to_s(16)}-#{SecureRandom.hex(3)}".freeze
 
+    # `GET /credit-applications/{id}` and `GET /credit-decisions/{id}` reject any
+    # request that omits a `Content-Type: application/vnd.api+json` header with
+    # 415, even though neither takes a body. The spec declares no request body
+    # for them, so the generated clients send no `Content-Type` and every
+    # single-resource read fails. Specs pass this via `header_params`.
+    VND_API_JSON_HEADERS = { 'Content-Type' => 'application/vnd.api+json' }.freeze
+
     module_function
 
     def configuration
@@ -102,6 +109,14 @@ module Helpers
 
     def build_cards_authorizations_api
       UnitFinanceSdk::CardsAuthorizationsApi.new(UnitFinanceSdk::ApiClient.new(configuration))
+    end
+
+    def build_credit_applications_api
+      UnitFinanceSdk::CreditApplicationsApi.new(UnitFinanceSdk::ApiClient.new(configuration))
+    end
+
+    def build_credit_decisions_api
+      UnitFinanceSdk::CreditDecisionsApi.new(UnitFinanceSdk::ApiClient.new(configuration))
     end
 
     def sleep(seconds)
