@@ -1214,3 +1214,22 @@ def build_get_mobile_wallet_payload_request(
         },
     }
     return GetMobileWalletPayloadRequest.from_dict(body)
+
+
+def build_update_daca_policies_request(account_id: str) -> Dict[str, Any]:
+    """Body for the three DACA transitions.
+
+    The spec declares the request body as an untyped, optional ``object``, but
+    the API rejects a missing body with 400 ``invalid_fields`` and pins
+    ``data.type`` to the constant ``updateDacaPoliciesRequest`` with a required
+    ``account`` relationship. Spec defect owned by ``unit-openapi``: model this
+    body instead of ``type: object``.
+    """
+    return {
+        "data": {
+            "type": "updateDacaPoliciesRequest",
+            "relationships": {
+                "account": {"data": {"type": "depositAccount", "id": account_id}},
+            },
+        },
+    }
