@@ -327,6 +327,7 @@ docs/CreditApplicationsApi.md
 docs/CreditDecisionsApi.md
 docs/CurrencyConversionType.md
 docs/CustomersApi.md
+docs/DACAApi.md
 docs/DeniedCreditApplicationDecision.md
 docs/DeniedCreditApplicationDecisionAttributes.md
 docs/DeniedCreditApplicationDecisionRelationships.md
@@ -337,9 +338,15 @@ docs/DepositAccountRelationships.md
 docs/DeviceFingerprintType.md
 docs/DishonoredACHTransaction.md
 docs/DishonoredACHTransactionAttributes.md
+docs/Dispute.md
+docs/DisputeAttributes.md
+docs/DisputeAttributesStatusHistoryInner.md
+docs/DisputeRelationships.md
 docs/DisputeTransaction.md
 docs/DisputeTransactionAttributes.md
 docs/DisputeTransactionRelationships.md
+docs/DisputesApi.md
+docs/EnterControlAgreement200Response.md
 docs/ErrorDocument.md
 docs/ErrorDocumentErrorsInner.md
 docs/ErrorDocumentErrorsInnerSource.md
@@ -384,6 +391,7 @@ docs/GetAuthorizedUser200Response.md
 docs/GetAvailableDepositProducts200Response.md
 docs/GetAvailableDepositProducts200ResponseDataInner.md
 docs/GetAvailableDepositProducts200ResponseDataInnerAttributes.md
+docs/GetByRoutingNumber200Response.md
 docs/GetCard200Response.md
 docs/GetCardFraudCaseById200Response.md
 docs/GetCardPinStatus200Response.md
@@ -391,6 +399,7 @@ docs/GetCheckDeposit200Response.md
 docs/GetCheckPayment200Response.md
 docs/GetCounterpartyBalance200Response.md
 docs/GetCustomer200Response.md
+docs/GetDisputeById200Response.md
 docs/GetExpectedACHCompletionDateData.md
 docs/GetExpectedACHCompletionDateDataAttributes.md
 docs/GetExpectedAchCompletionDate200Response.md
@@ -414,6 +423,9 @@ docs/IndividualDebitCardAttributes.md
 docs/IndividualVirtualDebitCard.md
 docs/IndividualVirtualDebitCardAttributes.md
 docs/IndustryType.md
+docs/Institution.md
+docs/InstitutionAttributes.md
+docs/InstitutionsApi.md
 docs/InterestShareTransaction.md
 docs/InterestShareTransactionRelationships.md
 docs/InterestTransaction.md
@@ -441,6 +453,7 @@ docs/ListCreditDecisions200Response.md
 docs/ListCreditDecisions200ResponseDataInner.md
 docs/ListCustomers200Response.md
 docs/ListCustomers200ResponseDataInner.md
+docs/ListDisputes200Response.md
 docs/ListReceivedPayments200Response.md
 docs/ListReceivedPayments200ResponseDataInner.md
 docs/ListRecurringPayments200Response.md
@@ -694,7 +707,10 @@ lib/unit_finance_sdk/api/counterparties_api.rb
 lib/unit_finance_sdk/api/credit_applications_api.rb
 lib/unit_finance_sdk/api/credit_decisions_api.rb
 lib/unit_finance_sdk/api/customers_api.rb
+lib/unit_finance_sdk/api/daca_api.rb
+lib/unit_finance_sdk/api/disputes_api.rb
 lib/unit_finance_sdk/api/fees_api.rb
+lib/unit_finance_sdk/api/institutions_api.rb
 lib/unit_finance_sdk/api/payments_api.rb
 lib/unit_finance_sdk/api/transactions_api.rb
 lib/unit_finance_sdk/api_client.rb
@@ -1017,9 +1033,14 @@ lib/unit_finance_sdk/models/deposit_account_relationships.rb
 lib/unit_finance_sdk/models/device_fingerprint_type.rb
 lib/unit_finance_sdk/models/dishonored_ach_transaction.rb
 lib/unit_finance_sdk/models/dishonored_ach_transaction_attributes.rb
+lib/unit_finance_sdk/models/dispute.rb
+lib/unit_finance_sdk/models/dispute_attributes.rb
+lib/unit_finance_sdk/models/dispute_attributes_status_history_inner.rb
+lib/unit_finance_sdk/models/dispute_relationships.rb
 lib/unit_finance_sdk/models/dispute_transaction.rb
 lib/unit_finance_sdk/models/dispute_transaction_attributes.rb
 lib/unit_finance_sdk/models/dispute_transaction_relationships.rb
+lib/unit_finance_sdk/models/enter_control_agreement200_response.rb
 lib/unit_finance_sdk/models/error_document.rb
 lib/unit_finance_sdk/models/error_document_errors_inner.rb
 lib/unit_finance_sdk/models/error_document_errors_inner_source.rb
@@ -1063,6 +1084,7 @@ lib/unit_finance_sdk/models/get_authorized_user200_response.rb
 lib/unit_finance_sdk/models/get_available_deposit_products200_response.rb
 lib/unit_finance_sdk/models/get_available_deposit_products200_response_data_inner.rb
 lib/unit_finance_sdk/models/get_available_deposit_products200_response_data_inner_attributes.rb
+lib/unit_finance_sdk/models/get_by_routing_number200_response.rb
 lib/unit_finance_sdk/models/get_card200_response.rb
 lib/unit_finance_sdk/models/get_card_fraud_case_by_id200_response.rb
 lib/unit_finance_sdk/models/get_card_pin_status200_response.rb
@@ -1070,6 +1092,7 @@ lib/unit_finance_sdk/models/get_check_deposit200_response.rb
 lib/unit_finance_sdk/models/get_check_payment200_response.rb
 lib/unit_finance_sdk/models/get_counterparty_balance200_response.rb
 lib/unit_finance_sdk/models/get_customer200_response.rb
+lib/unit_finance_sdk/models/get_dispute_by_id200_response.rb
 lib/unit_finance_sdk/models/get_expected_ach_completion_date200_response.rb
 lib/unit_finance_sdk/models/get_expected_ach_completion_date200_response_data.rb
 lib/unit_finance_sdk/models/get_expected_ach_completion_date_data.rb
@@ -1093,6 +1116,8 @@ lib/unit_finance_sdk/models/individual_debit_card_attributes.rb
 lib/unit_finance_sdk/models/individual_virtual_debit_card.rb
 lib/unit_finance_sdk/models/individual_virtual_debit_card_attributes.rb
 lib/unit_finance_sdk/models/industry_type.rb
+lib/unit_finance_sdk/models/institution.rb
+lib/unit_finance_sdk/models/institution_attributes.rb
 lib/unit_finance_sdk/models/interest_share_transaction.rb
 lib/unit_finance_sdk/models/interest_share_transaction_relationships.rb
 lib/unit_finance_sdk/models/interest_transaction.rb
@@ -1120,6 +1145,7 @@ lib/unit_finance_sdk/models/list_credit_decisions200_response.rb
 lib/unit_finance_sdk/models/list_credit_decisions200_response_data_inner.rb
 lib/unit_finance_sdk/models/list_customers200_response.rb
 lib/unit_finance_sdk/models/list_customers200_response_data_inner.rb
+lib/unit_finance_sdk/models/list_disputes200_response.rb
 lib/unit_finance_sdk/models/list_received_payments200_response.rb
 lib/unit_finance_sdk/models/list_received_payments200_response_data_inner.rb
 lib/unit_finance_sdk/models/list_recurring_payments200_response.rb

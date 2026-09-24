@@ -1015,3 +1015,21 @@ export function buildCreateApprovedCreditLimitDecisionRequest(
 		},
 	};
 }
+
+/**
+ * Body for the three DACA transitions. The spec declares the request body as
+ * an untyped, optional `object`, but the API rejects a missing body with 400
+ * `invalid_fields` and pins `data.type` to the constant
+ * `updateDacaPoliciesRequest` with a required `account` relationship. Spec
+ * defect owned by `unit-openapi`: model this body instead of `type: object`.
+ */
+export function buildUpdateDacaPoliciesRequest(accountId: string) {
+	return {
+		data: {
+			type: "updateDacaPoliciesRequest" as const,
+			relationships: {
+				account: { data: { type: "depositAccount" as const, id: accountId } },
+			},
+		},
+	};
+}

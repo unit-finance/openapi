@@ -329,6 +329,7 @@ docs/CreditApplicationsApi.md
 docs/CreditDecisionsApi.md
 docs/CurrencyConversionType.md
 docs/CustomersApi.md
+docs/DACAApi.md
 docs/DeniedCreditApplicationDecision.md
 docs/DeniedCreditApplicationDecisionAttributes.md
 docs/DeniedCreditApplicationDecisionRelationships.md
@@ -339,9 +340,15 @@ docs/DepositAccountRelationships.md
 docs/DeviceFingerprintType.md
 docs/DishonoredACHTransaction.md
 docs/DishonoredACHTransactionAttributes.md
+docs/Dispute.md
+docs/DisputeAttributes.md
+docs/DisputeAttributesStatusHistoryInner.md
+docs/DisputeRelationships.md
 docs/DisputeTransaction.md
 docs/DisputeTransactionAttributes.md
 docs/DisputeTransactionRelationships.md
+docs/DisputesApi.md
+docs/EnterControlAgreement200Response.md
 docs/ErrorDocument.md
 docs/ErrorDocumentErrorsInner.md
 docs/ErrorDocumentErrorsInnerSource.md
@@ -386,6 +393,7 @@ docs/GetAuthorizedUser200Response.md
 docs/GetAvailableDepositProducts200Response.md
 docs/GetAvailableDepositProducts200ResponseDataInner.md
 docs/GetAvailableDepositProducts200ResponseDataInnerAttributes.md
+docs/GetByRoutingNumber200Response.md
 docs/GetCard200Response.md
 docs/GetCardFraudCaseById200Response.md
 docs/GetCardPinStatus200Response.md
@@ -393,6 +401,7 @@ docs/GetCheckDeposit200Response.md
 docs/GetCheckPayment200Response.md
 docs/GetCounterpartyBalance200Response.md
 docs/GetCustomer200Response.md
+docs/GetDisputeById200Response.md
 docs/GetExpectedACHCompletionDateData.md
 docs/GetExpectedACHCompletionDateDataAttributes.md
 docs/GetExpectedAchCompletionDate200Response.md
@@ -416,6 +425,9 @@ docs/IndividualDebitCardAttributes.md
 docs/IndividualVirtualDebitCard.md
 docs/IndividualVirtualDebitCardAttributes.md
 docs/IndustryType.md
+docs/Institution.md
+docs/InstitutionAttributes.md
+docs/InstitutionsApi.md
 docs/InterestShareTransaction.md
 docs/InterestShareTransactionRelationships.md
 docs/InterestTransaction.md
@@ -443,6 +455,7 @@ docs/ListCreditDecisions200Response.md
 docs/ListCreditDecisions200ResponseDataInner.md
 docs/ListCustomers200Response.md
 docs/ListCustomers200ResponseDataInner.md
+docs/ListDisputes200Response.md
 docs/ListReceivedPayments200Response.md
 docs/ListReceivedPayments200ResponseDataInner.md
 docs/ListRecurringPayments200Response.md

@@ -1213,4 +1213,29 @@ final class Fixtures {
     return new CreateCreditDecisionRequest(
         new CreateApprovedCreditLimitDecisionRequest().data(data));
   }
+
+  /**
+   * Body for the three DACA transitions. The spec declares the request body as
+   * an untyped, optional {@code object}, so the generated method takes a bare
+   * {@code Object} and there is no model to build — but the API rejects a
+   * missing body with 400 {@code invalid_fields} and pins {@code data.type} to
+   * the constant {@code updateDacaPoliciesRequest} with a required
+   * {@code account} relationship. Spec defect owned by {@code unit-openapi}:
+   * model this body instead of {@code type: object}.
+   */
+  static Object updateDacaPoliciesRequest(String accountId) {
+    Map<String, Object> resourceIdentifier = new LinkedHashMap<>();
+    resourceIdentifier.put("type", "depositAccount");
+    resourceIdentifier.put("id", accountId);
+    Map<String, Object> account = new LinkedHashMap<>();
+    account.put("data", resourceIdentifier);
+    Map<String, Object> relationships = new LinkedHashMap<>();
+    relationships.put("account", account);
+    Map<String, Object> data = new LinkedHashMap<>();
+    data.put("type", "updateDacaPoliciesRequest");
+    data.put("relationships", relationships);
+    Map<String, Object> body = new LinkedHashMap<>();
+    body.put("data", data);
+    return body;
+  }
 }

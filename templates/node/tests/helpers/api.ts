@@ -17,7 +17,10 @@ import {
 	CreditApplicationsApi,
 	CreditDecisionsApi,
 	CustomersApi,
+	DACAApi,
+	DisputesApi,
 	FeesApi,
+	InstitutionsApi,
 	PaymentsApi,
 	TransactionsApi,
 } from "../..";
@@ -106,6 +109,18 @@ export function buildCardsAuthorizationRequestsApi(): CardsAuthorizationRequests
 
 export function buildCardsAuthorizationsApi(): CardsAuthorizationsApi {
 	return new CardsAuthorizationsApi(configuration());
+}
+
+export function buildDacaApi(): DACAApi {
+	return new DACAApi(configuration());
+}
+
+export function buildDisputesApi(): DisputesApi {
+	return new DisputesApi(configuration());
+}
+
+export function buildInstitutionsApi(): InstitutionsApi {
+	return new InstitutionsApi(configuration());
 }
 
 /**
