@@ -119,6 +119,18 @@ module Helpers
       UnitFinanceSdk::CreditDecisionsApi.new(UnitFinanceSdk::ApiClient.new(configuration))
     end
 
+    def build_daca_api
+      UnitFinanceSdk::DACAApi.new(UnitFinanceSdk::ApiClient.new(configuration))
+    end
+
+    def build_disputes_api
+      UnitFinanceSdk::DisputesApi.new(UnitFinanceSdk::ApiClient.new(configuration))
+    end
+
+    def build_institutions_api
+      UnitFinanceSdk::InstitutionsApi.new(UnitFinanceSdk::ApiClient.new(configuration))
+    end
+
     def sleep(seconds)
       Kernel.sleep(seconds)
     end

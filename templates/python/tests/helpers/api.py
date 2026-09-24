@@ -26,7 +26,10 @@ from unit_finance_sdk import (
     CreditApplicationsApi,
     CreditDecisionsApi,
     CustomersApi,
+    DACAApi,
+    DisputesApi,
     FeesApi,
+    InstitutionsApi,
     PaymentsApi,
     TransactionsApi,
 )
@@ -142,6 +145,21 @@ def build_cards_authorization_requests_api() -> CardsAuthorizationRequestsApi:
 def build_cards_authorizations_api() -> CardsAuthorizationsApi:
     """Construct a ``CardsAuthorizationsApi`` bound to the sandbox."""
     return CardsAuthorizationsApi(ApiClient(_configuration()))
+
+
+def build_daca_api() -> DACAApi:
+    """Construct a ``DACAApi`` bound to the sandbox."""
+    return DACAApi(ApiClient(_configuration()))
+
+
+def build_disputes_api() -> DisputesApi:
+    """Construct a ``DisputesApi`` bound to the sandbox."""
+    return DisputesApi(ApiClient(_configuration()))
+
+
+def build_institutions_api() -> InstitutionsApi:
+    """Construct an ``InstitutionsApi`` bound to the sandbox."""
+    return InstitutionsApi(ApiClient(_configuration()))
 
 
 def build_credit_applications_api() -> CreditApplicationsApi:
