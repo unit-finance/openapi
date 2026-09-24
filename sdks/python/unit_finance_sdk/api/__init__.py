@@ -15,6 +15,8 @@ from unit_finance_sdk.api.cards_authorizations_api import CardsAuthorizationsApi
 from unit_finance_sdk.api.check_deposits_api import CheckDepositsApi
 from unit_finance_sdk.api.check_payments_api import CheckPaymentsApi
 from unit_finance_sdk.api.counterparties_api import CounterpartiesApi
+from unit_finance_sdk.api.credit_applications_api import CreditApplicationsApi
+from unit_finance_sdk.api.credit_decisions_api import CreditDecisionsApi
 from unit_finance_sdk.api.customers_api import CustomersApi
 from unit_finance_sdk.api.fees_api import FeesApi
 from unit_finance_sdk.api.payments_api import PaymentsApi

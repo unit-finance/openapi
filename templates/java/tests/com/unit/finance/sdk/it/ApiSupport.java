@@ -17,6 +17,8 @@ import com.unit.finance.sdk.api.CardsAuthorizationsApi;
 import com.unit.finance.sdk.api.CheckDepositsApi;
 import com.unit.finance.sdk.api.CheckPaymentsApi;
 import com.unit.finance.sdk.api.CounterpartiesApi;
+import com.unit.finance.sdk.api.CreditApplicationsApi;
+import com.unit.finance.sdk.api.CreditDecisionsApi;
 import com.unit.finance.sdk.api.CustomersApi;
 import com.unit.finance.sdk.api.FeesApi;
 import com.unit.finance.sdk.api.PaymentsApi;
@@ -202,6 +204,29 @@ final class ApiSupport {
     return new TransactionsApi(buildApiClient());
   }
 
+  /**
+   * {@code GET /credit-applications/{id}} and {@code GET /credit-decisions/{id}}
+   * reject any request that omits a {@code Content-Type:
+   * application/vnd.api+json} header with 415, even though neither takes a
+   * body. The spec declares no request body for them, so the generated clients
+   * send no {@code Content-Type} and every single-resource read fails. Pinning
+   * it as a default header works around it for the credit clients only; the
+   * generated per-operation header always wins where one is set.
+   */
+  private static ApiClient buildCreditApiClient() {
+    return buildApiClient().addDefaultHeader("Content-Type", "application/vnd.api+json");
+  }
+
+  /** Construct a {@code CreditApplicationsApi} bound to the sandbox. */
+  static CreditApplicationsApi buildCreditApplicationsApi() {
+    return new CreditApplicationsApi(buildCreditApiClient());
+  }
+
+  /** Construct a {@code CreditDecisionsApi} bound to the sandbox. */
+  static CreditDecisionsApi buildCreditDecisionsApi() {
+    return new CreditDecisionsApi(buildCreditApiClient());
+  }
+
   /** Construct a {@code CustomersApi} bound to the sandbox. */
   static CustomersApi buildCustomersApi() {
     return new CustomersApi(buildApiClient());
@@ -326,7 +351,7 @@ final class ApiSupport {
     }
   }
 
-  private static Object unwrap(Object resource) {
+  static Object unwrap(Object resource) {
     if (resource instanceof AbstractOpenApiSchema) {
       return ((AbstractOpenApiSchema) resource).getActualInstance();
     }

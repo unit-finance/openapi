@@ -1,0 +1,20 @@
+# CreateDeniedCreditApplicationDecisionRequest
+
+
+## Properties
+
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**data** | [**CreateDeniedCreditApplicationDecisionData**](CreateDeniedCreditApplicationDecisionData.md) |  | [default to undefined]
+
+## Example
+
+```typescript
+import { CreateDeniedCreditApplicationDecisionRequest } from '@unit-finance/unit-node-sdk';
+
+const instance: CreateDeniedCreditApplicationDecisionRequest = {
+    data,
+};
+```
+
+[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
