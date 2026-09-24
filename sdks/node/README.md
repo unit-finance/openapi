@@ -150,8 +150,14 @@ Class | Method | HTTP request | Description
 *CustomersApi* | [**listCustomers**](docs/CustomersApi.md#listcustomers) | **GET** /customers | List customers
 *CustomersApi* | [**updateBusinessCustomerOfficer**](docs/CustomersApi.md#updatebusinesscustomerofficer) | **PATCH** /customers/{customerId}/officers/{officerId} | Update a business customer officer
 *CustomersApi* | [**updateCustomer**](docs/CustomersApi.md#updatecustomer) | **PATCH** /customers/{customerId} | Update a customer
+*DACAApi* | [**activateControlAgreement**](docs/DACAApi.md#activatecontrolagreement) | **POST** /accounts/{accountId}/activate-daca | Activate control agreement
+*DACAApi* | [**deactivateControlAgreement**](docs/DACAApi.md#deactivatecontrolagreement) | **POST** /accounts/{accountId}/deactivate-daca | Deactivate control agreement
+*DACAApi* | [**enterControlAgreement**](docs/DACAApi.md#entercontrolagreement) | **POST** /accounts/{accountId}/enter-daca | Enter control agreement
+*DisputesApi* | [**getDisputeById**](docs/DisputesApi.md#getdisputebyid) | **GET** /disputes/{id} | Get dispute by id
+*DisputesApi* | [**listDisputes**](docs/DisputesApi.md#listdisputes) | **GET** /disputes | List disputes
 *FeesApi* | [**createFee**](docs/FeesApi.md#createfee) | **POST** /fees | Create a fee
 *FeesApi* | [**reverseFee**](docs/FeesApi.md#reversefee) | **POST** /fees/reverse | Reverse a fee
+*InstitutionsApi* | [**getByRoutingNumber**](docs/InstitutionsApi.md#getbyroutingnumber) | **GET** /institutions/{routingNumber} | Get by routing number
 *PaymentsApi* | [**cancelPayment**](docs/PaymentsApi.md#cancelpayment) | **POST** /payments/{paymentId}/cancel | Cancel a payment
 *PaymentsApi* | [**clearAchDebitPayment**](docs/PaymentsApi.md#clearachdebitpayment) | **POST** /payments/{paymentId}/clear | Clear an ACH debit payment
 *PaymentsApi* | [**createBatchReleases**](docs/PaymentsApi.md#createbatchreleases) | **POST** /batch-releases | Create batch releases
@@ -498,9 +504,14 @@ Class | Method | HTTP request | Description
  - [DeviceFingerprintType](docs/DeviceFingerprintType.md)
  - [DishonoredACHTransaction](docs/DishonoredACHTransaction.md)
  - [DishonoredACHTransactionAttributes](docs/DishonoredACHTransactionAttributes.md)
+ - [Dispute](docs/Dispute.md)
+ - [DisputeAttributes](docs/DisputeAttributes.md)
+ - [DisputeAttributesStatusHistoryInner](docs/DisputeAttributesStatusHistoryInner.md)
+ - [DisputeRelationships](docs/DisputeRelationships.md)
  - [DisputeTransaction](docs/DisputeTransaction.md)
  - [DisputeTransactionAttributes](docs/DisputeTransactionAttributes.md)
  - [DisputeTransactionRelationships](docs/DisputeTransactionRelationships.md)
+ - [EnterControlAgreement200Response](docs/EnterControlAgreement200Response.md)
  - [ErrorDocument](docs/ErrorDocument.md)
  - [ErrorDocumentErrorsInner](docs/ErrorDocumentErrorsInner.md)
  - [ErrorDocumentErrorsInnerSource](docs/ErrorDocumentErrorsInnerSource.md)
@@ -544,6 +555,7 @@ Class | Method | HTTP request | Description
  - [GetAvailableDepositProducts200Response](docs/GetAvailableDepositProducts200Response.md)
  - [GetAvailableDepositProducts200ResponseDataInner](docs/GetAvailableDepositProducts200ResponseDataInner.md)
  - [GetAvailableDepositProducts200ResponseDataInnerAttributes](docs/GetAvailableDepositProducts200ResponseDataInnerAttributes.md)
+ - [GetByRoutingNumber200Response](docs/GetByRoutingNumber200Response.md)
  - [GetCard200Response](docs/GetCard200Response.md)
  - [GetCardFraudCaseById200Response](docs/GetCardFraudCaseById200Response.md)
  - [GetCardPinStatus200Response](docs/GetCardPinStatus200Response.md)
@@ -551,6 +563,7 @@ Class | Method | HTTP request | Description
  - [GetCheckPayment200Response](docs/GetCheckPayment200Response.md)
  - [GetCounterpartyBalance200Response](docs/GetCounterpartyBalance200Response.md)
  - [GetCustomer200Response](docs/GetCustomer200Response.md)
+ - [GetDisputeById200Response](docs/GetDisputeById200Response.md)
  - [GetExpectedACHCompletionDateData](docs/GetExpectedACHCompletionDateData.md)
  - [GetExpectedACHCompletionDateDataAttributes](docs/GetExpectedACHCompletionDateDataAttributes.md)
  - [GetExpectedAchCompletionDate200Response](docs/GetExpectedAchCompletionDate200Response.md)
@@ -574,6 +587,8 @@ Class | Method | HTTP request | Description
  - [IndividualVirtualDebitCard](docs/IndividualVirtualDebitCard.md)
  - [IndividualVirtualDebitCardAttributes](docs/IndividualVirtualDebitCardAttributes.md)
  - [IndustryType](docs/IndustryType.md)
+ - [Institution](docs/Institution.md)
+ - [InstitutionAttributes](docs/InstitutionAttributes.md)
  - [InterestShareTransaction](docs/InterestShareTransaction.md)
  - [InterestShareTransactionRelationships](docs/InterestShareTransactionRelationships.md)
  - [InterestTransaction](docs/InterestTransaction.md)
@@ -601,6 +616,7 @@ Class | Method | HTTP request | Description
  - [ListCreditDecisions200ResponseDataInner](docs/ListCreditDecisions200ResponseDataInner.md)
  - [ListCustomers200Response](docs/ListCustomers200Response.md)
  - [ListCustomers200ResponseDataInner](docs/ListCustomers200ResponseDataInner.md)
+ - [ListDisputes200Response](docs/ListDisputes200Response.md)
  - [ListReceivedPayments200Response](docs/ListReceivedPayments200Response.md)
  - [ListReceivedPayments200ResponseDataInner](docs/ListReceivedPayments200ResponseDataInner.md)
  - [ListRecurringPayments200Response](docs/ListRecurringPayments200Response.md)
