@@ -852,5 +852,73 @@ module Helpers
         }
       }
     end
+
+    # Credit applications have no `tags` attribute, so the run marker rides
+    # along in the free-form `additionalUnderwritingData` instead.
+    # `lendingProgram` is required and there is no list-lending-programs
+    # operation, so callers borrow an id off an existing credit application.
+    #
+    # `idempotencyKey` is omitted deliberately: the spec declares it on the
+    # create attributes, but the API answers 400 "Field 'idempotencyKey' is not
+    # expected". Spec defect owned by `unit-openapi`.
+    def create_existing_credit_application_request(customer_id, lending_program_id)
+      {
+        'data' => {
+          'type' => 'createExistingCustomerCreditApplication',
+          'attributes' => {
+            'annualIncome' => 100_000,
+            'numberOfEmployees' => 'UpTo10',
+            'yearsInBusiness' => 4,
+            'additionalUnderwritingData' => base_tags
+          },
+          'relationships' => {
+            'customer' => { 'data' => { 'type' => 'customer', 'id' => customer_id } },
+            'lendingProgram' => {
+              'data' => { 'type' => 'lendingProgram', 'id' => lending_program_id }
+            }
+          }
+        }
+      }
+    end
+
+    def update_credit_application_request
+      {
+        'data' => {
+          'type' => 'patchCreditApplication',
+          'attributes' => {
+            'annualIncome' => 120_000,
+            'numberOfEmployees' => 'UpTo10',
+            'yearsInBusiness' => 5,
+            'additionalUnderwritingData' => base_tags
+          }
+        }
+      }
+    end
+
+    # The API accepts only the `Z` spelling of these timestamps and answers 400
+    # for the equivalent `+00:00` offset, so the fixture formats them by hand.
+    def create_approved_credit_limit_decision_request(credit_application_id)
+      now = Time.now.utc.strftime('%Y-%m-%dT%H:%M:%S.%LZ')
+      {
+        'data' => {
+          'type' => 'approvedCreditLimitDecision',
+          'attributes' => {
+            'externalApplicationId' => "#{Helpers::Api::TEST_RUN_ID}-ext-app-#{SecureRandom.hex(4)}",
+            'submissionTimestamp' => now,
+            'decisionTimestamp' => now,
+            'creditLimit' => 1_000_000,
+            'policyException' => false,
+            'policyExceptionReason' => '',
+            'additionalUnderwritingData' => base_tags,
+            'idempotencyKey' => "#{Helpers::Api::TEST_RUN_ID}-credit-decision-#{SecureRandom.hex(4)}"
+          },
+          'relationships' => {
+            'creditApplication' => {
+              'data' => { 'type' => 'creditApplication', 'id' => credit_application_id }
+            }
+          }
+        }
+      }
+    end
   end
 end

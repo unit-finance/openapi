@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Unit API",
-    "version": "0.15.0",
+    "version": "0.16.0",
     "description": "JSON:API-compliant banking API.",
     "license": {
       "name": "Proprietary",
@@ -91,6 +91,14 @@
     {
       "name": "Cards Authorizations",
       "description": "Card authorization holds placed on an account, including releasing them."
+    },
+    {
+      "name": "Credit Applications",
+      "description": "Credit applications submitted for underwriting under a lending program."
+    },
+    {
+      "name": "Credit Decisions",
+      "description": "Credit decisions recorded against credit applications, for credit limit and credit application evaluations."
     }
   ],
   "paths": {
@@ -11399,6 +11407,760 @@
             "application/vnd.api+json": {
               "schema": {
                 "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/credit-applications": {
+      "get": {
+        "operationId": "listCreditApplications",
+        "summary": "List credit applications",
+        "description": "List credit applications resources. Paging can be applied.",
+        "tags": [
+          "Credit Applications"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "credit-applications-read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page[limit]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Maximum number of resources that will be returned. Maximum is 1000 resources. See Pagination.",
+            "schema": {
+              "type": "string",
+              "default": "100"
+            }
+          },
+          {
+            "name": "page[offset]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Number of resources to skip. See Pagination.",
+            "schema": {
+              "type": "string",
+              "default": "0"
+            }
+          },
+          {
+            "name": "filter[lendingProgramId]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Search resources by lending program id.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[orgId]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Search resources by organization id.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[bankId]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Search resources by bank id.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[applicationId]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Search resources by application id.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[customerId]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Search resources by customer id.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of credit application resources.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "oneOf": [
+                          {
+                            "$ref": "#/components/schemas/ExistingCustomerCreditApplication"
+                          },
+                          {
+                            "$ref": "#/components/schemas/OnboardingCreditApplication"
+                          }
+                        ],
+                        "discriminator": {
+                          "propertyName": "type",
+                          "mapping": {
+                            "existingCustomerCreditApplication": "#/components/schemas/ExistingCustomerCreditApplication",
+                            "onboardingCustomerCreditApplication": "#/components/schemas/OnboardingCreditApplication"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createCreditApplication",
+        "summary": "Create a credit application",
+        "description": "Create a credit application. The request body is one of CreateExistingCreditApplicationRequest (an existing customer, related to a customer) or CreateOnboardingCreditApplicationRequest (a customer being onboarded, related to an application).",
+        "tags": [
+          "Credit Applications"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "credit-applications-write"
+            ]
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/CreateExistingCreditApplicationRequest"
+                  },
+                  {
+                    "$ref": "#/components/schemas/CreateOnboardingCreditApplicationRequest"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The returned resource after the operation was completed.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "oneOf": [
+                        {
+                          "$ref": "#/components/schemas/ExistingCustomerCreditApplication"
+                        },
+                        {
+                          "$ref": "#/components/schemas/OnboardingCreditApplication"
+                        }
+                      ],
+                      "discriminator": {
+                        "propertyName": "type",
+                        "mapping": {
+                          "existingCustomerCreditApplication": "#/components/schemas/ExistingCustomerCreditApplication",
+                          "onboardingCustomerCreditApplication": "#/components/schemas/OnboardingCreditApplication"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/credit-applications/{creditApplicationId}": {
+      "get": {
+        "operationId": "getCreditApplication",
+        "summary": "Get a credit application by id",
+        "description": "Get a credit application resource by id.",
+        "tags": [
+          "Credit Applications"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "credit-applications-read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "creditApplicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A credit application resource.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "oneOf": [
+                        {
+                          "$ref": "#/components/schemas/ExistingCustomerCreditApplication"
+                        },
+                        {
+                          "$ref": "#/components/schemas/OnboardingCreditApplication"
+                        }
+                      ],
+                      "discriminator": {
+                        "propertyName": "type",
+                        "mapping": {
+                          "existingCustomerCreditApplication": "#/components/schemas/ExistingCustomerCreditApplication",
+                          "onboardingCustomerCreditApplication": "#/components/schemas/OnboardingCreditApplication"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "updateCreditApplication",
+        "summary": "Update a credit application",
+        "description": "Update a credit application.",
+        "tags": [
+          "Credit Applications"
+        ],
+        "parameters": [
+          {
+            "name": "creditApplicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCreditApplicationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The requested resource after the operation was completed.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "oneOf": [
+                        {
+                          "$ref": "#/components/schemas/ExistingCustomerCreditApplication"
+                        },
+                        {
+                          "$ref": "#/components/schemas/OnboardingCreditApplication"
+                        }
+                      ],
+                      "discriminator": {
+                        "propertyName": "type",
+                        "mapping": {
+                          "existingCustomerCreditApplication": "#/components/schemas/ExistingCustomerCreditApplication",
+                          "onboardingCustomerCreditApplication": "#/components/schemas/OnboardingCreditApplication"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/credit-decisions": {
+      "get": {
+        "operationId": "listCreditDecisions",
+        "summary": "List credit decisions",
+        "description": "List credit decision resources. Paging can be applied.",
+        "tags": [
+          "Credit Decisions"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "credit-decisions"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page[limit]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Maximum number of resources that will be returned. Maximum is 1000 resources. See Pagination.",
+            "schema": {
+              "type": "string",
+              "default": "100"
+            }
+          },
+          {
+            "name": "page[offset]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Number of resources to skip. See Pagination.",
+            "schema": {
+              "type": "string",
+              "default": "0"
+            }
+          },
+          {
+            "name": "filter[orgId]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the results by the specified org id.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[customerId]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the results by the specified customer id.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[accountId]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the results by the specified account id.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[applicationId]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the results by the specified application id.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[bankId]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the results by the specified bank id.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[decision]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the results by the specified decision (one of Approved or Denied).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[evaluationType]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the results by the specified evaluation type (one of CreditLimit or CreditApplication).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of credit-decisions resources.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "oneOf": [
+                          {
+                            "$ref": "#/components/schemas/ApprovedCreditLimitDecision"
+                          },
+                          {
+                            "$ref": "#/components/schemas/DeniedCreditLimitDecision"
+                          },
+                          {
+                            "$ref": "#/components/schemas/ManualReviewCreditLimitDecision"
+                          },
+                          {
+                            "$ref": "#/components/schemas/DeniedCreditApplicationDecision"
+                          },
+                          {
+                            "$ref": "#/components/schemas/ManualReviewCreditApplicationDecision"
+                          }
+                        ],
+                        "discriminator": {
+                          "propertyName": "type",
+                          "mapping": {
+                            "approvedCreditLimitDecision": "#/components/schemas/ApprovedCreditLimitDecision",
+                            "deniedCreditLimitDecision": "#/components/schemas/DeniedCreditLimitDecision",
+                            "manualReviewCreditLimitDecision": "#/components/schemas/ManualReviewCreditLimitDecision",
+                            "deniedCreditApplicationDecision": "#/components/schemas/DeniedCreditApplicationDecision",
+                            "manualReviewCreditApplicationDecision": "#/components/schemas/ManualReviewCreditApplicationDecision"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createCreditDecision",
+        "summary": "Create a credit decision",
+        "description": "Create a credit decision for a credit application. The request body is one of CreateApprovedCreditLimitDecisionRequest (an approved decision for an existing customer), CreateDeniedCreditLimitDecisionRequest (a denied decision for an existing customer), CreateManualReviewCreditLimitDecisionRequest (a manual review decision for an existing customer), CreateDeniedCreditApplicationDecisionRequest (a denied decision before a customer exists) or CreateManualReviewCreditApplicationDecisionRequest (a manual review decision before a customer exists).",
+        "tags": [
+          "Credit Decisions"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "credit-decisions-write"
+            ]
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/CreateApprovedCreditLimitDecisionRequest"
+                  },
+                  {
+                    "$ref": "#/components/schemas/CreateDeniedCreditLimitDecisionRequest"
+                  },
+                  {
+                    "$ref": "#/components/schemas/CreateManualReviewCreditLimitDecisionRequest"
+                  },
+                  {
+                    "$ref": "#/components/schemas/CreateDeniedCreditApplicationDecisionRequest"
+                  },
+                  {
+                    "$ref": "#/components/schemas/CreateManualReviewCreditApplicationDecisionRequest"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The returned resource after the operation was completed.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "oneOf": [
+                        {
+                          "$ref": "#/components/schemas/ApprovedCreditLimitDecision"
+                        },
+                        {
+                          "$ref": "#/components/schemas/DeniedCreditLimitDecision"
+                        },
+                        {
+                          "$ref": "#/components/schemas/ManualReviewCreditLimitDecision"
+                        },
+                        {
+                          "$ref": "#/components/schemas/DeniedCreditApplicationDecision"
+                        },
+                        {
+                          "$ref": "#/components/schemas/ManualReviewCreditApplicationDecision"
+                        }
+                      ],
+                      "discriminator": {
+                        "propertyName": "type",
+                        "mapping": {
+                          "approvedCreditLimitDecision": "#/components/schemas/ApprovedCreditLimitDecision",
+                          "deniedCreditLimitDecision": "#/components/schemas/DeniedCreditLimitDecision",
+                          "manualReviewCreditLimitDecision": "#/components/schemas/ManualReviewCreditLimitDecision",
+                          "deniedCreditApplicationDecision": "#/components/schemas/DeniedCreditApplicationDecision",
+                          "manualReviewCreditApplicationDecision": "#/components/schemas/ManualReviewCreditApplicationDecision"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/credit-decisions/{id}": {
+      "get": {
+        "operationId": "getCreditDecision",
+        "summary": "Get a credit decision by id",
+        "description": "Get a credit decision resource by id.",
+        "tags": [
+          "Credit Decisions"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "credit-decisions"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A credit decision resource.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "oneOf": [
+                        {
+                          "$ref": "#/components/schemas/ApprovedCreditLimitDecision"
+                        },
+                        {
+                          "$ref": "#/components/schemas/DeniedCreditLimitDecision"
+                        },
+                        {
+                          "$ref": "#/components/schemas/ManualReviewCreditLimitDecision"
+                        },
+                        {
+                          "$ref": "#/components/schemas/DeniedCreditApplicationDecision"
+                        },
+                        {
+                          "$ref": "#/components/schemas/ManualReviewCreditApplicationDecision"
+                        }
+                      ],
+                      "discriminator": {
+                        "propertyName": "type",
+                        "mapping": {
+                          "approvedCreditLimitDecision": "#/components/schemas/ApprovedCreditLimitDecision",
+                          "deniedCreditLimitDecision": "#/components/schemas/DeniedCreditLimitDecision",
+                          "manualReviewCreditLimitDecision": "#/components/schemas/ManualReviewCreditLimitDecision",
+                          "deniedCreditApplicationDecision": "#/components/schemas/DeniedCreditApplicationDecision",
+                          "manualReviewCreditApplicationDecision": "#/components/schemas/ManualReviewCreditApplicationDecision"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
               }
             }
           }
@@ -28880,6 +29642,1494 @@
           }
         },
         "description": "`Authorization` is a JSON:API resource, top-level fields:"
+      },
+      "ExistingCustomerCreditApplication": {
+        "type": "object",
+        "required": [
+          "type",
+          "id",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "existingCustomerCreditApplication"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "createdAt",
+              "status"
+            ],
+            "properties": {
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the resource was created."
+              },
+              "status": {
+                "type": "string",
+                "description": "The status of the credit application. One of Created, Pending, Approved, Denied, Canceled."
+              },
+              "aggregatorAccessTokens": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Array of aggregator access tokens which are Plaid (or other account linking platform) integration tokens. See Plaid processor token"
+              },
+              "annualIncome": {
+                "type": "integer",
+                "nullable": true,
+                "description": "The annual income of the applicant."
+              },
+              "numberOfEmployees": {
+                "type": "string",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/NumberOfEmployeesType"
+                  }
+                ],
+                "nullable": true,
+                "description": "Number of employees of the business."
+              },
+              "yearsInBusiness": {
+                "type": "integer",
+                "nullable": true,
+                "description": "Number of years the business has been in operation."
+              },
+              "additionalUnderwritingData": {
+                "type": "object",
+                "additionalProperties": true,
+                "nullable": true,
+                "description": "Object containing key-value pairs of underwriting data per credit policy."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "properties": {
+              "customer": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "lendingProgram": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        },
+        "example": {
+          "type": "existingCustomerCreditApplication",
+          "id": "12",
+          "attributes": {
+            "createdAt": "2024-02-18T12:33:32.158Z",
+            "status": "Pending",
+            "aggregatorAccessTokens": [],
+            "annualIncome": 1,
+            "numberOfEmployees": "One",
+            "yearsInBusiness": 4,
+            "additionalUnderwritingData": {
+              "dad": "dada"
+            }
+          },
+          "relationships": {
+            "customer": {
+              "data": {
+                "type": "customer",
+                "id": "10002"
+              }
+            },
+            "lendingProgram": {
+              "data": {
+                "type": "lendingProgram",
+                "id": "1"
+              }
+            }
+          }
+        },
+        "description": "`ExistingCustomerCreditApplication` is a JSON:API resource, top-level fields:"
+      },
+      "OnboardingCreditApplication": {
+        "type": "object",
+        "required": [
+          "type",
+          "id",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "onboardingCustomerCreditApplication"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "createdAt",
+              "status"
+            ],
+            "properties": {
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the resource was created."
+              },
+              "status": {
+                "type": "string",
+                "description": "The status of the credit application. One of Created, Pending, Approved, Denied, Canceled."
+              },
+              "aggregatorAccessTokens": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Array of aggregator access tokens which are Plaid (or other account linking platform) integration tokens. See Plaid processor token"
+              },
+              "annualIncome": {
+                "type": "integer",
+                "nullable": true,
+                "description": "The annual income of the applicant."
+              },
+              "numberOfEmployees": {
+                "type": "string",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/NumberOfEmployeesType"
+                  }
+                ],
+                "nullable": true,
+                "description": "Number of employees of the business."
+              },
+              "yearsInBusiness": {
+                "type": "integer",
+                "nullable": true,
+                "description": "Number of years the business has been in operation."
+              },
+              "additionalUnderwritingData": {
+                "type": "object",
+                "additionalProperties": true,
+                "nullable": true,
+                "description": "Object containing key-value pairs of underwriting data per credit policy."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "properties": {
+              "application": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "lendingProgram": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        },
+        "example": {
+          "type": "onboardingCustomerCreditApplication",
+          "id": "10",
+          "attributes": {
+            "createdAt": "2024-02-18T11:19:44.838Z",
+            "status": "Created",
+            "aggregatorAccessTokens": [],
+            "annualIncome": null,
+            "numberOfEmployees": null,
+            "yearsInBusiness": null,
+            "additionalUnderwritingData": null
+          },
+          "relationships": {
+            "application": {
+              "data": {
+                "type": "application",
+                "id": "10002"
+              }
+            },
+            "lendingProgram": {
+              "data": {
+                "type": "lendingProgram",
+                "id": "1"
+              }
+            }
+          }
+        },
+        "description": "`OnboardingCreditApplication` is a JSON:API resource, top-level fields:"
+      },
+      "CreateExistingCreditApplicationData": {
+        "type": "object",
+        "required": [
+          "type",
+          "attributes",
+          "relationships"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "createExistingCustomerCreditApplication"
+            ]
+          },
+          "attributes": {
+            "type": "object",
+            "properties": {
+              "aggregatorAccessTokens": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Array of aggregator access tokens which are Plaid (or other account linking platform) integration tokens. See Plaid processor token"
+              },
+              "annualIncome": {
+                "type": "integer",
+                "description": "The annual income of the applicant.",
+                "example": 1
+              },
+              "numberOfEmployees": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/BusinessNumberOfEmployeesType"
+                  }
+                ],
+                "description": "Number of employees of the business.",
+                "example": "One"
+              },
+              "yearsInBusiness": {
+                "type": "integer",
+                "description": "Number of years the business has been in operation.",
+                "example": 4
+              },
+              "additionalUnderwritingData": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "Object containing key-value pairs of underwriting data per credit policy.",
+                "example": {
+                  "dad": "dada"
+                }
+              },
+              "idempotencyKey": {
+                "type": "string",
+                "description": "See Idempotency."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "required": [
+              "customer",
+              "lendingProgram"
+            ],
+            "properties": {
+              "customer": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "lendingProgram": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        }
+      },
+      "CreateExistingCreditApplicationRequest": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/CreateExistingCreditApplicationData"
+          }
+        }
+      },
+      "CreateOnboardingCreditApplicationData": {
+        "type": "object",
+        "required": [
+          "type",
+          "attributes",
+          "relationships"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "createOnboardingCustomerCreditApplication"
+            ]
+          },
+          "attributes": {
+            "type": "object",
+            "properties": {
+              "aggregatorAccessTokens": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Array of aggregator access tokens which are Plaid (or other account linking platform) integration tokens. See Plaid processor token"
+              },
+              "annualIncome": {
+                "type": "integer",
+                "description": "The annual income of the applicant."
+              },
+              "numberOfEmployees": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/BusinessNumberOfEmployeesType"
+                  }
+                ],
+                "description": "Number of employees of the business."
+              },
+              "yearsInBusiness": {
+                "type": "integer",
+                "description": "Number of years the business has been in operation."
+              },
+              "additionalUnderwritingData": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "Object containing key-value pairs of underwriting data per credit policy."
+              },
+              "idempotencyKey": {
+                "type": "string",
+                "description": "See Idempotency."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "required": [
+              "application",
+              "lendingProgram"
+            ],
+            "properties": {
+              "application": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "lendingProgram": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        }
+      },
+      "CreateOnboardingCreditApplicationRequest": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/CreateOnboardingCreditApplicationData"
+          }
+        }
+      },
+      "UpdateCreditApplicationData": {
+        "type": "object",
+        "required": [
+          "type",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "patchCreditApplication"
+            ]
+          },
+          "attributes": {
+            "type": "object",
+            "properties": {
+              "aggregatorAccessTokens": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Array of aggregator access tokens which are Plaid (or other account linking platform) integration tokens. See Plaid processor token"
+              },
+              "annualIncome": {
+                "type": "integer",
+                "description": "The annual income of the applicant."
+              },
+              "numberOfEmployees": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/BusinessNumberOfEmployeesType"
+                  }
+                ],
+                "description": "Number of employees of the business.",
+                "example": "Between2And5"
+              },
+              "yearsInBusiness": {
+                "type": "integer",
+                "description": "Number of years the business has been in operation."
+              },
+              "additionalUnderwritingData": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "Object containing key-value pairs of underwriting data per credit policy."
+              }
+            }
+          }
+        }
+      },
+      "UpdateCreditApplicationRequest": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/UpdateCreditApplicationData"
+          }
+        }
+      },
+      "ApprovedCreditLimitDecision": {
+        "type": "object",
+        "required": [
+          "type",
+          "id",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "approvedCreditLimitDecision"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "createdAt",
+              "externalApplicationId",
+              "evaluationType",
+              "submissionTimestamp",
+              "decisionTimestamp",
+              "decision",
+              "policyException"
+            ],
+            "properties": {
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the resource was created."
+              },
+              "externalApplicationId": {
+                "type": "string",
+                "description": "Identifier for client's credit evaluation related to this decision. Max 200 char."
+              },
+              "evaluationType": {
+                "type": "string",
+                "description": "The type of credit decision. This is always CreditLimit."
+              },
+              "submissionTimestamp": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Timestamp when the corresponding credit application was submitted."
+              },
+              "decisionTimestamp": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Timestamp when the credit decision was made."
+              },
+              "decision": {
+                "type": "string",
+                "description": "The Decision for this credit application."
+              },
+              "policyException": {
+                "type": "boolean",
+                "description": "One of true or false."
+              },
+              "policyExceptionReason": {
+                "type": "string",
+                "description": "Conditional if policyException is true. Brief description of reason for policy exception. Max 200 char."
+              },
+              "additionalUnderwritingData": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "Object containing key-value pairs of underwriting data per credit policy."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "properties": {
+              "account": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "creditApplication": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        },
+        "example": {
+          "type": "approvedCreditLimitDecision",
+          "id": "1",
+          "attributes": {
+            "createdAt": "2023-07-04T15:21:11.688Z",
+            "externalApplicationId": "A1234",
+            "evaluationType": "CreditLimit",
+            "submissionTimestamp": "2023-09-19T09:10:09.206Z",
+            "decisionTimestamp": "2023-09-19T09:10:09.206Z",
+            "decision": "Approved",
+            "policyException": true,
+            "policyExceptionReason": "Executive approval",
+            "additionalUnderwritingData": {
+              "someKey1": "someValue1",
+              "someKey2": "someValue2",
+              "someKey3": "someValue3"
+            }
+          },
+          "relationships": {
+            "account": {
+              "data": {
+                "type": "account",
+                "id": "10005"
+              }
+            }
+          }
+        }
+      },
+      "DeniedCreditLimitDecision": {
+        "type": "object",
+        "required": [
+          "type",
+          "id",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "deniedCreditLimitDecision"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "createdAt",
+              "externalApplicationId",
+              "evaluationType",
+              "submissionTimestamp",
+              "decisionTimestamp",
+              "decision",
+              "policyException"
+            ],
+            "properties": {
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the resource was created."
+              },
+              "externalApplicationId": {
+                "type": "string",
+                "description": "Identifier for client's credit evaluation related to this decision. Max 200 char."
+              },
+              "evaluationType": {
+                "type": "string",
+                "description": "The type of credit decision. This is always CreditLimit."
+              },
+              "submissionTimestamp": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Timestamp when the corresponding credit application was submitted."
+              },
+              "decisionTimestamp": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Timestamp when the credit decision was made."
+              },
+              "decision": {
+                "type": "string",
+                "description": "The Decision for this credit application."
+              },
+              "policyException": {
+                "type": "boolean",
+                "description": "One of true or false."
+              },
+              "policyExceptionReason": {
+                "type": "string",
+                "description": "Conditional if policyException is true. Brief description of reason for policy exception. Max 200 char."
+              },
+              "additionalUnderwritingData": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "Object containing key-value pairs of underwriting data per credit policy."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "properties": {
+              "account": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "creditApplication": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        },
+        "example": {
+          "type": "deniedCreditLimitDecision",
+          "id": "1",
+          "attributes": {
+            "createdAt": "2023-07-04T15:21:11.688Z",
+            "externalApplicationId": "A1234",
+            "evaluationType": "CreditLimit",
+            "submissionTimestamp": "2023-09-19T09:10:09.206Z",
+            "decisionTimestamp": "2023-09-19T09:10:09.206Z",
+            "decision": "Denied",
+            "policyException": true,
+            "policyExceptionReason": "Executive approval",
+            "additionalUnderwritingData": {
+              "someKey1": "someValue1",
+              "someKey2": "someValue2",
+              "someKey3": "someValue3"
+            }
+          },
+          "relationships": {
+            "account": {
+              "data": {
+                "type": "account",
+                "id": "10005"
+              }
+            }
+          }
+        }
+      },
+      "ManualReviewCreditLimitDecision": {
+        "type": "object",
+        "required": [
+          "type",
+          "id",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "manualReviewCreditLimitDecision"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "createdAt",
+              "externalApplicationId",
+              "evaluationType",
+              "submissionTimestamp",
+              "decisionTimestamp",
+              "decision",
+              "policyException"
+            ],
+            "properties": {
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the resource was created."
+              },
+              "externalApplicationId": {
+                "type": "string",
+                "description": "Identifier for client's credit evaluation related to this decision. Max 200 char."
+              },
+              "evaluationType": {
+                "type": "string",
+                "description": "The type of credit decision. This is always CreditLimit."
+              },
+              "submissionTimestamp": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Timestamp when the corresponding credit application was submitted."
+              },
+              "decisionTimestamp": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Timestamp when the credit decision was made."
+              },
+              "decision": {
+                "type": "string",
+                "description": "The Decision for this credit application. This is always ManualReview."
+              },
+              "policyException": {
+                "type": "boolean",
+                "description": "One of true or false."
+              },
+              "policyExceptionReason": {
+                "type": "string",
+                "description": "Conditional if policyException is true. Brief description of reason for policy exception. Max 200 char."
+              },
+              "additionalUnderwritingData": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "Object containing key-value pairs of underwriting data per credit policy."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "properties": {
+              "account": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "creditApplication": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        },
+        "example": {
+          "type": "manualReviewCreditLimitDecision",
+          "id": "1",
+          "attributes": {
+            "createdAt": "2023-07-04T15:21:11.688Z",
+            "externalApplicationId": "A1234",
+            "evaluationType": "CreditLimit",
+            "submissionTimestamp": "2023-09-19T09:10:09.206Z",
+            "decisionTimestamp": "2023-09-19T09:10:09.206Z",
+            "decision": "ManualReview",
+            "policyException": true,
+            "policyExceptionReason": "Executive approval",
+            "additionalUnderwritingData": {
+              "someKey1": "someValue1",
+              "someKey2": "someValue2",
+              "someKey3": "someValue3"
+            }
+          },
+          "relationships": {
+            "account": {
+              "data": {
+                "type": "account",
+                "id": "10005"
+              }
+            }
+          }
+        }
+      },
+      "DeniedCreditApplicationDecision": {
+        "type": "object",
+        "required": [
+          "type",
+          "id",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "deniedCreditApplicationDecision"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "createdAt",
+              "externalApplicationId",
+              "evaluationType",
+              "submissionTimestamp",
+              "decisionTimestamp",
+              "decision",
+              "policyException"
+            ],
+            "properties": {
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the resource was created."
+              },
+              "externalApplicationId": {
+                "type": "string",
+                "description": "Identifier for client's credit evaluation related to this decision. Max 200 char."
+              },
+              "evaluationType": {
+                "type": "string",
+                "description": "The type of credit decision. This is always CreditApplication."
+              },
+              "submissionTimestamp": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Timestamp when the corresponding credit application was submitted."
+              },
+              "decisionTimestamp": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Timestamp when the credit decision was made."
+              },
+              "decision": {
+                "type": "string",
+                "description": "The Decision for this credit application."
+              },
+              "policyException": {
+                "type": "boolean",
+                "description": "One of true or false."
+              },
+              "policyExceptionReason": {
+                "type": "string",
+                "description": "Conditional if policyException is true. Brief description of reason for policy exception. Max 200 char."
+              },
+              "additionalUnderwritingData": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "Object containing key-value pairs of underwriting data per credit policy."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "properties": {
+              "application": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "creditApplication": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        },
+        "example": {
+          "type": "deniedCreditApplicationDecision",
+          "id": "1",
+          "attributes": {
+            "createdAt": "2023-07-04T15:21:11.688Z",
+            "externalApplicationId": "A1234",
+            "evaluationType": "CreditApplication",
+            "submissionTimestamp": "2023-09-19T09:10:09.206Z",
+            "decisionTimestamp": "2023-09-19T09:10:09.206Z",
+            "decision": "Denied",
+            "policyException": true,
+            "policyExceptionReason": "Executive approval",
+            "additionalUnderwritingData": {
+              "someKey1": "someValue1",
+              "someKey2": "someValue2",
+              "someKey3": "someValue3"
+            }
+          },
+          "relationships": {
+            "application": {
+              "data": {
+                "type": "application",
+                "id": "10005"
+              }
+            }
+          }
+        }
+      },
+      "ManualReviewCreditApplicationDecision": {
+        "type": "object",
+        "required": [
+          "type",
+          "id",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "manualReviewCreditApplicationDecision"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "createdAt",
+              "externalApplicationId",
+              "evaluationType",
+              "submissionTimestamp",
+              "decisionTimestamp",
+              "decision",
+              "policyException"
+            ],
+            "properties": {
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the resource was created."
+              },
+              "externalApplicationId": {
+                "type": "string",
+                "description": "Identifier for client's credit evaluation related to this decision. Max 200 char."
+              },
+              "evaluationType": {
+                "type": "string",
+                "description": "The type of credit decision. This is always CreditApplication."
+              },
+              "submissionTimestamp": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Timestamp when the corresponding credit application was submitted."
+              },
+              "decisionTimestamp": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Timestamp when the credit decision was made."
+              },
+              "decision": {
+                "type": "string",
+                "description": "The Decision for this credit application. This is always ManualReview."
+              },
+              "policyException": {
+                "type": "boolean",
+                "description": "One of true or false."
+              },
+              "policyExceptionReason": {
+                "type": "string",
+                "description": "Conditional if policyException is true. Brief description of reason for policy exception. Max 200 char."
+              },
+              "additionalUnderwritingData": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "Object containing key-value pairs of underwriting data per credit policy."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "properties": {
+              "application": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "creditApplication": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        },
+        "example": {
+          "type": "manualReviewCreditApplicationDecision",
+          "id": "1",
+          "attributes": {
+            "createdAt": "2023-07-04T15:21:11.688Z",
+            "externalApplicationId": "A1234",
+            "evaluationType": "CreditApplication",
+            "submissionTimestamp": "2023-09-19T09:10:09.206Z",
+            "decisionTimestamp": "2023-09-19T09:10:09.206Z",
+            "decision": "ManualReview",
+            "policyException": true,
+            "policyExceptionReason": "Executive approval",
+            "additionalUnderwritingData": {
+              "someKey1": "someValue1",
+              "someKey2": "someValue2",
+              "someKey3": "someValue3"
+            }
+          },
+          "relationships": {
+            "application": {
+              "data": {
+                "type": "application",
+                "id": "10005"
+              }
+            }
+          }
+        }
+      },
+      "CreateApprovedCreditLimitDecisionData": {
+        "type": "object",
+        "required": [
+          "type",
+          "attributes",
+          "relationships"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "approvedCreditLimitDecision"
+            ]
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "externalApplicationId",
+              "submissionTimestamp",
+              "decisionTimestamp",
+              "creditLimit",
+              "policyException",
+              "policyExceptionReason",
+              "additionalUnderwritingData"
+            ],
+            "properties": {
+              "externalApplicationId": {
+                "type": "string",
+                "description": "Identifier for client's credit evaluation related to this decision. Max 200 char.",
+                "example": "A1234"
+              },
+              "submissionTimestamp": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Timestamp when the corresponding credit application was submitted.",
+                "example": "2023-09-19T09:10:09.206Z"
+              },
+              "decisionTimestamp": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Timestamp when the credit decision was made.",
+                "example": "2023-09-19T09:10:09.206Z"
+              },
+              "creditLimit": {
+                "type": "integer",
+                "description": "Credit limit for application as evaluated per policy. In cents.",
+                "example": 1000000
+              },
+              "policyException": {
+                "type": "boolean",
+                "description": "One of true or false.",
+                "example": true
+              },
+              "policyExceptionReason": {
+                "type": "string",
+                "description": "Conditional if policyException is true. Brief description of reason for policy exception. Max 200 char.",
+                "example": "Executive approval"
+              },
+              "additionalUnderwritingData": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "Object containing key-value pairs of underwriting data per credit policy.",
+                "example": {
+                  "someKey1": "someValue1",
+                  "someKey2": "someValue2",
+                  "someKey3": "someValue3"
+                }
+              },
+              "idempotencyKey": {
+                "type": "string",
+                "description": "See Idempotency.",
+                "example": "3q1a3sbe-se12-4603-8ed0-820923389fb1"
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "required": [
+              "creditApplication"
+            ],
+            "properties": {
+              "creditApplication": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        }
+      },
+      "CreateApprovedCreditLimitDecisionRequest": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/CreateApprovedCreditLimitDecisionData"
+          }
+        }
+      },
+      "CreateDeniedCreditLimitDecisionData": {
+        "type": "object",
+        "required": [
+          "type",
+          "attributes",
+          "relationships"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "deniedCreditLimitDecision"
+            ]
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "externalApplicationId",
+              "submissionTimestamp",
+              "decisionTimestamp",
+              "policyException",
+              "policyExceptionReason",
+              "additionalUnderwritingData",
+              "decisionReason",
+              "adverseActionReasons"
+            ],
+            "properties": {
+              "externalApplicationId": {
+                "type": "string",
+                "description": "Identifier for client's credit evaluation related to this decision. Max 200 char.",
+                "example": "A1234"
+              },
+              "submissionTimestamp": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Timestamp when the corresponding credit application was submitted.",
+                "example": "2023-09-19T09:10:09.206Z"
+              },
+              "decisionTimestamp": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Timestamp when the credit decision was made.",
+                "example": "2023-09-19T09:10:09.206Z"
+              },
+              "policyException": {
+                "type": "boolean",
+                "description": "One of true or false.",
+                "example": true
+              },
+              "policyExceptionReason": {
+                "type": "string",
+                "description": "Conditional if policyException is true. Brief description of reason for policy exception. Max 200 char.",
+                "example": "Executive approval"
+              },
+              "additionalUnderwritingData": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "Object containing key-value pairs of underwriting data per credit policy.",
+                "example": {
+                  "someKey1": "someValue1",
+                  "someKey2": "someValue2",
+                  "someKey3": "someValue3"
+                }
+              },
+              "decisionReason": {
+                "type": "string",
+                "description": "Reason for denial per credit policy. Max 200 char.",
+                "example": "this is a decline reason"
+              },
+              "adverseActionReasons": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Array of strings representing Adverse action reasons (must have at least one). Max 200 char per reason.",
+                "example": [
+                  "adverse action reason 1",
+                  "adverse action reason 2"
+                ]
+              },
+              "idempotencyKey": {
+                "type": "string",
+                "description": "See Idempotency.",
+                "example": "3q1a3sbe-se12-4603-8ed0-820923389fb1"
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "required": [
+              "creditApplication"
+            ],
+            "properties": {
+              "creditApplication": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        }
+      },
+      "CreateDeniedCreditLimitDecisionRequest": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/CreateDeniedCreditLimitDecisionData"
+          }
+        }
+      },
+      "CreateManualReviewCreditLimitDecisionData": {
+        "type": "object",
+        "required": [
+          "type",
+          "attributes",
+          "relationships"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "manualReviewCreditLimitDecision"
+            ]
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "externalApplicationId",
+              "submissionTimestamp",
+              "decisionTimestamp",
+              "policyException",
+              "policyExceptionReason",
+              "additionalUnderwritingData"
+            ],
+            "properties": {
+              "externalApplicationId": {
+                "type": "string",
+                "description": "Identifier for client's credit evaluation related to this decision. Max 200 char.",
+                "example": "A1234"
+              },
+              "submissionTimestamp": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Timestamp when the corresponding credit application was submitted.",
+                "example": "2023-09-19T09:10:09.206Z"
+              },
+              "decisionTimestamp": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Timestamp when the credit decision was made.",
+                "example": "2023-09-19T09:10:09.206Z"
+              },
+              "policyException": {
+                "type": "boolean",
+                "description": "One of true or false.",
+                "example": true
+              },
+              "policyExceptionReason": {
+                "type": "string",
+                "description": "Conditional if policyException is true. Brief description of reason for policy exception. Max 200 char.",
+                "example": "Executive approval"
+              },
+              "additionalUnderwritingData": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "Object containing key-value pairs of underwriting data per credit policy.",
+                "example": {
+                  "someKey1": "someValue1",
+                  "someKey2": "someValue2",
+                  "someKey3": "someValue3"
+                }
+              },
+              "idempotencyKey": {
+                "type": "string",
+                "description": "See Idempotency.",
+                "example": "3q1a3sbe-se12-4603-8ed0-820923389fb1"
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "required": [
+              "creditApplication"
+            ],
+            "properties": {
+              "creditApplication": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        }
+      },
+      "CreateManualReviewCreditLimitDecisionRequest": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/CreateManualReviewCreditLimitDecisionData"
+          }
+        }
+      },
+      "CreateDeniedCreditApplicationDecisionData": {
+        "type": "object",
+        "required": [
+          "type",
+          "attributes",
+          "relationships"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "deniedCreditApplicationDecision"
+            ]
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "externalApplicationId",
+              "submissionTimestamp",
+              "decisionTimestamp",
+              "decisionReason",
+              "adverseActionReasons",
+              "policyException",
+              "policyExceptionReason",
+              "additionalUnderwritingData"
+            ],
+            "properties": {
+              "externalApplicationId": {
+                "type": "string",
+                "description": "Identifier for client's credit evaluation related to this decision. Max 200 char.",
+                "example": "A1234"
+              },
+              "submissionTimestamp": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Timestamp when the corresponding credit application was submitted.",
+                "example": "2023-09-19T09:10:09.206Z"
+              },
+              "decisionTimestamp": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Timestamp when the credit decision was made.",
+                "example": "2023-09-19T09:10:09.206Z"
+              },
+              "decisionReason": {
+                "type": "string",
+                "description": "Reason for denial per credit policy. Max 200 char.",
+                "example": "this is a decline reason"
+              },
+              "adverseActionReasons": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Array of strings representing Adverse action reasons (must have at least one). Max 200 char per reason.",
+                "example": [
+                  "adverse action reason 1",
+                  "adverse action reason 2"
+                ]
+              },
+              "policyException": {
+                "type": "boolean",
+                "description": "One of true or false.",
+                "example": false
+              },
+              "policyExceptionReason": {
+                "type": "string",
+                "description": "Conditional if policyException is true. Brief description of reason for policy exception. Max 200 char."
+              },
+              "additionalUnderwritingData": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "Object containing key-value pairs of underwriting data per credit policy.",
+                "example": {
+                  "someKey1": "someValue1",
+                  "someKey2": "someValue2",
+                  "someKey3": "someValue3"
+                }
+              },
+              "idempotencyKey": {
+                "type": "string",
+                "description": "See Idempotency.",
+                "example": "3q1a3sbe-se12-4603-8ed0-820923389fb1"
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "required": [
+              "creditApplication"
+            ],
+            "properties": {
+              "creditApplication": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        }
+      },
+      "CreateDeniedCreditApplicationDecisionRequest": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/CreateDeniedCreditApplicationDecisionData"
+          }
+        }
+      },
+      "CreateManualReviewCreditApplicationDecisionData": {
+        "type": "object",
+        "required": [
+          "type",
+          "attributes",
+          "relationships"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "manualReviewCreditApplicationDecision"
+            ]
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "externalApplicationId",
+              "submissionTimestamp",
+              "decisionTimestamp",
+              "policyException",
+              "policyExceptionReason"
+            ],
+            "properties": {
+              "externalApplicationId": {
+                "type": "string",
+                "description": "Identifier for client's credit evaluation related to this decision. Max 200 char.",
+                "example": "A1234"
+              },
+              "submissionTimestamp": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Timestamp when the corresponding credit application was submitted.",
+                "example": "2023-09-19T09:10:09.206Z"
+              },
+              "decisionTimestamp": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Timestamp when the credit decision was made.",
+                "example": "2023-09-19T09:10:09.206Z"
+              },
+              "policyException": {
+                "type": "boolean",
+                "description": "One of true or false.",
+                "example": false
+              },
+              "policyExceptionReason": {
+                "type": "string",
+                "description": "Conditional if policyException is true. Brief description of reason for policy"
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "required": [
+              "creditApplication"
+            ],
+            "properties": {
+              "creditApplication": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        }
+      },
+      "CreateManualReviewCreditApplicationDecisionRequest": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/CreateManualReviewCreditApplicationDecisionData"
+          }
+        }
       }
     },
     "responses": {

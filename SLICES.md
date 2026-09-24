@@ -1,12 +1,12 @@
 # Implemented API slices
 
-From `spec-version.json` (`slices`), OpenAPI tags on `unit-finance/unit-openapi` **0.15.0**.
+From `spec-version.json` (`slices`), OpenAPI tags on `unit-finance/unit-openapi` **0.16.0**.
 
 Accounts · Application Documents · Applications · Authorized Users ·
 Card Fraud Outreach · Card Holder API Tokens · Cards · Cards ATM Locations ·
 Cards Add To Mobile Wallet · Cards Authorization Requests · Cards Authorizations ·
-Check Deposits · Check Payments · Counterparties · Customers · Fees · Payments ·
-Transactions
+Check Deposits · Check Payments · Counterparties · Credit Applications ·
+Credit Decisions · Customers · Fees · Payments · Transactions
 
 # Test skips and early exits
 
@@ -48,6 +48,11 @@ it). `listAuthorizedUsers` / `getAuthorizedUser` differ; see below.
 **Cards Authorizations** `listAuthorizations` / `getAuthorization` /
 `releaseAuthorization` differ; see below.
 
+**Credit Applications** (new in spec 0.16.0) — all four operations **run** in
+every SDK, but two API defects had to be worked around first; see below.
+**Credit Decisions** `listCreditDecisions` / `getCreditDecision` run in every
+SDK; `createCreditDecision` differs. See below.
+
 | Mark | Meaning |
 | --- | --- |
 | **hard skip** | Test never calls the API (`it.skip`, `@Disabled`, RSpec/`pytest` skip). |
@@ -75,6 +80,10 @@ it). `listAuthorizedUsers` / `getAuthorizedUser` differ; see below.
 | `listAtmLocations` (new in spec 0.14.0) | runs | GET `/atm-locations` with `filter[postalCode]=11375` returns 200 and a JSON:API array. |
 | `originateCheckPaymentMailPhysicalCheck` (new in spec 0.15.0) | abort | The POST is valid (funded deposit account, US payee, future `sendDate`). The sandbox may **400/403** when mailed checks are off for the org bank agreement. Tests treat that as unavailable instead of failing. |
 | `cancelCheckPayment` | abort | Cancel is only legal while status is **`Pending`**. The suite originates a future-dated check then POSTs cancel. A 4xx (already in production, feature off, or not pending) is treated as unavailable. |
+| `getCreditApplication` / `getCreditDecision` (new in spec 0.16.0) | runs, with a header workaround | Both single-resource GETs answer **415** `content-type must be "application/vnd.api+json"` unless the request carries that **`Content-Type`** header — on a request with no body. The spec declares no request body for them, so no generated client sends one and every read fails out of the box. The suites pin the header on the credit clients only (node `baseOptions`, python `_headers`, ruby `header_params`, java `addDefaultHeader`). The sibling **list** endpoints do not require it. Defect owned by the API / `unit-openapi`: stop requiring a request content type on bodyless GETs, or declare it. |
+| `listCreditApplications` / `listCreditDecisions` (new in spec 0.16.0) | runs | Plain paged reads; the sandbox org already has credit applications, and decisions accumulate as the suites create them. |
+| `createCreditApplication` (new in spec 0.16.0) | runs, with two workarounds | `relationships.lendingProgram` is **required**, and this SDK surface has **no list-lending-programs operation**, so the suites borrow a program id off an existing credit application rather than guessing (`null` -> skip when the org has none). Separately, the spec declares `idempotencyKey` on the create attributes but the API answers **400 `"Field 'idempotencyKey' is not expected"`**, so the fixtures omit it. Spec defect owned by `unit-openapi`: drop `idempotencyKey` from the credit-application create attributes (its sibling on `createCreditDecision` **is** accepted). |
+| `updateCreditApplication` (new in spec 0.16.0) | runs | PATCHes the underwriting attributes of a **dedicated** application the suite creates for this test alone, so it never mutates an unrelated org resource. It cannot share the application the other credit suites use: `createCreditDecision` records an approved decision, flipping that application to `Approved`, and the API then rejects the PATCH with 400 `not_supported_for_credit_application_status` ("Credit application cannot be patched when status is Approved"). Sharing made the run order-dependent — it passed under jest/pytest/rspec alphabetical collection but failed on CI for Java, where Surefire's default `filesystem` order ran the decision first. The fallback path likewise only accepts a listed application still in `Pending`. |
 
 ---
 
@@ -277,6 +286,32 @@ the same null-required-field defect above. This broke the existing
 | Node | Java | Ruby | Python |
 | --- | --- | --- | --- |
 | **Runs.** Axios does not validate. | **Runs.** Passes in practice (the required documents are not yet generated when these ITs run in the single fast JVM, so `included[]` is empty). Will break if a document appears; same spec fix applies. | **Runs (raw).** `shared_app` + `get_by_id` + `update` specs read the raw body (`debug_return_type: 'String'`). | **Runs (raw).** `shared_app` + `test_get_by_id` + `test_update` read the raw body (`*_without_preload_content`). |
+
+### `createCreditDecision` (new in spec 0.16.0)
+
+The decision timestamps (`submissionTimestamp`, `decisionTimestamp`) are the
+pickiest field on this API. It accepts **only** `YYYY-MM-DDTHH:MM:SS.sssZ` —
+exactly three fractional digits and a literal `Z` — and answers a bare **400
+“Please check the request payload and try again”** for every other RFC 3339
+spelling of the same instant. Verified against the sandbox: `.078Z` **201**,
+`.07898Z` **400**, no fraction **400**, `.078+00:00` **400**.
+
+That turns a `format: date-time` field into a trap for any generated client
+that serializes date-times its own way. Node and Ruby build the string by hand,
+so they are unaffected. Java serializes `OffsetDateTime` with
+`ISO_OFFSET_DATE_TIME`, which prints microseconds — the fixture truncates to
+milliseconds (and nudges an exact second by 1ms so the fraction is not dropped
+entirely). Python types the field as `datetime` and pydantic always renders it
+with a `+00:00` offset; no fixture can express the accepted spelling while the
+field stays typed, so the suite aborts.
+
+Defect owned by the API / `unit-openapi`: accept any RFC 3339 instant, as the
+`format: date-time` declaration promises. Then drop the Java truncation and the
+Python abort.
+
+| Node | Java | Ruby | Python |
+| --- | --- | --- | --- |
+| **Runs**. Hand-built `toISOString()` is already `.sssZ`. | **Runs**, after truncating the `OffsetDateTime` to milliseconds. | **Runs**. Hand-built `strftime('%L')` + `Z`. | **Abort** on the 400: pydantic emits `+00:00` and the API rejects it. |
 
 ---
 
