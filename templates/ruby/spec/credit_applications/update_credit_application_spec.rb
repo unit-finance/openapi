@@ -5,7 +5,9 @@ require 'helpers/fixtures'
 
 RSpec.describe 'update_credit_application', :sandbox do
   it 'patches the underwriting attributes of a credit application' do
-    application_id = Helpers::Credit.credit_application_id
+    # A dedicated application: an approved decision would flip the shared one
+    # to `Approved`, which the API refuses to PATCH.
+    application_id = Helpers::Credit.patchable_credit_application_id
     next if application_id.nil?
 
     api = Helpers::Api.build_credit_applications_api

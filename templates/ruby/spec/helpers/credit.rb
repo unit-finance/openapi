@@ -78,9 +78,10 @@ module Helpers
       [e.code, nil]
     end
 
-    # A credit application id for get/update/decision to reuse. Prefer one this
-    # run created so the update spec never patches an unrelated org resource;
-    # fall back to an existing one.
+    # A credit application id for get/decision to reuse. Prefer one this run
+    # created so the specs never touch an unrelated org resource; fall back to
+    # an existing one. The update spec deliberately does NOT share this one --
+    # see `patchable_credit_application_id`.
     def credit_application_id
       return @application_id if @application_id_resolved
 
@@ -98,6 +99,31 @@ module Helpers
       first = Array(document && document['data']).first
       @application_id = first['id'] if first.is_a?(Hash) && first['id'].is_a?(String)
       @application_id
+    end
+
+    # A credit application the update spec may PATCH.
+    #
+    # Recording an approved decision flips an application to `Approved`, and the
+    # API then refuses the PATCH with 400
+    # `not_supported_for_credit_application_status`. Sharing one application
+    # between the update and create-decision specs therefore makes the run
+    # order-dependent -- which is exactly how this broke on CI for Java, where
+    # Surefire's filesystem order put the decision first. So the update spec
+    # always mints its own application and only ever falls back to one still in
+    # `Pending`.
+    def patchable_credit_application_id
+      created = create_credit_application_or_skip
+      if !created.nil? && !created[1].nil?
+        created_id = created[1].dig('data', 'id')
+        return created_id if created_id.is_a?(String)
+      end
+
+      _status_code, document = list_credit_applications_raw
+      Array(document && document['data']).each do |item|
+        next unless item.is_a?(Hash) && item['id'].is_a?(String)
+        return item['id'] if item.dig('attributes', 'status') == 'Pending'
+      end
+      nil
     end
 
     def create_credit_decision_or_skip(application_id)

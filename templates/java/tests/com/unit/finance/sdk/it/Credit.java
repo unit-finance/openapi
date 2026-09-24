@@ -116,9 +116,12 @@ final class Credit {
   }
 
   /**
-   * A credit application id for get/update/decision to reuse. Prefer one this
-   * run created so the update suite never patches an unrelated org resource;
-   * fall back to an existing one.
+   * A credit application id for get/decision to reuse. Prefer one this run
+   * created so the suites never touch an unrelated org resource; fall back to
+   * an existing one.
+   *
+   * <p>The update suite deliberately does NOT share this one — see
+   * {@link #patchableApplicationId()}.
    */
   static String applicationId() throws ApiException, InterruptedException {
     if (applicationIdResolved) {
@@ -139,6 +142,56 @@ final class Credit {
       applicationId = ApiSupport.jsonApiId(listed.getData().get(0));
     }
     return applicationId;
+  }
+
+  /**
+   * A credit application the update suite may PATCH.
+   *
+   * <p>Recording an approved decision flips an application to {@code Approved},
+   * and the API then refuses the PATCH with <b>400
+   * {@code not_supported_for_credit_application_status}</b>. Sharing one
+   * application between the update and create-decision suites therefore makes
+   * the run order-dependent — which is exactly how this broke on CI, where
+   * Surefire's filesystem order put the decision first. So the update suite
+   * always mints its own application and only ever falls back to one still in
+   * {@code Pending}.
+   */
+  static String patchableApplicationId() throws ApiException, InterruptedException {
+    CreditApplicationsApi api = ApiSupport.buildCreditApplicationsApi();
+    ApiResponse<CreateCreditApplication201Response> created = createApplicationOrSkip(api);
+    if (created != null && created.getData() != null) {
+      String createdId = ApiSupport.jsonApiId(created.getData().getData());
+      if (createdId != null) {
+        return createdId;
+      }
+    }
+    ListCreditApplications200Response listed = listApplicationsOrSkip(api);
+    if (listed == null || listed.getData() == null) {
+      return null;
+    }
+    for (ListCreditApplications200ResponseDataInner item : listed.getData()) {
+      if ("Pending".equals(statusOf(item))) {
+        return ApiSupport.jsonApiId(item);
+      }
+    }
+    return null;
+  }
+
+  private static String statusOf(Object item) {
+    Object actual = ApiSupport.unwrap(item);
+    if (actual == null) {
+      return null;
+    }
+    try {
+      Object attributes = actual.getClass().getMethod("getAttributes").invoke(actual);
+      if (attributes == null) {
+        return null;
+      }
+      Object status = attributes.getClass().getMethod("getStatus").invoke(attributes);
+      return status == null ? null : status.toString();
+    } catch (ReflectiveOperationException ignored) {
+      return null;
+    }
   }
 
   static ApiResponse<CreateCreditDecision201Response> createDecisionOrSkip(
