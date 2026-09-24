@@ -18,7 +18,10 @@ from unit_finance_sdk.api.counterparties_api import CounterpartiesApi
 from unit_finance_sdk.api.credit_applications_api import CreditApplicationsApi
 from unit_finance_sdk.api.credit_decisions_api import CreditDecisionsApi
 from unit_finance_sdk.api.customers_api import CustomersApi
+from unit_finance_sdk.api.daca_api import DACAApi
+from unit_finance_sdk.api.disputes_api import DisputesApi
 from unit_finance_sdk.api.fees_api import FeesApi
+from unit_finance_sdk.api.institutions_api import InstitutionsApi
 from unit_finance_sdk.api.payments_api import PaymentsApi
 from unit_finance_sdk.api.transactions_api import TransactionsApi
 

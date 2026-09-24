@@ -5,7 +5,7 @@ info:
     name: Proprietary
     url: https://www.unit.co/terms-of-service
   title: Unit API
-  version: 0.16.0
+  version: 0.17.0
 servers:
 - url: https://api.s.unit.sh
 security:
@@ -67,6 +67,14 @@ tags:
 - description: "Credit decisions recorded against credit applications, for credit\
     \ limit and credit application evaluations."
   name: Credit Decisions
+- description: "Deposit Account Control Agreement lifecycle on deposit accounts: entering,\
+    \ activating, and deactivating DACA."
+  name: DACA
+- description: "Disputes raised on debit card and ACH transactions, their status history\
+    \ and resolution."
+  name: Disputes
+- description: Financial institutions searchable by ABA routing number.
+  name: Institutions
 paths:
   /applications:
     get:
@@ -8646,6 +8654,360 @@ paths:
       - Credit Decisions
       x-accepts:
       - application/vnd.api+json
+  /accounts/{accountId}/enter-daca:
+    post:
+      description: Set an account with DACA `Entered` status.
+      operationId: enterControlAgreement
+      parameters:
+      - explode: false
+        in: path
+        name: accountId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+        required: false
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/enterControlAgreement_200_response"
+          description: The deposit account resource.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - accounts-write
+      summary: Enter control agreement
+      tags:
+      - DACA
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /accounts/{accountId}/activate-daca:
+    post:
+      description: "Set an account with DACA `Activated` status. This action will:"
+      operationId: activateControlAgreement
+      parameters:
+      - explode: false
+        in: path
+        name: accountId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+        required: false
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/enterControlAgreement_200_response"
+          description: The deposit account resource.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - accounts-write
+      summary: Activate control agreement
+      tags:
+      - DACA
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /accounts/{accountId}/deactivate-daca:
+    post:
+      description: "Deactivate an account with DACA `Activated` status. This action\
+        \ will:"
+      operationId: deactivateControlAgreement
+      parameters:
+      - explode: false
+        in: path
+        name: accountId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+        required: false
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/enterControlAgreement_200_response"
+          description: The deposit account resource.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - accounts-write
+      summary: Deactivate control agreement
+      tags:
+      - DACA
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /disputes:
+    get:
+      description: List dispute resources. Paging can be applied.
+      operationId: listDisputes
+      parameters:
+      - description: Optional. Maximum number of resources that will be returned.
+          Maximum is 1000 resources. See Pagination.
+        explode: true
+        in: query
+        name: "page[limit]"
+        required: false
+        schema:
+          default: "100"
+          type: string
+        style: form
+      - description: Optional. Number of resources to skip. See Pagination.
+        explode: true
+        in: query
+        name: "page[offset]"
+        required: false
+        schema:
+          default: "0"
+          type: string
+        style: form
+      - description: Optional. Search term according to the Full-Text Search Rules.
+        explode: true
+        in: query
+        name: "filter[query]"
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/listDisputes_200_response"
+          description: Array of dispute resources.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - disputes
+      summary: List disputes
+      tags:
+      - Disputes
+      x-accepts:
+      - application/vnd.api+json
+  /disputes/{id}:
+    get:
+      description: Get a dispute resource by id.
+      operationId: getDisputeById
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/getDisputeById_200_response"
+          description: A dispute resource.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - disputes
+      summary: Get dispute by id
+      tags:
+      - Disputes
+      x-accepts:
+      - application/vnd.api+json
+  /institutions/{routingNumber}:
+    get:
+      description: Get an institution resource by routing number.
+      operationId: getByRoutingNumber
+      parameters:
+      - explode: false
+        in: path
+        name: routingNumber
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/getByRoutingNumber_200_response"
+          description: Institution resource.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - institutions
+      summary: Get by routing number
+      tags:
+      - Institutions
+      x-accepts:
+      - application/vnd.api+json
 components:
   responses:
     BadRequest:
@@ -12408,6 +12770,55 @@ components:
       - id
       - type
       type: object
+    Dispute:
+      description: "`Dispute` is a JSON:API resource, top-level fields:"
+      example:
+        type: dispute
+        id: "36"
+        attributes:
+          source: DebitCard
+          statusHistory:
+          - type: InvestigationStarted
+            updatedAt: 2022-02-23T12:15:47.386Z
+          status: InvestigationStarted
+          description: Debit card transaction
+          disputeType: Fraud
+          createdAt: 2022-02-23T12:15:47.386Z
+          amount: 5000
+          decisionReason: null
+        relationships:
+          customer:
+            data:
+              type: customer
+              id: "10001"
+          account:
+            data:
+              type: account
+              id: "10002"
+          transaction:
+            data:
+              type: transaction
+              id: "10003"
+          card:
+            data:
+              type: card
+              id: "10004"
+      properties:
+        type:
+          enum:
+          - dispute
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/Dispute_attributes"
+        relationships:
+          $ref: "#/components/schemas/Dispute_relationships"
+      required:
+      - attributes
+      - id
+      - type
+      type: object
     DisputeTransaction:
       description: "`DisputeTransaction` is a JSON:API resource, top-level fields:"
       example:
@@ -15344,6 +15755,28 @@ components:
       required:
       - data
       type: object
+    Institution:
+      example:
+        type: institution
+        attributes:
+          routingNumber: "091311229"
+          name: Choice Financial Group
+          address: Ste 300 Fargo ND 58104
+          isACHSupported: true
+          isWireSupported: false
+      properties:
+        type:
+          enum:
+          - institution
+          type: string
+        id:
+          type: string
+        attributes:
+          $ref: "#/components/schemas/Institution_attributes"
+      required:
+      - attributes
+      - type
+      type: object
     list_200_response_data_inner:
       discriminator:
         mapping:
@@ -16647,6 +17080,41 @@ components:
       properties:
         data:
           $ref: "#/components/schemas/listCreditDecisions_200_response_data_inner"
+      required:
+      - data
+      type: object
+    enterControlAgreement_200_response:
+      properties:
+        data:
+          allOf:
+          - $ref: "#/components/schemas/DepositAccount"
+          description: Deposit Account resource.
+      required:
+      - data
+      type: object
+    listDisputes_200_response:
+      properties:
+        data:
+          description: Array of dispute resources.
+          items:
+            $ref: "#/components/schemas/Dispute"
+          type: array
+      required:
+      - data
+      type: object
+    getDisputeById_200_response:
+      properties:
+        data:
+          $ref: "#/components/schemas/Dispute"
+      required:
+      - data
+      type: object
+    getByRoutingNumber_200_response:
+      properties:
+        data:
+          allOf:
+          - $ref: "#/components/schemas/Institution"
+          description: Institution resource.
       required:
       - data
       type: object
@@ -20477,6 +20945,73 @@ components:
       - tags
       - traceNumber
       type: object
+    Dispute_attributes_statusHistory_inner:
+      properties:
+        type:
+          description: "The dispute status. One of InvestigationStarted, ProvisionallyCredited,\
+            \ Denied, ResolvedLost, ResolvedWon."
+          type: string
+        updatedAt:
+          description: The date the status was set.
+          format: date-time
+          type: string
+      type: object
+    Dispute_attributes:
+      properties:
+        source:
+          description: One of DebitCard or ACH
+          type: string
+        status:
+          description: "One of InvestigationStarted, ProvisionallyCredited, Denied,\
+            \ ResolvedLost, ResolvedWon."
+          type: string
+        statusHistory:
+          description: "A dispute status list with the status date. Possible statuses\
+            \ are InvestigationStarted, ProvisionallyCredited, Denied, ResolvedLost,\
+            \ ResolvedWon."
+          items:
+            $ref: "#/components/schemas/Dispute_attributes_statusHistory_inner"
+          type: array
+        description:
+          description: Dispute description.
+          type: string
+        createdAt:
+          description: The date the resource was created.
+          format: date-time
+          type: string
+        updatedAt:
+          description: The date the resource was updated.
+          format: date-time
+          type: string
+        amount:
+          description: The amount (cents) of the payment.
+          type: integer
+        decisionReason:
+          description: Reason for a ResolvedLost status.
+          nullable: true
+          type: string
+        disputeType:
+          description: "One of Issuer, Fraud, NonFraud."
+          type: string
+      required:
+      - amount
+      - createdAt
+      - description
+      - source
+      - status
+      - statusHistory
+      type: object
+    Dispute_relationships:
+      properties:
+        account:
+          $ref: "#/components/schemas/Relationship"
+        customer:
+          $ref: "#/components/schemas/Relationship"
+        transaction:
+          $ref: "#/components/schemas/Relationship"
+        card:
+          $ref: "#/components/schemas/Relationship"
+      type: object
     DisputeTransaction_attributes:
       properties:
         createdAt:
@@ -23655,6 +24190,30 @@ components:
       - policyException
       - policyExceptionReason
       - submissionTimestamp
+      type: object
+    Institution_attributes:
+      properties:
+        routingNumber:
+          description: Routing number of the institution. Valid 9-digit ABA routing
+            transit number.
+          type: string
+        name:
+          description: Name of the institution.
+          type: string
+        address:
+          description: Address of the institution.
+          type: string
+        isACHSupported:
+          description: Is FedACH participant.
+          type: boolean
+        isWireSupported:
+          description: Is Fedwire participant.
+          type: boolean
+      required:
+      - isACHSupported
+      - isWireSupported
+      - name
+      - routingNumber
       type: object
   securitySchemes:
     bearerAuth:

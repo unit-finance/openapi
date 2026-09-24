@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Unit API",
-    "version": "0.16.0",
+    "version": "0.17.0",
     "description": "JSON:API-compliant banking API.",
     "license": {
       "name": "Proprietary",
@@ -99,6 +99,18 @@
     {
       "name": "Credit Decisions",
       "description": "Credit decisions recorded against credit applications, for credit limit and credit application evaluations."
+    },
+    {
+      "name": "DACA",
+      "description": "Deposit Account Control Agreement lifecycle on deposit accounts: entering, activating, and deactivating DACA."
+    },
+    {
+      "name": "Disputes",
+      "description": "Disputes raised on debit card and ACH transactions, their status history and resolution."
+    },
+    {
+      "name": "Institutions",
+      "description": "Financial institutions searchable by ABA routing number."
     }
   ],
   "paths": {
@@ -12166,6 +12178,477 @@
           }
         }
       }
+    },
+    "/accounts/{accountId}/enter-daca": {
+      "parameters": [
+        {
+          "name": "accountId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "operationId": "enterControlAgreement",
+        "summary": "Enter control agreement",
+        "description": "Set an account with DACA `Entered` status.",
+        "tags": [
+          "DACA"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "accounts-write"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The deposit account resource.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/DepositAccount"
+                        }
+                      ],
+                      "description": "Deposit Account resource."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/accounts/{accountId}/activate-daca": {
+      "parameters": [
+        {
+          "name": "accountId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "operationId": "activateControlAgreement",
+        "summary": "Activate control agreement",
+        "description": "Set an account with DACA `Activated` status. This action will:",
+        "tags": [
+          "DACA"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "accounts-write"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The deposit account resource.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/DepositAccount"
+                        }
+                      ],
+                      "description": "Deposit Account resource."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/accounts/{accountId}/deactivate-daca": {
+      "parameters": [
+        {
+          "name": "accountId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "operationId": "deactivateControlAgreement",
+        "summary": "Deactivate control agreement",
+        "description": "Deactivate an account with DACA `Activated` status. This action will:",
+        "tags": [
+          "DACA"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "accounts-write"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The deposit account resource.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/DepositAccount"
+                        }
+                      ],
+                      "description": "Deposit Account resource."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/disputes": {
+      "get": {
+        "operationId": "listDisputes",
+        "summary": "List disputes",
+        "description": "List dispute resources. Paging can be applied.",
+        "tags": [
+          "Disputes"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "disputes"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page[limit]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Maximum number of resources that will be returned. Maximum is 1000 resources. See Pagination.",
+            "schema": {
+              "type": "string",
+              "default": "100"
+            }
+          },
+          {
+            "name": "page[offset]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Number of resources to skip. See Pagination.",
+            "schema": {
+              "type": "string",
+              "default": "0"
+            }
+          },
+          {
+            "name": "filter[query]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Search term according to the Full-Text Search Rules.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of dispute resources.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Dispute"
+                      },
+                      "description": "Array of dispute resources."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/disputes/{id}": {
+      "get": {
+        "operationId": "getDisputeById",
+        "summary": "Get dispute by id",
+        "description": "Get a dispute resource by id.",
+        "tags": [
+          "Disputes"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "disputes"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A dispute resource.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Dispute"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/institutions/{routingNumber}": {
+      "get": {
+        "operationId": "getByRoutingNumber",
+        "summary": "Get by routing number",
+        "description": "Get an institution resource by routing number.",
+        "tags": [
+          "Institutions"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "institutions"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "routingNumber",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Institution resource.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/Institution"
+                        }
+                      ],
+                      "description": "Institution resource."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -22422,6 +22905,154 @@
         },
         "description": "A dishonored ACH transaction is a relatively uncommon transaction type, that happens when Unit attempts to return a received ACH, but the originating bank decides not to return the funds. This typically happens when the return is not in compliance with the NACHA rules (e.g. 3 days after the payment took place when the network rules define a maximum of 2 days)."
       },
+      "Dispute": {
+        "type": "object",
+        "required": [
+          "type",
+          "id",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "dispute"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "source",
+              "status",
+              "statusHistory",
+              "description",
+              "createdAt",
+              "amount"
+            ],
+            "properties": {
+              "source": {
+                "type": "string",
+                "description": "One of DebitCard or ACH"
+              },
+              "status": {
+                "type": "string",
+                "description": "One of InvestigationStarted, ProvisionallyCredited, Denied, ResolvedLost, ResolvedWon."
+              },
+              "statusHistory": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "description": "The dispute status. One of InvestigationStarted, ProvisionallyCredited, Denied, ResolvedLost, ResolvedWon."
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "description": "The date the status was set."
+                    }
+                  }
+                },
+                "description": "A dispute status list with the status date. Possible statuses are InvestigationStarted, ProvisionallyCredited, Denied, ResolvedLost, ResolvedWon."
+              },
+              "description": {
+                "type": "string",
+                "description": "Dispute description."
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the resource was created."
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the resource was updated."
+              },
+              "amount": {
+                "type": "integer",
+                "description": "The amount (cents) of the payment."
+              },
+              "decisionReason": {
+                "type": "string",
+                "nullable": true,
+                "description": "Reason for a ResolvedLost status."
+              },
+              "disputeType": {
+                "type": "string",
+                "description": "One of Issuer, Fraud, NonFraud."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "properties": {
+              "account": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "customer": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "transaction": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "card": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        },
+        "example": {
+          "type": "dispute",
+          "id": "36",
+          "attributes": {
+            "source": "DebitCard",
+            "statusHistory": [
+              {
+                "type": "InvestigationStarted",
+                "updatedAt": "2022-02-23T12:15:47.386Z"
+              }
+            ],
+            "status": "InvestigationStarted",
+            "description": "Debit card transaction",
+            "disputeType": "Fraud",
+            "createdAt": "2022-02-23T12:15:47.386Z",
+            "amount": 5000,
+            "decisionReason": null
+          },
+          "relationships": {
+            "customer": {
+              "data": {
+                "type": "customer",
+                "id": "10001"
+              }
+            },
+            "account": {
+              "data": {
+                "type": "account",
+                "id": "10002"
+              }
+            },
+            "transaction": {
+              "data": {
+                "type": "transaction",
+                "id": "10003"
+              }
+            },
+            "card": {
+              "data": {
+                "type": "card",
+                "id": "10004"
+              }
+            }
+          }
+        },
+        "description": "`Dispute` is a JSON:API resource, top-level fields:"
+      },
       "DisputeTransaction": {
         "type": "object",
         "required": [
@@ -31128,6 +31759,65 @@
         "properties": {
           "data": {
             "$ref": "#/components/schemas/CreateManualReviewCreditApplicationDecisionData"
+          }
+        }
+      },
+      "Institution": {
+        "type": "object",
+        "required": [
+          "type",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "institution"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "routingNumber",
+              "name",
+              "isACHSupported",
+              "isWireSupported"
+            ],
+            "properties": {
+              "routingNumber": {
+                "type": "string",
+                "description": "Routing number of the institution. Valid 9-digit ABA routing transit number."
+              },
+              "name": {
+                "type": "string",
+                "description": "Name of the institution."
+              },
+              "address": {
+                "type": "string",
+                "description": "Address of the institution."
+              },
+              "isACHSupported": {
+                "type": "boolean",
+                "description": "Is FedACH participant."
+              },
+              "isWireSupported": {
+                "type": "boolean",
+                "description": "Is Fedwire participant."
+              }
+            }
+          }
+        },
+        "example": {
+          "type": "institution",
+          "attributes": {
+            "routingNumber": "091311229",
+            "name": "Choice Financial Group",
+            "address": "Ste 300 Fargo ND 58104",
+            "isACHSupported": true,
+            "isWireSupported": false
           }
         }
       }
