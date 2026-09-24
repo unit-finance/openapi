@@ -1,12 +1,13 @@
 # Implemented API slices
 
-From `spec-version.json` (`slices`), OpenAPI tags on `unit-finance/unit-openapi` **0.16.0**.
+From `spec-version.json` (`slices`), OpenAPI tags on `unit-finance/unit-openapi` **0.17.0**.
 
 Accounts · Application Documents · Applications · Authorized Users ·
 Card Fraud Outreach · Card Holder API Tokens · Cards · Cards ATM Locations ·
 Cards Add To Mobile Wallet · Cards Authorization Requests · Cards Authorizations ·
 Check Deposits · Check Payments · Counterparties · Credit Applications ·
-Credit Decisions · Customers · Fees · Payments · Transactions
+Credit Decisions · Customers · DACA · Disputes · Fees · Institutions ·
+Payments · Transactions
 
 # Test skips and early exits
 
@@ -53,6 +54,12 @@ every SDK, but two API defects had to be worked around first; see below.
 **Credit Decisions** `listCreditDecisions` / `getCreditDecision` run in every
 SDK; `createCreditDecision` differs. See below.
 
+**DACA · Institutions** (new in spec 0.17.0) — no extra skip in any SDK; all
+four operations **run**. The three DACA transitions needed a hand-rolled
+request body the spec does not describe; see below. **Disputes**
+`listDisputes` runs in every SDK; `getDisputeById` is the same abort in every
+SDK. See below.
+
 | Mark | Meaning |
 | --- | --- |
 | **hard skip** | Test never calls the API (`it.skip`, `@Disabled`, RSpec/`pytest` skip). |
@@ -83,6 +90,10 @@ SDK; `createCreditDecision` differs. See below.
 | `getCreditApplication` / `getCreditDecision` (new in spec 0.16.0) | runs, with a header workaround | Both single-resource GETs answer **415** `content-type must be "application/vnd.api+json"` unless the request carries that **`Content-Type`** header — on a request with no body. The spec declares no request body for them, so no generated client sends one and every read fails out of the box. The suites pin the header on the credit clients only (node `baseOptions`, python `_headers`, ruby `header_params`, java `addDefaultHeader`). The sibling **list** endpoints do not require it. Defect owned by the API / `unit-openapi`: stop requiring a request content type on bodyless GETs, or declare it. |
 | `listCreditApplications` / `listCreditDecisions` (new in spec 0.16.0) | runs | Plain paged reads; the sandbox org already has credit applications, and decisions accumulate as the suites create them. |
 | `createCreditApplication` (new in spec 0.16.0) | runs, with two workarounds | `relationships.lendingProgram` is **required**, and this SDK surface has **no list-lending-programs operation**, so the suites borrow a program id off an existing credit application rather than guessing (`null` -> skip when the org has none). Separately, the spec declares `idempotencyKey` on the create attributes but the API answers **400 `"Field 'idempotencyKey' is not expected"`**, so the fixtures omit it. Spec defect owned by `unit-openapi`: drop `idempotencyKey` from the credit-application create attributes (its sibling on `createCreditDecision` **is** accepted). |
+| `enterControlAgreement` / `activateControlAgreement` / `deactivateControlAgreement` (new in spec 0.17.0) | runs, with a hand-rolled body | The spec declares the request body as an **optional, untyped `object`**, so the generated clients take a bare `object` / `Object` / `Dict[str, Any]` / `opts[:body]` and there is no model to build. The API nevertheless **requires** it: omitting the body answers **400 `invalid_fields`** (`Field 'data' is required`), `data.type` is pinned to the constant **`updateDacaPoliciesRequest`**, and `data.relationships.account` is required. The fixtures therefore hand-roll the envelope in every SDK. Spec defect owned by `unit-openapi`: model this request body instead of `type: object`. Ordering is also enforced by the API — activate requires the account to be **`Entered`** and deactivate requires **`Activated`**, otherwise it returns 400 `invalid_daca_status_transition` — so each suite mints its **own dedicated deposit account** and walks it through the prior transitions rather than sharing one, keeping the run order-independent. |
+| `listDisputes` (new in spec 0.17.0) | runs | Plain paged read; the sandbox org already has disputes. |
+| `getDisputeById` (new in spec 0.17.0) | abort | Needs an existing dispute id. Disputes are opened by **Unit operations**, not through the API — this surface exposes only list and get, with **no create-dispute operation** — so the suites read the first id off `listDisputes` and bail when the org has none. |
+| `getByRoutingNumber` (new in spec 0.17.0) | runs | GET `/institutions/{routingNumber}` with the shared account's routing number returns 200. The `institution` resource is keyed by routing number and carries **no JSON:API `id`**; the spec marks `id` optional, so the strict-typed clients still parse the envelope and the tests assert `type` plus the attribute keys instead. |
 | `updateCreditApplication` (new in spec 0.16.0) | runs | PATCHes the underwriting attributes of a **dedicated** application the suite creates for this test alone, so it never mutates an unrelated org resource. It cannot share the application the other credit suites use: `createCreditDecision` records an approved decision, flipping that application to `Approved`, and the API then rejects the PATCH with 400 `not_supported_for_credit_application_status` ("Credit application cannot be patched when status is Approved"). Sharing made the run order-dependent — it passed under jest/pytest/rspec alphabetical collection but failed on CI for Java, where Surefire's default `filesystem` order ran the decision first. The fallback path likewise only accepts a listed application still in `Pending`. |
 
 ---

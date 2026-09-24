@@ -20,7 +20,10 @@ import com.unit.finance.sdk.api.CounterpartiesApi;
 import com.unit.finance.sdk.api.CreditApplicationsApi;
 import com.unit.finance.sdk.api.CreditDecisionsApi;
 import com.unit.finance.sdk.api.CustomersApi;
+import com.unit.finance.sdk.api.DacaApi;
+import com.unit.finance.sdk.api.DisputesApi;
 import com.unit.finance.sdk.api.FeesApi;
+import com.unit.finance.sdk.api.InstitutionsApi;
 import com.unit.finance.sdk.api.PaymentsApi;
 import com.unit.finance.sdk.api.TransactionsApi;
 import com.unit.finance.sdk.model.AbstractOpenApiSchema;
@@ -285,6 +288,21 @@ final class ApiSupport {
   /** Construct a {@code CardsAuthorizationsApi} bound to the sandbox. */
   static CardsAuthorizationsApi buildCardsAuthorizationsApi() {
     return new CardsAuthorizationsApi(buildApiClient());
+  }
+
+  /** Construct a {@code DacaApi} bound to the sandbox. */
+  static DacaApi buildDacaApi() {
+    return new DacaApi(buildApiClient());
+  }
+
+  /** Construct a {@code DisputesApi} bound to the sandbox. */
+  static DisputesApi buildDisputesApi() {
+    return new DisputesApi(buildApiClient());
+  }
+
+  /** Construct an {@code InstitutionsApi} bound to the sandbox. */
+  static InstitutionsApi buildInstitutionsApi() {
+    return new InstitutionsApi(buildApiClient());
   }
 
   /** Block the current thread for sandbox polling (mirrors Node {@code sleep}). */
