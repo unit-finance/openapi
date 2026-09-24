@@ -23,6 +23,8 @@ from unit_finance_sdk import (
     CheckPaymentsApi,
     Configuration,
     CounterpartiesApi,
+    CreditApplicationsApi,
+    CreditDecisionsApi,
     CustomersApi,
     FeesApi,
     PaymentsApi,
@@ -140,6 +142,24 @@ def build_cards_authorization_requests_api() -> CardsAuthorizationRequestsApi:
 def build_cards_authorizations_api() -> CardsAuthorizationsApi:
     """Construct a ``CardsAuthorizationsApi`` bound to the sandbox."""
     return CardsAuthorizationsApi(ApiClient(_configuration()))
+
+
+def build_credit_applications_api() -> CreditApplicationsApi:
+    """Construct a ``CreditApplicationsApi`` bound to the sandbox."""
+    return CreditApplicationsApi(ApiClient(_configuration()))
+
+
+def build_credit_decisions_api() -> CreditDecisionsApi:
+    """Construct a ``CreditDecisionsApi`` bound to the sandbox."""
+    return CreditDecisionsApi(ApiClient(_configuration()))
+
+
+# ``GET /credit-applications/{id}`` and ``GET /credit-decisions/{id}`` reject any
+# request that omits a ``Content-Type: application/vnd.api+json`` header with
+# 415, even though neither takes a body. The spec declares no request body for
+# them, so the generated clients send no ``Content-Type`` and every
+# single-resource read fails. Tests pass this via ``_headers``.
+VND_API_JSON_HEADERS = {"Content-Type": "application/vnd.api+json"}
 
 
 def sleep(seconds: float) -> None:

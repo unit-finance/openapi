@@ -17,6 +17,9 @@ import type {
 	CreateCardholderTokenVerificationRequest,
 	GetMobileWalletPayloadRequest,
 	CreateCounterpartyRequest,
+	CreateCreditApplicationRequest,
+	CreateCreditDecisionRequest,
+	UpdateCreditApplicationRequest,
 	CreateIndividualApplicationRequest,
 	CreateSoleProprietorApplicationRequest,
 	FreezeCardRequest,
@@ -929,6 +932,86 @@ export function buildMarkCardFraudCaseAsFraudRequest(
 		data: {
 			type: "markAsFraudRequest",
 			attributes: { fraudulentActivityIds },
+		},
+	};
+}
+
+/**
+ * Credit applications have no `tags` attribute, so the run marker rides along
+ * in the free-form `additionalUnderwritingData` instead.
+ */
+const underwritingData = () => ({ testRun: TEST_RUN_ID });
+
+const idempotency = (label: string) =>
+	`${TEST_RUN_ID}-${label}-${Math.random().toString(36).slice(2, 10)}`;
+
+/**
+ * `lendingProgram` is required but this SDK surface has no list-lending-programs
+ * operation, so callers borrow an id off an existing credit application.
+ *
+ * `idempotencyKey` is omitted deliberately: the spec declares it on the create
+ * attributes, but the API answers 400 `"Field 'idempotencyKey' is not
+ * expected"`. Spec defect owned by `unit-openapi`.
+ */
+export function buildCreateExistingCreditApplicationRequest(
+	customerId: string,
+	lendingProgramId: string,
+): CreateCreditApplicationRequest {
+	return {
+		data: {
+			type: "createExistingCustomerCreditApplication",
+			attributes: {
+				annualIncome: 100000,
+				numberOfEmployees: BusinessNumberOfEmployeesType.UpTo10,
+				yearsInBusiness: 4,
+				additionalUnderwritingData: underwritingData(),
+			},
+			relationships: {
+				customer: { data: { type: "customer", id: customerId } },
+				lendingProgram: {
+					data: { type: "lendingProgram", id: lendingProgramId },
+				},
+			},
+		},
+	};
+}
+
+export function buildUpdateCreditApplicationRequest(): UpdateCreditApplicationRequest {
+	return {
+		data: {
+			type: "patchCreditApplication",
+			attributes: {
+				annualIncome: 120000,
+				numberOfEmployees: BusinessNumberOfEmployeesType.UpTo10,
+				yearsInBusiness: 5,
+				additionalUnderwritingData: underwritingData(),
+			},
+		},
+	};
+}
+
+export function buildCreateApprovedCreditLimitDecisionRequest(
+	creditApplicationId: string,
+): CreateCreditDecisionRequest {
+	const now = new Date().toISOString();
+	return {
+		data: {
+			type: "approvedCreditLimitDecision",
+			attributes: {
+				externalApplicationId: idempotency("ext-app"),
+				submissionTimestamp: now,
+				decisionTimestamp: now,
+				creditLimit: 1000000,
+				policyException: false,
+				policyExceptionReason: "",
+				additionalUnderwritingData: underwritingData(),
+				idempotencyKey: idempotency("credit-decision"),
+			},
+			relationships: {
+				creditApplication: {
+					data: { type: "creditApplication", id: creditApplicationId },
+				},
+			},
 		},
 	};
 }

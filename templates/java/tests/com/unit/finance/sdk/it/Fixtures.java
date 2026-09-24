@@ -79,9 +79,22 @@ import com.unit.finance.sdk.model.CreateDepositAccountDataRelationships;
 import com.unit.finance.sdk.model.CreateCounterpartyBody;
 import com.unit.finance.sdk.model.CreateCounterpartyData;
 import com.unit.finance.sdk.model.CreateCounterpartyDataAttributes;
+import com.unit.finance.sdk.model.CreateApprovedCreditLimitDecisionData;
+import com.unit.finance.sdk.model.CreateApprovedCreditLimitDecisionDataAttributes;
+import com.unit.finance.sdk.model.CreateApprovedCreditLimitDecisionDataRelationships;
+import com.unit.finance.sdk.model.CreateApprovedCreditLimitDecisionRequest;
 import com.unit.finance.sdk.model.CreateCounterpartyRequest;
+import com.unit.finance.sdk.model.CreateCreditApplicationRequest;
+import com.unit.finance.sdk.model.CreateCreditDecisionRequest;
 import com.unit.finance.sdk.model.CreateDepositAccountRequest;
+import com.unit.finance.sdk.model.CreateExistingCreditApplicationData;
+import com.unit.finance.sdk.model.CreateExistingCreditApplicationDataAttributes;
+import com.unit.finance.sdk.model.CreateExistingCreditApplicationDataRelationships;
+import com.unit.finance.sdk.model.CreateExistingCreditApplicationRequest;
 import com.unit.finance.sdk.model.UpdateCounterpartyData;
+import com.unit.finance.sdk.model.UpdateCreditApplicationData;
+import com.unit.finance.sdk.model.UpdateCreditApplicationDataAttributes;
+import com.unit.finance.sdk.model.UpdateCreditApplicationRequest;
 import com.unit.finance.sdk.model.UpdateCounterpartyDataAttributes;
 import com.unit.finance.sdk.model.UpdateCounterpartyRequest;
 import com.unit.finance.sdk.model.CreateFeeData;
@@ -194,7 +207,9 @@ import com.unit.finance.sdk.model.RemoveAuthorizedUsersData;
 import com.unit.finance.sdk.model.RemoveAuthorizedUsersDataAttributes;
 import com.unit.finance.sdk.model.RemoveAuthorizedUsersRequest;
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -1109,5 +1124,93 @@ final class Fixtures {
         new GetMobileWalletPayloadDataAttributes().signedNonce("eyJle...");
     return new GetMobileWalletPayloadRequest()
         .data(new GetMobileWalletPayloadData().attributes(attributes));
+  }
+
+  /**
+   * Credit applications have no {@code tags} attribute, so the run marker rides
+   * along in the free-form {@code additionalUnderwritingData} instead.
+   * {@code lendingProgram} is required and there is no list-lending-programs
+   * operation, so callers borrow an id off an existing credit application.
+   *
+   * <p>{@code idempotencyKey} is omitted deliberately: the spec declares it on
+   * the create attributes, but the API answers 400 {@code "Field
+   * 'idempotencyKey' is not expected"}. Spec defect owned by
+   * {@code unit-openapi}.
+   */
+  static CreateCreditApplicationRequest createExistingCreditApplicationRequest(
+      String customerId, String lendingProgramId) {
+    CreateExistingCreditApplicationDataAttributes attributes =
+        new CreateExistingCreditApplicationDataAttributes()
+            .annualIncome(100_000)
+            .numberOfEmployees(BusinessNumberOfEmployeesType.UP_TO10)
+            .yearsInBusiness(4)
+            .additionalUnderwritingData(baseTags());
+    CreateExistingCreditApplicationDataRelationships relationships =
+        new CreateExistingCreditApplicationDataRelationships()
+            .customer(relationship("customer", customerId))
+            .lendingProgram(relationship("lendingProgram", lendingProgramId));
+    CreateExistingCreditApplicationData data =
+        new CreateExistingCreditApplicationData()
+            .type(
+                CreateExistingCreditApplicationData.TypeEnum
+                    .CREATE_EXISTING_CUSTOMER_CREDIT_APPLICATION)
+            .attributes(attributes)
+            .relationships(relationships);
+    return new CreateCreditApplicationRequest(
+        new CreateExistingCreditApplicationRequest().data(data));
+  }
+
+  static UpdateCreditApplicationRequest updateCreditApplicationRequest() {
+    UpdateCreditApplicationDataAttributes attributes =
+        new UpdateCreditApplicationDataAttributes()
+            .annualIncome(120_000)
+            .numberOfEmployees(BusinessNumberOfEmployeesType.UP_TO10)
+            .yearsInBusiness(5)
+            .additionalUnderwritingData(baseTags());
+    UpdateCreditApplicationData data =
+        new UpdateCreditApplicationData()
+            .type(UpdateCreditApplicationData.TypeEnum.PATCH_CREDIT_APPLICATION)
+            .attributes(attributes);
+    return new UpdateCreditApplicationRequest().data(data);
+  }
+
+  /**
+   * The decision timestamps are the pickiest field on this API: it accepts only
+   * {@code YYYY-MM-DDTHH:MM:SS.sssZ} and answers a bare 400 for anything else,
+   * including the microsecond precision the client emits by default. The SDK
+   * serializes {@code OffsetDateTime} with {@code ISO_OFFSET_DATE_TIME}, which
+   * prints fractional seconds in groups of three, so truncating to milliseconds
+   * yields the accepted spelling — except at an exact second, where it prints
+   * none at all, which the API also rejects. Nudging a zero millisecond field
+   * by 1ms keeps the fraction present. The alternative, {@code
+   * JSON.setOffsetDateTimeFormat}, is static and would also govern response
+   * parsing for every other suite.
+   */
+  static CreateCreditDecisionRequest createApprovedCreditLimitDecisionRequest(
+      String creditApplicationId) {
+    OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.MILLIS);
+    if (now.getNano() == 0) {
+      now = now.plusNanos(1_000_000L);
+    }
+    CreateApprovedCreditLimitDecisionDataAttributes attributes =
+        new CreateApprovedCreditLimitDecisionDataAttributes()
+            .externalApplicationId(RUN + "-ext-app-" + UUID.randomUUID().toString().substring(0, 8))
+            .submissionTimestamp(now)
+            .decisionTimestamp(now)
+            .creditLimit(1_000_000)
+            .policyException(false)
+            .policyExceptionReason("")
+            .additionalUnderwritingData(baseTags())
+            .idempotencyKey(RUN + "-credit-decision-" + UUID.randomUUID().toString().substring(0, 8));
+    CreateApprovedCreditLimitDecisionDataRelationships relationships =
+        new CreateApprovedCreditLimitDecisionDataRelationships()
+            .creditApplication(relationship("creditApplication", creditApplicationId));
+    CreateApprovedCreditLimitDecisionData data =
+        new CreateApprovedCreditLimitDecisionData()
+            .type(CreateApprovedCreditLimitDecisionData.TypeEnum.APPROVED_CREDIT_LIMIT_DECISION)
+            .attributes(attributes)
+            .relationships(relationships);
+    return new CreateCreditDecisionRequest(
+        new CreateApprovedCreditLimitDecisionRequest().data(data));
   }
 }

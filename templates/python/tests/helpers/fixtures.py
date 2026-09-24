@@ -29,7 +29,7 @@ How they are then handed to the API depends on the endpoint's request type:
 
 import time
 import uuid
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta, timezone
 from typing import Any, Dict, List, Optional
 
 from unit_finance_sdk import (
@@ -43,6 +43,7 @@ from unit_finance_sdk import (
     CreateAccountRequest,
     CreateACHPaymentRequest,
     CreateApplicationRequest,
+    CreateApprovedCreditLimitDecisionRequest,
     CreateBulkPaymentRequest,
     CreateBusinessApplicationRequest,
     CreateBusinessDebitCardRequest,
@@ -55,7 +56,10 @@ from unit_finance_sdk import (
     CreateCheckDepositSendLinkRequest,
     CreateCounterpartyBody,
     CreateCounterpartyRequest,
+    CreateCreditApplicationRequest,
+    CreateCreditDecisionRequest,
     CreateDepositAccountRequest,
+    CreateExistingCreditApplicationRequest,
     CreateFeeRequest,
     CreateIndividualApplicationRequest,
     CreatePaymentRequest,
@@ -84,6 +88,7 @@ from unit_finance_sdk import (
     UpdateCardRequest,
     UpdateCheckDepositRequest,
     UpdateCounterpartyRequest,
+    UpdateCreditApplicationRequest,
     UpdateCustomerRequest,
     UpdateDepositAccountRequest,
     UpdatePaymentRequest,
@@ -961,6 +966,87 @@ def build_update_counterparty_request() -> UpdateCounterpartyRequest:
         },
     }
     return UpdateCounterpartyRequest.from_dict(body)
+
+
+# Credit applications have no ``tags`` attribute, so the run marker rides along
+# in the free-form ``additionalUnderwritingData`` instead. ``lendingProgram`` is
+# required and there is no list-lending-programs operation, so callers borrow an
+# id off an existing credit application.
+#
+# ``idempotencyKey`` is omitted deliberately: the spec declares it on the create
+# attributes, but the API answers 400 "Field 'idempotencyKey' is not expected".
+# Spec defect owned by ``unit-openapi``.
+def build_create_existing_credit_application_request(
+    customer_id: str,
+    lending_program_id: str,
+) -> CreateCreditApplicationRequest:
+    body = {
+        "data": {
+            "type": "createExistingCustomerCreditApplication",
+            "attributes": {
+                "annualIncome": 100000,
+                "numberOfEmployees": "UpTo10",
+                "yearsInBusiness": 4,
+                "additionalUnderwritingData": _base_tags(),
+            },
+            "relationships": {
+                "customer": {"data": {"type": "customer", "id": customer_id}},
+                "lendingProgram": {
+                    "data": {"type": "lendingProgram", "id": lending_program_id}
+                },
+            },
+        },
+    }
+    return CreateCreditApplicationRequest(
+        actual_instance=CreateExistingCreditApplicationRequest.from_dict(body)
+    )
+
+
+def build_update_credit_application_request() -> UpdateCreditApplicationRequest:
+    body = {
+        "data": {
+            "type": "patchCreditApplication",
+            "attributes": {
+                "annualIncome": 120000,
+                "numberOfEmployees": "UpTo10",
+                "yearsInBusiness": 5,
+                "additionalUnderwritingData": _base_tags(),
+            },
+        },
+    }
+    return UpdateCreditApplicationRequest.from_dict(body)
+
+
+def build_create_approved_credit_limit_decision_request(
+    credit_application_id: str,
+) -> CreateCreditDecisionRequest:
+    now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
+    body = {
+        "data": {
+            "type": "approvedCreditLimitDecision",
+            "attributes": {
+                "externalApplicationId": f"{TEST_RUN_ID}-ext-app-{uuid.uuid4().hex[:8]}",
+                "submissionTimestamp": now,
+                "decisionTimestamp": now,
+                "creditLimit": 1000000,
+                "policyException": False,
+                "policyExceptionReason": "",
+                "additionalUnderwritingData": _base_tags(),
+                "idempotencyKey": f"{TEST_RUN_ID}-credit-decision-{uuid.uuid4().hex[:8]}",
+            },
+            "relationships": {
+                "creditApplication": {
+                    "data": {
+                        "type": "creditApplication",
+                        "id": credit_application_id,
+                    }
+                },
+            },
+        },
+    }
+    return CreateCreditDecisionRequest(
+        actual_instance=CreateApprovedCreditLimitDecisionRequest.from_dict(body)
+    )
 
 
 def build_add_account_owners_request(customer_ids: List[str]) -> Dict[str, Any]:

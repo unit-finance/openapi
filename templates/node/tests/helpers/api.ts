@@ -14,6 +14,8 @@ import {
 	CheckPaymentsApi,
 	Configuration,
 	CounterpartiesApi,
+	CreditApplicationsApi,
+	CreditDecisionsApi,
 	CustomersApi,
 	FeesApi,
 	PaymentsApi,
@@ -104,6 +106,34 @@ export function buildCardsAuthorizationRequestsApi(): CardsAuthorizationRequests
 
 export function buildCardsAuthorizationsApi(): CardsAuthorizationsApi {
 	return new CardsAuthorizationsApi(configuration());
+}
+
+/**
+ * `GET /credit-applications/{id}` and `GET /credit-decisions/{id}` reject any
+ * request that omits a `Content-Type: application/vnd.api+json` header with
+ * **415**, even though neither takes a body. The spec declares no request body
+ * for them, so the generated clients send no `Content-Type` and every
+ * single-resource read fails. Pinning the header in `baseOptions` works around
+ * it for the credit clients only; the list endpoints accept it too.
+ */
+function creditConfiguration(): Configuration {
+	const base = configuration();
+	base.baseOptions = {
+		...base.baseOptions,
+		headers: {
+			...base.baseOptions?.headers,
+			"Content-Type": "application/vnd.api+json",
+		},
+	};
+	return base;
+}
+
+export function buildCreditApplicationsApi(): CreditApplicationsApi {
+	return new CreditApplicationsApi(creditConfiguration());
+}
+
+export function buildCreditDecisionsApi(): CreditDecisionsApi {
+	return new CreditDecisionsApi(creditConfiguration());
 }
 
 /**
