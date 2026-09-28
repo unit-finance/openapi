@@ -79,7 +79,7 @@ drift gate and sandbox suites on the resulting PR, which stays human-reviewed.
 
 | Secret | Used by | Purpose |
 |--------|---------|---------|
-| `SDK_BOT_TOKEN` | `regenerate-on-spec-release.yaml` | PAT used to open the regeneration PR (a PAT triggers CI on the PR, unlike `GITHUB_TOKEN`). Use a fine-grained PAT scoped to this repo with Contents + Pull requests: read & write |
+| `SDK_BOT_TOKEN` | `regenerate-on-spec-release.yaml`, `tag-releases.yaml` | PAT used to open the regeneration PR and to publish the `vX.Y.Z` GitHub Release (a PAT triggers CI on the PR and `publish.yaml` on the release, unlike `GITHUB_TOKEN`). Use a fine-grained PAT scoped to this repo with Contents + Pull requests: read & write |
 | `SPEC_REPO_TOKEN` | `ci.yaml`, `regenerate-on-spec-release.yaml`, `publish.yaml` | read the private `unit-openapi` releases in `fetch-spec`. PAT/App token with Contents: read on `unit-openapi` |
 | `CURSOR_API_KEY` | `regenerate-on-spec-release.yaml` | run the test-authoring Cursor agent on coverage gaps (optional; step skips when unset) |
 | `UNIT_SANDBOX_TOKEN` | `ci.yaml`, `regenerate-on-spec-release.yaml` | run sandbox integration tests (optional) |
