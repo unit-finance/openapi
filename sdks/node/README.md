@@ -158,6 +158,10 @@ Class | Method | HTTP request | Description
 *FeesApi* | [**createFee**](docs/FeesApi.md#createfee) | **POST** /fees | Create a fee
 *FeesApi* | [**reverseFee**](docs/FeesApi.md#reversefee) | **POST** /fees/reverse | Reverse a fee
 *InstitutionsApi* | [**getByRoutingNumber**](docs/InstitutionsApi.md#getbyroutingnumber) | **GET** /institutions/{routingNumber} | Get by routing number
+*InterestApi* | [**getTotalAccruedInterest**](docs/InterestApi.md#gettotalaccruedinterest) | **GET** /accrued-interest/total | Get total accrued interest
+*LendingProgramsApi* | [**getLendingProgramById**](docs/LendingProgramsApi.md#getlendingprogrambyid) | **GET** /lending-programs/{id} | Get lending program by id
+*LendingProgramsApi* | [**getLendingProgramExtendedInformationById**](docs/LendingProgramsApi.md#getlendingprogramextendedinformationbyid) | **GET** /lending-programs/{id}/extended | Get lending program extended information by id
+*LendingProgramsApi* | [**listLendingPrograms**](docs/LendingProgramsApi.md#listlendingprograms) | **GET** /lending-programs | List lending programs
 *PaymentsApi* | [**cancelPayment**](docs/PaymentsApi.md#cancelpayment) | **POST** /payments/{paymentId}/cancel | Cancel a payment
 *PaymentsApi* | [**clearAchDebitPayment**](docs/PaymentsApi.md#clearachdebitpayment) | **POST** /payments/{paymentId}/clear | Clear an ACH debit payment
 *PaymentsApi* | [**createBatchReleases**](docs/PaymentsApi.md#createbatchreleases) | **POST** /batch-releases | Create batch releases
@@ -180,6 +184,14 @@ Class | Method | HTTP request | Description
 *PaymentsApi* | [**sendDrawdownPayment**](docs/PaymentsApi.md#senddrawdownpayment) | **POST** /wire-drawdowns/{id}/send | Send a drawdown payment
 *PaymentsApi* | [**updatePayment**](docs/PaymentsApi.md#updatepayment) | **PATCH** /payments/{paymentId} | Update a payment
 *PaymentsApi* | [**updateReceivedPayment**](docs/PaymentsApi.md#updatereceivedpayment) | **PATCH** /received-payments/{id} | Update a received payment
+*PositivePayApi* | [**cancelPositivePay**](docs/PositivePayApi.md#cancelpositivepay) | **POST** /positive-pay/{positivePayId}/cancel | Cancel a positive pay rule
+*PositivePayApi* | [**configurePositivePayPolicy**](docs/PositivePayApi.md#configurepositivepaypolicy) | **POST** /positive-pay-policy | Configure a positive pay policy
+*PositivePayApi* | [**createPositivePay**](docs/PositivePayApi.md#createpositivepay) | **POST** /positive-pay | Create a positive pay rule
+*PositivePayApi* | [**getPositivePayById**](docs/PositivePayApi.md#getpositivepaybyid) | **GET** /positive-pay/{positivePayId} | Get a positive pay rule by id
+*PositivePayApi* | [**listPositivePay**](docs/PositivePayApi.md#listpositivepay) | **GET** /positive-pay | List positive pay rules
+*PositivePayApi* | [**uploadPositivePayDocument**](docs/PositivePayApi.md#uploadpositivepaydocument) | **PUT** /positive-pay/{positivePayId}/documents | Upload a positive pay document
+*ReceivablesManagementApi* | [**getReceivableById**](docs/ReceivablesManagementApi.md#getreceivablebyid) | **GET** /receivables/{id} | Get receivable by id
+*ReceivablesManagementApi* | [**listReceivables**](docs/ReceivablesManagementApi.md#listreceivables) | **GET** /receivables | List receivables
 *TransactionsApi* | [**getTransaction**](docs/TransactionsApi.md#gettransaction) | **GET** /accounts/{accountId}/transactions/{transactionId} | Get a transaction
 *TransactionsApi* | [**listTransactions**](docs/TransactionsApi.md#listtransactions) | **GET** /transactions | List transactions
 *TransactionsApi* | [**updateTransaction**](docs/TransactionsApi.md#updatetransaction) | **PATCH** /transactions/{transactionId} | Update a transaction
@@ -277,6 +289,8 @@ Class | Method | HTTP request | Description
  - [CancelApplicationRequest](docs/CancelApplicationRequest.md)
  - [CancelPayment200Response](docs/CancelPayment200Response.md)
  - [CancelPayment200ResponseData](docs/CancelPayment200ResponseData.md)
+ - [CancelPositivePay200Response](docs/CancelPositivePay200Response.md)
+ - [CancelPositivePay200ResponseData](docs/CancelPositivePay200ResponseData.md)
  - [CardFraudOutreachPolicy](docs/CardFraudOutreachPolicy.md)
  - [CardFraudOutreachPolicyAttributes](docs/CardFraudOutreachPolicyAttributes.md)
  - [CardFraudOutreachPolicyRelationships](docs/CardFraudOutreachPolicyRelationships.md)
@@ -309,6 +323,8 @@ Class | Method | HTTP request | Description
  - [CheckPayment](docs/CheckPayment.md)
  - [CheckPaymentAttributes](docs/CheckPaymentAttributes.md)
  - [CheckPaymentCounterpartyType](docs/CheckPaymentCounterpartyType.md)
+ - [CheckPaymentPositivePay](docs/CheckPaymentPositivePay.md)
+ - [CheckPaymentPositivePayAttributes](docs/CheckPaymentPositivePayAttributes.md)
  - [CheckPaymentTransaction](docs/CheckPaymentTransaction.md)
  - [CheckPaymentTransactionRelationships](docs/CheckPaymentTransactionRelationships.md)
  - [ClearAchDebitPayment200Response](docs/ClearAchDebitPayment200Response.md)
@@ -323,6 +339,9 @@ Class | Method | HTTP request | Description
  - [CloseWalletData](docs/CloseWalletData.md)
  - [CloseWalletDataAttributes](docs/CloseWalletDataAttributes.md)
  - [CloseWalletRequest](docs/CloseWalletRequest.md)
+ - [ConfigurePositivePayPolicyData](docs/ConfigurePositivePayPolicyData.md)
+ - [ConfigurePositivePayPolicyDataAttributes](docs/ConfigurePositivePayPolicyDataAttributes.md)
+ - [ConfigurePositivePayPolicyRequest](docs/ConfigurePositivePayPolicyRequest.md)
  - [CoordinatesType](docs/CoordinatesType.md)
  - [CounterpartyBalance](docs/CounterpartyBalance.md)
  - [CounterpartyBalanceAttributes](docs/CounterpartyBalanceAttributes.md)
@@ -411,6 +430,9 @@ Class | Method | HTTP request | Description
  - [CreateCheckDepositSendLinkDataAttributes](docs/CreateCheckDepositSendLinkDataAttributes.md)
  - [CreateCheckDepositSendLinkDataRelationships](docs/CreateCheckDepositSendLinkDataRelationships.md)
  - [CreateCheckDepositSendLinkRequest](docs/CreateCheckDepositSendLinkRequest.md)
+ - [CreateCheckPaymentPositivePayData](docs/CreateCheckPaymentPositivePayData.md)
+ - [CreateCheckPaymentPositivePayDataAttributes](docs/CreateCheckPaymentPositivePayDataAttributes.md)
+ - [CreateCheckPaymentPositivePayRequest](docs/CreateCheckPaymentPositivePayRequest.md)
  - [CreateCounterparty201Response](docs/CreateCounterparty201Response.md)
  - [CreateCounterpartyBody](docs/CreateCounterpartyBody.md)
  - [CreateCounterpartyData](docs/CreateCounterpartyData.md)
@@ -472,6 +494,11 @@ Class | Method | HTTP request | Description
  - [CreatePolicyDataAttributes](docs/CreatePolicyDataAttributes.md)
  - [CreatePolicyDataRelationships](docs/CreatePolicyDataRelationships.md)
  - [CreatePolicyRequest](docs/CreatePolicyRequest.md)
+ - [CreatePositivePay201Response](docs/CreatePositivePay201Response.md)
+ - [CreatePositivePayRequest](docs/CreatePositivePayRequest.md)
+ - [CreateReceivedACHDebitPositivePayData](docs/CreateReceivedACHDebitPositivePayData.md)
+ - [CreateReceivedACHDebitPositivePayDataAttributes](docs/CreateReceivedACHDebitPositivePayDataAttributes.md)
+ - [CreateReceivedACHDebitPositivePayRequest](docs/CreateReceivedACHDebitPositivePayRequest.md)
  - [CreateRecurringCreditACHPaymentData](docs/CreateRecurringCreditACHPaymentData.md)
  - [CreateRecurringCreditACHPaymentDataAttributes](docs/CreateRecurringCreditACHPaymentDataAttributes.md)
  - [CreateRecurringCreditACHPaymentRequest](docs/CreateRecurringCreditACHPaymentRequest.md)
@@ -490,6 +517,9 @@ Class | Method | HTTP request | Description
  - [CreateWalletData](docs/CreateWalletData.md)
  - [CreateWalletDataAttributes](docs/CreateWalletDataAttributes.md)
  - [CreateWalletRequest](docs/CreateWalletRequest.md)
+ - [CreateWireDrawdownPositivePayData](docs/CreateWireDrawdownPositivePayData.md)
+ - [CreateWireDrawdownPositivePayDataAttributes](docs/CreateWireDrawdownPositivePayDataAttributes.md)
+ - [CreateWireDrawdownPositivePayRequest](docs/CreateWireDrawdownPositivePayRequest.md)
  - [CreditAccount](docs/CreditAccount.md)
  - [CreditAccountAttributes](docs/CreditAccountAttributes.md)
  - [CreditAccountRelationships](docs/CreditAccountRelationships.md)
@@ -569,11 +599,17 @@ Class | Method | HTTP request | Description
  - [GetExpectedAchCompletionDate200Response](docs/GetExpectedAchCompletionDate200Response.md)
  - [GetExpectedAchCompletionDate200ResponseData](docs/GetExpectedAchCompletionDate200ResponseData.md)
  - [GetExpectedAchCompletionDateRequest](docs/GetExpectedAchCompletionDateRequest.md)
+ - [GetLendingProgramById200Response](docs/GetLendingProgramById200Response.md)
+ - [GetLendingProgramExtendedInformationById200Response](docs/GetLendingProgramExtendedInformationById200Response.md)
  - [GetMobileWalletPayload200Response](docs/GetMobileWalletPayload200Response.md)
  - [GetMobileWalletPayloadData](docs/GetMobileWalletPayloadData.md)
  - [GetMobileWalletPayloadDataAttributes](docs/GetMobileWalletPayloadDataAttributes.md)
  - [GetMobileWalletPayloadRequest](docs/GetMobileWalletPayloadRequest.md)
+ - [GetPositivePayById200Response](docs/GetPositivePayById200Response.md)
+ - [GetPositivePayById200ResponseData](docs/GetPositivePayById200ResponseData.md)
+ - [GetReceivableById200Response](docs/GetReceivableById200Response.md)
  - [GetReceivedPayment200Response](docs/GetReceivedPayment200Response.md)
+ - [GetTotalAccruedInterest200Response](docs/GetTotalAccruedInterest200Response.md)
  - [GetTransaction200Response](docs/GetTransaction200Response.md)
  - [GetWireDrawdown200Response](docs/GetWireDrawdown200Response.md)
  - [HealthcareAmountsType](docs/HealthcareAmountsType.md)
@@ -592,6 +628,10 @@ Class | Method | HTTP request | Description
  - [InterestShareTransaction](docs/InterestShareTransaction.md)
  - [InterestShareTransactionRelationships](docs/InterestShareTransactionRelationships.md)
  - [InterestTransaction](docs/InterestTransaction.md)
+ - [LendingProgram](docs/LendingProgram.md)
+ - [LendingProgramAttributes](docs/LendingProgramAttributes.md)
+ - [LendingProgramExtendedInformation](docs/LendingProgramExtendedInformation.md)
+ - [LendingProgramExtendedInformationAttributes](docs/LendingProgramExtendedInformationAttributes.md)
  - [List200Response](docs/List200Response.md)
  - [List200ResponseDataInner](docs/List200ResponseDataInner.md)
  - [ListAccountHolds200Response](docs/ListAccountHolds200Response.md)
@@ -617,6 +657,11 @@ Class | Method | HTTP request | Description
  - [ListCustomers200Response](docs/ListCustomers200Response.md)
  - [ListCustomers200ResponseDataInner](docs/ListCustomers200ResponseDataInner.md)
  - [ListDisputes200Response](docs/ListDisputes200Response.md)
+ - [ListLendingPrograms200Response](docs/ListLendingPrograms200Response.md)
+ - [ListPositivePay200Response](docs/ListPositivePay200Response.md)
+ - [ListPositivePay200ResponseDataInner](docs/ListPositivePay200ResponseDataInner.md)
+ - [ListReceivables200Response](docs/ListReceivables200Response.md)
+ - [ListReceivables200ResponseData](docs/ListReceivables200ResponseData.md)
  - [ListReceivedPayments200Response](docs/ListReceivedPayments200Response.md)
  - [ListReceivedPayments200ResponseDataInner](docs/ListReceivedPayments200ResponseDataInner.md)
  - [ListRecurringPayments200Response](docs/ListRecurringPayments200Response.md)
@@ -678,6 +723,14 @@ Class | Method | HTTP request | Description
  - [RealtimeReceivedPayment](docs/RealtimeReceivedPayment.md)
  - [RealtimeReceivedPaymentAttributes](docs/RealtimeReceivedPaymentAttributes.md)
  - [RealtimeReceivedPaymentRelationships](docs/RealtimeReceivedPaymentRelationships.md)
+ - [Receivable](docs/Receivable.md)
+ - [ReceivableAttributes](docs/ReceivableAttributes.md)
+ - [ReceivableAttributesRepaymentStatus](docs/ReceivableAttributesRepaymentStatus.md)
+ - [ReceivableRelationships](docs/ReceivableRelationships.md)
+ - [ReceivablesBalance](docs/ReceivablesBalance.md)
+ - [ReceivablesBalanceAttributes](docs/ReceivablesBalanceAttributes.md)
+ - [ReceivedACHDebitPositivePay](docs/ReceivedACHDebitPositivePay.md)
+ - [ReceivedACHDebitPositivePayAttributes](docs/ReceivedACHDebitPositivePayAttributes.md)
  - [ReceivedACHTransaction](docs/ReceivedACHTransaction.md)
  - [ReceivedACHTransactionAttributes](docs/ReceivedACHTransactionAttributes.md)
  - [RecurringCreditACHPayment](docs/RecurringCreditACHPayment.md)
@@ -843,6 +896,8 @@ Class | Method | HTTP request | Description
  - [WireCounterpartyType](docs/WireCounterpartyType.md)
  - [WireDrawdown](docs/WireDrawdown.md)
  - [WireDrawdownAttributes](docs/WireDrawdownAttributes.md)
+ - [WireDrawdownPositivePay](docs/WireDrawdownPositivePay.md)
+ - [WireDrawdownPositivePayAttributes](docs/WireDrawdownPositivePayAttributes.md)
  - [WireDrawdownRelationships](docs/WireDrawdownRelationships.md)
  - [WirePayment](docs/WirePayment.md)
  - [WirePaymentAttributes](docs/WirePaymentAttributes.md)
