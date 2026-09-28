@@ -14,11 +14,14 @@ import { getSharedBusinessCustomerId } from "./customers";
 
 /**
  * Credit applications are gated on a lending program: every create request
- * needs a `lendingProgram` relationship id, and this SDK surface exposes no
- * list-lending-programs operation, so the suite can only send a placeholder.
- * A sandbox org without a credit/lending program also returns 4xx/5xx for the
- * list. Both are org configuration, not a bad request, so the helpers return
- * `null` (unavailable) instead of failing — the holds / send-link pattern.
+ * needs a `lendingProgram` relationship id. Spec 0.18.0 added
+ * `listLendingPrograms`, but it returns programs of every kind (receivables
+ * retention, charge card, ...) and only a credit-capable one is accepted here,
+ * so the id is still read off an existing credit application rather than
+ * guessed from that list. A sandbox org without a credit/lending program
+ * returns 4xx/5xx for the list. That is org configuration, not a bad request,
+ * so the helpers return `null` (unavailable) instead of failing — the holds /
+ * send-link pattern.
  */
 const SKIP_STATUSES = [400, 403, 404, 409, 422, 500];
 
@@ -50,9 +53,9 @@ export async function listCreditApplicationsOrSkip(
 }
 
 /**
- * Reads a lending program id off an existing credit application. There is no
- * list-lending-programs operation, so this is the only way to name a real
- * program; `null` when the org has no credit applications to read one from.
+ * Reads a lending program id off an existing credit application — the only way
+ * to name a program that credit applications actually accept; `null` when the
+ * org has no credit applications to read one from.
  */
 export async function getLendingProgramId(): Promise<string | null> {
 	const items = await listCreditApplicationsOrSkip();
@@ -75,7 +78,7 @@ export async function createCreditApplicationOrSkip(
 	const lendingProgramId = await getLendingProgramId();
 	if (!lendingProgramId) {
 		console.warn(
-			"No lending program is visible on this sandbox org and the SDK has no list-lending-programs operation; skipping createCreditApplication.",
+			"No credit-capable lending program is visible on this sandbox org; skipping createCreditApplication.",
 		);
 		return null;
 	}

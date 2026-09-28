@@ -100,6 +100,19 @@ import com.unit.finance.sdk.model.UpdateCounterpartyRequest;
 import com.unit.finance.sdk.model.CreateFeeData;
 import com.unit.finance.sdk.model.CreateFeeDataAttributes;
 import com.unit.finance.sdk.model.CreateFeeDataRelationships;
+import com.unit.finance.sdk.model.ConfigurePositivePayPolicyData;
+import com.unit.finance.sdk.model.ConfigurePositivePayPolicyDataAttributes;
+import com.unit.finance.sdk.model.ConfigurePositivePayPolicyRequest;
+import com.unit.finance.sdk.model.CreateCheckPaymentPositivePayData;
+import com.unit.finance.sdk.model.CreateCheckPaymentPositivePayDataAttributes;
+import com.unit.finance.sdk.model.CreateCheckPaymentPositivePayRequest;
+import com.unit.finance.sdk.model.CreatePositivePayRequest;
+import com.unit.finance.sdk.model.CreateReceivedACHDebitPositivePayData;
+import com.unit.finance.sdk.model.CreateReceivedACHDebitPositivePayDataAttributes;
+import com.unit.finance.sdk.model.CreateReceivedACHDebitPositivePayRequest;
+import com.unit.finance.sdk.model.CreateWireDrawdownPositivePayData;
+import com.unit.finance.sdk.model.CreateWireDrawdownPositivePayDataAttributes;
+import com.unit.finance.sdk.model.CreateWireDrawdownPositivePayRequest;
 import com.unit.finance.sdk.model.CreateFeeRequest;
 import com.unit.finance.sdk.model.CreateIndividualApplicationData;
 import com.unit.finance.sdk.model.CreateIndividualApplicationDataAttributes;
@@ -1237,5 +1250,73 @@ final class Fixtures {
     Map<String, Object> body = new LinkedHashMap<>();
     body.put("data", data);
     return body;
+  }
+
+  /** A {@code checkPaymentPositivePay} rule, created {@code Active}. */
+  static CreatePositivePayRequest createCheckPaymentPositivePayRequest(String accountId) {
+    CreateCheckPaymentPositivePayDataAttributes attributes =
+        new CreateCheckPaymentPositivePayDataAttributes()
+            .checkNumber("1" + (1_000_000 + (int) (Math.random() * 9_000_000)))
+            .amount(250_000)
+            .payeeName("ACME Corp")
+            .tags(baseTags());
+    CreateCheckPaymentPositivePayData data =
+        new CreateCheckPaymentPositivePayData()
+            .type(CreateCheckPaymentPositivePayData.TypeEnum.CHECK_PAYMENT_POSITIVE_PAY)
+            .attributes(attributes)
+            .relationships(
+                new CreateFeeDataRelationships().account(relationship("account", accountId)));
+    return new CreatePositivePayRequest(
+        new CreateCheckPaymentPositivePayRequest().data(data));
+  }
+
+  static CreatePositivePayRequest createReceivedAchDebitPositivePayRequest(String accountId) {
+    CreateReceivedACHDebitPositivePayDataAttributes attributes =
+        new CreateReceivedACHDebitPositivePayDataAttributes()
+            .originatorName("Payroll Company Inc")
+            .originatorEntityId("1234567")
+            .amount(500_000)
+            .tags(baseTags());
+    CreateReceivedACHDebitPositivePayData data =
+        new CreateReceivedACHDebitPositivePayData()
+            .type(CreateReceivedACHDebitPositivePayData.TypeEnum.RECEIVED_ACH_DEBIT_POSITIVE_PAY)
+            .attributes(attributes)
+            .relationships(
+                new CreateFeeDataRelationships().account(relationship("account", accountId)));
+    return new CreatePositivePayRequest(
+        new CreateReceivedACHDebitPositivePayRequest().data(data));
+  }
+
+  /**
+   * A {@code drawdownPositivePay} rule. Unlike the other two variants this one
+   * is created {@code AwaitingDocuments}, which is the only state
+   * {@code uploadPositivePayDocument} accepts — the check-payment variant
+   * answers that upload with 400 {@code Document upload activation not
+   * supported for this positive pay type}.
+   */
+  static CreatePositivePayRequest createWireDrawdownPositivePayRequest(String accountId) {
+    CreateWireDrawdownPositivePayDataAttributes attributes =
+        new CreateWireDrawdownPositivePayDataAttributes().tags(baseTags());
+    CreateWireDrawdownPositivePayData data =
+        new CreateWireDrawdownPositivePayData()
+            .type(CreateWireDrawdownPositivePayData.TypeEnum.DRAWDOWN_POSITIVE_PAY)
+            .attributes(attributes)
+            .relationships(
+                new CreateFeeDataRelationships().account(relationship("account", accountId)));
+    return new CreatePositivePayRequest(
+        new CreateWireDrawdownPositivePayRequest().data(data));
+  }
+
+  static ConfigurePositivePayPolicyRequest configurePositivePayPolicyRequest(String accountId) {
+    ConfigurePositivePayPolicyDataAttributes attributes =
+        new ConfigurePositivePayPolicyDataAttributes()
+            .optInTypes(java.util.Collections.singletonList("CheckPayment"));
+    ConfigurePositivePayPolicyData data =
+        new ConfigurePositivePayPolicyData()
+            .type(ConfigurePositivePayPolicyData.TypeEnum.POSITIVE_PAY_POLICY)
+            .attributes(attributes)
+            .relationships(
+                new CreateFeeDataRelationships().account(relationship("account", accountId)));
+    return new ConfigurePositivePayPolicyRequest().data(data);
   }
 }
