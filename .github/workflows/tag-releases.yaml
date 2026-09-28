@@ -24,7 +24,10 @@ jobs:
 
       - name: Create missing GitHub Release
         env:
-          GH_TOKEN: ${{ github.token }}
+          # PAT (SDK_BOT_TOKEN) rather than the built-in GITHUB_TOKEN: a release
+          # published with GITHUB_TOKEN does not start new workflow runs, so
+          # publish.yaml's `on: release` trigger would never fire.
+          GH_TOKEN: ${{ secrets.SDK_BOT_TOKEN }}
         run: |
           set -euo pipefail
           SDK_VERSION="$(jq -r '.sdkVersion // .version' spec-version.json)"
