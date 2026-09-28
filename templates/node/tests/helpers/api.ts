@@ -21,7 +21,11 @@ import {
 	DisputesApi,
 	FeesApi,
 	InstitutionsApi,
+	InterestApi,
+	LendingProgramsApi,
 	PaymentsApi,
+	PositivePayApi,
+	ReceivablesManagementApi,
 	TransactionsApi,
 } from "../..";
 
@@ -121,6 +125,22 @@ export function buildDisputesApi(): DisputesApi {
 
 export function buildInstitutionsApi(): InstitutionsApi {
 	return new InstitutionsApi(configuration());
+}
+
+export function buildInterestApi(): InterestApi {
+	return new InterestApi(configuration());
+}
+
+export function buildLendingProgramsApi(): LendingProgramsApi {
+	return new LendingProgramsApi(configuration());
+}
+
+export function buildPositivePayApi(): PositivePayApi {
+	return new PositivePayApi(configuration());
+}
+
+export function buildReceivablesManagementApi(): ReceivablesManagementApi {
+	return new ReceivablesManagementApi(configuration());
 }
 
 /**

@@ -30,7 +30,11 @@ from unit_finance_sdk import (
     DisputesApi,
     FeesApi,
     InstitutionsApi,
+    InterestApi,
+    LendingProgramsApi,
     PaymentsApi,
+    PositivePayApi,
+    ReceivablesManagementApi,
     TransactionsApi,
 )
 
@@ -160,6 +164,26 @@ def build_disputes_api() -> DisputesApi:
 def build_institutions_api() -> InstitutionsApi:
     """Construct an ``InstitutionsApi`` bound to the sandbox."""
     return InstitutionsApi(ApiClient(_configuration()))
+
+
+def build_interest_api() -> InterestApi:
+    """Construct an ``InterestApi`` bound to the sandbox."""
+    return InterestApi(ApiClient(_configuration()))
+
+
+def build_lending_programs_api() -> LendingProgramsApi:
+    """Construct a ``LendingProgramsApi`` bound to the sandbox."""
+    return LendingProgramsApi(ApiClient(_configuration()))
+
+
+def build_positive_pay_api() -> PositivePayApi:
+    """Construct a ``PositivePayApi`` bound to the sandbox."""
+    return PositivePayApi(ApiClient(_configuration()))
+
+
+def build_receivables_management_api() -> ReceivablesManagementApi:
+    """Construct a ``ReceivablesManagementApi`` bound to the sandbox."""
+    return ReceivablesManagementApi(ApiClient(_configuration()))
 
 
 def build_credit_applications_api() -> CreditApplicationsApi:
