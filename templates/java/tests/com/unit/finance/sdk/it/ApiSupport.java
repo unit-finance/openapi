@@ -24,8 +24,14 @@ import com.unit.finance.sdk.api.DacaApi;
 import com.unit.finance.sdk.api.DisputesApi;
 import com.unit.finance.sdk.api.FeesApi;
 import com.unit.finance.sdk.api.InstitutionsApi;
+import com.unit.finance.sdk.api.InterestApi;
+import com.unit.finance.sdk.api.LendingProgramsApi;
+import com.unit.finance.sdk.api.PositivePayApi;
+import com.unit.finance.sdk.api.ReceivablesManagementApi;
 import com.unit.finance.sdk.api.PaymentsApi;
 import com.unit.finance.sdk.api.TransactionsApi;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.unit.finance.sdk.model.AbstractOpenApiSchema;
 import com.unit.finance.sdk.model.BusinessApplication;
 import com.unit.finance.sdk.model.IndividualApplication;
@@ -33,6 +39,9 @@ import com.unit.finance.sdk.model.List200ResponseDataInner;
 import io.github.cdimascio.dotenv.Dotenv;
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -303,6 +312,63 @@ final class ApiSupport {
   /** Construct an {@code InstitutionsApi} bound to the sandbox. */
   static InstitutionsApi buildInstitutionsApi() {
     return new InstitutionsApi(buildApiClient());
+  }
+
+  /** Construct an {@code InterestApi} bound to the sandbox. */
+  static InterestApi buildInterestApi() {
+    return new InterestApi(buildApiClient());
+  }
+
+  /** Construct a {@code LendingProgramsApi} bound to the sandbox. */
+  static LendingProgramsApi buildLendingProgramsApi() {
+    return new LendingProgramsApi(buildApiClient());
+  }
+
+  /** Construct a {@code PositivePayApi} bound to the sandbox. */
+  static PositivePayApi buildPositivePayApi() {
+    return new PositivePayApi(buildApiClient());
+  }
+
+  /** Construct a {@code ReceivablesManagementApi} bound to the sandbox. */
+  static ReceivablesManagementApi buildReceivablesManagementApi() {
+    return new ReceivablesManagementApi(buildApiClient());
+  }
+
+  /**
+   * A raw {@code GET} against the sandbox, returning the parsed JSON body.
+   *
+   * <p>Some responses cannot survive a typed round-trip because the spec's
+   * {@code required} set is stricter than what the sandbox sends — gson's
+   * generated {@code validateJsonElement} throws before a test can assert
+   * anything. {@code GET /accrued-interest/total} and the receivables reads
+   * are the current cases (see SLICES.md). Node (axios) does not validate and
+   * is unaffected; this escape hatch keeps the Java suite asserting the same
+   * structure instead of skipping outright.
+   */
+  static JsonObject rawGet(String path, Map<String, String> query) throws IOException {
+    HttpUrl.Builder url = HttpUrl.parse(BASE_PATH + path).newBuilder();
+    if (query != null) {
+      for (Map.Entry<String, String> e : query.entrySet()) {
+        url.addQueryParameter(e.getKey(), e.getValue());
+      }
+    }
+    Request request =
+        new Request.Builder().url(url.build()).header("Authorization", "Bearer " + TOKEN).build();
+    // Match buildApiClient()'s timeouts: OkHttp defaults to 10s, which
+    // `/accrued-interest/total` routinely exceeds.
+    OkHttpClient client =
+        new OkHttpClient.Builder()
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
+            .writeTimeout(60, TimeUnit.SECONDS)
+            .build();
+    try (Response response = client.newCall(request).execute()) {
+      ResponseBody body = response.body();
+      String text = body == null ? "" : body.string();
+      JsonObject parsed = JsonParser.parseString(text).getAsJsonObject();
+      parsed.addProperty("__status", response.code());
+      return parsed;
+    }
   }
 
   /** Block the current thread for sandbox polling (mirrors Node {@code sleep}). */

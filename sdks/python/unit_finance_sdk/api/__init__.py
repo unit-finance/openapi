@@ -22,6 +22,10 @@ from unit_finance_sdk.api.daca_api import DACAApi
 from unit_finance_sdk.api.disputes_api import DisputesApi
 from unit_finance_sdk.api.fees_api import FeesApi
 from unit_finance_sdk.api.institutions_api import InstitutionsApi
+from unit_finance_sdk.api.interest_api import InterestApi
+from unit_finance_sdk.api.lending_programs_api import LendingProgramsApi
 from unit_finance_sdk.api.payments_api import PaymentsApi
+from unit_finance_sdk.api.positive_pay_api import PositivePayApi
+from unit_finance_sdk.api.receivables_management_api import ReceivablesManagementApi
 from unit_finance_sdk.api.transactions_api import TransactionsApi
 

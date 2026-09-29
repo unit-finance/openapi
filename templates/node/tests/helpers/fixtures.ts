@@ -1033,3 +1033,78 @@ export function buildUpdateDacaPoliciesRequest(accountId: string) {
 		},
 	};
 }
+
+/**
+ * A `checkPaymentPositivePay` rule. Created `Active`, so it is the variant the
+ * create / get / cancel suites use.
+ */
+export function buildCreateCheckPaymentPositivePayRequest(accountId: string) {
+	return {
+		data: {
+			type: "checkPaymentPositivePay" as const,
+			attributes: {
+				checkNumber: `1${Math.floor(Math.random() * 9_000_000 + 1_000_000)}`,
+				amount: 250_000,
+				payeeName: "ACME Corp",
+				tags: baseTags(),
+			},
+			relationships: {
+				account: { data: { type: "account" as const, id: accountId } },
+			},
+		},
+	};
+}
+
+export function buildCreateReceivedAchDebitPositivePayRequest(
+	accountId: string,
+) {
+	return {
+		data: {
+			type: "receivedAchDebitPositivePay" as const,
+			attributes: {
+				originatorName: "Payroll Company Inc",
+				originatorEntityId: "1234567",
+				amount: 500_000,
+				tags: baseTags(),
+			},
+			relationships: {
+				account: { data: { type: "account" as const, id: accountId } },
+			},
+		},
+	};
+}
+
+/**
+ * A `drawdownPositivePay` rule. Unlike the other two variants this one is
+ * created `AwaitingDocuments`, which is the only state
+ * `uploadPositivePayDocument` accepts — the check-payment variant answers that
+ * upload with 400 `Document upload activation not supported for this positive
+ * pay type`.
+ */
+export function buildCreateWireDrawdownPositivePayRequest(accountId: string) {
+	return {
+		data: {
+			type: "drawdownPositivePay" as const,
+			attributes: {
+				tags: baseTags(),
+			},
+			relationships: {
+				account: { data: { type: "account" as const, id: accountId } },
+			},
+		},
+	};
+}
+
+export function buildConfigurePositivePayPolicyRequest(accountId: string) {
+	return {
+		data: {
+			type: "positivePayPolicy" as const,
+			attributes: {
+				optInTypes: ["CheckPayment"],
+			},
+			relationships: {
+				account: { data: { type: "account" as const, id: accountId } },
+			},
+		},
+	};
+}

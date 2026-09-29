@@ -1,7 +1,10 @@
 # Sandbox client helpers, the Ruby analogue of Node's `helpers/api.ts` and
 # Python's `helpers/api.py`.
 
+require 'json'
+require 'net/http'
 require 'securerandom'
+require 'uri'
 require 'unit_finance_sdk'
 
 module Helpers
@@ -131,8 +134,44 @@ module Helpers
       UnitFinanceSdk::InstitutionsApi.new(UnitFinanceSdk::ApiClient.new(configuration))
     end
 
+    def build_interest_api
+      UnitFinanceSdk::InterestApi.new(UnitFinanceSdk::ApiClient.new(configuration))
+    end
+
+    def build_lending_programs_api
+      UnitFinanceSdk::LendingProgramsApi.new(UnitFinanceSdk::ApiClient.new(configuration))
+    end
+
+    def build_positive_pay_api
+      UnitFinanceSdk::PositivePayApi.new(UnitFinanceSdk::ApiClient.new(configuration))
+    end
+
+    def build_receivables_management_api
+      UnitFinanceSdk::ReceivablesManagementApi.new(UnitFinanceSdk::ApiClient.new(configuration))
+    end
+
     def sleep(seconds)
       Kernel.sleep(seconds)
+    end
+
+    # A raw `GET` against the sandbox, returning `[parsed_body, status_code]`.
+    #
+    # Some responses cannot survive a typed round-trip because the spec is
+    # stricter than what the sandbox sends, and the generated `oneOf` builder
+    # returns nil when no arm matches ("data cannot be nil").
+    # `GET /accrued-interest/total` and the receivables reads are the current
+    # cases (see SLICES.md). Node (axios) does not validate and is unaffected;
+    # this escape hatch keeps the Ruby suite asserting the same structure
+    # instead of skipping outright.
+    def raw_get(path, query = {})
+      uri = URI.parse("#{BASE_URL}#{path}")
+      uri.query = URI.encode_www_form(query) unless query.empty?
+      request = Net::HTTP::Get.new(uri)
+      request['Authorization'] = "Bearer #{TOKEN}"
+      response = Net::HTTP.start(
+        uri.hostname, uri.port, use_ssl: uri.scheme == 'https', read_timeout: 60
+      ) { |http| http.request(request) }
+      [JSON.parse(response.body), response.code.to_i]
     end
 
     # Polymorphic JSON:API `data`/`included` members deserialize into the

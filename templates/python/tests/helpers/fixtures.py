@@ -27,6 +27,7 @@ How they are then handed to the API depends on the endpoint's request type:
   need every required field present, so we pick the variant ourselves.
 """
 
+import random
 import time
 import uuid
 from datetime import date, datetime, timedelta, timezone
@@ -38,6 +39,7 @@ from unit_finance_sdk import (
     ArchiveCustomerRequest,
     CloseAccountRequest,
     CloseDepositAccountRequest,
+    ConfigurePositivePayPolicyRequest,
     CreateABookPaymentRequest,
     CreateAccountHoldRequest,
     CreateAccountRequest,
@@ -54,6 +56,7 @@ from unit_finance_sdk import (
     CreateCardRequest,
     CreateCheckDepositRequest,
     CreateCheckDepositSendLinkRequest,
+    CreateCheckPaymentPositivePayRequest,
     CreateCounterpartyBody,
     CreateCounterpartyRequest,
     CreateCreditApplicationRequest,
@@ -64,8 +67,11 @@ from unit_finance_sdk import (
     CreateIndividualApplicationRequest,
     CreatePaymentRequest,
     CreatePolicyRequest,
+    CreatePositivePayRequest,
+    CreateReceivedACHDebitPositivePayRequest,
     CreateRecurringCreditBookPaymentRequest,
     CreateRecurringPaymentRequest,
+    CreateWireDrawdownPositivePayRequest,
     FreezeAccountRequest,
     FreezeCardRequest,
     FreezeDepositAccountRequest,
@@ -1233,3 +1239,92 @@ def build_update_daca_policies_request(account_id: str) -> Dict[str, Any]:
             },
         },
     }
+
+
+def _create_check_payment_positive_pay_dict(account_id: str) -> Dict[str, Any]:
+    return {
+        "data": {
+            "type": "checkPaymentPositivePay",
+            "attributes": {
+                "checkNumber": f"1{random.randint(1_000_000, 9_999_999)}",
+                "amount": 250000,
+                "payeeName": "ACME Corp",
+                "tags": _base_tags(),
+            },
+            "relationships": {
+                "account": {"data": {"type": "account", "id": account_id}},
+            },
+        },
+    }
+
+
+def build_create_check_payment_positive_pay_request(
+    account_id: str,
+) -> CreatePositivePayRequest:
+    """A ``checkPaymentPositivePay`` rule, created ``Active``."""
+    return CreatePositivePayRequest(
+        actual_instance=CreateCheckPaymentPositivePayRequest.from_dict(
+            _create_check_payment_positive_pay_dict(account_id)
+        )
+    )
+
+
+def build_create_received_ach_debit_positive_pay_request(
+    account_id: str,
+) -> CreatePositivePayRequest:
+    body = {
+        "data": {
+            "type": "receivedAchDebitPositivePay",
+            "attributes": {
+                "originatorName": "Payroll Company Inc",
+                "originatorEntityId": "1234567",
+                "amount": 500000,
+                "tags": _base_tags(),
+            },
+            "relationships": {
+                "account": {"data": {"type": "account", "id": account_id}},
+            },
+        },
+    }
+    return CreatePositivePayRequest(
+        actual_instance=CreateReceivedACHDebitPositivePayRequest.from_dict(body)
+    )
+
+
+def build_create_wire_drawdown_positive_pay_request(
+    account_id: str,
+) -> CreatePositivePayRequest:
+    """A ``drawdownPositivePay`` rule.
+
+    Unlike the other two variants this one is created ``AwaitingDocuments``,
+    which is the only state ``upload_positive_pay_document`` accepts — the
+    check-payment variant answers that upload with 400 ``Document upload
+    activation not supported for this positive pay type``.
+    """
+    body = {
+        "data": {
+            "type": "drawdownPositivePay",
+            "attributes": {"tags": _base_tags()},
+            "relationships": {
+                "account": {"data": {"type": "account", "id": account_id}},
+            },
+        },
+    }
+    return CreatePositivePayRequest(
+        actual_instance=CreateWireDrawdownPositivePayRequest.from_dict(body)
+    )
+
+
+def build_configure_positive_pay_policy_request(
+    account_id: str,
+) -> ConfigurePositivePayPolicyRequest:
+    body = {
+        "data": {
+            "type": "positivePayPolicy",
+            "attributes": {"optInTypes": ["CheckPayment"]},
+            "relationships": {
+                "account": {"data": {"type": "account", "id": account_id}},
+            },
+        },
+    }
+    return ConfigurePositivePayPolicyRequest.from_dict(body)

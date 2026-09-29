@@ -1,13 +1,14 @@
 # Implemented API slices
 
-From `spec-version.json` (`slices`), OpenAPI tags on `unit-finance/unit-openapi` **0.17.0**.
+From `spec-version.json` (`slices`), OpenAPI tags on `unit-finance/unit-openapi` **0.18.0**.
 
 Accounts · Application Documents · Applications · Authorized Users ·
 Card Fraud Outreach · Card Holder API Tokens · Cards · Cards ATM Locations ·
 Cards Add To Mobile Wallet · Cards Authorization Requests · Cards Authorizations ·
 Check Deposits · Check Payments · Counterparties · Credit Applications ·
 Credit Decisions · Customers · DACA · Disputes · Fees · Institutions ·
-Payments · Transactions
+Interest · Lending Programs · Payments · Positive Pay ·
+Receivables Management · Transactions
 
 # Test skips and early exits
 
@@ -60,6 +61,13 @@ request body the spec does not describe; see below. **Disputes**
 `listDisputes` runs in every SDK; `getDisputeById` is the same abort in every
 SDK. See below.
 
+**Interest · Lending Programs · Positive Pay · Receivables Management** (new in
+spec 0.18.0) — the three Lending Programs operations and five of the six
+Positive Pay operations **run** in every SDK. `configurePositivePayPolicy` is
+the same **hard skip** everywhere (the sandbox does not serve the path).
+`getTotalAccruedInterest` and the two Receivables reads **run** in every SDK but
+need a raw-body read in the three strict-typed clients; see below.
+
 | Mark | Meaning |
 | --- | --- |
 | **hard skip** | Test never calls the API (`it.skip`, `@Disabled`, RSpec/`pytest` skip). |
@@ -94,6 +102,14 @@ SDK. See below.
 | `listDisputes` (new in spec 0.17.0) | runs | Plain paged read; the sandbox org already has disputes. |
 | `getDisputeById` (new in spec 0.17.0) | abort | Needs an existing dispute id. Disputes are opened by **Unit operations**, not through the API — this surface exposes only list and get, with **no create-dispute operation** — so the suites read the first id off `listDisputes` and bail when the org has none. |
 | `getByRoutingNumber` (new in spec 0.17.0) | runs | GET `/institutions/{routingNumber}` with the shared account's routing number returns 200. The `institution` resource is keyed by routing number and carries **no JSON:API `id`**; the spec marks `id` optional, so the strict-typed clients still parse the envelope and the tests assert `type` plus the attribute keys instead. |
+| `listLendingPrograms` / `getLendingProgramById` / `getLendingProgramExtendedInformationById` (new in spec 0.18.0) | runs | Plain reads; the sandbox org already has lending programs, and the two by-id reads take the first id off the list (`null` -> abort when the org has none). `LendingProgram.type` is deliberately **open-ended** in the spec (the sandbox returns `receivablesRetentionProgram`, `clientSponsoredChargeCardProgram`, ...), so the tests assert the field is present rather than pinning a literal. Note this list operation is what `createCreditApplication` was missing before 0.18.0, but it is **not** usable there: it returns programs of every kind and only a credit-capable one is accepted, so that suite still borrows its id off an existing credit application. |
+| `createPositivePay` (new in spec 0.18.0) | runs | All three request variants (`checkPaymentPositivePay`, `receivedAchDebitPositivePay`, `drawdownPositivePay`) return **201** against the shared account. The check-payment and ACH-debit variants are created `Active`; the drawdown variant is created **`AwaitingDocuments`**, which matters for the upload below. |
+| `listPositivePay` / `getPositivePayById` (new in spec 0.18.0) | runs | Plain reads. Because the org starts with no rules, each read-suite **mints its own rule** rather than sharing one — `cancel` and the document upload both mutate rule state, so a shared rule would make the run order-dependent. |
+| `cancelPositivePay` (new in spec 0.18.0) | runs, asserting **201** | The spec documents **200** for this operation but the sandbox answers **201**. Node/Java/Ruby still get a parsed body and assert 201 directly; Python's generated client only maps a body for the documented 200, so the typed call returns `data=None` and the test reads the raw body instead. Spec defect owned by `unit-openapi`: document 201 (or make the API return 200). |
+| `uploadPositivePayDocument` (new in spec 0.18.0) | runs, drawdown only | The upload is only accepted for a rule in **`AwaitingDocuments`**, which only the **drawdown** variant enters — the check-payment variant answers **400 `Document upload activation not supported for this positive pay type`**. Each suite therefore creates a dedicated drawdown rule and PUTs a minimal PDF, which flips it to `Active`. The spec declares **no response content**, so Java and Node type the body as `void`/`Void` even though the sandbox returns the activated rule; Java asserts status only, Node and Python read the body untyped. Spec defect owned by `unit-openapi`: declare the 200 response schema. |
+| `configurePositivePayPolicy` (new in spec 0.18.0) | hard skip | The sandbox does not route `POST /positive-pay-policy` at all: a spec-valid request answers **404 "Please check the path, we don't serve any resource at the specified path"**. The operation exists only in the spec, so there is nothing to exercise. Fix lives in the sandbox (serve the path) or in `unit-openapi` (drop the operation). |
+| `getTotalAccruedInterest` (new in spec 0.18.0) | runs, via raw body in three SDKs | Two separate problems. **Request:** the spec types every filter as a plain `string` and its own example shows `2024-03`, but the API rejects a missing range with **400** ("provide either a since/until or a sinceInterestMonth/untilInterestMonth range"), rejects `YYYY-MM-DD` with **400 `Invalid value`**, and the `sinceInterestMonth`/`untilInterestMonth` pair simply **never responds** (the request hangs past any client timeout). Only full ISO-8601 instants on `filter[since]`/`filter[until]` work, and only over a **narrow window** — a multi-month range also hangs — so the fixtures use a rolling one-day window. **Response:** the spec types `data` as a bare `{ amount }` object, but the sandbox returns a full JSON:API resource (`{ type: "totalAccruedInterest", attributes: { amount } }`). The typed `amount` is therefore absent, which the strict clients reject outright (pydantic/gson "required field missing", Ruby "data cannot be nil"), so Python, Java and Ruby read the raw body. Spec defects owned by `unit-openapi`: model `data` as the JSON:API resource the API returns, and document the accepted datetime format. |
+| `listReceivables` / `getReceivableById` (new in spec 0.18.0) | runs, via raw body in three SDKs | The spec marks `Receivable.attributes.originalAmount` and `remainingAmount` **required**, but the sandbox sends neither — it returns `totalPrincipal`, `remainingPrincipal`, `plan`, `totalInterest` and `remainingInterest` instead. The strict clients therefore fail while **deserializing** a 200 (Python matches neither arm of the response `oneOf`, Java's generated `validateJsonElement` throws, Ruby's `oneOf` builder returns nil and raises "data cannot be nil"). Node (axios) does not validate and reads the typed response directly; Python, Java and Ruby read the raw body so they still assert the same envelope. `getReceivableById` additionally takes the first id off the list and aborts when the org has none — receivables are produced by Unit's lending flows, with no create operation on this surface. Spec defect owned by `unit-openapi`: align `ReceivableAttributes` with what the API actually returns. |
 | `updateCreditApplication` (new in spec 0.16.0) | runs | PATCHes the underwriting attributes of a **dedicated** application the suite creates for this test alone, so it never mutates an unrelated org resource. It cannot share the application the other credit suites use: `createCreditDecision` records an approved decision, flipping that application to `Approved`, and the API then rejects the PATCH with 400 `not_supported_for_credit_application_status` ("Credit application cannot be patched when status is Approved"). Sharing made the run order-dependent — it passed under jest/pytest/rspec alphabetical collection but failed on CI for Java, where Surefire's default `filesystem` order ran the decision first. The fallback path likewise only accepts a listed application still in `Pending`. |
 
 ---

@@ -936,5 +936,69 @@ module Helpers
         }
       }
     end
+
+    # A `checkPaymentPositivePay` rule, created `Active`.
+    def create_check_payment_positive_pay_request(account_id)
+      {
+        'data' => {
+          'type' => 'checkPaymentPositivePay',
+          'attributes' => {
+            'checkNumber' => "1#{rand(1_000_000..9_999_999)}",
+            'amount' => 250_000,
+            'payeeName' => 'ACME Corp',
+            'tags' => base_tags
+          },
+          'relationships' => {
+            'account' => { 'data' => { 'type' => 'account', 'id' => account_id } }
+          }
+        }
+      }
+    end
+
+    def create_received_ach_debit_positive_pay_request(account_id)
+      {
+        'data' => {
+          'type' => 'receivedAchDebitPositivePay',
+          'attributes' => {
+            'originatorName' => 'Payroll Company Inc',
+            'originatorEntityId' => '1234567',
+            'amount' => 500_000,
+            'tags' => base_tags
+          },
+          'relationships' => {
+            'account' => { 'data' => { 'type' => 'account', 'id' => account_id } }
+          }
+        }
+      }
+    end
+
+    # A `drawdownPositivePay` rule. Unlike the other two variants this one is
+    # created `AwaitingDocuments`, which is the only state
+    # `upload_positive_pay_document` accepts -- the check-payment variant
+    # answers that upload with 400 `Document upload activation not supported
+    # for this positive pay type`.
+    def create_wire_drawdown_positive_pay_request(account_id)
+      {
+        'data' => {
+          'type' => 'drawdownPositivePay',
+          'attributes' => { 'tags' => base_tags },
+          'relationships' => {
+            'account' => { 'data' => { 'type' => 'account', 'id' => account_id } }
+          }
+        }
+      }
+    end
+
+    def configure_positive_pay_policy_request(account_id)
+      {
+        'data' => {
+          'type' => 'positivePayPolicy',
+          'attributes' => { 'optInTypes' => ['CheckPayment'] },
+          'relationships' => {
+            'account' => { 'data' => { 'type' => 'account', 'id' => account_id } }
+          }
+        }
+      }
+    end
   end
 end
