@@ -151,15 +151,9 @@ def create_credit_decision_or_skip(
         )
     except ApiException as err:
         if err.status in _SKIP_STATUSES:
-            # The decision attributes are `format: date-time`, so the generated
-            # model types them as `datetime` and pydantic serializes them with
-            # a `+00:00` offset. The API only accepts the `Z` spelling and
-            # answers 400 for the offset form, which no fixture can work around
-            # while the field stays typed. Defect owned by the API / the spec in
-            # `unit-openapi`; the other four decision variants are affected too.
             print(
-                "createCreditDecision rejected the generated `+00:00` timestamp "
-                f"spelling (the API wants `Z`); skipping. {err.body}"
+                "createCreditDecision is unavailable on this sandbox org; "
+                f"skipping. {err.body}"
             )
             return None
         raise

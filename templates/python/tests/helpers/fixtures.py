@@ -661,12 +661,8 @@ def build_create_recurring_book_payment_request(
     account_id: str,
     counterparty_account_id: str,
 ) -> CreateRecurringPaymentRequest:
-    # NOTE: schedule.startTime/endTime are omitted deliberately. The spec marks
-    # them "Date only", but the generator types them as `datetime`, so any value
-    # we set is re-serialized with a time component and the sandbox rejects it
-    # with `should match format "date"`. They are optional, so we leave them out
-    # until the spec types them as a date. (Node sends them because typescript-
-    # axios keeps them as plain strings.)
+    start = datetime.now(timezone.utc).date() + timedelta(days=7)
+    end = start + timedelta(days=90)
     body = {
         "data": {
             "type": "recurringCreditBookPayment",
@@ -674,6 +670,8 @@ def build_create_recurring_book_payment_request(
                 "amount": 100,
                 "description": "SDK integration test recurring payment",
                 "schedule": {
+                    "startTime": start.isoformat(),
+                    "endTime": end.isoformat(),
                     "interval": "Monthly",
                     "dayOfMonth": 15,
                 },
