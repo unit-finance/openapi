@@ -779,17 +779,12 @@ final class Fixtures {
       String accountId, String counterpartyAccountId) {
     LocalDate start = LocalDate.now(ZoneOffset.UTC).plusDays(7);
     LocalDate end = start.plusMonths(3);
-    // The schedule's startTime/endTime are date-only ("2022-06-29"), but the
-    // generated model types them as OffsetDateTime (spec declares date-time),
-    // which serializes with a time component the sandbox rejects with
-    // `should match format "date"`. Emit the date-only strings through the
-    // additionalProperties escape hatch instead of the typed setters.
     CreateScheduleType schedule =
         new CreateScheduleType()
+            .startTime(start)
+            .endTime(end)
             .interval("Monthly")
             .dayOfMonth(15);
-    schedule.putAdditionalProperty("startTime", start.toString());
-    schedule.putAdditionalProperty("endTime", end.toString());
     CreateRecurringCreditBookPaymentDataAttributes attributes =
         new CreateRecurringCreditBookPaymentDataAttributes()
             .amount(100)
