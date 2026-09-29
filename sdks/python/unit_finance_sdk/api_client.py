@@ -367,6 +367,9 @@ class ApiClient:
             return tuple(
                 self.sanitize_for_serialization(sub_obj) for sub_obj in obj
             )
+        elif isinstance(obj, datetime.datetime) and obj.tzinfo is not None:
+            utc = obj.astimezone(datetime.timezone.utc)
+            return utc.strftime("%Y-%m-%dT%H:%M:%S.") + f"{utc.microsecond // 1000:03d}Z"
         elif isinstance(obj, (datetime.datetime, datetime.date)):
             return obj.isoformat()
         elif isinstance(obj, decimal.Decimal):

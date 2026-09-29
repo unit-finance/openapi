@@ -328,17 +328,19 @@ that serializes date-times its own way. Node and Ruby build the string by hand,
 so they are unaffected. Java serializes `OffsetDateTime` with
 `ISO_OFFSET_DATE_TIME`, which prints microseconds — the fixture truncates to
 milliseconds (and nudges an exact second by 1ms so the fraction is not dropped
-entirely). Python types the field as `datetime` and pydantic always renders it
-with a `+00:00` offset; no fixture can express the accepted spelling while the
-field stays typed, so the suite aborts.
+entirely). Python types the field as `datetime`, and the generated
+`ApiClient.sanitize_for_serialization` used `isoformat()`, which sends
+`.348000+00:00`. `scripts/openapi/prepare-python-sdk.ts` now patches the
+generated `api_client.py` after every regeneration so timezone-aware datetimes
+go out as UTC `.sssZ`. This fixes the published SDK too, not just the suite.
 
 Defect owned by the API / `unit-openapi`: accept any RFC 3339 instant, as the
 `format: date-time` declaration promises. Then drop the Java truncation and the
-Python abort.
+Python `api_client.py` patch.
 
 | Node | Java | Ruby | Python |
 | --- | --- | --- | --- |
-| **Runs**. Hand-built `toISOString()` is already `.sssZ`. | **Runs**, after truncating the `OffsetDateTime` to milliseconds. | **Runs**. Hand-built `strftime('%L')` + `Z`. | **Abort** on the 400: pydantic emits `+00:00` and the API rejects it. |
+| **Runs**. Hand-built `toISOString()` is already `.sssZ`. | **Runs**, after truncating the `OffsetDateTime` to milliseconds. | **Runs**. Hand-built `strftime('%L')` + `Z`. | **Runs**. The patched `api_client.py` serializes aware datetimes as UTC `.sssZ`. |
 
 ---
 
