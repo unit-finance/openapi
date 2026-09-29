@@ -10,7 +10,9 @@
  * standalone, installable package with stable metadata and deps
  * (rather than the generator's poetry-flavoured defaults). Also
  * trims the generator README so PyPI does not ship the huge
- * API-endpoint and model index tables.
+ * API-endpoint and model index tables, and patches the generated
+ * `api_client.py` so request datetimes go out in the one spelling the
+ * Unit API parses (`YYYY-MM-DDTHH:MM:SS.sssZ`).
  *
  * The curated source lives under `templates/python/` —
  * outside the wiped output tree — so it survives every regeneration.
@@ -65,6 +67,41 @@ function main(): void {
 	const polished = polishReadme(fs.readFileSync(readmePath, "utf8"));
 	fs.writeFileSync(readmePath, polished, "utf8");
 	console.log(`Wrote SDK README.md (PyPI description, without generator indexes): ${rel(readmePath)}`);
+
+	const apiClientPath = path.join(SDK_DIR, "unit_finance_sdk", "api_client.py");
+	if (!fs.existsSync(apiClientPath)) {
+		fail(`SDK api_client.py not found: ${rel(apiClientPath)}`);
+	}
+	fs.writeFileSync(
+		apiClientPath,
+		patchDatetimeSerialization(fs.readFileSync(apiClientPath, "utf8")),
+		"utf8",
+	);
+	console.log(`Patched ${rel(apiClientPath)}: datetimes serialize as YYYY-MM-DDTHH:MM:SS.sssZ`);
+}
+
+const DATETIME_BRANCH =
+	"        elif isinstance(obj, (datetime.datetime, datetime.date)):\n" +
+	"            return obj.isoformat()\n";
+
+/**
+ * The generated client writes datetimes with `isoformat()`, which yields
+ * microseconds and a `+00:00` offset (e.g. `2026-09-28T21:30:21.348000+00:00`).
+ * The Unit API (credit decisions, among others) only accepts millisecond
+ * precision with a literal `Z` and answers 400 otherwise, so aware datetimes
+ * are normalised to UTC and truncated to milliseconds. Naive datetimes and
+ * plain dates keep the generator's behaviour.
+ */
+function patchDatetimeSerialization(source: string): string {
+	if (!source.includes(DATETIME_BRANCH)) {
+		fail("could not find the datetime branch of sanitize_for_serialization in api_client.py");
+	}
+	const patched =
+		"        elif isinstance(obj, datetime.datetime) and obj.tzinfo is not None:\n" +
+		"            utc = obj.astimezone(datetime.timezone.utc)\n" +
+		'            return utc.strftime("%Y-%m-%dT%H:%M:%S.") + f"{utc.microsecond // 1000:03d}Z"\n' +
+		DATETIME_BRANCH;
+	return source.replace(DATETIME_BRANCH, patched);
 }
 
 /** Replace the first top-level `version = "..."` assignment (the [project] one). */
