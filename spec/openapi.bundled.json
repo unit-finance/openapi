@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Unit API",
-    "version": "0.17.0",
+    "version": "0.18.0",
     "description": "JSON:API-compliant banking API.",
     "license": {
       "name": "Proprietary",
@@ -111,6 +111,22 @@
     {
       "name": "Institutions",
       "description": "Financial institutions searchable by ABA routing number."
+    },
+    {
+      "name": "Interest",
+      "description": "Accrued interest reporting across customer accounts."
+    },
+    {
+      "name": "Lending Programs",
+      "description": "Lending programs and their extended size information."
+    },
+    {
+      "name": "Positive Pay",
+      "description": "Positive Pay rules for check payments, incoming ACH debits, and wire drawdowns, plus policy configuration."
+    },
+    {
+      "name": "Receivables Management",
+      "description": "Receivables and the receivables balance due to be purchased."
     }
   ],
   "paths": {
@@ -12622,6 +12638,1115 @@
                         }
                       ],
                       "description": "Institution resource."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/accrued-interest/total": {
+      "get": {
+        "operationId": "getTotalAccruedInterest",
+        "summary": "Get total accrued interest",
+        "description": "The response to this API call includes the sum of customer accrued interest (in cents) for a given period of time.",
+        "tags": [
+          "Interest"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "accounts"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "filter[accountId]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the results by the specified account id.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[since]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the accrued interest *after* the specified date. e.g. 2024-01-13T16:01:19.346Z",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[until]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the account accrued interest *before* the specified date. e.g. 2024-05-06T16:01:00.123Z",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[sinceInterestMonth]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the accrued interest *after* the specified month. e.g. 2024-03",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[untilInterestMonth]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the accrued interest *before* the specified month. e.g. 2024-07",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Total accrued interest.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/TotalAccruedInterestType"
+                        }
+                      ],
+                      "description": "The requested resource after the operation was completed."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/lending-programs": {
+      "get": {
+        "operationId": "listLendingPrograms",
+        "summary": "List lending programs",
+        "description": "List lending program resources. Paging can be applied.",
+        "tags": [
+          "Lending Programs"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "lending-programs"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page[limit]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Maximum number of resources that will be returned. Maximum is 1000 resources. See Pagination.",
+            "schema": {
+              "type": "string",
+              "default": "100"
+            }
+          },
+          {
+            "name": "page[offset]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Number of resources to skip. See Pagination.",
+            "schema": {
+              "type": "string",
+              "default": "0"
+            }
+          },
+          {
+            "name": "filter[name]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the results by the specified program name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[programType]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the results by the specified Lending Program Type.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[minProgramLimit]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the results by a maximum value of programSizeLimit.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[orgId]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the results by the specified org id.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[bankId]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the results by the specified bank id.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of lending-program resources.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/LendingProgram"
+                      },
+                      "description": "Array of lending-program resources."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/lending-programs/{id}": {
+      "get": {
+        "operationId": "getLendingProgramById",
+        "summary": "Get lending program by id",
+        "description": "Get a lending program resource by id.",
+        "tags": [
+          "Lending Programs"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "lending-programs"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A lending-program resource.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/LendingProgram"
+                        }
+                      ],
+                      "description": "A lending-program resource."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/lending-programs/{id}/extended": {
+      "get": {
+        "operationId": "getLendingProgramExtendedInformationById",
+        "summary": "Get lending program extended information by id",
+        "description": "Get lending program extended information resource by id.",
+        "tags": [
+          "Lending Programs"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "lending-programs"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A lending-program extended information resource.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/LendingProgramExtendedInformation"
+                        }
+                      ],
+                      "description": "A lending-program extended information resource."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/positive-pay": {
+      "post": {
+        "operationId": "createPositivePay",
+        "summary": "Create a positive pay rule",
+        "description": "Create a Positive Pay rule. Variants:\n- **CreateCheckPaymentPositivePay**\n- **CreateReceivedACHDebitPositivePay**\n- **CreateWireDrawdownPositivePay**",
+        "tags": [
+          "Positive Pay"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "payments-write"
+            ]
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/CreateCheckPaymentPositivePayRequest"
+                  },
+                  {
+                    "$ref": "#/components/schemas/CreateReceivedACHDebitPositivePayRequest"
+                  },
+                  {
+                    "$ref": "#/components/schemas/CreateWireDrawdownPositivePayRequest"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The created Positive Pay rule, distinguished by the `type` field.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "oneOf": [
+                        {
+                          "$ref": "#/components/schemas/ReceivedACHDebitPositivePay"
+                        },
+                        {
+                          "$ref": "#/components/schemas/CheckPaymentPositivePay"
+                        },
+                        {
+                          "$ref": "#/components/schemas/WireDrawdownPositivePay"
+                        }
+                      ],
+                      "discriminator": {
+                        "propertyName": "type",
+                        "mapping": {
+                          "receivedAchDebitPositivePay": "#/components/schemas/ReceivedACHDebitPositivePay",
+                          "checkPaymentPositivePay": "#/components/schemas/CheckPaymentPositivePay",
+                          "drawdownPositivePay": "#/components/schemas/WireDrawdownPositivePay"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "listPositivePay",
+        "summary": "List positive pay rules",
+        "description": "List Positive Pay rules. Filtering, paging, and sorting can be applied.",
+        "tags": [
+          "Positive Pay"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "payments"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page[limit]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Maximum number of resources that will be returned. Maximum is 1000 resources. See Pagination.",
+            "schema": {
+              "type": "string",
+              "default": "100"
+            }
+          },
+          {
+            "name": "page[offset]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Number of resources to skip. See Pagination.",
+            "schema": {
+              "type": "string",
+              "default": "0"
+            }
+          },
+          {
+            "name": "filter[accountId]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the results by the specified account id.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[status]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters by rule status. One of: AwaitingDocuments, Active, Expired, Cancelled.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[type]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters by rule type. One of: receivedAchDebitPositivePay, checkPaymentPositivePay, drawdownPositivePay.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[tags]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filter positive pay by Tags.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Leave empty or provide sort=createdAt for ascending order. Provide sort=-createdAt (leading minus sign) for descending order.",
+            "schema": {
+              "type": "string",
+              "default": "-createdAt"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of positive pay rule resources. Each resource can be any of the listed rule types, as indicated by the type field.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "description": "Array of positive pay rule resources. Each resource can be any of the listed rule types, as indicated by the type field.",
+                      "items": {
+                        "oneOf": [
+                          {
+                            "$ref": "#/components/schemas/ReceivedACHDebitPositivePay"
+                          },
+                          {
+                            "$ref": "#/components/schemas/CheckPaymentPositivePay"
+                          },
+                          {
+                            "$ref": "#/components/schemas/WireDrawdownPositivePay"
+                          }
+                        ],
+                        "discriminator": {
+                          "propertyName": "type",
+                          "mapping": {
+                            "receivedAchDebitPositivePay": "#/components/schemas/ReceivedACHDebitPositivePay",
+                            "checkPaymentPositivePay": "#/components/schemas/CheckPaymentPositivePay",
+                            "drawdownPositivePay": "#/components/schemas/WireDrawdownPositivePay"
+                          }
+                        }
+                      }
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/positive-pay/{positivePayId}": {
+      "get": {
+        "operationId": "getPositivePayById",
+        "summary": "Get a positive pay rule by id",
+        "description": "Get a Positive Pay rule by ID.",
+        "tags": [
+          "Positive Pay"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "payments"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "positivePayId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The Positive Pay rule.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "oneOf": [
+                        {
+                          "$ref": "#/components/schemas/ReceivedACHDebitPositivePay"
+                        },
+                        {
+                          "$ref": "#/components/schemas/CheckPaymentPositivePay"
+                        },
+                        {
+                          "$ref": "#/components/schemas/WireDrawdownPositivePay"
+                        }
+                      ],
+                      "discriminator": {
+                        "propertyName": "type",
+                        "mapping": {
+                          "receivedAchDebitPositivePay": "#/components/schemas/ReceivedACHDebitPositivePay",
+                          "checkPaymentPositivePay": "#/components/schemas/CheckPaymentPositivePay",
+                          "drawdownPositivePay": "#/components/schemas/WireDrawdownPositivePay"
+                        }
+                      },
+                      "description": "The Positive Pay rule."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/positive-pay/{positivePayId}/cancel": {
+      "post": {
+        "operationId": "cancelPositivePay",
+        "summary": "Cancel a positive pay rule",
+        "description": "Cancel a Positive Pay rule by ID. Cancelled rules stop authorizing payments.",
+        "tags": [
+          "Positive Pay"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "payments-write"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "positivePayId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The cancelled Positive Pay rule.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "oneOf": [
+                        {
+                          "$ref": "#/components/schemas/ReceivedACHDebitPositivePay"
+                        },
+                        {
+                          "$ref": "#/components/schemas/CheckPaymentPositivePay"
+                        },
+                        {
+                          "$ref": "#/components/schemas/WireDrawdownPositivePay"
+                        }
+                      ],
+                      "discriminator": {
+                        "propertyName": "type",
+                        "mapping": {
+                          "receivedAchDebitPositivePay": "#/components/schemas/ReceivedACHDebitPositivePay",
+                          "checkPaymentPositivePay": "#/components/schemas/CheckPaymentPositivePay",
+                          "drawdownPositivePay": "#/components/schemas/WireDrawdownPositivePay"
+                        }
+                      },
+                      "description": "The cancelled Positive Pay rule."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/positive-pay/{positivePayId}/documents": {
+      "put": {
+        "operationId": "uploadPositivePayDocument",
+        "summary": "Upload a positive pay document",
+        "description": "Upload the authorization document required to activate a drawdown rule (Wire Drawdown Only).",
+        "tags": [
+          "Positive Pay"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "payments-write"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "positivePayId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/pdf": {
+              "schema": {
+                "type": "string",
+                "format": "binary"
+              }
+            },
+            "image/jpeg": {
+              "schema": {
+                "type": "string",
+                "format": "binary",
+                "title": "UploadPositivePayDocumentBody"
+              }
+            },
+            "image/png": {
+              "schema": {
+                "type": "string",
+                "format": "binary",
+                "title": "UploadPositivePayDocumentBody2"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The authorization document was uploaded."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/positive-pay-policy": {
+      "post": {
+        "operationId": "configurePositivePayPolicy",
+        "summary": "Configure a positive pay policy",
+        "description": "Configure Positive Pay policy to control which payment types require matching Positive Pay rules before they can be processed.",
+        "tags": [
+          "Positive Pay"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "payments-write"
+            ]
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfigurePositivePayPolicyRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The Positive Pay policy was configured."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/receivables": {
+      "get": {
+        "operationId": "listReceivables",
+        "summary": "List receivables",
+        "description": "List receivables resources. Paging can be applied.\n\nThe same endpoint also serves the receivables balance report: when `filter[purchaseDueDate]` or `filter[daysUntilPurchase]` is supplied, the response `data` is a single receivables balance resource holding the receivables balance that is due to be purchased by the specified date, or within the specified number of days from today.",
+        "tags": [
+          "Receivables Management"
+        ],
+        "parameters": [
+          {
+            "name": "page[limit]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Maximum number of resources that will be returned. Maximum is 1000 resources. See Pagination.",
+            "schema": {
+              "type": "string",
+              "default": "100"
+            }
+          },
+          {
+            "name": "page[offset]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Number of resources to skip. See Pagination.",
+            "schema": {
+              "type": "string",
+              "default": "0"
+            }
+          },
+          {
+            "name": "filter[customerId]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the results by the specified customer id.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[receivableType]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the results by one of the following receivable types [\"bankReceivable\", \"orgReceivable\", \"capitalPartnerReceivable\"]",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[repaymentStatusType]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the results by one of the following repayment status types [\"notRepaid\", \"partiallyRepaid\", \"fullyRepaid\"]",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[purchaseDueDate]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the results by the specified purchase due date e.g. 2023-05-25. When supplied, a receivables balance resource is returned instead of an array of receivables.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[daysUntilPurchase]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the results by days until purchase. When supplied, a receivables balance resource is returned instead of an array of receivables.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of receivable resources, or a receivables balance resource when a balance-report filter is supplied.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "oneOf": [
+                        {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Receivable"
+                          },
+                          "description": "Array of receivable resources."
+                        },
+                        {
+                          "allOf": [
+                            {
+                              "$ref": "#/components/schemas/ReceivablesBalance"
+                            }
+                          ],
+                          "description": "A receivables balance resource."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/receivables/{id}": {
+      "get": {
+        "operationId": "getReceivableById",
+        "summary": "Get receivable by id",
+        "description": "Get a receivable resource by id.",
+        "tags": [
+          "Receivables Management"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A receivable resource.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/Receivable"
+                        }
+                      ],
+                      "description": "A receivable resource."
                     }
                   }
                 }
@@ -31818,6 +32943,798 @@
             "address": "Ste 300 Fargo ND 58104",
             "isACHSupported": true,
             "isWireSupported": false
+          }
+        }
+      },
+      "LendingProgram": {
+        "type": "object",
+        "required": [
+          "type",
+          "id",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "The lending program type, e.g. `bankSponsoredChargeCardProgram`. The set of program types is open-ended and is not enumerated here."
+          },
+          "id": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "createdAt",
+              "name",
+              "programSizeLimit"
+            ],
+            "properties": {
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the resource was created."
+              },
+              "name": {
+                "type": "string",
+                "description": "The name of the lending program"
+              },
+              "programSizeLimit": {
+                "type": "integer",
+                "description": "The size limit of the lending program, in cents."
+              }
+            }
+          }
+        },
+        "example": {
+          "type": "bankSponsoredChargeCardProgram",
+          "id": "12",
+          "attributes": {
+            "createdAt": "2024-02-16T16:32:11.741Z",
+            "name": "Unit Finance Inc - MyBank BankSponsored Lending Program",
+            "programSizeLimit": 10900000
+          }
+        }
+      },
+      "LendingProgramExtendedInformation": {
+        "type": "object",
+        "required": [
+          "type",
+          "id",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "lendingProgramExtendedInformation"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "object",
+            "properties": {
+              "programSizeAvailable": {
+                "type": "integer",
+                "description": "The currently available size of the lending program, in cents."
+              },
+              "programSizeAllocated": {
+                "type": "integer",
+                "description": "The currently allocated size of the lending program, in cents."
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "example": {
+          "type": "lendingProgramExtendedInformation",
+          "id": "12",
+          "attributes": {
+            "programSizeAvailable": 10899600,
+            "programSizeAllocated": 400
+          }
+        }
+      },
+      "CheckPaymentPositivePay": {
+        "type": "object",
+        "description": "`Check Payment Positive Pay` is a JSON:API resource, top-level fields:",
+        "required": [
+          "type",
+          "id",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "checkPaymentPositivePay"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "createdAt",
+              "status",
+              "checkNumber",
+              "amount"
+            ],
+            "properties": {
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the resource was created."
+              },
+              "status": {
+                "type": "string",
+                "description": "One of Active, Expired, or Cancelled."
+              },
+              "checkNumber": {
+                "type": "string",
+                "description": "Check number to authorize."
+              },
+              "payeeName": {
+                "type": "string",
+                "description": "Payee name to add specificity."
+              },
+              "amount": {
+                "type": "integer",
+                "description": "Expected amount in cents."
+              },
+              "expirationDate": {
+                "type": "string",
+                "format": "date",
+                "description": "When the authorization expires."
+              },
+              "tags": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "See Tags."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "properties": {
+              "account": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        },
+        "example": {
+          "type": "checkPaymentPositivePay",
+          "id": "3",
+          "attributes": {
+            "createdAt": "2026-01-15T10:00:00.000Z",
+            "status": "Active",
+            "checkNumber": "10045",
+            "payeeName": "ACME Corp",
+            "amount": 250000,
+            "expirationDate": "2026-12-31",
+            "tags": {
+              "category": "vendor"
+            }
+          },
+          "relationships": {
+            "account": {
+              "data": {
+                "type": "depositAccount",
+                "id": "123"
+              }
+            }
+          }
+        }
+      },
+      "ReceivedACHDebitPositivePay": {
+        "type": "object",
+        "description": "`Received ACH Debit Positive Pay` is a JSON:API resource, top-level fields:",
+        "required": [
+          "type",
+          "id",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "receivedAchDebitPositivePay"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "createdAt",
+              "status",
+              "originatorName",
+              "originatorEntityId",
+              "amount"
+            ],
+            "properties": {
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the resource was created."
+              },
+              "status": {
+                "type": "string",
+                "description": "One of Active, Expired, or Cancelled."
+              },
+              "originatorName": {
+                "type": "string",
+                "description": "Name of the ACH debit originator."
+              },
+              "originatorEntityId": {
+                "type": "string",
+                "description": "Entity ID of the ACH debit originator."
+              },
+              "amount": {
+                "type": "integer",
+                "description": "Maximum allowed debit amount in cents."
+              },
+              "expirationDate": {
+                "type": "string",
+                "format": "date",
+                "description": "When the authorization expires."
+              },
+              "tags": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "See Tags."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "properties": {
+              "account": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        },
+        "example": {
+          "type": "receivedAchDebitPositivePay",
+          "id": "1",
+          "attributes": {
+            "createdAt": "2026-01-15T10:00:00.000Z",
+            "status": "Active",
+            "originatorName": "Payroll Company Inc",
+            "originatorEntityId": "1234567",
+            "amount": 500000,
+            "expirationDate": "2026-12-31",
+            "tags": {
+              "purpose": "payroll"
+            }
+          },
+          "relationships": {
+            "account": {
+              "data": {
+                "type": "depositAccount",
+                "id": "123"
+              }
+            }
+          }
+        }
+      },
+      "WireDrawdownPositivePay": {
+        "type": "object",
+        "description": "`Drawdown Positive Pay` is a JSON:API resource, top-level fields:",
+        "required": [
+          "type",
+          "id",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "drawdownPositivePay"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "createdAt",
+              "status"
+            ],
+            "properties": {
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the resource was created."
+              },
+              "status": {
+                "type": "string",
+                "description": "One of AwaitingDocuments, Active, Expired, or Cancelled."
+              },
+              "expirationDate": {
+                "type": "string",
+                "format": "date",
+                "description": "When the authorization expires."
+              },
+              "tags": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "See Tags."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "properties": {
+              "account": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        },
+        "example": {
+          "type": "drawdownPositivePay",
+          "id": "4",
+          "attributes": {
+            "createdAt": "2026-01-15T10:00:00.000Z",
+            "status": "AwaitingDocuments",
+            "expirationDate": "2026-12-31",
+            "tags": {
+              "purpose": "vendor-payment"
+            }
+          },
+          "relationships": {
+            "account": {
+              "data": {
+                "type": "depositAccount",
+                "id": "123"
+              }
+            }
+          }
+        }
+      },
+      "CreateCheckPaymentPositivePayData": {
+        "type": "object",
+        "required": [
+          "type",
+          "attributes",
+          "relationships"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "checkPaymentPositivePay"
+            ]
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "checkNumber",
+              "amount"
+            ],
+            "properties": {
+              "checkNumber": {
+                "type": "string",
+                "description": "Check number to authorize.",
+                "example": "10045"
+              },
+              "amount": {
+                "type": "integer",
+                "description": "Expected amount in cents. Must match within 1$ tolerance.",
+                "example": 250000
+              },
+              "payeeName": {
+                "type": "string",
+                "description": "Payee name to add specificity.",
+                "example": "ACME Corp"
+              },
+              "expirationDate": {
+                "type": "string",
+                "format": "date",
+                "description": "When the authorization expires.",
+                "example": "2026-12-31"
+              },
+              "tags": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "See Tags. Tags that will be copied to any transaction that this payment creates (see Tag Inheritance).",
+                "example": {
+                  "category": "vendor"
+                }
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "required": [
+              "account"
+            ],
+            "properties": {
+              "account": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        }
+      },
+      "CreateCheckPaymentPositivePayRequest": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/CreateCheckPaymentPositivePayData"
+          }
+        }
+      },
+      "CreateReceivedACHDebitPositivePayData": {
+        "type": "object",
+        "required": [
+          "type",
+          "attributes",
+          "relationships"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "receivedAchDebitPositivePay"
+            ]
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "originatorName",
+              "originatorEntityId"
+            ],
+            "properties": {
+              "originatorName": {
+                "type": "string",
+                "description": "Name of the ACH Received Payment originator. Required if originatorEntityId is not provided.",
+                "example": "Payroll Company Inc"
+              },
+              "originatorEntityId": {
+                "type": "string",
+                "description": "Entity ID of the ACH Received Payment originator. Required if originatorName is not provided.",
+                "example": "1234567"
+              },
+              "amount": {
+                "type": "integer",
+                "description": "Maximum allowed debit amount in cents. Decisioning uses this as a maximum.",
+                "example": 500000
+              },
+              "expirationDate": {
+                "type": "string",
+                "format": "date",
+                "description": "When the authorization expires.",
+                "example": "2026-12-31"
+              },
+              "tags": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "See Tags. Tags that will be copied to any transaction that this payment creates (see Tag Inheritance).",
+                "example": {
+                  "purpose": "payroll"
+                }
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "required": [
+              "account"
+            ],
+            "properties": {
+              "account": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        }
+      },
+      "CreateReceivedACHDebitPositivePayRequest": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/CreateReceivedACHDebitPositivePayData"
+          }
+        }
+      },
+      "CreateWireDrawdownPositivePayData": {
+        "type": "object",
+        "required": [
+          "type",
+          "attributes",
+          "relationships"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "drawdownPositivePay"
+            ]
+          },
+          "attributes": {
+            "type": "object",
+            "properties": {
+              "expirationDate": {
+                "type": "string",
+                "format": "date",
+                "description": "When the authorization expires.",
+                "example": "2026-12-31"
+              },
+              "tags": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "Internal labels for your own use.",
+                "example": {
+                  "purpose": "vendor-payment"
+                }
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "required": [
+              "account"
+            ],
+            "properties": {
+              "account": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        }
+      },
+      "CreateWireDrawdownPositivePayRequest": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/CreateWireDrawdownPositivePayData"
+          }
+        }
+      },
+      "ConfigurePositivePayPolicyData": {
+        "type": "object",
+        "required": [
+          "type",
+          "attributes",
+          "relationships"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "positivePayPolicy"
+            ]
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "optInTypes"
+            ],
+            "properties": {
+              "optInTypes": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Payment types to opt in. Supported values: CheckPayment, ReceivedAchDebit.",
+                "example": [
+                  "CheckPayment",
+                  "ReceivedAchDebit",
+                  "ReceivedAchCredit"
+                ]
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "required": [
+              "account"
+            ],
+            "properties": {
+              "account": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        }
+      },
+      "ConfigurePositivePayPolicyRequest": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/ConfigurePositivePayPolicyData"
+          }
+        }
+      },
+      "Receivable": {
+        "type": "object",
+        "required": [
+          "type",
+          "id",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "bankReceivable"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "createdAt",
+              "updatedAt",
+              "originalAmount",
+              "remainingAmount",
+              "repaymentStatus"
+            ],
+            "properties": {
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the resource was created."
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the resource was updated."
+              },
+              "originalAmount": {
+                "type": "integer",
+                "description": "The original amount of the receivable that need to be repaid."
+              },
+              "remainingAmount": {
+                "type": "integer",
+                "description": "The remaining amount of the receivable that need to be repaid."
+              },
+              "repaymentStatus": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "description": "The status of the repayment, one of `notRepaid`, `partiallyRepaid`, `fullyRepaid`."
+                  }
+                },
+                "additionalProperties": true,
+                "description": "JSON Object representing The status of the repayment and last repayment timestamp. The value of the repayment status can be one of the following notRepaid, partiallyRepaid, fullyRepaid."
+              },
+              "purchaseDueDate": {
+                "type": "string",
+                "format": "date",
+                "description": "The date the receivable is due e.g. 2024-12-31."
+              },
+              "purchasedTimestamp": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the receivable was purchased"
+              },
+              "capitalPartnerId": {
+                "type": "string",
+                "description": "The capital partner id"
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "properties": {
+              "customer": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "account": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "transaction": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "lendingProgram": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        },
+        "example": {
+          "type": "bankReceivable",
+          "id": "5",
+          "attributes": {
+            "createdAt": "2024-12-08T08:58:55.515Z",
+            "updatedAt": "2024-12-08T08:58:55.515Z",
+            "originalAmount": 100,
+            "remainingAmount": 100,
+            "purchaseDueDate": "2023-05-25",
+            "repaymentStatus": {
+              "type": "notRepaid"
+            }
+          },
+          "relationships": {
+            "customer": {
+              "data": {
+                "type": "customer",
+                "id": "10002"
+              }
+            },
+            "account": {
+              "data": {
+                "type": "account",
+                "id": "10027"
+              }
+            },
+            "transaction": {
+              "data": {
+                "type": "transaction",
+                "id": "154"
+              }
+            },
+            "lendingProgram": {
+              "data": {
+                "type": "lendingProgram",
+                "id": "15"
+              }
+            }
+          }
+        }
+      },
+      "ReceivablesBalance": {
+        "type": "object",
+        "required": [
+          "type",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "receivablesBalance"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "pendingPurchaseReceivablesAmount"
+            ],
+            "properties": {
+              "pendingPurchaseReceivablesAmount": {
+                "type": "integer",
+                "description": "The remaining amount to be purchased."
+              },
+              "purchaseDueDate": {
+                "type": "string",
+                "format": "date",
+                "description": "The date the receivables are supposed to be purchased e.g. 2024-12-31."
+              }
+            }
+          }
+        },
+        "example": {
+          "type": "receivablesBalance",
+          "attributes": {
+            "pendingPurchaseReceivablesAmount": 100
           }
         }
       }
