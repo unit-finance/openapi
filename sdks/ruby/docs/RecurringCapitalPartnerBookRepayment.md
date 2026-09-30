@@ -1,0 +1,24 @@
+# UnitFinanceSdk::RecurringCapitalPartnerBookRepayment
+
+## Properties
+
+| Name | Type | Description | Notes |
+| ---- | ---- | ----------- | ----- |
+| **type** | **String** |  |  |
+| **id** | **String** |  |  |
+| **attributes** | [**RecurringCapitalPartnerBookRepaymentAttributes**](RecurringCapitalPartnerBookRepaymentAttributes.md) |  |  |
+| **relationships** | [**RecurringCapitalPartnerBookRepaymentRelationships**](RecurringCapitalPartnerBookRepaymentRelationships.md) |  | [optional] |
+
+## Example
+
+```ruby
+require 'unit_finance_sdk'
+
+instance = UnitFinanceSdk::RecurringCapitalPartnerBookRepayment.new(
+  type: null,
+  id: null,
+  attributes: null,
+  relationships: null
+)
+```
+

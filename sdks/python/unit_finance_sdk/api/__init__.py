@@ -27,5 +27,11 @@ from unit_finance_sdk.api.lending_programs_api import LendingProgramsApi
 from unit_finance_sdk.api.payments_api import PaymentsApi
 from unit_finance_sdk.api.positive_pay_api import PositivePayApi
 from unit_finance_sdk.api.receivables_management_api import ReceivablesManagementApi
+from unit_finance_sdk.api.recurring_repayments_api import RecurringRepaymentsApi
+from unit_finance_sdk.api.repayments_api import RepaymentsApi
+from unit_finance_sdk.api.rewards_api import RewardsApi
+from unit_finance_sdk.api.statements_api import StatementsApi
+from unit_finance_sdk.api.stop_payments_api import StopPaymentsApi
+from unit_finance_sdk.api.tax_forms_api import TaxFormsApi
 from unit_finance_sdk.api.transactions_api import TransactionsApi
 

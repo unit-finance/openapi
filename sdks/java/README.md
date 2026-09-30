@@ -1,7 +1,7 @@
 # unit-java-sdk
 
 Unit API
-- API version: 0.18.0
+- API version: 0.19.0
   - Generator version: 7.22.0
 
 JSON:API-compliant banking API.
@@ -261,6 +261,30 @@ Class | Method | HTTP request | Description
 *PositivePayApi* | [**uploadPositivePayDocument**](docs/PositivePayApi.md#uploadPositivePayDocument) | **PUT** /positive-pay/{positivePayId}/documents | Upload a positive pay document
 *ReceivablesManagementApi* | [**getReceivableById**](docs/ReceivablesManagementApi.md#getReceivableById) | **GET** /receivables/{id} | Get receivable by id
 *ReceivablesManagementApi* | [**listReceivables**](docs/ReceivablesManagementApi.md#listReceivables) | **GET** /receivables | List receivables
+*RecurringRepaymentsApi* | [**createRecurringRepayment**](docs/RecurringRepaymentsApi.md#createRecurringRepayment) | **POST** /recurring-repayments | Create a recurring repayment
+*RecurringRepaymentsApi* | [**disableRecurringRepayment**](docs/RecurringRepaymentsApi.md#disableRecurringRepayment) | **POST** /recurring-repayments/{id}/disable | Disable a recurring repayment
+*RecurringRepaymentsApi* | [**enableRecurringRepayment**](docs/RecurringRepaymentsApi.md#enableRecurringRepayment) | **POST** /recurring-repayments/{id}/enable | Enable a recurring repayment
+*RecurringRepaymentsApi* | [**getRecurringRepayment**](docs/RecurringRepaymentsApi.md#getRecurringRepayment) | **GET** /recurring-repayments/{id} | Get a recurring repayment by id
+*RecurringRepaymentsApi* | [**listRecurringRepayments**](docs/RecurringRepaymentsApi.md#listRecurringRepayments) | **GET** /recurring-repayments | List recurring repayments
+*RepaymentsApi* | [**createRepayment**](docs/RepaymentsApi.md#createRepayment) | **POST** /repayments | Create a repayment
+*RepaymentsApi* | [**getRepayment**](docs/RepaymentsApi.md#getRepayment) | **GET** /repayments/{repaymentId} | Get a repayment by id
+*RepaymentsApi* | [**listRepayments**](docs/RepaymentsApi.md#listRepayments) | **GET** /repayments | List repayments
+*RepaymentsApi* | [**returnExternalRepayment**](docs/RepaymentsApi.md#returnExternalRepayment) | **POST** /repayments/{repaymentId}/return | Return an external repayment
+*RewardsApi* | [**createReward**](docs/RewardsApi.md#createReward) | **POST** /rewards | Create a reward
+*RewardsApi* | [**getReward**](docs/RewardsApi.md#getReward) | **GET** /rewards/{rewardId} | Get a reward by id
+*RewardsApi* | [**listRewards**](docs/RewardsApi.md#listRewards) | **GET** /rewards | List rewards
+*StatementsApi* | [**getBankVerificationPdf**](docs/StatementsApi.md#getBankVerificationPdf) | **GET** /statements/{accountId}/bank/pdf | Get a bank verification PDF
+*StatementsApi* | [**getStatementHtml**](docs/StatementsApi.md#getStatementHtml) | **GET** /statements/{id}/html | Get a statement HTML
+*StatementsApi* | [**getStatementPdf**](docs/StatementsApi.md#getStatementPdf) | **GET** /statements/{id}/pdf | Get a statement PDF
+*StatementsApi* | [**listStatements**](docs/StatementsApi.md#listStatements) | **GET** /statements | List statements
+*StopPaymentsApi* | [**createStopPayment**](docs/StopPaymentsApi.md#createStopPayment) | **POST** /stop-payments | Create a stop payment
+*StopPaymentsApi* | [**disableStopPayment**](docs/StopPaymentsApi.md#disableStopPayment) | **POST** /stop-payments/{stopPaymentId}/disable | Disable a stop payment
+*StopPaymentsApi* | [**getStopPayment**](docs/StopPaymentsApi.md#getStopPayment) | **GET** /stop-payments/{stopPaymentId} | Get a stop payment by id
+*StopPaymentsApi* | [**listStopPayments**](docs/StopPaymentsApi.md#listStopPayments) | **GET** /stop-payments | List stop payments
+*StopPaymentsApi* | [**updateAchStopPayment**](docs/StopPaymentsApi.md#updateAchStopPayment) | **PATCH** /stop-payments/{stopPaymentId} | Update an ACH stop payment
+*TaxFormsApi* | [**getTaxFormById**](docs/TaxFormsApi.md#getTaxFormById) | **GET** /tax-forms/{id} | Get a tax form by id
+*TaxFormsApi* | [**getTaxFormPdfById**](docs/TaxFormsApi.md#getTaxFormPdfById) | **GET** /tax-forms/{id}/pdf | Get a tax form PDF by id
+*TaxFormsApi* | [**listTaxForms**](docs/TaxFormsApi.md#listTaxForms) | **GET** /tax-forms | List tax forms
 *TransactionsApi* | [**getTransaction**](docs/TransactionsApi.md#getTransaction) | **GET** /accounts/{accountId}/transactions/{transactionId} | Get a transaction
 *TransactionsApi* | [**listTransactions**](docs/TransactionsApi.md#listTransactions) | **GET** /transactions | List transactions
 *TransactionsApi* | [**updateTransaction**](docs/TransactionsApi.md#updateTransaction) | **PATCH** /transactions/{transactionId} | Update a transaction
@@ -277,6 +301,11 @@ Class | Method | HTTP request | Description
  - [ACHReceivedPayment](docs/ACHReceivedPayment.md)
  - [ACHReceivedPaymentAttributes](docs/ACHReceivedPaymentAttributes.md)
  - [ACHReceivedPaymentRelationships](docs/ACHReceivedPaymentRelationships.md)
+ - [ACHRepayment](docs/ACHRepayment.md)
+ - [ACHRepaymentAttributes](docs/ACHRepaymentAttributes.md)
+ - [ACHRepaymentRelationships](docs/ACHRepaymentRelationships.md)
+ - [ACHStopPayment](docs/ACHStopPayment.md)
+ - [ACHStopPaymentAttributes](docs/ACHStopPaymentAttributes.md)
  - [ATMLocation](docs/ATMLocation.md)
  - [ATMLocationAttributes](docs/ATMLocationAttributes.md)
  - [ATMTransaction](docs/ATMTransaction.md)
@@ -330,6 +359,9 @@ Class | Method | HTTP request | Description
  - [BookPayment](docs/BookPayment.md)
  - [BookPaymentAttributes](docs/BookPaymentAttributes.md)
  - [BookPaymentRelationships](docs/BookPaymentRelationships.md)
+ - [BookRepayment](docs/BookRepayment.md)
+ - [BookRepaymentAttributes](docs/BookRepaymentAttributes.md)
+ - [BookRepaymentRelationships](docs/BookRepaymentRelationships.md)
  - [BookTransaction](docs/BookTransaction.md)
  - [BookTransactionAttributes](docs/BookTransactionAttributes.md)
  - [BookTransactionRelationships](docs/BookTransactionRelationships.md)
@@ -360,6 +392,10 @@ Class | Method | HTTP request | Description
  - [CancelPayment200ResponseData](docs/CancelPayment200ResponseData.md)
  - [CancelPositivePay200Response](docs/CancelPositivePay200Response.md)
  - [CancelPositivePay200ResponseData](docs/CancelPositivePay200ResponseData.md)
+ - [CapitalPartnerACHRepayment](docs/CapitalPartnerACHRepayment.md)
+ - [CapitalPartnerACHRepaymentRelationships](docs/CapitalPartnerACHRepaymentRelationships.md)
+ - [CapitalPartnerBookRepayment](docs/CapitalPartnerBookRepayment.md)
+ - [CapitalPartnerBookRepaymentRelationships](docs/CapitalPartnerBookRepaymentRelationships.md)
  - [CardFraudOutreachPolicy](docs/CardFraudOutreachPolicy.md)
  - [CardFraudOutreachPolicyAttributes](docs/CardFraudOutreachPolicyAttributes.md)
  - [CardFraudOutreachPolicyRelationships](docs/CardFraudOutreachPolicyRelationships.md)
@@ -396,6 +432,9 @@ Class | Method | HTTP request | Description
  - [CheckPaymentPositivePayAttributes](docs/CheckPaymentPositivePayAttributes.md)
  - [CheckPaymentTransaction](docs/CheckPaymentTransaction.md)
  - [CheckPaymentTransactionRelationships](docs/CheckPaymentTransactionRelationships.md)
+ - [CheckStopPayment](docs/CheckStopPayment.md)
+ - [CheckStopPaymentAttributes](docs/CheckStopPaymentAttributes.md)
+ - [CheckStopPaymentRelationships](docs/CheckStopPaymentRelationships.md)
  - [ClearAchDebitPayment200Response](docs/ClearAchDebitPayment200Response.md)
  - [CloseAccountRequest](docs/CloseAccountRequest.md)
  - [CloseCard200Response](docs/CloseCard200Response.md)
@@ -430,6 +469,12 @@ Class | Method | HTTP request | Description
  - [CreateACHPaymentPlaidTokenDataAttributes](docs/CreateACHPaymentPlaidTokenDataAttributes.md)
  - [CreateACHPaymentPlaidTokenRequest](docs/CreateACHPaymentPlaidTokenRequest.md)
  - [CreateACHPaymentRequest](docs/CreateACHPaymentRequest.md)
+ - [CreateACHRepaymentData](docs/CreateACHRepaymentData.md)
+ - [CreateACHRepaymentDataAttributes](docs/CreateACHRepaymentDataAttributes.md)
+ - [CreateACHRepaymentRequest](docs/CreateACHRepaymentRequest.md)
+ - [CreateACHStopPaymentData](docs/CreateACHStopPaymentData.md)
+ - [CreateACHStopPaymentDataAttributes](docs/CreateACHStopPaymentDataAttributes.md)
+ - [CreateACHStopPaymentRequest](docs/CreateACHStopPaymentRequest.md)
  - [CreateAWirePaymentData](docs/CreateAWirePaymentData.md)
  - [CreateAWirePaymentDataAttributes](docs/CreateAWirePaymentDataAttributes.md)
  - [CreateAWirePaymentRequest](docs/CreateAWirePaymentRequest.md)
@@ -451,6 +496,9 @@ Class | Method | HTTP request | Description
  - [CreateBatchReleasesData](docs/CreateBatchReleasesData.md)
  - [CreateBatchReleasesDataAttributes](docs/CreateBatchReleasesDataAttributes.md)
  - [CreateBatchReleasesRequest](docs/CreateBatchReleasesRequest.md)
+ - [CreateBookRepaymentData](docs/CreateBookRepaymentData.md)
+ - [CreateBookRepaymentDataAttributes](docs/CreateBookRepaymentDataAttributes.md)
+ - [CreateBookRepaymentRequest](docs/CreateBookRepaymentRequest.md)
  - [CreateBulkPayment201Response](docs/CreateBulkPayment201Response.md)
  - [CreateBulkPayment201ResponseData](docs/CreateBulkPayment201ResponseData.md)
  - [CreateBulkPayment201ResponseDataAttributes](docs/CreateBulkPayment201ResponseDataAttributes.md)
@@ -474,6 +522,11 @@ Class | Method | HTTP request | Description
  - [CreateBusinessWalletCustomerData](docs/CreateBusinessWalletCustomerData.md)
  - [CreateBusinessWalletCustomerDataAttributes](docs/CreateBusinessWalletCustomerDataAttributes.md)
  - [CreateBusinessWalletCustomerRequest](docs/CreateBusinessWalletCustomerRequest.md)
+ - [CreateCapitalPartnerACHRepaymentData](docs/CreateCapitalPartnerACHRepaymentData.md)
+ - [CreateCapitalPartnerACHRepaymentDataAttributes](docs/CreateCapitalPartnerACHRepaymentDataAttributes.md)
+ - [CreateCapitalPartnerACHRepaymentRequest](docs/CreateCapitalPartnerACHRepaymentRequest.md)
+ - [CreateCapitalPartnerBookRepaymentData](docs/CreateCapitalPartnerBookRepaymentData.md)
+ - [CreateCapitalPartnerBookRepaymentRequest](docs/CreateCapitalPartnerBookRepaymentRequest.md)
  - [CreateCard201Response](docs/CreateCard201Response.md)
  - [CreateCard201ResponseData](docs/CreateCard201ResponseData.md)
  - [CreateCardRequest](docs/CreateCardRequest.md)
@@ -502,6 +555,9 @@ Class | Method | HTTP request | Description
  - [CreateCheckPaymentPositivePayData](docs/CreateCheckPaymentPositivePayData.md)
  - [CreateCheckPaymentPositivePayDataAttributes](docs/CreateCheckPaymentPositivePayDataAttributes.md)
  - [CreateCheckPaymentPositivePayRequest](docs/CreateCheckPaymentPositivePayRequest.md)
+ - [CreateCheckStopPaymentData](docs/CreateCheckStopPaymentData.md)
+ - [CreateCheckStopPaymentDataAttributes](docs/CreateCheckStopPaymentDataAttributes.md)
+ - [CreateCheckStopPaymentRequest](docs/CreateCheckStopPaymentRequest.md)
  - [CreateCounterparty201Response](docs/CreateCounterparty201Response.md)
  - [CreateCounterpartyBody](docs/CreateCounterpartyBody.md)
  - [CreateCounterpartyData](docs/CreateCounterpartyData.md)
@@ -531,6 +587,10 @@ Class | Method | HTTP request | Description
  - [CreateExistingCreditApplicationDataAttributes](docs/CreateExistingCreditApplicationDataAttributes.md)
  - [CreateExistingCreditApplicationDataRelationships](docs/CreateExistingCreditApplicationDataRelationships.md)
  - [CreateExistingCreditApplicationRequest](docs/CreateExistingCreditApplicationRequest.md)
+ - [CreateExternalRepaymentData](docs/CreateExternalRepaymentData.md)
+ - [CreateExternalRepaymentDataAttributes](docs/CreateExternalRepaymentDataAttributes.md)
+ - [CreateExternalRepaymentDataRelationships](docs/CreateExternalRepaymentDataRelationships.md)
+ - [CreateExternalRepaymentRequest](docs/CreateExternalRepaymentRequest.md)
  - [CreateFee201Response](docs/CreateFee201Response.md)
  - [CreateFeeData](docs/CreateFeeData.md)
  - [CreateFeeDataAttributes](docs/CreateFeeDataAttributes.md)
@@ -568,6 +628,22 @@ Class | Method | HTTP request | Description
  - [CreateReceivedACHDebitPositivePayData](docs/CreateReceivedACHDebitPositivePayData.md)
  - [CreateReceivedACHDebitPositivePayDataAttributes](docs/CreateReceivedACHDebitPositivePayDataAttributes.md)
  - [CreateReceivedACHDebitPositivePayRequest](docs/CreateReceivedACHDebitPositivePayRequest.md)
+ - [CreateRecurringACHRepaymentData](docs/CreateRecurringACHRepaymentData.md)
+ - [CreateRecurringACHRepaymentDataAttributes](docs/CreateRecurringACHRepaymentDataAttributes.md)
+ - [CreateRecurringACHRepaymentDataRelationships](docs/CreateRecurringACHRepaymentDataRelationships.md)
+ - [CreateRecurringACHRepaymentRequest](docs/CreateRecurringACHRepaymentRequest.md)
+ - [CreateRecurringBookRepaymentData](docs/CreateRecurringBookRepaymentData.md)
+ - [CreateRecurringBookRepaymentDataAttributes](docs/CreateRecurringBookRepaymentDataAttributes.md)
+ - [CreateRecurringBookRepaymentDataRelationships](docs/CreateRecurringBookRepaymentDataRelationships.md)
+ - [CreateRecurringBookRepaymentRequest](docs/CreateRecurringBookRepaymentRequest.md)
+ - [CreateRecurringCapitalPartnerACHRepaymentData](docs/CreateRecurringCapitalPartnerACHRepaymentData.md)
+ - [CreateRecurringCapitalPartnerACHRepaymentDataAttributes](docs/CreateRecurringCapitalPartnerACHRepaymentDataAttributes.md)
+ - [CreateRecurringCapitalPartnerACHRepaymentDataRelationships](docs/CreateRecurringCapitalPartnerACHRepaymentDataRelationships.md)
+ - [CreateRecurringCapitalPartnerACHRepaymentRequest](docs/CreateRecurringCapitalPartnerACHRepaymentRequest.md)
+ - [CreateRecurringCapitalPartnerBookRepaymentData](docs/CreateRecurringCapitalPartnerBookRepaymentData.md)
+ - [CreateRecurringCapitalPartnerBookRepaymentDataAttributes](docs/CreateRecurringCapitalPartnerBookRepaymentDataAttributes.md)
+ - [CreateRecurringCapitalPartnerBookRepaymentDataRelationships](docs/CreateRecurringCapitalPartnerBookRepaymentDataRelationships.md)
+ - [CreateRecurringCapitalPartnerBookRepaymentRequest](docs/CreateRecurringCapitalPartnerBookRepaymentRequest.md)
  - [CreateRecurringCreditACHPaymentData](docs/CreateRecurringCreditACHPaymentData.md)
  - [CreateRecurringCreditACHPaymentDataAttributes](docs/CreateRecurringCreditACHPaymentDataAttributes.md)
  - [CreateRecurringCreditACHPaymentRequest](docs/CreateRecurringCreditACHPaymentRequest.md)
@@ -579,10 +655,23 @@ Class | Method | HTTP request | Description
  - [CreateRecurringDebitACHPaymentRequest](docs/CreateRecurringDebitACHPaymentRequest.md)
  - [CreateRecurringPayment201Response](docs/CreateRecurringPayment201Response.md)
  - [CreateRecurringPaymentRequest](docs/CreateRecurringPaymentRequest.md)
+ - [CreateRecurringRepayment201Response](docs/CreateRecurringRepayment201Response.md)
+ - [CreateRecurringRepaymentRequest](docs/CreateRecurringRepaymentRequest.md)
+ - [CreateRepayment201Response](docs/CreateRepayment201Response.md)
+ - [CreateRepayment201ResponseData](docs/CreateRepayment201ResponseData.md)
+ - [CreateRepaymentRequest](docs/CreateRepaymentRequest.md)
+ - [CreateReward201Response](docs/CreateReward201Response.md)
+ - [CreateRewardData](docs/CreateRewardData.md)
+ - [CreateRewardDataAttributes](docs/CreateRewardDataAttributes.md)
+ - [CreateRewardDataRelationships](docs/CreateRewardDataRelationships.md)
+ - [CreateRewardRequest](docs/CreateRewardRequest.md)
  - [CreateScheduleType](docs/CreateScheduleType.md)
  - [CreateSoleProprietorApplicationData](docs/CreateSoleProprietorApplicationData.md)
  - [CreateSoleProprietorApplicationDataAttributes](docs/CreateSoleProprietorApplicationDataAttributes.md)
  - [CreateSoleProprietorApplicationRequest](docs/CreateSoleProprietorApplicationRequest.md)
+ - [CreateStopPayment201Response](docs/CreateStopPayment201Response.md)
+ - [CreateStopPayment201ResponseData](docs/CreateStopPayment201ResponseData.md)
+ - [CreateStopPaymentRequest](docs/CreateStopPaymentRequest.md)
  - [CreateWalletData](docs/CreateWalletData.md)
  - [CreateWalletDataAttributes](docs/CreateWalletDataAttributes.md)
  - [CreateWalletRequest](docs/CreateWalletRequest.md)
@@ -617,6 +706,9 @@ Class | Method | HTTP request | Description
  - [ExistingCustomerCreditApplication](docs/ExistingCustomerCreditApplication.md)
  - [ExistingCustomerCreditApplicationAttributes](docs/ExistingCustomerCreditApplicationAttributes.md)
  - [ExistingCustomerCreditApplicationRelationships](docs/ExistingCustomerCreditApplicationRelationships.md)
+ - [ExternalRepayment](docs/ExternalRepayment.md)
+ - [ExternalRepaymentAttributes](docs/ExternalRepaymentAttributes.md)
+ - [ExternalRepaymentRelationships](docs/ExternalRepaymentRelationships.md)
  - [Fee](docs/Fee.md)
  - [FeeAttributes](docs/FeeAttributes.md)
  - [FeeRelationships](docs/FeeRelationships.md)
@@ -678,6 +770,10 @@ Class | Method | HTTP request | Description
  - [GetPositivePayById200ResponseData](docs/GetPositivePayById200ResponseData.md)
  - [GetReceivableById200Response](docs/GetReceivableById200Response.md)
  - [GetReceivedPayment200Response](docs/GetReceivedPayment200Response.md)
+ - [GetRepayment200Response](docs/GetRepayment200Response.md)
+ - [GetReward200Response](docs/GetReward200Response.md)
+ - [GetStopPayment200Response](docs/GetStopPayment200Response.md)
+ - [GetTaxFormById200Response](docs/GetTaxFormById200Response.md)
  - [GetTotalAccruedInterest200Response](docs/GetTotalAccruedInterest200Response.md)
  - [GetTransaction200Response](docs/GetTransaction200Response.md)
  - [GetWireDrawdown200Response](docs/GetWireDrawdown200Response.md)
@@ -735,7 +831,15 @@ Class | Method | HTTP request | Description
  - [ListReceivedPayments200ResponseDataInner](docs/ListReceivedPayments200ResponseDataInner.md)
  - [ListRecurringPayments200Response](docs/ListRecurringPayments200Response.md)
  - [ListRecurringPayments200ResponseDataInner](docs/ListRecurringPayments200ResponseDataInner.md)
+ - [ListRecurringRepayments200Response](docs/ListRecurringRepayments200Response.md)
+ - [ListRecurringRepayments200ResponseDataInner](docs/ListRecurringRepayments200ResponseDataInner.md)
+ - [ListRepayments200Response](docs/ListRepayments200Response.md)
+ - [ListRepayments200ResponseDataInner](docs/ListRepayments200ResponseDataInner.md)
+ - [ListRewards200Response](docs/ListRewards200Response.md)
+ - [ListStatements200Response](docs/ListStatements200Response.md)
+ - [ListStopPayments200Response](docs/ListStopPayments200Response.md)
  - [ListStoreLocations200Response](docs/ListStoreLocations200Response.md)
+ - [ListTaxForms200Response](docs/ListTaxForms200Response.md)
  - [ListTransactions200Response](docs/ListTransactions200Response.md)
  - [ListTransactions200ResponseIncludedInner](docs/ListTransactions200ResponseIncludedInner.md)
  - [ListWireDrawdowns200Response](docs/ListWireDrawdowns200Response.md)
@@ -802,6 +906,17 @@ Class | Method | HTTP request | Description
  - [ReceivedACHDebitPositivePayAttributes](docs/ReceivedACHDebitPositivePayAttributes.md)
  - [ReceivedACHTransaction](docs/ReceivedACHTransaction.md)
  - [ReceivedACHTransactionAttributes](docs/ReceivedACHTransactionAttributes.md)
+ - [RecurringACHRepayment](docs/RecurringACHRepayment.md)
+ - [RecurringACHRepaymentAttributes](docs/RecurringACHRepaymentAttributes.md)
+ - [RecurringACHRepaymentRelationships](docs/RecurringACHRepaymentRelationships.md)
+ - [RecurringBookRepayment](docs/RecurringBookRepayment.md)
+ - [RecurringBookRepaymentAttributes](docs/RecurringBookRepaymentAttributes.md)
+ - [RecurringBookRepaymentRelationships](docs/RecurringBookRepaymentRelationships.md)
+ - [RecurringCapitalPartnerACHRepayment](docs/RecurringCapitalPartnerACHRepayment.md)
+ - [RecurringCapitalPartnerACHRepaymentRelationships](docs/RecurringCapitalPartnerACHRepaymentRelationships.md)
+ - [RecurringCapitalPartnerBookRepayment](docs/RecurringCapitalPartnerBookRepayment.md)
+ - [RecurringCapitalPartnerBookRepaymentAttributes](docs/RecurringCapitalPartnerBookRepaymentAttributes.md)
+ - [RecurringCapitalPartnerBookRepaymentRelationships](docs/RecurringCapitalPartnerBookRepaymentRelationships.md)
  - [RecurringCreditACHPayment](docs/RecurringCreditACHPayment.md)
  - [RecurringCreditACHPaymentAttributes](docs/RecurringCreditACHPaymentAttributes.md)
  - [RecurringCreditACHPaymentRelationships](docs/RecurringCreditACHPaymentRelationships.md)
@@ -835,6 +950,10 @@ Class | Method | HTTP request | Description
  - [ReturnCheckPaymentData](docs/ReturnCheckPaymentData.md)
  - [ReturnCheckPaymentDataAttributes](docs/ReturnCheckPaymentDataAttributes.md)
  - [ReturnCheckPaymentRequest](docs/ReturnCheckPaymentRequest.md)
+ - [ReturnExternalRepayment200Response](docs/ReturnExternalRepayment200Response.md)
+ - [ReturnExternalRepaymentData](docs/ReturnExternalRepaymentData.md)
+ - [ReturnExternalRepaymentDataRelationships](docs/ReturnExternalRepaymentDataRelationships.md)
+ - [ReturnExternalRepaymentRequest](docs/ReturnExternalRepaymentRequest.md)
  - [ReturnedACHTransaction](docs/ReturnedACHTransaction.md)
  - [ReturnedACHTransactionAttributes](docs/ReturnedACHTransactionAttributes.md)
  - [ReturnedACHTransactionRelationships](docs/ReturnedACHTransactionRelationships.md)
@@ -852,6 +971,9 @@ Class | Method | HTTP request | Description
  - [ReverseFeeDataAttributes](docs/ReverseFeeDataAttributes.md)
  - [ReverseFeeDataRelationships](docs/ReverseFeeDataRelationships.md)
  - [ReverseFeeRequest](docs/ReverseFeeRequest.md)
+ - [Reward](docs/Reward.md)
+ - [RewardAttributes](docs/RewardAttributes.md)
+ - [RewardRelationships](docs/RewardRelationships.md)
  - [RewardTransaction](docs/RewardTransaction.md)
  - [RewardTransactionAttributes](docs/RewardTransactionAttributes.md)
  - [RewardTransactionRelationships](docs/RewardTransactionRelationships.md)
@@ -866,8 +988,13 @@ Class | Method | HTTP request | Description
  - [SoleProprietorAnnualRevenueType](docs/SoleProprietorAnnualRevenueType.md)
  - [SoleProprietorNumberOfEmployeesType](docs/SoleProprietorNumberOfEmployeesType.md)
  - [SourceOfIncomeType](docs/SourceOfIncomeType.md)
+ - [Statement](docs/Statement.md)
+ - [StatementAttributes](docs/StatementAttributes.md)
  - [StoreLocation](docs/StoreLocation.md)
  - [StoreLocationAttributes](docs/StoreLocationAttributes.md)
+ - [TaxForm](docs/TaxForm.md)
+ - [TaxFormAttributes](docs/TaxFormAttributes.md)
+ - [TaxFormRelationships](docs/TaxFormRelationships.md)
  - [ToManyRelationship](docs/ToManyRelationship.md)
  - [TotalAccruedInterestType](docs/TotalAccruedInterestType.md)
  - [Transaction](docs/Transaction.md)
@@ -879,6 +1006,10 @@ Class | Method | HTTP request | Description
  - [UpdateACHReceivedPaymentDataAttributes](docs/UpdateACHReceivedPaymentDataAttributes.md)
  - [UpdateACHReceivedPaymentRequest](docs/UpdateACHReceivedPaymentRequest.md)
  - [UpdateAccountRequest](docs/UpdateAccountRequest.md)
+ - [UpdateAchStopPayment200Response](docs/UpdateAchStopPayment200Response.md)
+ - [UpdateAchStopPaymentData](docs/UpdateAchStopPaymentData.md)
+ - [UpdateAchStopPaymentDataAttributes](docs/UpdateAchStopPaymentDataAttributes.md)
+ - [UpdateAchStopPaymentRequest](docs/UpdateAchStopPaymentRequest.md)
  - [UpdateApplicationRequest](docs/UpdateApplicationRequest.md)
  - [UpdateBookPaymentData](docs/UpdateBookPaymentData.md)
  - [UpdateBookPaymentDataAttributes](docs/UpdateBookPaymentDataAttributes.md)
