@@ -358,9 +358,22 @@ final class ApiSupport {
     return new RewardsApi(buildApiClient());
   }
 
+  /**
+   * The read timeout the statements endpoints need.
+   *
+   * <p>{@code /statements} accepts {@code page[limit]} but ignores it, so every
+   * read costs a full unpaged response that outruns the shared 60s budget —
+   * which is how {@code GetStatementHtmlIT} failed on CI with a
+   * {@code SocketTimeout} while resolving a statement id. The single-statement
+   * downloads inherit the cost because they resolve their id through the list.
+   */
+  static final int STATEMENTS_READ_TIMEOUT_MS = 180_000;
+
   /** Construct a {@code StatementsApi} bound to the sandbox. */
   static StatementsApi buildStatementsApi() {
-    return new StatementsApi(buildApiClient());
+    ApiClient client = buildApiClient();
+    client.setReadTimeout(STATEMENTS_READ_TIMEOUT_MS);
+    return new StatementsApi(client);
   }
 
   /** Construct a {@code StopPaymentsApi} bound to the sandbox. */
@@ -385,6 +398,15 @@ final class ApiSupport {
    * structure instead of skipping outright.
    */
   static JsonObject rawGet(String path, Map<String, String> query) throws IOException {
+    return rawGet(path, query, 60_000);
+  }
+
+  /**
+   * {@link #rawGet} with an explicit read timeout, for endpoints the shared 60s
+   * budget does not cover — see {@link #STATEMENTS_READ_TIMEOUT_MS}.
+   */
+  static JsonObject rawGet(String path, Map<String, String> query, int readTimeoutMs)
+      throws IOException {
     HttpUrl.Builder url = HttpUrl.parse(BASE_PATH + path).newBuilder();
     if (query != null) {
       for (Map.Entry<String, String> e : query.entrySet()) {
@@ -398,7 +420,7 @@ final class ApiSupport {
     OkHttpClient client =
         new OkHttpClient.Builder()
             .connectTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(readTimeoutMs, TimeUnit.MILLISECONDS)
             .writeTimeout(60, TimeUnit.SECONDS)
             .build();
     try (Response response = client.newCall(request).execute()) {
