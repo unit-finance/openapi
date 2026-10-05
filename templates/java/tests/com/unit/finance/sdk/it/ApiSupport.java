@@ -3,6 +3,7 @@ package com.unit.finance.sdk.it;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import com.unit.finance.sdk.ApiClient;
+import com.unit.finance.sdk.JSON;
 import com.unit.finance.sdk.api.AccountsApi;
 import com.unit.finance.sdk.api.ApplicationDocumentsApi;
 import com.unit.finance.sdk.api.ApplicationsApi;
@@ -28,6 +29,12 @@ import com.unit.finance.sdk.api.InterestApi;
 import com.unit.finance.sdk.api.LendingProgramsApi;
 import com.unit.finance.sdk.api.PositivePayApi;
 import com.unit.finance.sdk.api.ReceivablesManagementApi;
+import com.unit.finance.sdk.api.RecurringRepaymentsApi;
+import com.unit.finance.sdk.api.RepaymentsApi;
+import com.unit.finance.sdk.api.RewardsApi;
+import com.unit.finance.sdk.api.StatementsApi;
+import com.unit.finance.sdk.api.StopPaymentsApi;
+import com.unit.finance.sdk.api.TaxFormsApi;
 import com.unit.finance.sdk.api.PaymentsApi;
 import com.unit.finance.sdk.api.TransactionsApi;
 import com.google.gson.JsonObject;
@@ -42,8 +49,10 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import okhttp3.HttpUrl;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
@@ -334,6 +343,36 @@ final class ApiSupport {
     return new ReceivablesManagementApi(buildApiClient());
   }
 
+  /** Construct a {@code RecurringRepaymentsApi} bound to the sandbox. */
+  static RecurringRepaymentsApi buildRecurringRepaymentsApi() {
+    return new RecurringRepaymentsApi(buildApiClient());
+  }
+
+  /** Construct a {@code RepaymentsApi} bound to the sandbox. */
+  static RepaymentsApi buildRepaymentsApi() {
+    return new RepaymentsApi(buildApiClient());
+  }
+
+  /** Construct a {@code RewardsApi} bound to the sandbox. */
+  static RewardsApi buildRewardsApi() {
+    return new RewardsApi(buildApiClient());
+  }
+
+  /** Construct a {@code StatementsApi} bound to the sandbox. */
+  static StatementsApi buildStatementsApi() {
+    return new StatementsApi(buildApiClient());
+  }
+
+  /** Construct a {@code StopPaymentsApi} bound to the sandbox. */
+  static StopPaymentsApi buildStopPaymentsApi() {
+    return new StopPaymentsApi(buildApiClient());
+  }
+
+  /** Construct a {@code TaxFormsApi} bound to the sandbox. */
+  static TaxFormsApi buildTaxFormsApi() {
+    return new TaxFormsApi(buildApiClient());
+  }
+
   /**
    * A raw {@code GET} against the sandbox, returning the parsed JSON body.
    *
@@ -369,6 +408,44 @@ final class ApiSupport {
       parsed.addProperty("__status", response.code());
       return parsed;
     }
+  }
+
+  /**
+   * A raw {@code POST} against the sandbox, returning the parsed JSON body.
+   *
+   * <p>The write-side counterpart of {@link #rawGet}. The stop-payment suites
+   * need it because the generated {@code CheckStopPayment} model pins
+   * {@code type} to the spec's {@code checkStopPayment} while the sandbox
+   * answers with the bare {@code stopPayment}; gson's {@code oneOf} adapter
+   * matches nothing and throws before the test can assert. {@code request} is
+   * serialized with the SDK's own gson so the fixtures stay typed.
+   */
+  static JsonObject rawPost(String path, Object request) throws IOException {
+    String json = request == null ? "{}" : JSON.getGson().toJson(request);
+    Request httpRequest =
+        new Request.Builder()
+            .url(BASE_PATH + path)
+            .header("Authorization", "Bearer " + TOKEN)
+            .post(RequestBody.create(json, MediaType.parse("application/vnd.api+json")))
+            .build();
+    OkHttpClient client =
+        new OkHttpClient.Builder()
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
+            .writeTimeout(60, TimeUnit.SECONDS)
+            .build();
+    try (Response response = client.newCall(httpRequest).execute()) {
+      ResponseBody body = response.body();
+      String text = body == null ? "" : body.string();
+      JsonObject parsed = JsonParser.parseString(text).getAsJsonObject();
+      parsed.addProperty("__status", response.code());
+      return parsed;
+    }
+  }
+
+  /** The HTTP status {@link #rawGet} / {@link #rawPost} stamped onto a body. */
+  static int rawStatus(JsonObject body) {
+    return body.get("__status").getAsInt();
   }
 
   /** Block the current thread for sandbox polling (mirrors Node {@code sleep}). */
