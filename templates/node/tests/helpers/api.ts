@@ -1,3 +1,4 @@
+import { isAxiosError } from "axios";
 import {
 	AccountsApi,
 	ApplicationDocumentsApi,
@@ -217,4 +218,40 @@ export const TEST_RUN_ID = `sdk-node-${Date.now().toString(36)}-${Math.random()
 
 export function sleep(ms: number): Promise<void> {
 	return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/** Statuses that mean "the sandbox was unwell", not "the request was wrong". */
+const TRANSIENT_STATUSES = [429, 500, 502, 503, 504];
+
+/**
+ * Retry `operation` through transient sandbox failures.
+ *
+ * Jest gives every test file its own module registry, so the shared
+ * application and account are provisioned once *per file* rather than once per
+ * run — upwards of sixty creates against the sandbox. At that volume a single
+ * 500 or a throttled 429 is routine, and because it lands in a bootstrap
+ * helper it fails the whole suite rather than the one operation under test.
+ * Only the provisioning helpers use this; a test asserting an operation must
+ * still see that operation's first answer.
+ */
+export async function withRetry<T>(
+	operation: () => Promise<T>,
+	attempts = 4,
+): Promise<T> {
+	for (let attempt = 1; ; attempt++) {
+		try {
+			return await operation();
+		} catch (err) {
+			// A transport failure (`ECONNRESET`) carries no response at all and is
+			// just as transient as a 5xx. Anything that is not an axios error is a
+			// bug in the helper and must surface immediately.
+			const transient =
+				isAxiosError(err) &&
+				(err.response === undefined ||
+					TRANSIENT_STATUSES.includes(err.response.status));
+			if (!transient || attempt >= attempts) throw err;
+			// Exponential backoff, which also gives a throttled org time to recover.
+			await sleep(1000 * 2 ** (attempt - 1));
+		}
+	}
 }
