@@ -425,10 +425,7 @@ final class ApiSupport {
             .build();
     try (Response response = client.newCall(request).execute()) {
       ResponseBody body = response.body();
-      String text = body == null ? "" : body.string();
-      JsonObject parsed = JsonParser.parseString(text).getAsJsonObject();
-      parsed.addProperty("__status", response.code());
-      return parsed;
+      return parseBody(body == null ? "" : body.string(), response.code());
     }
   }
 
@@ -458,16 +455,42 @@ final class ApiSupport {
             .build();
     try (Response response = client.newCall(httpRequest).execute()) {
       ResponseBody body = response.body();
-      String text = body == null ? "" : body.string();
-      JsonObject parsed = JsonParser.parseString(text).getAsJsonObject();
-      parsed.addProperty("__status", response.code());
-      return parsed;
+      return parseBody(body == null ? "" : body.string(), response.code());
     }
+  }
+
+  /**
+   * Stamp {@code status} onto a response body, parsing it as JSON when it is
+   * JSON.
+   *
+   * <p>Not every answer from the sandbox is JSON: a gateway that gives up on a
+   * slow upstream replies with an HTML or plain-text error page. Parsing that
+   * eagerly surfaced as a bare gson {@code MalformedJsonException} naming a line
+   * and column, which says nothing about what went wrong. Keeping the text under
+   * {@code __body} instead lets callers report the status and the response they
+   * actually got.
+   */
+  private static JsonObject parseBody(String text, int status) {
+    JsonObject parsed;
+    try {
+      parsed = JsonParser.parseString(text).getAsJsonObject();
+    } catch (RuntimeException e) {
+      parsed = new JsonObject();
+      parsed.addProperty("__body", text);
+    }
+    parsed.addProperty("__status", status);
+    return parsed;
   }
 
   /** The HTTP status {@link #rawGet} / {@link #rawPost} stamped onto a body. */
   static int rawStatus(JsonObject body) {
     return body.get("__status").getAsInt();
+  }
+
+  /** A short rendering of a raw body, for failure messages. */
+  static String rawBodyText(JsonObject body) {
+    String text = body.has("__body") ? body.get("__body").getAsString() : body.toString();
+    return text.length() > 500 ? text.substring(0, 500) + "..." : text;
   }
 
   /** Block the current thread for sandbox polling (mirrors Node {@code sleep}). */
