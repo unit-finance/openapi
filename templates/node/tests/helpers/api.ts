@@ -26,6 +26,12 @@ import {
 	PaymentsApi,
 	PositivePayApi,
 	ReceivablesManagementApi,
+	RecurringRepaymentsApi,
+	RepaymentsApi,
+	RewardsApi,
+	StatementsApi,
+	StopPaymentsApi,
+	TaxFormsApi,
 	TransactionsApi,
 } from "../..";
 
@@ -141,6 +147,30 @@ export function buildPositivePayApi(): PositivePayApi {
 
 export function buildReceivablesManagementApi(): ReceivablesManagementApi {
 	return new ReceivablesManagementApi(configuration());
+}
+
+export function buildRecurringRepaymentsApi(): RecurringRepaymentsApi {
+	return new RecurringRepaymentsApi(configuration());
+}
+
+export function buildRepaymentsApi(): RepaymentsApi {
+	return new RepaymentsApi(configuration());
+}
+
+export function buildRewardsApi(): RewardsApi {
+	return new RewardsApi(configuration());
+}
+
+export function buildStatementsApi(): StatementsApi {
+	return new StatementsApi(configuration());
+}
+
+export function buildStopPaymentsApi(): StopPaymentsApi {
+	return new StopPaymentsApi(configuration());
+}
+
+export function buildTaxFormsApi(): TaxFormsApi {
+	return new TaxFormsApi(configuration());
 }
 
 /**

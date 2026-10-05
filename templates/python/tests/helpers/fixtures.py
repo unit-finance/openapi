@@ -44,8 +44,10 @@ from unit_finance_sdk import (
     CreateAccountHoldRequest,
     CreateAccountRequest,
     CreateACHPaymentRequest,
+    CreateACHStopPaymentRequest,
     CreateApplicationRequest,
     CreateApprovedCreditLimitDecisionRequest,
+    CreateBookRepaymentRequest,
     CreateBulkPaymentRequest,
     CreateBusinessApplicationRequest,
     CreateBusinessDebitCardRequest,
@@ -57,20 +59,28 @@ from unit_finance_sdk import (
     CreateCheckDepositRequest,
     CreateCheckDepositSendLinkRequest,
     CreateCheckPaymentPositivePayRequest,
+    CreateCheckStopPaymentRequest,
     CreateCounterpartyBody,
     CreateCounterpartyRequest,
+    CreateCreditAccountRequest,
     CreateCreditApplicationRequest,
     CreateCreditDecisionRequest,
     CreateDepositAccountRequest,
     CreateExistingCreditApplicationRequest,
+    CreateExternalRepaymentRequest,
     CreateFeeRequest,
     CreateIndividualApplicationRequest,
     CreatePaymentRequest,
     CreatePolicyRequest,
     CreatePositivePayRequest,
     CreateReceivedACHDebitPositivePayRequest,
+    CreateRecurringBookRepaymentRequest,
     CreateRecurringCreditBookPaymentRequest,
     CreateRecurringPaymentRequest,
+    CreateRecurringRepaymentRequest,
+    CreateRepaymentRequest,
+    CreateRewardRequest,
+    CreateStopPaymentRequest,
     CreateWireDrawdownPositivePayRequest,
     FreezeAccountRequest,
     FreezeCardRequest,
@@ -82,8 +92,10 @@ from unit_finance_sdk import (
     RemoveAuthorizedUsersRequest,
     ReplaceCardRequest,
     ReturnCheckPaymentRequest,
+    ReturnExternalRepaymentRequest,
     ReverseFeeRequest,
     UpdateAccountRequest,
+    UpdateAchStopPaymentRequest,
     UpdateApplicationRequest,
     UpdateBookPaymentRequest,
     UpdateBookTransactionRequest,
@@ -1326,3 +1338,228 @@ def build_configure_positive_pay_policy_request(
         },
     }
     return ConfigurePositivePayPolicyRequest.from_dict(body)
+
+
+def _idempotency_key(prefix: str) -> str:
+    """A unique idempotency key so re-runs never collide on a replayed request."""
+    return f"{TEST_RUN_ID}-{prefix}-{uuid.uuid4().hex[:8]}"
+
+
+def _next_year_date() -> str:
+    """``YYYY-MM-DD`` a year out, for fields that demand a future date."""
+    today = date.today()
+    return today.replace(year=today.year + 1).isoformat()
+
+
+def build_create_credit_account_request(
+    customer_id: str, credit_terms: str
+) -> CreateAccountRequest:
+    """A ``creditAccount``.
+
+    ``creditTerms`` names a credit product configured on the org, and there is
+    no API to enumerate them, so the caller has to guess the sandbox default.
+    """
+    body = {
+        "data": {
+            "type": "creditAccount",
+            "attributes": {
+                "creditTerms": credit_terms,
+                "creditLimit": 200000,
+                "tags": _base_tags(),
+                "idempotencyKey": _idempotency_key("credit-account"),
+            },
+            "relationships": {
+                "customer": {"data": {"type": "customer", "id": customer_id}},
+            },
+        },
+    }
+    return CreateAccountRequest(
+        actual_instance=CreateCreditAccountRequest.from_dict(body)
+    )
+
+
+def build_create_check_stop_payment_request(
+    account_id: str, check_number: str
+) -> CreateStopPaymentRequest:
+    body = {
+        "data": {
+            "type": "checkStopPayment",
+            "attributes": {
+                "checkNumber": check_number,
+                "amount": 10000,
+                "tags": _base_tags(),
+                "idempotencyKey": _idempotency_key("check-stop-payment"),
+            },
+            "relationships": {
+                "account": {"data": {"type": "account", "id": account_id}},
+            },
+        },
+    }
+    return CreateStopPaymentRequest(
+        actual_instance=CreateCheckStopPaymentRequest.from_dict(body)
+    )
+
+
+def build_create_ach_stop_payment_request(account_id: str) -> CreateStopPaymentRequest:
+    """An ``achStopPayment``.
+
+    The spec marks both ``minAmount`` and ``originatorName`` as optional but the
+    API requires at least one of them, so both are sent. Each ``originatorName``
+    entry is capped at 16 characters — a limit the spec does not describe; a
+    longer name is rejected with 400 ``invalid_fields``. The name also has to be
+    unique per account: a repeat is rejected with 409 ``Already Exists``, so the
+    suffix keeps the create and update suites from colliding within a run.
+    """
+    body = {
+        "data": {
+            "type": "achStopPayment",
+            "attributes": {
+                "minAmount": 10000,
+                "originatorName": [f"Payroll {uuid.uuid4().hex[:8]}"],
+                "direction": "Debit",
+                "expiration": _next_year_date(),
+                "isMultiUse": True,
+                "description": "SDK integration test ACH stop payment",
+                "tags": _base_tags(),
+                "idempotencyKey": _idempotency_key("ach-stop-payment"),
+            },
+            "relationships": {
+                "account": {"data": {"type": "account", "id": account_id}},
+            },
+        },
+    }
+    return CreateStopPaymentRequest(
+        actual_instance=CreateACHStopPaymentRequest.from_dict(body)
+    )
+
+
+def build_update_ach_stop_payment_request() -> UpdateAchStopPaymentRequest:
+    body = {
+        "data": {
+            "type": "achStopPayment",
+            "attributes": {
+                "expiration": _next_year_date(),
+                "tags": _base_tags(),
+            },
+        },
+    }
+    return UpdateAchStopPaymentRequest.from_dict(body)
+
+
+def build_create_reward_request(receiving_account_id: str) -> CreateRewardRequest:
+    body = {
+        "data": {
+            "type": "reward",
+            "attributes": {
+                "amount": 1000,
+                "description": "SDK integration test reward",
+                "tags": _base_tags(),
+                "idempotencyKey": _idempotency_key("reward"),
+            },
+            "relationships": {
+                "receivingAccount": {
+                    "data": {"type": "account", "id": receiving_account_id},
+                },
+            },
+        },
+    }
+    return CreateRewardRequest.from_dict(body)
+
+
+def build_create_book_repayment_request(
+    account_id: str, credit_account_id: str, counterparty_account_id: str
+) -> CreateRepaymentRequest:
+    body = {
+        "data": {
+            "type": "repayment",
+            "attributes": {
+                "description": "SDK integration test repayment",
+                "amount": 1000,
+                "transactionSummaryOverride": "SDK integration test repayment",
+                "tags": _base_tags(),
+                "idempotencyKey": _idempotency_key("book-repayment"),
+            },
+            "relationships": {
+                "account": {"data": {"type": "account", "id": account_id}},
+                "creditAccount": {
+                    "data": {"type": "creditAccount", "id": credit_account_id},
+                },
+                "counterpartyAccount": {
+                    "data": {"type": "account", "id": counterparty_account_id},
+                },
+            },
+        },
+    }
+    return CreateRepaymentRequest(
+        actual_instance=CreateBookRepaymentRequest.from_dict(body)
+    )
+
+
+def build_create_external_repayment_request(
+    credit_account_id: str,
+) -> CreateRepaymentRequest:
+    body = {
+        "data": {
+            "type": "externalRepayment",
+            "attributes": {
+                "description": "SDK integration test external repayment",
+                "amount": 1000,
+                "tags": _base_tags(),
+                "idempotencyKey": _idempotency_key("external-repayment"),
+            },
+            "relationships": {
+                "creditAccount": {
+                    "data": {"type": "creditAccount", "id": credit_account_id},
+                },
+            },
+        },
+    }
+    return CreateRepaymentRequest(
+        actual_instance=CreateExternalRepaymentRequest.from_dict(body)
+    )
+
+
+def build_return_external_repayment_request(
+    repayment_id: str,
+) -> ReturnExternalRepaymentRequest:
+    """The return body names the resource ``externalRepaymentReturn`` and points
+    at the ``repayment`` (not the credit account) it reverses.
+    """
+    body = {
+        "data": {
+            "type": "externalRepaymentReturn",
+            "attributes": {},
+            "relationships": {
+                "repayment": {"data": {"type": "repayment", "id": repayment_id}},
+            },
+        },
+    }
+    return ReturnExternalRepaymentRequest.from_dict(body)
+
+
+def build_create_recurring_book_repayment_request(
+    account_id: str, credit_account_id: str, counterparty_account_id: str
+) -> CreateRecurringRepaymentRequest:
+    body = {
+        "data": {
+            "type": "recurringBookRepayment",
+            "attributes": {
+                "description": "SDK integration test recurring",
+                "transactionSummaryOverride": "SDK integration test recurring",
+                "tags": _base_tags(),
+                "idempotencyKey": _idempotency_key("recurring-book-repayment"),
+            },
+            "relationships": {
+                "account": {"data": {"type": "account", "id": account_id}},
+                "creditAccount": {
+                    "data": {"type": "creditAccount", "id": credit_account_id},
+                },
+                "counterpartyAccount": {
+                    "data": {"type": "account", "id": counterparty_account_id},
+                },
+            },
+        },
+    }
+    return CreateRecurringRepaymentRequest(
+        actual_instance=CreateRecurringBookRepaymentRequest.from_dict(body)
+    )

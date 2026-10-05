@@ -1000,5 +1000,186 @@ module Helpers
         }
       }
     end
+
+    def idempotency_key(prefix)
+      "#{Helpers::Api::TEST_RUN_ID}-#{prefix}-#{SecureRandom.hex(4)}"
+    end
+
+    def next_year_date
+      (Date.today + 365).strftime('%Y-%m-%d')
+    end
+
+    def create_credit_account_request(customer_id, credit_terms)
+      {
+        'data' => {
+          'type' => 'creditAccount',
+          'attributes' => {
+            'creditTerms' => credit_terms,
+            'creditLimit' => 200_000,
+            'tags' => base_tags,
+            'idempotencyKey' => idempotency_key('credit-account')
+          },
+          'relationships' => {
+            'customer' => { 'data' => { 'type' => 'customer', 'id' => customer_id } }
+          }
+        }
+      }
+    end
+
+    def create_check_stop_payment_request(account_id, check_number)
+      {
+        'data' => {
+          'type' => 'checkStopPayment',
+          'attributes' => {
+            'checkNumber' => check_number,
+            'amount' => 10_000,
+            'tags' => base_tags,
+            'idempotencyKey' => idempotency_key('check-stop-payment')
+          },
+          'relationships' => {
+            'account' => { 'data' => { 'type' => 'account', 'id' => account_id } }
+          }
+        }
+      }
+    end
+
+    # An `achStopPayment`. The spec marks both `minAmount` and `originatorName`
+    # as optional but the API requires at least one of them, so both are sent.
+    #
+    # Two undocumented constraints on `originatorName`, both learned from 4xx
+    # bodies: each entry is capped at 16 characters (a longer one is rejected
+    # with 400 `invalid_fields`), and the name must be unique per account (a
+    # repeat is rejected with 409). Hence the randomized 16-character name.
+    def create_ach_stop_payment_request(account_id)
+      {
+        'data' => {
+          'type' => 'achStopPayment',
+          'attributes' => {
+            'minAmount' => 10_000,
+            'originatorName' => ["Payroll #{SecureRandom.hex(4)}"],
+            'direction' => 'Debit',
+            'expiration' => next_year_date,
+            'isMultiUse' => true,
+            'description' => 'SDK integration test ACH stop payment',
+            'tags' => base_tags,
+            'idempotencyKey' => idempotency_key('ach-stop-payment')
+          },
+          'relationships' => {
+            'account' => { 'data' => { 'type' => 'account', 'id' => account_id } }
+          }
+        }
+      }
+    end
+
+    def update_ach_stop_payment_request
+      {
+        'data' => {
+          'type' => 'achStopPayment',
+          'attributes' => {
+            'expiration' => next_year_date,
+            'tags' => base_tags
+          }
+        }
+      }
+    end
+
+    def create_reward_request(receiving_account_id)
+      {
+        'data' => {
+          'type' => 'reward',
+          'attributes' => {
+            'amount' => 1_000,
+            'description' => 'SDK integration test reward',
+            'tags' => base_tags,
+            'idempotencyKey' => idempotency_key('reward')
+          },
+          'relationships' => {
+            'receivingAccount' => {
+              'data' => { 'type' => 'account', 'id' => receiving_account_id }
+            }
+          }
+        }
+      }
+    end
+
+    def create_book_repayment_request(account_id, credit_account_id, counterparty_account_id)
+      {
+        'data' => {
+          'type' => 'repayment',
+          'attributes' => {
+            'description' => 'SDK integration test repayment',
+            'amount' => 1_000,
+            'transactionSummaryOverride' => 'SDK integration test repayment',
+            'tags' => base_tags,
+            'idempotencyKey' => idempotency_key('book-repayment')
+          },
+          'relationships' => {
+            'account' => { 'data' => { 'type' => 'account', 'id' => account_id } },
+            'creditAccount' => {
+              'data' => { 'type' => 'creditAccount', 'id' => credit_account_id }
+            },
+            'counterpartyAccount' => {
+              'data' => { 'type' => 'account', 'id' => counterparty_account_id }
+            }
+          }
+        }
+      }
+    end
+
+    def create_external_repayment_request(credit_account_id)
+      {
+        'data' => {
+          'type' => 'externalRepayment',
+          'attributes' => {
+            'description' => 'SDK integration test external repayment',
+            'amount' => 1_000,
+            'tags' => base_tags,
+            'idempotencyKey' => idempotency_key('external-repayment')
+          },
+          'relationships' => {
+            'creditAccount' => {
+              'data' => { 'type' => 'creditAccount', 'id' => credit_account_id }
+            }
+          }
+        }
+      }
+    end
+
+    # The return body is typed `externalRepaymentReturn` and relates to the
+    # `repayment` being reversed, not to the credit account.
+    def return_external_repayment_request(repayment_id)
+      {
+        'data' => {
+          'type' => 'externalRepaymentReturn',
+          'attributes' => {},
+          'relationships' => {
+            'repayment' => { 'data' => { 'type' => 'repayment', 'id' => repayment_id } }
+          }
+        }
+      }
+    end
+
+    def create_recurring_book_repayment_request(account_id, credit_account_id, counterparty_account_id)
+      {
+        'data' => {
+          'type' => 'recurringBookRepayment',
+          'attributes' => {
+            'description' => 'SDK integration test recurring',
+            'transactionSummaryOverride' => 'SDK integration test recurring',
+            'tags' => base_tags,
+            'idempotencyKey' => idempotency_key('recurring-book-repayment')
+          },
+          'relationships' => {
+            'account' => { 'data' => { 'type' => 'account', 'id' => account_id } },
+            'creditAccount' => {
+              'data' => { 'type' => 'creditAccount', 'id' => credit_account_id }
+            },
+            'counterpartyAccount' => {
+              'data' => { 'type' => 'account', 'id' => counterparty_account_id }
+            }
+          }
+        }
+      }
+    end
   end
 end
