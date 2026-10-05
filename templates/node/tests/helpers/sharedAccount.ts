@@ -1,5 +1,5 @@
 import type { BusinessApplication, DepositAccount } from "../..";
-import { buildAccountsApi, buildApi, sleep } from "./api";
+import { buildAccountsApi, buildApi, sleep, withRetry } from "./api";
 import {
 	buildCreateDepositAccountRequest,
 	buildDepositAccountRequestForCustomer,
@@ -34,9 +34,13 @@ async function waitForCustomerId(applicationId: string): Promise<string> {
 
 async function createDepositAccount(customerId: string): Promise<DepositAccount> {
 	const api = buildAccountsApi();
-	const { data, status } = await api.createAccount({
-		createAccountRequest: buildDepositAccountRequestForCustomer(customerId),
-	});
+	// Retried for the same reason as the shared application: this is provisioning
+	// every suite depends on, not the operation under test.
+	const { data, status } = await withRetry(() =>
+		api.createAccount({
+			createAccountRequest: buildDepositAccountRequestForCustomer(customerId),
+		}),
+	);
 	if (status !== 201) {
 		throw new Error(
 			`Failed to create deposit account: expected status 201, got ${status}.`,
