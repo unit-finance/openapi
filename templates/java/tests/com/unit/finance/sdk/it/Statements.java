@@ -27,7 +27,11 @@ final class Statements {
    * {@code accountStatementDTO} the sandbox actually sends.
    */
   static JsonArray listStatementsRaw() throws IOException {
-    JsonObject body = ApiSupport.rawGet("/statements", Collections.singletonMap("page[limit]", "20"));
+    JsonObject body =
+        ApiSupport.rawGet(
+            "/statements",
+            Collections.singletonMap("page[limit]", "20"),
+            ApiSupport.STATEMENTS_READ_TIMEOUT_MS);
     if (ApiSupport.rawStatus(body) != 200) {
       throw new IllegalStateException(
           "Failed to list statements: expected status 200, got "
