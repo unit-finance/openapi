@@ -27,19 +27,37 @@ final class Statements {
    * {@code accountStatementDTO} the sandbox actually sends.
    */
   static JsonArray listStatementsRaw() throws IOException {
-    JsonObject body =
-        ApiSupport.rawGet(
-            "/statements",
-            Collections.singletonMap("page[limit]", "20"),
-            ApiSupport.STATEMENTS_READ_TIMEOUT_MS);
-    if (ApiSupport.rawStatus(body) != 200) {
-      throw new IllegalStateException(
-          "Failed to list statements: expected status 200, got "
-              + ApiSupport.rawStatus(body)
-              + ".");
+    // Because the response is unpaged it is slow enough that the sandbox's
+    // gateway intermittently gives up on it and answers 5xx with a non-JSON
+    // error page, which fails whichever suite happened to ask. Retried for the
+    // same reason the Node provisioning helpers are: resolving a statement id is
+    // setup for the download suites, not the operation they assert.
+    IllegalStateException last = null;
+    for (int attempt = 1; attempt <= 3; attempt++) {
+      JsonObject body =
+          ApiSupport.rawGet(
+              "/statements",
+              Collections.singletonMap("page[limit]", "20"),
+              ApiSupport.STATEMENTS_READ_TIMEOUT_MS);
+      int status = ApiSupport.rawStatus(body);
+      if (status == 200 && !body.has("__body")) {
+        JsonArray data = body.getAsJsonArray("data");
+        return data == null ? new JsonArray() : data;
+      }
+      last =
+          new IllegalStateException(
+              "Failed to list statements: expected status 200 and a JSON body, got "
+                  + status
+                  + " "
+                  + ApiSupport.rawBodyText(body));
+      try {
+        ApiSupport.sleep(1000L * (1L << (attempt - 1)));
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        throw last;
+      }
     }
-    JsonArray data = body.getAsJsonArray("data");
-    return data == null ? new JsonArray() : data;
+    throw last;
   }
 
   /**
