@@ -3,6 +3,7 @@ package com.unit.finance.sdk.it;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import com.unit.finance.sdk.ApiClient;
+import com.unit.finance.sdk.JSON;
 import com.unit.finance.sdk.api.AccountsApi;
 import com.unit.finance.sdk.api.ApplicationDocumentsApi;
 import com.unit.finance.sdk.api.ApplicationsApi;
@@ -28,6 +29,12 @@ import com.unit.finance.sdk.api.InterestApi;
 import com.unit.finance.sdk.api.LendingProgramsApi;
 import com.unit.finance.sdk.api.PositivePayApi;
 import com.unit.finance.sdk.api.ReceivablesManagementApi;
+import com.unit.finance.sdk.api.RecurringRepaymentsApi;
+import com.unit.finance.sdk.api.RepaymentsApi;
+import com.unit.finance.sdk.api.RewardsApi;
+import com.unit.finance.sdk.api.StatementsApi;
+import com.unit.finance.sdk.api.StopPaymentsApi;
+import com.unit.finance.sdk.api.TaxFormsApi;
 import com.unit.finance.sdk.api.PaymentsApi;
 import com.unit.finance.sdk.api.TransactionsApi;
 import com.google.gson.JsonObject;
@@ -42,8 +49,10 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import okhttp3.HttpUrl;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
@@ -334,6 +343,49 @@ final class ApiSupport {
     return new ReceivablesManagementApi(buildApiClient());
   }
 
+  /** Construct a {@code RecurringRepaymentsApi} bound to the sandbox. */
+  static RecurringRepaymentsApi buildRecurringRepaymentsApi() {
+    return new RecurringRepaymentsApi(buildApiClient());
+  }
+
+  /** Construct a {@code RepaymentsApi} bound to the sandbox. */
+  static RepaymentsApi buildRepaymentsApi() {
+    return new RepaymentsApi(buildApiClient());
+  }
+
+  /** Construct a {@code RewardsApi} bound to the sandbox. */
+  static RewardsApi buildRewardsApi() {
+    return new RewardsApi(buildApiClient());
+  }
+
+  /**
+   * The read timeout the statements endpoints need.
+   *
+   * <p>{@code /statements} accepts {@code page[limit]} but ignores it, so every
+   * read costs a full unpaged response that outruns the shared 60s budget —
+   * which is how {@code GetStatementHtmlIT} failed on CI with a
+   * {@code SocketTimeout} while resolving a statement id. The single-statement
+   * downloads inherit the cost because they resolve their id through the list.
+   */
+  static final int STATEMENTS_READ_TIMEOUT_MS = 180_000;
+
+  /** Construct a {@code StatementsApi} bound to the sandbox. */
+  static StatementsApi buildStatementsApi() {
+    ApiClient client = buildApiClient();
+    client.setReadTimeout(STATEMENTS_READ_TIMEOUT_MS);
+    return new StatementsApi(client);
+  }
+
+  /** Construct a {@code StopPaymentsApi} bound to the sandbox. */
+  static StopPaymentsApi buildStopPaymentsApi() {
+    return new StopPaymentsApi(buildApiClient());
+  }
+
+  /** Construct a {@code TaxFormsApi} bound to the sandbox. */
+  static TaxFormsApi buildTaxFormsApi() {
+    return new TaxFormsApi(buildApiClient());
+  }
+
   /**
    * A raw {@code GET} against the sandbox, returning the parsed JSON body.
    *
@@ -346,6 +398,15 @@ final class ApiSupport {
    * structure instead of skipping outright.
    */
   static JsonObject rawGet(String path, Map<String, String> query) throws IOException {
+    return rawGet(path, query, 60_000);
+  }
+
+  /**
+   * {@link #rawGet} with an explicit read timeout, for endpoints the shared 60s
+   * budget does not cover — see {@link #STATEMENTS_READ_TIMEOUT_MS}.
+   */
+  static JsonObject rawGet(String path, Map<String, String> query, int readTimeoutMs)
+      throws IOException {
     HttpUrl.Builder url = HttpUrl.parse(BASE_PATH + path).newBuilder();
     if (query != null) {
       for (Map.Entry<String, String> e : query.entrySet()) {
@@ -359,16 +420,77 @@ final class ApiSupport {
     OkHttpClient client =
         new OkHttpClient.Builder()
             .connectTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(readTimeoutMs, TimeUnit.MILLISECONDS)
             .writeTimeout(60, TimeUnit.SECONDS)
             .build();
     try (Response response = client.newCall(request).execute()) {
       ResponseBody body = response.body();
-      String text = body == null ? "" : body.string();
-      JsonObject parsed = JsonParser.parseString(text).getAsJsonObject();
-      parsed.addProperty("__status", response.code());
-      return parsed;
+      return parseBody(body == null ? "" : body.string(), response.code());
     }
+  }
+
+  /**
+   * A raw {@code POST} against the sandbox, returning the parsed JSON body.
+   *
+   * <p>The write-side counterpart of {@link #rawGet}. The stop-payment suites
+   * need it because the generated {@code CheckStopPayment} model pins
+   * {@code type} to the spec's {@code checkStopPayment} while the sandbox
+   * answers with the bare {@code stopPayment}; gson's {@code oneOf} adapter
+   * matches nothing and throws before the test can assert. {@code request} is
+   * serialized with the SDK's own gson so the fixtures stay typed.
+   */
+  static JsonObject rawPost(String path, Object request) throws IOException {
+    String json = request == null ? "{}" : JSON.getGson().toJson(request);
+    Request httpRequest =
+        new Request.Builder()
+            .url(BASE_PATH + path)
+            .header("Authorization", "Bearer " + TOKEN)
+            .post(RequestBody.create(json, MediaType.parse("application/vnd.api+json")))
+            .build();
+    OkHttpClient client =
+        new OkHttpClient.Builder()
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
+            .writeTimeout(60, TimeUnit.SECONDS)
+            .build();
+    try (Response response = client.newCall(httpRequest).execute()) {
+      ResponseBody body = response.body();
+      return parseBody(body == null ? "" : body.string(), response.code());
+    }
+  }
+
+  /**
+   * Stamp {@code status} onto a response body, parsing it as JSON when it is
+   * JSON.
+   *
+   * <p>Not every answer from the sandbox is JSON: a gateway that gives up on a
+   * slow upstream replies with an HTML or plain-text error page. Parsing that
+   * eagerly surfaced as a bare gson {@code MalformedJsonException} naming a line
+   * and column, which says nothing about what went wrong. Keeping the text under
+   * {@code __body} instead lets callers report the status and the response they
+   * actually got.
+   */
+  private static JsonObject parseBody(String text, int status) {
+    JsonObject parsed;
+    try {
+      parsed = JsonParser.parseString(text).getAsJsonObject();
+    } catch (RuntimeException e) {
+      parsed = new JsonObject();
+      parsed.addProperty("__body", text);
+    }
+    parsed.addProperty("__status", status);
+    return parsed;
+  }
+
+  /** The HTTP status {@link #rawGet} / {@link #rawPost} stamped onto a body. */
+  static int rawStatus(JsonObject body) {
+    return body.get("__status").getAsInt();
+  }
+
+  /** A short rendering of a raw body, for failure messages. */
+  static String rawBodyText(JsonObject body) {
+    String text = body.has("__body") ? body.get("__body").getAsString() : body.toString();
+    return text.length() > 500 ? text.substring(0, 500) + "..." : text;
   }
 
   /** Block the current thread for sandbox polling (mirrors Node {@code sleep}). */

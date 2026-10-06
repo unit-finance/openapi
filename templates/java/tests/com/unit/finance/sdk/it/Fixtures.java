@@ -219,6 +219,39 @@ import com.unit.finance.sdk.model.RemoveAccountOwnersRequest;
 import com.unit.finance.sdk.model.RemoveAuthorizedUsersData;
 import com.unit.finance.sdk.model.RemoveAuthorizedUsersDataAttributes;
 import com.unit.finance.sdk.model.RemoveAuthorizedUsersRequest;
+import com.unit.finance.sdk.model.CreateACHStopPaymentData;
+import com.unit.finance.sdk.model.CreateACHStopPaymentDataAttributes;
+import com.unit.finance.sdk.model.CreateACHStopPaymentRequest;
+import com.unit.finance.sdk.model.CreateBookRepaymentData;
+import com.unit.finance.sdk.model.CreateBookRepaymentDataAttributes;
+import com.unit.finance.sdk.model.CreateBookRepaymentRequest;
+import com.unit.finance.sdk.model.CreateCheckStopPaymentData;
+import com.unit.finance.sdk.model.CreateCheckStopPaymentDataAttributes;
+import com.unit.finance.sdk.model.CreateCheckStopPaymentRequest;
+import com.unit.finance.sdk.model.CreateCreditAccountData;
+import com.unit.finance.sdk.model.CreateCreditAccountDataAttributes;
+import com.unit.finance.sdk.model.CreateCreditAccountRequest;
+import com.unit.finance.sdk.model.CreateExternalRepaymentData;
+import com.unit.finance.sdk.model.CreateExternalRepaymentDataAttributes;
+import com.unit.finance.sdk.model.CreateExternalRepaymentDataRelationships;
+import com.unit.finance.sdk.model.CreateExternalRepaymentRequest;
+import com.unit.finance.sdk.model.CreateRecurringBookRepaymentData;
+import com.unit.finance.sdk.model.CreateRecurringBookRepaymentDataAttributes;
+import com.unit.finance.sdk.model.CreateRecurringBookRepaymentDataRelationships;
+import com.unit.finance.sdk.model.CreateRecurringBookRepaymentRequest;
+import com.unit.finance.sdk.model.CreateRecurringRepaymentRequest;
+import com.unit.finance.sdk.model.CreateRepaymentRequest;
+import com.unit.finance.sdk.model.CreateRewardData;
+import com.unit.finance.sdk.model.CreateRewardDataAttributes;
+import com.unit.finance.sdk.model.CreateRewardDataRelationships;
+import com.unit.finance.sdk.model.CreateRewardRequest;
+import com.unit.finance.sdk.model.CreateStopPaymentRequest;
+import com.unit.finance.sdk.model.ReturnExternalRepaymentData;
+import com.unit.finance.sdk.model.ReturnExternalRepaymentDataRelationships;
+import com.unit.finance.sdk.model.ReturnExternalRepaymentRequest;
+import com.unit.finance.sdk.model.UpdateAchStopPaymentData;
+import com.unit.finance.sdk.model.UpdateAchStopPaymentDataAttributes;
+import com.unit.finance.sdk.model.UpdateAchStopPaymentRequest;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -1313,5 +1346,189 @@ final class Fixtures {
             .relationships(
                 new CreateFeeDataRelationships().account(relationship("account", accountId)));
     return new ConfigurePositivePayPolicyRequest().data(data);
+  }
+
+  /** A unique idempotency key so re-runs never collide on a replayed request. */
+  private static String idempotencyKey(String prefix) {
+    return RUN + "-" + prefix + "-" + UUID.randomUUID().toString().substring(0, 8);
+  }
+
+  /** A date a year out, for fields that demand a future date. */
+  private static LocalDate nextYear() {
+    return LocalDate.now(ZoneOffset.UTC).plusYears(1);
+  }
+
+  /**
+   * A {@code creditAccount}.
+   *
+   * <p>{@code creditTerms} names a credit product configured on the org, and
+   * there is no API to enumerate them, so the caller has to guess the sandbox
+   * default.
+   */
+  static CreateAccountRequest createCreditAccountRequest(String customerId, String creditTerms) {
+    CreateCreditAccountDataAttributes attributes =
+        new CreateCreditAccountDataAttributes()
+            .creditTerms(creditTerms)
+            .creditLimit(200000)
+            .tags(baseTags())
+            .idempotencyKey(idempotencyKey("credit-account"));
+    CreateCreditAccountData data =
+        new CreateCreditAccountData()
+            .type(CreateCreditAccountData.TypeEnum.CREDIT_ACCOUNT)
+            .attributes(attributes)
+            .relationships(
+                new CreateDepositAccountDataRelationships()
+                    .customer(relationship("customer", customerId)));
+    return new CreateAccountRequest(new CreateCreditAccountRequest().data(data));
+  }
+
+  static CreateStopPaymentRequest createCheckStopPaymentRequest(
+      String accountId, String checkNumber) {
+    CreateCheckStopPaymentDataAttributes attributes =
+        new CreateCheckStopPaymentDataAttributes()
+            .checkNumber(checkNumber)
+            .amount(10000)
+            .tags(baseTags())
+            .idempotencyKey(idempotencyKey("check-stop-payment"));
+    CreateCheckStopPaymentData data =
+        new CreateCheckStopPaymentData()
+            .type(CreateCheckStopPaymentData.TypeEnum.CHECK_STOP_PAYMENT)
+            .attributes(attributes)
+            .relationships(
+                new CreateFeeDataRelationships().account(relationship("account", accountId)));
+    return new CreateStopPaymentRequest(new CreateCheckStopPaymentRequest().data(data));
+  }
+
+  /**
+   * An {@code achStopPayment}.
+   *
+   * <p>The spec marks both {@code minAmount} and {@code originatorName} as
+   * optional but the API requires at least one of them, so both are sent. Each
+   * {@code originatorName} entry is capped at 16 characters — a limit the spec
+   * does not describe; a longer name is rejected with 400
+   * {@code invalid_fields}. The name also has to be unique per account: a
+   * repeat is rejected with 409 {@code Already Exists}, so the suffix keeps the
+   * create and update suites from colliding within a run.
+   */
+  static CreateStopPaymentRequest createAchStopPaymentRequest(String accountId) {
+    CreateACHStopPaymentDataAttributes attributes =
+        new CreateACHStopPaymentDataAttributes()
+            .minAmount(10000)
+            .originatorName(
+                Arrays.asList("Payroll " + UUID.randomUUID().toString().substring(0, 8)))
+            .direction("Debit")
+            .expiration(nextYear())
+            .isMultiUse(true)
+            .description("SDK integration test ACH stop payment")
+            .tags(baseTags())
+            .idempotencyKey(idempotencyKey("ach-stop-payment"));
+    CreateACHStopPaymentData data =
+        new CreateACHStopPaymentData()
+            .type(CreateACHStopPaymentData.TypeEnum.ACH_STOP_PAYMENT)
+            .attributes(attributes)
+            .relationships(
+                new CreateFeeDataRelationships().account(relationship("account", accountId)));
+    return new CreateStopPaymentRequest(new CreateACHStopPaymentRequest().data(data));
+  }
+
+  static UpdateAchStopPaymentRequest updateAchStopPaymentRequest() {
+    UpdateAchStopPaymentDataAttributes attributes =
+        new UpdateAchStopPaymentDataAttributes().expiration(nextYear()).tags(baseTags());
+    UpdateAchStopPaymentData data =
+        new UpdateAchStopPaymentData()
+            .type(UpdateAchStopPaymentData.TypeEnum.ACH_STOP_PAYMENT)
+            .attributes(attributes);
+    return new UpdateAchStopPaymentRequest().data(data);
+  }
+
+  static CreateRewardRequest createRewardRequest(String receivingAccountId) {
+    CreateRewardDataAttributes attributes =
+        new CreateRewardDataAttributes()
+            .amount(1000)
+            .description("SDK integration test reward")
+            .tags(baseTags())
+            .idempotencyKey(idempotencyKey("reward"));
+    CreateRewardData data =
+        new CreateRewardData()
+            .type(CreateRewardData.TypeEnum.REWARD)
+            .attributes(attributes)
+            .relationships(
+                new CreateRewardDataRelationships()
+                    .receivingAccount(relationship("account", receivingAccountId)));
+    return new CreateRewardRequest().data(data);
+  }
+
+  static CreateRepaymentRequest createBookRepaymentRequest(
+      String accountId, String creditAccountId, String counterpartyAccountId) {
+    CreateBookRepaymentDataAttributes attributes =
+        new CreateBookRepaymentDataAttributes()
+            .description("SDK integration test repayment")
+            .amount(1000)
+            .transactionSummaryOverride("SDK integration test repayment")
+            .tags(baseTags())
+            .idempotencyKey(idempotencyKey("book-repayment"));
+    CreateBookRepaymentData data =
+        new CreateBookRepaymentData()
+            .type(CreateBookRepaymentData.TypeEnum.REPAYMENT)
+            .attributes(attributes)
+            .relationships(
+                new CreateRecurringBookRepaymentDataRelationships()
+                    .account(relationship("account", accountId))
+                    .creditAccount(relationship("creditAccount", creditAccountId))
+                    .counterpartyAccount(relationship("account", counterpartyAccountId)));
+    return new CreateRepaymentRequest(new CreateBookRepaymentRequest().data(data));
+  }
+
+  static CreateRepaymentRequest createExternalRepaymentRequest(String creditAccountId) {
+    CreateExternalRepaymentDataAttributes attributes =
+        new CreateExternalRepaymentDataAttributes()
+            .description("SDK integration test external repayment")
+            .amount(1000)
+            .tags(baseTags())
+            .idempotencyKey(idempotencyKey("external-repayment"));
+    CreateExternalRepaymentData data =
+        new CreateExternalRepaymentData()
+            .type(CreateExternalRepaymentData.TypeEnum.EXTERNAL_REPAYMENT)
+            .attributes(attributes)
+            .relationships(
+                new CreateExternalRepaymentDataRelationships()
+                    .creditAccount(relationship("creditAccount", creditAccountId)));
+    return new CreateRepaymentRequest(new CreateExternalRepaymentRequest().data(data));
+  }
+
+  /**
+   * The return body names the resource {@code externalRepaymentReturn} and
+   * points at the {@code repayment} (not the credit account) it reverses.
+   */
+  static ReturnExternalRepaymentRequest returnExternalRepaymentRequest(String repaymentId) {
+    ReturnExternalRepaymentData data =
+        new ReturnExternalRepaymentData()
+            .type(ReturnExternalRepaymentData.TypeEnum.EXTERNAL_REPAYMENT_RETURN)
+            .attributes(map())
+            .relationships(
+                new ReturnExternalRepaymentDataRelationships()
+                    .repayment(relationship("repayment", repaymentId)));
+    return new ReturnExternalRepaymentRequest().data(data);
+  }
+
+  static CreateRecurringRepaymentRequest createRecurringBookRepaymentRequest(
+      String accountId, String creditAccountId, String counterpartyAccountId) {
+    CreateRecurringBookRepaymentDataAttributes attributes =
+        new CreateRecurringBookRepaymentDataAttributes()
+            .description("SDK integration test recurring")
+            .transactionSummaryOverride("SDK integration test recurring")
+            .tags(baseTags())
+            .idempotencyKey(idempotencyKey("recurring-book-repayment"));
+    CreateRecurringBookRepaymentData data =
+        new CreateRecurringBookRepaymentData()
+            .type(CreateRecurringBookRepaymentData.TypeEnum.RECURRING_BOOK_REPAYMENT)
+            .attributes(attributes)
+            .relationships(
+                new CreateRecurringBookRepaymentDataRelationships()
+                    .account(relationship("account", accountId))
+                    .creditAccount(relationship("creditAccount", creditAccountId))
+                    .counterpartyAccount(relationship("account", counterpartyAccountId)));
+    return new CreateRecurringRepaymentRequest(
+        new CreateRecurringBookRepaymentRequest().data(data));
   }
 }

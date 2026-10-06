@@ -150,6 +150,30 @@ module Helpers
       UnitFinanceSdk::ReceivablesManagementApi.new(UnitFinanceSdk::ApiClient.new(configuration))
     end
 
+    def build_recurring_repayments_api
+      UnitFinanceSdk::RecurringRepaymentsApi.new(UnitFinanceSdk::ApiClient.new(configuration))
+    end
+
+    def build_repayments_api
+      UnitFinanceSdk::RepaymentsApi.new(UnitFinanceSdk::ApiClient.new(configuration))
+    end
+
+    def build_rewards_api
+      UnitFinanceSdk::RewardsApi.new(UnitFinanceSdk::ApiClient.new(configuration))
+    end
+
+    def build_statements_api
+      UnitFinanceSdk::StatementsApi.new(UnitFinanceSdk::ApiClient.new(configuration))
+    end
+
+    def build_stop_payments_api
+      UnitFinanceSdk::StopPaymentsApi.new(UnitFinanceSdk::ApiClient.new(configuration))
+    end
+
+    def build_tax_forms_api
+      UnitFinanceSdk::TaxFormsApi.new(UnitFinanceSdk::ApiClient.new(configuration))
+    end
+
     def sleep(seconds)
       Kernel.sleep(seconds)
     end

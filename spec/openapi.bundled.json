@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Unit API",
-    "version": "0.18.0",
+    "version": "0.19.0",
     "description": "JSON:API-compliant banking API.",
     "license": {
       "name": "Proprietary",
@@ -127,6 +127,30 @@
     {
       "name": "Receivables Management",
       "description": "Receivables and the receivables balance due to be purchased."
+    },
+    {
+      "name": "Recurring Repayments",
+      "description": "Recurring repayments that automatically pay down a credit account on a schedule."
+    },
+    {
+      "name": "Repayments",
+      "description": "Repayments made toward credit accounts."
+    },
+    {
+      "name": "Rewards",
+      "description": "Rewards credited to customer accounts."
+    },
+    {
+      "name": "Statements",
+      "description": "Monthly account statements and bank verification letters."
+    },
+    {
+      "name": "Stop Payments",
+      "description": "Stop payments that block matching incoming ACH debits and check payments."
+    },
+    {
+      "name": "Tax Forms",
+      "description": "Annual tax forms produced for customers."
     }
   ],
   "paths": {
@@ -13749,6 +13773,2407 @@
                       "description": "A receivable resource."
                     }
                   }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/recurring-repayments": {
+      "get": {
+        "operationId": "listRecurringRepayments",
+        "summary": "List recurring repayments",
+        "description": "List recurring repayments resources. Filtering, paging and sorting can be applied.",
+        "tags": [
+          "Recurring Repayments"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "repayments"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page[limit]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Maximum number of resources that will be returned. Maximum is 1000 resources. See Pagination.",
+            "schema": {
+              "type": "string",
+              "default": "100"
+            }
+          },
+          {
+            "name": "page[offset]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Number of resources to skip. See Pagination.",
+            "schema": {
+              "type": "string",
+              "default": "0"
+            }
+          },
+          {
+            "name": "filter[creditAccountId]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the results by the specified credit account id.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[customerId]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the results by the specified customer id.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[status]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filter recurring repayments by status (Active or Disabled). Usage example: *filter[status]=Active",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[fromStartTime]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the Recurring Repayments that their start time occurred *after* the specified date. e.g. 2022-06-13",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[toStartTime]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the Recurring Repayments that their start time occurred *before* the specified date. e.g. 2022-05-13",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Leave empty or provide sort=createdAt for ascending order. Provide sort=-createdAt (leading minus sign) for descending order.",
+            "schema": {
+              "type": "string",
+              "default": "-createdAt"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of recurring repayment resources.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "oneOf": [
+                          {
+                            "$ref": "#/components/schemas/RecurringACHRepayment"
+                          },
+                          {
+                            "$ref": "#/components/schemas/RecurringBookRepayment"
+                          },
+                          {
+                            "$ref": "#/components/schemas/RecurringCapitalPartnerACHRepayment"
+                          },
+                          {
+                            "$ref": "#/components/schemas/RecurringCapitalPartnerBookRepayment"
+                          }
+                        ],
+                        "discriminator": {
+                          "propertyName": "type",
+                          "mapping": {
+                            "recurringAchRepayment": "#/components/schemas/RecurringACHRepayment",
+                            "recurringBookRepayment": "#/components/schemas/RecurringBookRepayment",
+                            "recurringCapitalPartnerAchRepayment": "#/components/schemas/RecurringCapitalPartnerACHRepayment",
+                            "recurringCapitalPartnerBookRepayment": "#/components/schemas/RecurringCapitalPartnerBookRepayment"
+                          }
+                        }
+                      }
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createRecurringRepayment",
+        "summary": "Create a recurring repayment",
+        "description": "Originate a recurring repayment. The request body is one of CreateRecurringACHRepaymentRequest, CreateRecurringBookRepaymentRequest, CreateRecurringCapitalPartnerACHRepaymentRequest, or CreateRecurringCapitalPartnerBookRepaymentRequest, discriminated by data.type (recurringAchRepayment, recurringBookRepayment) together with the relationships supplied — the capital partner variants omit the account relationship.",
+        "tags": [
+          "Recurring Repayments"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "repayments-write"
+            ]
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/CreateRecurringACHRepaymentRequest"
+                  },
+                  {
+                    "$ref": "#/components/schemas/CreateRecurringBookRepaymentRequest"
+                  },
+                  {
+                    "$ref": "#/components/schemas/CreateRecurringCapitalPartnerACHRepaymentRequest"
+                  },
+                  {
+                    "$ref": "#/components/schemas/CreateRecurringCapitalPartnerBookRepaymentRequest"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The created recurring repayment resource.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "oneOf": [
+                        {
+                          "$ref": "#/components/schemas/RecurringACHRepayment"
+                        },
+                        {
+                          "$ref": "#/components/schemas/RecurringBookRepayment"
+                        },
+                        {
+                          "$ref": "#/components/schemas/RecurringCapitalPartnerACHRepayment"
+                        },
+                        {
+                          "$ref": "#/components/schemas/RecurringCapitalPartnerBookRepayment"
+                        }
+                      ],
+                      "discriminator": {
+                        "propertyName": "type",
+                        "mapping": {
+                          "recurringAchRepayment": "#/components/schemas/RecurringACHRepayment",
+                          "recurringBookRepayment": "#/components/schemas/RecurringBookRepayment",
+                          "recurringCapitalPartnerAchRepayment": "#/components/schemas/RecurringCapitalPartnerACHRepayment",
+                          "recurringCapitalPartnerBookRepayment": "#/components/schemas/RecurringCapitalPartnerBookRepayment"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/recurring-repayments/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "getRecurringRepayment",
+        "summary": "Get a recurring repayment by id",
+        "description": "Get a recurring repayment by id.",
+        "tags": [
+          "Recurring Repayments"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "repayments"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Recurring Repayment resource.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "oneOf": [
+                        {
+                          "$ref": "#/components/schemas/RecurringACHRepayment"
+                        },
+                        {
+                          "$ref": "#/components/schemas/RecurringBookRepayment"
+                        },
+                        {
+                          "$ref": "#/components/schemas/RecurringCapitalPartnerACHRepayment"
+                        },
+                        {
+                          "$ref": "#/components/schemas/RecurringCapitalPartnerBookRepayment"
+                        }
+                      ],
+                      "discriminator": {
+                        "propertyName": "type",
+                        "mapping": {
+                          "recurringAchRepayment": "#/components/schemas/RecurringACHRepayment",
+                          "recurringBookRepayment": "#/components/schemas/RecurringBookRepayment",
+                          "recurringCapitalPartnerAchRepayment": "#/components/schemas/RecurringCapitalPartnerACHRepayment",
+                          "recurringCapitalPartnerBookRepayment": "#/components/schemas/RecurringCapitalPartnerBookRepayment"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/recurring-repayments/{id}/enable": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "operationId": "enableRecurringRepayment",
+        "summary": "Enable a recurring repayment",
+        "description": "Enable a recurring repayment by id. When a Recurring Repayment is enabled, its status is set to Active according to the start date and end date that were defined in the schedule. See Recurring Repayment Statuses. When enabled, the Recurring Repayment Status Changed webhook event is fired.",
+        "tags": [
+          "Recurring Repayments"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "repayments"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Recurring Repayment resource.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "oneOf": [
+                        {
+                          "$ref": "#/components/schemas/RecurringACHRepayment"
+                        },
+                        {
+                          "$ref": "#/components/schemas/RecurringBookRepayment"
+                        },
+                        {
+                          "$ref": "#/components/schemas/RecurringCapitalPartnerACHRepayment"
+                        },
+                        {
+                          "$ref": "#/components/schemas/RecurringCapitalPartnerBookRepayment"
+                        }
+                      ],
+                      "discriminator": {
+                        "propertyName": "type",
+                        "mapping": {
+                          "recurringAchRepayment": "#/components/schemas/RecurringACHRepayment",
+                          "recurringBookRepayment": "#/components/schemas/RecurringBookRepayment",
+                          "recurringCapitalPartnerAchRepayment": "#/components/schemas/RecurringCapitalPartnerACHRepayment",
+                          "recurringCapitalPartnerBookRepayment": "#/components/schemas/RecurringCapitalPartnerBookRepayment"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/recurring-repayments/{id}/disable": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "operationId": "disableRecurringRepayment",
+        "summary": "Disable a recurring repayment",
+        "description": "Disable a Recurring Repayment by id. When a Recurring Repayment is disabled, the Recurring Repayment Status Changed webhook event is fired and future repayments will no longer be created according to the defined schedule.",
+        "tags": [
+          "Recurring Repayments"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "repayments"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Recurring Repayment resource.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "oneOf": [
+                        {
+                          "$ref": "#/components/schemas/RecurringACHRepayment"
+                        },
+                        {
+                          "$ref": "#/components/schemas/RecurringBookRepayment"
+                        },
+                        {
+                          "$ref": "#/components/schemas/RecurringCapitalPartnerACHRepayment"
+                        },
+                        {
+                          "$ref": "#/components/schemas/RecurringCapitalPartnerBookRepayment"
+                        }
+                      ],
+                      "discriminator": {
+                        "propertyName": "type",
+                        "mapping": {
+                          "recurringAchRepayment": "#/components/schemas/RecurringACHRepayment",
+                          "recurringBookRepayment": "#/components/schemas/RecurringBookRepayment",
+                          "recurringCapitalPartnerAchRepayment": "#/components/schemas/RecurringCapitalPartnerACHRepayment",
+                          "recurringCapitalPartnerBookRepayment": "#/components/schemas/RecurringCapitalPartnerBookRepayment"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/repayments": {
+      "get": {
+        "operationId": "listRepayments",
+        "summary": "List repayments",
+        "description": "List repayments resources. Filtering, paging and sorting can be applied.",
+        "tags": [
+          "Repayments"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "repayments"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page[limit]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Maximum number of resources that will be returned. Maximum is 1000 resources. See Pagination.",
+            "schema": {
+              "type": "string",
+              "default": "100"
+            }
+          },
+          {
+            "name": "page[offset]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Number of resources to skip. See Pagination.",
+            "schema": {
+              "type": "string",
+              "default": "0"
+            }
+          },
+          {
+            "name": "filter[accountId]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the results by the specified account id.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[creditAccountId]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the results by the specified credit account id.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[recurringRepaymentId]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the result according to the associated Recurring Repayment id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[customerId]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the results by the specified customer id.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[status][]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filter repayments by status (Pending, PendingReview, Returned, Sent or Rejected). Usage example: *filter[status][0]=Active",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[type][]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filter repayments by Repayment type. such as (AchRepayment, BookRepayment, ExternalRepayment). Usage example: *filter[type][0]=AchRepayment&filter[type][1]=BookRepayment*",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[since]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters Repayments that occurred *after* the specified date. e.g. 2020-01-13T16:01:19.346Z",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[until]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the Repayments that occurred *before* the specified date. e.g. 2020-01-02T20:06:23.486Z",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of repayment resources.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "oneOf": [
+                          {
+                            "$ref": "#/components/schemas/ACHRepayment"
+                          },
+                          {
+                            "$ref": "#/components/schemas/BookRepayment"
+                          },
+                          {
+                            "$ref": "#/components/schemas/ExternalRepayment"
+                          }
+                        ],
+                        "discriminator": {
+                          "propertyName": "type",
+                          "mapping": {
+                            "achRepayment": "#/components/schemas/ACHRepayment",
+                            "bookRepayment": "#/components/schemas/BookRepayment",
+                            "externalRepayment": "#/components/schemas/ExternalRepayment"
+                          }
+                        }
+                      }
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createRepayment",
+        "summary": "Create a repayment",
+        "description": "Create a repayment for a credit account. The request body is one of CreateACHRepaymentRequest, CreateBookRepaymentRequest, CreateCapitalPartnerACHRepaymentRequest, CreateCapitalPartnerBookRepaymentRequest, or CreateExternalRepaymentRequest, discriminated by data.type (repayment, externalRepayment) together with the relationships supplied — the capital partner variants omit the account relationship, the book variants use counterpartyAccount instead of counterparty, and the external variant only takes creditAccount.",
+        "tags": [
+          "Repayments"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "repayments-write"
+            ]
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/CreateACHRepaymentRequest"
+                  },
+                  {
+                    "$ref": "#/components/schemas/CreateBookRepaymentRequest"
+                  },
+                  {
+                    "$ref": "#/components/schemas/CreateCapitalPartnerACHRepaymentRequest"
+                  },
+                  {
+                    "$ref": "#/components/schemas/CreateCapitalPartnerBookRepaymentRequest"
+                  },
+                  {
+                    "$ref": "#/components/schemas/CreateExternalRepaymentRequest"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The requested resource after the operation was completed.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "oneOf": [
+                        {
+                          "$ref": "#/components/schemas/ACHRepayment"
+                        },
+                        {
+                          "$ref": "#/components/schemas/BookRepayment"
+                        },
+                        {
+                          "$ref": "#/components/schemas/CapitalPartnerACHRepayment"
+                        },
+                        {
+                          "$ref": "#/components/schemas/CapitalPartnerBookRepayment"
+                        },
+                        {
+                          "$ref": "#/components/schemas/ExternalRepayment"
+                        }
+                      ],
+                      "discriminator": {
+                        "propertyName": "type",
+                        "mapping": {
+                          "achRepayment": "#/components/schemas/ACHRepayment",
+                          "bookRepayment": "#/components/schemas/BookRepayment",
+                          "capitalPartnerAchRepayment": "#/components/schemas/CapitalPartnerACHRepayment",
+                          "capitalPartnerBookRepayment": "#/components/schemas/CapitalPartnerBookRepayment",
+                          "externalRepayment": "#/components/schemas/ExternalRepayment"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/repayments/{repaymentId}": {
+      "parameters": [
+        {
+          "name": "repaymentId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "getRepayment",
+        "summary": "Get a repayment by id",
+        "description": "Get a repayment by id.",
+        "tags": [
+          "Repayments"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "repayments"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Repayment resource.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "oneOf": [
+                        {
+                          "$ref": "#/components/schemas/ACHRepayment"
+                        },
+                        {
+                          "$ref": "#/components/schemas/BookRepayment"
+                        },
+                        {
+                          "$ref": "#/components/schemas/ExternalRepayment"
+                        }
+                      ],
+                      "discriminator": {
+                        "propertyName": "type",
+                        "mapping": {
+                          "achRepayment": "#/components/schemas/ACHRepayment",
+                          "bookRepayment": "#/components/schemas/BookRepayment",
+                          "externalRepayment": "#/components/schemas/ExternalRepayment"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/repayments/{repaymentId}/return": {
+      "parameters": [
+        {
+          "name": "repaymentId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "operationId": "returnExternalRepayment",
+        "summary": "Return an external repayment",
+        "description": "Returns an external repayment that was previously created with `Sent` status. This is used when the external payment needs to be reversed. When an external repayment is returned, the credit account balance will increase and the available credit limit will decrease.",
+        "tags": [
+          "Repayments"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "repayments-write"
+            ]
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReturnExternalRepaymentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The requested resource after the operation was completed.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/ExternalRepayment"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rewards": {
+      "post": {
+        "operationId": "createReward",
+        "summary": "Create a reward",
+        "description": "Creates a reward resource.",
+        "tags": [
+          "Rewards"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "rewards-write"
+            ]
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "properties": {
+                  "data": {
+                    "$ref": "#/components/schemas/CreateRewardData"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The requested resource after the operation was completed.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Reward"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "listRewards",
+        "summary": "List rewards",
+        "description": "List rewards resources. Filtering, paging and sorting can be applied.",
+        "tags": [
+          "Rewards"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "rewards"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page[limit]",
+            "in": "query",
+            "required": false,
+            "description": "Maximum number of resources that will be returned. Maximum is 1000 resources. See Pagination.",
+            "schema": {
+              "type": "string",
+              "default": "100"
+            }
+          },
+          {
+            "name": "page[offset]",
+            "in": "query",
+            "required": false,
+            "description": "Number of resources to skip. See Pagination.",
+            "schema": {
+              "type": "string",
+              "default": "0"
+            }
+          },
+          {
+            "name": "filter[transactionId]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the results by the specified transaction id.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[rewardedTransactionId]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the results by the specified rewarded transaction id.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[receivingAccountId]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the results by the specified account id.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[customerId]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the results by the specified customer id.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[cardId]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the results by the specified card id.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[status]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filter by reward Status. Usage example: filter[status][0]=Rejected.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[since]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the rewards that occurred *after* the specified date. e.g. 2020-01-13T16:01:19.346Z",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[until]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the rewards that occurred *before* the specified date. e.g. 2020-01-02T20:06:23.486Z",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[tags]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filter rewards by Tags.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Leave empty or provide sort=createdAt for ascending order. Provide sort=-createdAt (leading minus sign) for descending order.",
+            "schema": {
+              "type": "string",
+              "default": "-createdAt"
+            }
+          },
+          {
+            "name": "include",
+            "in": "query",
+            "required": false,
+            "description": "Optional. A comma-separated list of related resources to include in the response. Related resources include: customer, account, transaction. See Getting Related Resources",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of rewards resources.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Reward"
+                      }
+                    },
+                    "included": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/DepositAccount"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rewards/{rewardId}": {
+      "parameters": [
+        {
+          "name": "rewardId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "getReward",
+        "summary": "Get a reward by id",
+        "description": "Get a reward by id.",
+        "tags": [
+          "Rewards"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "rewards"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "include",
+            "in": "query",
+            "required": false,
+            "description": "Optional. A comma-separated list of related resources to include in the response. Related resources include: customer, account, transaction. See Getting Related Resources",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Reward resource.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Reward"
+                    },
+                    "included": {
+                      "type": "array",
+                      "items": {
+                        "oneOf": [
+                          {
+                            "$ref": "#/components/schemas/DepositAccount"
+                          },
+                          {
+                            "$ref": "#/components/schemas/CreditAccount"
+                          }
+                        ],
+                        "discriminator": {
+                          "propertyName": "type",
+                          "mapping": {
+                            "depositAccount": "#/components/schemas/DepositAccount",
+                            "creditAccount": "#/components/schemas/CreditAccount"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/statements": {
+      "get": {
+        "operationId": "listStatements",
+        "summary": "List statements",
+        "description": "List statement resources. Filtering and paging can be applied.",
+        "tags": [
+          "Statements"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "statements"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page[limit]",
+            "in": "query",
+            "required": false,
+            "description": "Maximum number of resources that will be returned. Maximum is 1000 resources. See Pagination.",
+            "schema": {
+              "type": "string",
+              "default": "100"
+            }
+          },
+          {
+            "name": "page[offset]",
+            "in": "query",
+            "required": false,
+            "description": "Number of resources to skip. See Pagination.",
+            "schema": {
+              "type": "string",
+              "default": "0"
+            }
+          },
+          {
+            "name": "filter[accountId]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the results by the specified account id.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[accountIds][]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the results by the specified account ids. Usage example: *filter[accountIds][0]=10000&filter[accountIds][1]=10001*",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[customerId]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the results by the specified customer id.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[period]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the results for a specific month. e.g. 2021-01",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Leave empty or provide sort=period for ascending order. Provide sort=-period (leading minus sign) for descending order.",
+            "schema": {
+              "type": "string",
+              "default": "period"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of statement resources.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Statement"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/statements/{id}/pdf": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "getStatementPdf",
+        "summary": "Get a statement PDF",
+        "description": "Get a statement PDF output by id.",
+        "tags": [
+          "Statements"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "statements"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "filter[customerId]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Verify that the statements belongs to the customer.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Select the statement language. en - English, es - Spanish",
+            "schema": {
+              "type": "string",
+              "default": "en"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The statement PDF output.",
+            "content": {
+              "application/pdf": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/statements/{id}/html": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "getStatementHtml",
+        "summary": "Get a statement HTML",
+        "description": "Get a statement HTML output by id.",
+        "tags": [
+          "Statements"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "statements"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "filter[customerId]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Verify that the statements belongs to the customer.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Select the statement language. en - English, es - Spanish",
+            "schema": {
+              "type": "string",
+              "default": "en"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The statement HTML output.",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/statements/{accountId}/bank/pdf": {
+      "parameters": [
+        {
+          "name": "accountId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "getBankVerificationPdf",
+        "summary": "Get a bank verification PDF",
+        "description": "Customers may be required, for various reasons, to provide proof that they hold a bank account with a certain financial institution. This is typically provided by the bank in a letter called \"Bank verification letter\", which includes the customer, account and financial institution information. If the customer is required to prove availability of funds, the letter may also include the available balance on the account.",
+        "tags": [
+          "Statements"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "statements"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "includeProofOfFunds",
+            "in": "query",
+            "required": false,
+            "description": "Optional. include customer proof of funds",
+            "schema": {
+              "type": "string",
+              "default": "false"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The bank verification letter PDF.",
+            "content": {
+              "application/pdf": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stop-payments": {
+      "post": {
+        "operationId": "createStopPayment",
+        "summary": "Create a stop payment",
+        "description": "Create a stop payment. The request body is one of CreateACHStopPaymentRequest or CreateCheckStopPaymentRequest, discriminated by data.type (achStopPayment, checkStopPayment). The stopPayment created webhook event will be fired.",
+        "tags": [
+          "Stop Payments"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "payments-write"
+            ]
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/CreateACHStopPaymentRequest"
+                  },
+                  {
+                    "$ref": "#/components/schemas/CreateCheckStopPaymentRequest"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The requested resource after the operation was completed.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "oneOf": [
+                        {
+                          "$ref": "#/components/schemas/ACHStopPayment"
+                        },
+                        {
+                          "$ref": "#/components/schemas/CheckStopPayment"
+                        }
+                      ],
+                      "discriminator": {
+                        "propertyName": "type",
+                        "mapping": {
+                          "achStopPayment": "#/components/schemas/ACHStopPayment",
+                          "checkStopPayment": "#/components/schemas/CheckStopPayment"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "listStopPayments",
+        "summary": "List stop payments",
+        "description": "List stop payment resources. Filtering, paging and sorting can be applied.",
+        "tags": [
+          "Stop Payments"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "payments"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page[limit]",
+            "in": "query",
+            "required": false,
+            "description": "Maximum number of resources that will be returned. Maximum is 1000 resources. See Pagination.",
+            "schema": {
+              "type": "string",
+              "default": "100"
+            }
+          },
+          {
+            "name": "page[offset]",
+            "in": "query",
+            "required": false,
+            "description": "Number of resources to skip. See Pagination.",
+            "schema": {
+              "type": "string",
+              "default": "0"
+            }
+          },
+          {
+            "name": "filter[accountId]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the results by the specified account id.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[customerId]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the results by the specified customer id.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[tags]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filter stop payments by Tags.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Leave empty or provide sort=createdAt for ascending order. Provide sort=-createdAt (leading minus sign) for descending order.",
+            "schema": {
+              "type": "string",
+              "default": "-createdAt"
+            }
+          },
+          {
+            "name": "filter[since]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters *before* the specified date. e.g. 2021-06-01",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[until]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters *after* the specified date. e.g. 2021-07-01",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[status][]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filter by status (Active, Disabled). Usage example: *filter[status][0]=Disabled*",
+            "schema": {
+              "type": "string",
+              "default": "Active"
+            }
+          },
+          {
+            "name": "filter[fromAmount]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the Check Stop Payments that have an amount that is *higher or equal to* the specified amount (in cents). e.g. 5000",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[toAmount]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters the Stop Payments that have an amount that is *lower or equal to* the specified amount (in cents). e.g. 7000",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[noAmount]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. If set to true, returns only Stop Payments with no amount . If set to false only returns Stop Payments with amount",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[fromMinAmount]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters ACH stop Payments that have minAmount higher than the specified amount (cents).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[toMinAmount]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filters ACH stop Payments that have minAmount lower than the specified amount (cents).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[noMinAmount]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. If set to true, returns only ACH Stop Payments with no minAmount . If set to false only returns Stop Payments with minAmount",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[originatorName]",
+            "in": "query",
+            "required": false,
+            "description": "Optional.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[noOriginatorName]",
+            "in": "query",
+            "required": false,
+            "description": "Optional.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[checkNumber]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Filter Stop Payments by check number (trimming leading zeros).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[type]",
+            "in": "query",
+            "required": false,
+            "description": "Optional. Either checkStopPayment or achStopPayment",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of check stop payments resources.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/CheckStopPayment"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stop-payments/{stopPaymentId}": {
+      "parameters": [
+        {
+          "name": "stopPaymentId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "getStopPayment",
+        "summary": "Get a stop payment by id",
+        "description": "Get a stop payment by id.",
+        "tags": [
+          "Stop Payments"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "payments"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "checkStopPayment resource.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/CheckStopPayment"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "updateAchStopPayment",
+        "summary": "Update an ACH stop payment",
+        "description": "Update an AchStopPayment.",
+        "tags": [
+          "Stop Payments"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAchStopPaymentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The requested resource after the operation was completed.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/ACHStopPayment"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stop-payments/{stopPaymentId}/disable": {
+      "parameters": [
+        {
+          "name": "stopPaymentId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "operationId": "disableStopPayment",
+        "summary": "Disable a stop payment",
+        "description": "Disable a Stop Payment by id. When a Stop Payment is disabled, the checkStopPayment disabled webhook event is fired and future check payments wont be stopped by this stop payment.",
+        "tags": [
+          "Stop Payments"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "payments"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "checkStopPayment resource.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/CheckStopPayment"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tax-forms": {
+      "get": {
+        "operationId": "listTaxForms",
+        "summary": "List tax forms",
+        "description": "List tax form resources per tax year. Filtering and paging can be applied.",
+        "tags": [
+          "Tax Forms"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "statements"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of tax form resources for a given tax year.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/TaxForm"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tax-forms/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "getTaxFormById",
+        "summary": "Get a tax form by id",
+        "description": "Get a tax form by id.",
+        "tags": [
+          "Tax Forms"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "statements"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tax form resource. Can be 1099-INT as indicated by the type field.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/TaxForm"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tax-forms/{id}/pdf": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "getTaxFormPdfById",
+        "summary": "Get a tax form PDF by id",
+        "description": "Get a tax form PDF file by id.",
+        "tags": [
+          "Tax Forms"
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "statements"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The tax form PDF file.",
+            "content": {
+              "application/pdf": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
                 }
               }
             }
@@ -33735,6 +36160,2684 @@
           "type": "receivablesBalance",
           "attributes": {
             "pendingPurchaseReceivablesAmount": 100
+          }
+        }
+      },
+      "RecurringACHRepayment": {
+        "type": "object",
+        "required": [
+          "type",
+          "id",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "recurringAchRepayment"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "createdAt",
+              "schedule",
+              "description",
+              "numberOfRepayments",
+              "status"
+            ],
+            "properties": {
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the resource was created."
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the resource was updated."
+              },
+              "schedule": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ScheduleType"
+                  }
+                ],
+                "description": "The schedule of the recurring payment."
+              },
+              "description": {
+                "type": "string",
+                "description": "Repayment description (maximum of 50 characters). this will show up on the statement of the counterparty."
+              },
+              "addenda": {
+                "type": "string",
+                "description": "Optional, additional payment description (maximum of 80 characters), not all institutions present that."
+              },
+              "sameDay": {
+                "type": "boolean",
+                "description": "Optional, default is false. See Same Day ACH."
+              },
+              "secCode": {
+                "type": "string",
+                "description": "See Use a custom SEC Code."
+              },
+              "tags": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "See Tags. Tags that will be copied to any transaction that this payment creates (see Tag Inheritance)."
+              },
+              "numberOfRepayments": {
+                "type": "integer",
+                "description": "Represents the number of repayments that were created by this recurring payment."
+              },
+              "status": {
+                "type": "string",
+                "description": "Status of the recurring repayment, one of: Active, Disabled."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "properties": {
+              "account": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "creditAccount": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "counterparty": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "customer": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "org": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        },
+        "example": {
+          "type": "recurringAchRepayment",
+          "id": "2",
+          "attributes": {
+            "createdAt": "2024-02-13T11:06:23.680Z",
+            "schedule": {
+              "startTime": "2024-02-13",
+              "interval": "Monthly",
+              "nextScheduledAction": "2024-03-29",
+              "dayOfMonth": 29
+            },
+            "description": "ACH Repayments",
+            "sameDay": false,
+            "numberOfRepayments": 0,
+            "status": "Active"
+          },
+          "relationships": {
+            "org": {
+              "data": {
+                "type": "org",
+                "id": "2"
+              }
+            },
+            "account": {
+              "data": {
+                "type": "account",
+                "id": "10016"
+              }
+            },
+            "creditAccount": {
+              "data": {
+                "type": "creditAccount",
+                "id": "10005"
+              }
+            },
+            "counterparty": {
+              "data": {
+                "type": "counterparty",
+                "id": "1"
+              }
+            },
+            "customer": {
+              "data": {
+                "type": "customer",
+                "id": "10000"
+              }
+            }
+          }
+        },
+        "description": "`recurringAchRepayment` is a JSON:API resource."
+      },
+      "RecurringBookRepayment": {
+        "type": "object",
+        "required": [
+          "type",
+          "id",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "recurringBookRepayment"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "createdAt",
+              "schedule",
+              "description",
+              "numberOfRepayments",
+              "status"
+            ],
+            "properties": {
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the resource was created."
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the resource was updated."
+              },
+              "schedule": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ScheduleType"
+                  }
+                ],
+                "description": "The schedule of the recurring payment."
+              },
+              "description": {
+                "type": "string",
+                "description": "Repayment description (maximum of 80 characters). this will show up on the statement of the counterparty."
+              },
+              "transactionSummaryOverride": {
+                "type": "string",
+                "description": "If this field is populated, its contents will be returned as the bookTransaction's summary field (maximum of 100 characters)."
+              },
+              "tags": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "See Tags. Tags that will be copied to any transaction that this payment creates (see Tag Inheritance)."
+              },
+              "numberOfRepayments": {
+                "type": "integer",
+                "description": "Represents the number of repayments that were created by this recurring payment."
+              },
+              "status": {
+                "type": "string",
+                "description": "Status of the recurring repayment, one of: Active, Disabled."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "properties": {
+              "account": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "creditAccount": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "counterparty": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "counterpartyAccount": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "customer": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "org": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        },
+        "example": {
+          "type": "recurringBookRepayment",
+          "id": "5",
+          "attributes": {
+            "createdAt": "2024-02-13T12:08:20.239Z",
+            "schedule": {
+              "startTime": "2024-02-13",
+              "interval": "Monthly",
+              "nextScheduledAction": "2024-03-29",
+              "dayOfMonth": 29
+            },
+            "description": "Book Repayments",
+            "transactionSummaryOverride": "Paid Piper Repayment",
+            "numberOfRepayments": 0,
+            "status": "Active"
+          },
+          "relationships": {
+            "org": {
+              "data": {
+                "type": "org",
+                "id": "2"
+              }
+            },
+            "account": {
+              "data": {
+                "type": "account",
+                "id": "10016"
+              }
+            },
+            "creditAccount": {
+              "data": {
+                "type": "creditAccount",
+                "id": "10005"
+              }
+            },
+            "counterpartyAccount": {
+              "data": {
+                "type": "account",
+                "id": "10012"
+              }
+            },
+            "customer": {
+              "data": {
+                "type": "customer",
+                "id": "10000"
+              }
+            }
+          }
+        },
+        "description": "`recurringBookRepayment` is a JSON:API resource."
+      },
+      "RecurringCapitalPartnerACHRepayment": {
+        "type": "object",
+        "required": [
+          "type",
+          "id",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "recurringCapitalPartnerAchRepayment"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "createdAt",
+              "schedule",
+              "description",
+              "numberOfRepayments",
+              "status"
+            ],
+            "properties": {
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the resource was created."
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the resource was updated."
+              },
+              "schedule": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ScheduleType"
+                  }
+                ],
+                "description": "The schedule of the recurring payment."
+              },
+              "description": {
+                "type": "string",
+                "description": "Repayment description (maximum of 50 characters). this will show up on the statement of the counterparty."
+              },
+              "addenda": {
+                "type": "string",
+                "description": "Optional, additional payment description (maximum of 80 characters), not all institutions present that."
+              },
+              "sameDay": {
+                "type": "boolean",
+                "description": "Optional, default is false. See Same Day ACH."
+              },
+              "secCode": {
+                "type": "string",
+                "description": "See Use a custom SEC Code."
+              },
+              "tags": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "See Tags. Tags that will be copied to any transaction that this payment creates (see Tag Inheritance)."
+              },
+              "numberOfRepayments": {
+                "type": "integer",
+                "description": "Represents the number of repayments that were created by this recurring payment."
+              },
+              "status": {
+                "type": "string",
+                "description": "Status of the recurring repayment, one of: Active, Disabled."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "properties": {
+              "creditAccount": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "counterparty": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "customer": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "org": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        },
+        "example": {
+          "type": "recurringCapitalPartnerAchRepayment",
+          "id": "1",
+          "attributes": {
+            "createdAt": "2024-02-13T10:54:24.373Z",
+            "schedule": {
+              "startTime": "2024-02-13",
+              "interval": "Monthly",
+              "nextScheduledAction": "2024-03-29",
+              "dayOfMonth": 29
+            },
+            "description": "Capital partner ACH Repayments",
+            "sameDay": false,
+            "numberOfRepayments": 0,
+            "status": "Active"
+          },
+          "relationships": {
+            "org": {
+              "data": {
+                "type": "org",
+                "id": "1"
+              }
+            },
+            "creditAccount": {
+              "data": {
+                "type": "creditAccount",
+                "id": "10010"
+              }
+            },
+            "counterparty": {
+              "data": {
+                "type": "counterparty",
+                "id": "1"
+              }
+            },
+            "customer": {
+              "data": {
+                "type": "customer",
+                "id": "10001"
+              }
+            }
+          }
+        },
+        "description": "`recurringCapitalPartnerAchRepayment` is a JSON:API resource."
+      },
+      "RecurringCapitalPartnerBookRepayment": {
+        "type": "object",
+        "required": [
+          "type",
+          "id",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "recurringCapitalPartnerBookRepayment"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "createdAt",
+              "schedule",
+              "description",
+              "numberOfRepayments",
+              "status"
+            ],
+            "properties": {
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the resource was created."
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the resource was updated."
+              },
+              "schedule": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ScheduleType"
+                  }
+                ],
+                "description": "The schedule of the recurring payment."
+              },
+              "description": {
+                "type": "string",
+                "description": "Repayment description (maximum of 50 characters). this will show up on the statement of the counterparty."
+              },
+              "transactionSummaryOverride": {
+                "type": "string",
+                "description": "If this field is populated, its contents will be returned as the bookTransaction's summary field (maximum of 100 characters)."
+              },
+              "tags": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "See Tags. Tags that will be copied to any transaction that this payment creates (see Tag Inheritance)."
+              },
+              "numberOfRepayments": {
+                "type": "integer",
+                "description": "Represents the number of repayments that were created by this recurring payment."
+              },
+              "status": {
+                "type": "string",
+                "description": "Status of the recurring repayment, one of: Active, Disabled."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "properties": {
+              "creditAccount": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "counterparty": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "counterpartyAccount": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "customer": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "org": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        },
+        "example": {
+          "type": "recurringCapitalPartnerBookRepayment",
+          "id": "5",
+          "attributes": {
+            "createdAt": "2024-02-13T12:08:20.239Z",
+            "schedule": {
+              "startTime": "2024-02-13",
+              "interval": "Monthly",
+              "nextScheduledAction": "2024-03-29",
+              "dayOfMonth": 29
+            },
+            "description": "Book Repayments",
+            "transactionSummaryOverride": "Paid Piper Repayment",
+            "numberOfRepayments": 0,
+            "status": "Active"
+          },
+          "relationships": {
+            "org": {
+              "data": {
+                "type": "org",
+                "id": "2"
+              }
+            },
+            "creditAccount": {
+              "data": {
+                "type": "creditAccount",
+                "id": "10005"
+              }
+            },
+            "counterpartyAccount": {
+              "data": {
+                "type": "account",
+                "id": "10012"
+              }
+            },
+            "customer": {
+              "data": {
+                "type": "customer",
+                "id": "10000"
+              }
+            }
+          }
+        },
+        "description": "`recurringCapitalPartnerBookRepayment` is a JSON:API resource."
+      },
+      "CreateRecurringACHRepaymentData": {
+        "type": "object",
+        "required": [
+          "type",
+          "attributes",
+          "relationships"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "recurringAchRepayment"
+            ]
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "description"
+            ],
+            "properties": {
+              "description": {
+                "type": "string",
+                "description": "Repayment description (maximum of 50 characters). This will show up on the statement of the counterparty.",
+                "example": "ACH Repayments"
+              },
+              "addenda": {
+                "type": "string",
+                "description": "Optional, additional repayment description (maximum of 80 characters), not all institutions present that in payment description."
+              },
+              "sameDay": {
+                "type": "boolean",
+                "description": "Optional, default is false. See Same Day ACH."
+              },
+              "secCode": {
+                "type": "string",
+                "description": "See Use a custom SEC Code."
+              },
+              "idempotencyKey": {
+                "type": "string",
+                "description": "See Idempotency.",
+                "example": "adjaw1sqvies-7aepu852-h4d6sxh-8jkyhfa"
+              },
+              "tags": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "See Tags. Tags that will be copied to any transaction that this recurring repayment creates (see Tag Inheritance)."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "required": [
+              "account",
+              "creditAccount",
+              "counterparty"
+            ],
+            "properties": {
+              "account": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "creditAccount": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "counterparty": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        }
+      },
+      "CreateRecurringACHRepaymentRequest": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/CreateRecurringACHRepaymentData"
+          }
+        }
+      },
+      "CreateRecurringBookRepaymentData": {
+        "type": "object",
+        "required": [
+          "type",
+          "attributes",
+          "relationships"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "recurringBookRepayment"
+            ]
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "description"
+            ],
+            "properties": {
+              "description": {
+                "type": "string",
+                "description": "Repayment description (maximum of 80 characters), this will show up on the statement of the counterparty.",
+                "example": "Book Repayments"
+              },
+              "transactionSummaryOverride": {
+                "type": "string",
+                "description": "If this field is populated, its contents will be returned as the bookTransaction's summary field (maximum of 100 characters).",
+                "example": "Paid Piper Repayment"
+              },
+              "idempotencyKey": {
+                "type": "string",
+                "description": "See Idempotency.",
+                "example": "adjaw1sqvies-7aep52-h4d6sxh-8hfa"
+              },
+              "tags": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "See Tags. Tags that will be copied to any transaction that this recurring repayment creates (see Tag Inheritance)."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "required": [
+              "account",
+              "creditAccount",
+              "counterpartyAccount"
+            ],
+            "properties": {
+              "account": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "creditAccount": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "counterpartyAccount": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        }
+      },
+      "CreateRecurringBookRepaymentRequest": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/CreateRecurringBookRepaymentData"
+          }
+        }
+      },
+      "CreateRecurringCapitalPartnerACHRepaymentData": {
+        "type": "object",
+        "required": [
+          "type",
+          "attributes",
+          "relationships"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "recurringAchRepayment"
+            ]
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "description"
+            ],
+            "properties": {
+              "description": {
+                "type": "string",
+                "description": "Repayment description (maximum of 50 characters), this will show up on the statement of the counterparty.",
+                "example": "ACH Repayments"
+              },
+              "addenda": {
+                "type": "string",
+                "description": "Optional, additional repayment description (maximum of 80 characters), not all institutions present that in the description."
+              },
+              "sameDay": {
+                "type": "boolean",
+                "description": "Optional, default is false. See Same Day ACH."
+              },
+              "secCode": {
+                "type": "string",
+                "description": "See Use a custom SEC Code."
+              },
+              "idempotencyKey": {
+                "type": "string",
+                "description": "See Idempotency.",
+                "example": "adjaw1sqvies-7aepu852-h4d6sxh-8jkyhfa"
+              },
+              "tags": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "See Tags. Tags that will be copied to any transaction that this recurring repayment creates (see Tag Inheritance)."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "required": [
+              "creditAccount",
+              "counterparty"
+            ],
+            "properties": {
+              "creditAccount": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "counterparty": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        }
+      },
+      "CreateRecurringCapitalPartnerACHRepaymentRequest": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/CreateRecurringCapitalPartnerACHRepaymentData"
+          }
+        }
+      },
+      "CreateRecurringCapitalPartnerBookRepaymentData": {
+        "type": "object",
+        "required": [
+          "type",
+          "attributes",
+          "relationships"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "recurringBookRepayment"
+            ]
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "description"
+            ],
+            "properties": {
+              "description": {
+                "type": "string",
+                "description": "Repayment description (maximum of 50 characters), this will show up on the statement of the counterparty.",
+                "example": "Capital Partner Book Repayments"
+              },
+              "transactionSummaryOverride": {
+                "type": "string",
+                "description": "If this field is populated, its contents will be returned as the bookTransaction's summary field (maximum of 100 characters).",
+                "example": "Paid Piper Repayment"
+              },
+              "idempotencyKey": {
+                "type": "string",
+                "description": "See Idempotency.",
+                "example": "adjaw1sqvies-7aep52-h4d6sxh-8hfa"
+              },
+              "tags": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "See Tags. Tags that will be copied to any transaction that this recurring repayment creates (see Tag Inheritance)."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "required": [
+              "creditAccount",
+              "counterpartyAccount"
+            ],
+            "properties": {
+              "creditAccount": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "counterpartyAccount": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        }
+      },
+      "CreateRecurringCapitalPartnerBookRepaymentRequest": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/CreateRecurringCapitalPartnerBookRepaymentData"
+          }
+        }
+      },
+      "ACHRepayment": {
+        "type": "object",
+        "required": [
+          "type",
+          "id",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "achRepayment"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "createdAt",
+              "updatedAt",
+              "amount",
+              "status"
+            ],
+            "properties": {
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the resource was created."
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the resource was updated."
+              },
+              "amount": {
+                "type": "integer",
+                "description": "The amount (cents) of the payment."
+              },
+              "status": {
+                "type": "string",
+                "description": "Either Pending, PendingReview, Returned, Sent or Rejected"
+              },
+              "tags": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "See Tags."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "properties": {
+              "account": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "creditAccount": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "org": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "customer": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "counterparty": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "payment": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "recurringRepayment": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        },
+        "example": {
+          "type": "achRepayment",
+          "id": "1",
+          "attributes": {
+            "createdAt": "2022-09-19T09:02:13.343Z",
+            "updatedAt": "2022-09-19T09:02:13.343Z",
+            "amount": 200,
+            "status": "Pending"
+          },
+          "relationships": {
+            "org": {
+              "data": {
+                "type": "org",
+                "id": "1"
+              }
+            },
+            "account": {
+              "data": {
+                "type": "account",
+                "id": "10003"
+              }
+            },
+            "counterparty": {
+              "data": {
+                "type": "counterparty",
+                "id": "1"
+              }
+            },
+            "creditAccount": {
+              "data": {
+                "type": "creditAccount",
+                "id": "10007"
+              }
+            },
+            "customer": {
+              "data": {
+                "type": "customer",
+                "id": "10002"
+              }
+            },
+            "payment": {
+              "data": {
+                "type": "payment",
+                "id": "1"
+              }
+            },
+            "recurringRepayment": {
+              "data": {
+                "type": "recurringRepayment",
+                "id": "4"
+              }
+            }
+          }
+        },
+        "description": "`achRepayment` is a JSON:API resource."
+      },
+      "BookRepayment": {
+        "type": "object",
+        "required": [
+          "type",
+          "id",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "bookRepayment"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "createdAt",
+              "updatedAt",
+              "amount",
+              "status"
+            ],
+            "properties": {
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the resource was created."
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the resource was updated."
+              },
+              "amount": {
+                "type": "integer",
+                "description": "The amount (cents) of the payment."
+              },
+              "status": {
+                "type": "string",
+                "description": "Either Sent or Rejected"
+              },
+              "tags": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "See Tags."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "properties": {
+              "account": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "creditAccount": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "org": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "customer": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "counterpartyAccount": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "payment": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "recurringRepayment": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        },
+        "example": {
+          "type": "bookRepayment",
+          "id": "5",
+          "attributes": {
+            "createdAt": "2022-09-19T09:33:16.254Z",
+            "updatedAt": "2022-09-19T09:33:16.254Z",
+            "amount": 20,
+            "status": "Sent"
+          },
+          "relationships": {
+            "counterpartyAccount": {
+              "data": {
+                "type": "account",
+                "id": "10008"
+              }
+            },
+            "account": {
+              "data": {
+                "type": "account",
+                "id": "10006"
+              }
+            },
+            "creditAccount": {
+              "data": {
+                "type": "creditAccount",
+                "id": "10007"
+              }
+            },
+            "customer": {
+              "data": {
+                "type": "customer",
+                "id": "10002"
+              }
+            },
+            "org": {
+              "data": {
+                "type": "org",
+                "id": "2"
+              }
+            },
+            "payment": {
+              "data": {
+                "type": "payment",
+                "id": "6"
+              }
+            }
+          }
+        },
+        "description": "`bookRepayment` is a JSON:API resource."
+      },
+      "CapitalPartnerACHRepayment": {
+        "type": "object",
+        "required": [
+          "type",
+          "id",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "capitalPartnerAchRepayment"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "createdAt",
+              "updatedAt",
+              "amount",
+              "status"
+            ],
+            "properties": {
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the resource was created."
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the resource was updated."
+              },
+              "amount": {
+                "type": "integer",
+                "description": "The amount (cents) of the payment."
+              },
+              "status": {
+                "type": "string",
+                "description": "Either Pending, PendingReview, Returned, Sent or Rejected"
+              },
+              "tags": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "See Tags."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "properties": {
+              "creditAccount": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "counterparty": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "org": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "customer": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "payment": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "recurringRepayment": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        },
+        "example": {
+          "type": "capitalPartnerAchRepayment",
+          "id": "1",
+          "attributes": {
+            "createdAt": "2022-09-19T09:02:13.343Z",
+            "updatedAt": "2022-09-19T09:02:13.343Z",
+            "amount": 200,
+            "status": "Pending"
+          },
+          "relationships": {
+            "counterparty": {
+              "data": {
+                "type": "counterparty",
+                "id": "1"
+              }
+            },
+            "creditAccount": {
+              "data": {
+                "type": "creditAccount",
+                "id": "10007"
+              }
+            },
+            "org": {
+              "data": {
+                "type": "org",
+                "id": "1"
+              }
+            },
+            "payment": {
+              "data": {
+                "type": "payment",
+                "id": "1"
+              }
+            }
+          }
+        },
+        "description": "`capitalPartnerAchRepayment` is a JSON:API resource."
+      },
+      "CapitalPartnerBookRepayment": {
+        "type": "object",
+        "required": [
+          "type",
+          "id",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "capitalPartnerBookRepayment"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "createdAt",
+              "updatedAt",
+              "amount",
+              "status"
+            ],
+            "properties": {
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the resource was created."
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the resource was updated."
+              },
+              "amount": {
+                "type": "integer",
+                "description": "The amount (cents) of the payment."
+              },
+              "status": {
+                "type": "string",
+                "description": "Either Pending, PendingReview, Returned, Sent or Rejected"
+              },
+              "tags": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "See Tags."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "properties": {
+              "creditAccount": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "counterpartyAccount": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "org": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "customer": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "payment": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "recurringRepayment": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        },
+        "example": {
+          "type": "capitalPartnerBookRepayment",
+          "id": "4",
+          "attributes": {
+            "createdAt": "2022-09-19T09:10:09.206Z",
+            "updatedAt": "2022-09-19T09:10:09.206Z",
+            "amount": 20,
+            "status": "Sent"
+          },
+          "relationships": {
+            "counterpartyAccount": {
+              "data": {
+                "type": "account",
+                "id": "10008"
+              }
+            },
+            "creditAccount": {
+              "data": {
+                "type": "creditAccount",
+                "id": "10007"
+              }
+            },
+            "customer": {
+              "data": {
+                "type": "customer",
+                "id": "10002"
+              }
+            },
+            "org": {
+              "data": {
+                "type": "org",
+                "id": "1"
+              }
+            },
+            "payment": {
+              "data": {
+                "type": "payment",
+                "id": "5"
+              }
+            },
+            "recurringRepayment": {
+              "data": {
+                "type": "recurringRepayment",
+                "id": "4"
+              }
+            }
+          }
+        },
+        "description": "`capitalPartnerBookRepayment` is a JSON:API resource."
+      },
+      "ExternalRepayment": {
+        "type": "object",
+        "required": [
+          "type",
+          "id",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "externalRepayment"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "createdAt",
+              "updatedAt",
+              "amount",
+              "status",
+              "description"
+            ],
+            "properties": {
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the resource was created."
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the resource was updated."
+              },
+              "amount": {
+                "type": "integer",
+                "description": "The amount (cents) of the repayment."
+              },
+              "status": {
+                "type": "string",
+                "description": "The status of the external repayment. One of Sent or Returned."
+              },
+              "description": {
+                "type": "string",
+                "description": "Repayment description."
+              },
+              "tags": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "See Tags."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "properties": {
+              "creditAccount": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "org": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "customer": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        },
+        "example": {
+          "type": "externalRepayment",
+          "id": "1",
+          "attributes": {
+            "createdAt": "2024-01-15T10:30:00.000Z",
+            "updatedAt": "2024-01-15T10:30:00.000Z",
+            "amount": 50000,
+            "status": "Sent",
+            "description": "External payment"
+          },
+          "relationships": {
+            "org": {
+              "data": {
+                "type": "org",
+                "id": "1"
+              }
+            },
+            "creditAccount": {
+              "data": {
+                "type": "creditAccount",
+                "id": "10007"
+              }
+            },
+            "customer": {
+              "data": {
+                "type": "customer",
+                "id": "10002"
+              }
+            }
+          }
+        },
+        "description": "`externalRepayment` is a JSON:API resource."
+      },
+      "CreateACHRepaymentData": {
+        "type": "object",
+        "required": [
+          "type",
+          "attributes",
+          "relationships"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "repayment"
+            ]
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "description",
+              "amount"
+            ],
+            "properties": {
+              "description": {
+                "type": "string",
+                "description": "Payment description (maximum of 10 characters), also known as Company Entry Description, this will show up on statement of the counterparty.",
+                "example": "test"
+              },
+              "amount": {
+                "type": "integer",
+                "description": "The amount to repay.",
+                "example": 200
+              },
+              "addenda": {
+                "type": "string",
+                "description": "Optional, additional payment description (maximum of 80 characters), not all institutions present that."
+              },
+              "tags": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "See Tags."
+              },
+              "sameDay": {
+                "type": "boolean",
+                "description": "Optional, default is false. See Same Day ACH."
+              },
+              "secCode": {
+                "type": "string",
+                "description": "See Use a custom SEC Code."
+              },
+              "clearingDaysOverride": {
+                "type": "number",
+                "description": "See Dynamic Clearing Period."
+              },
+              "idempotencyKey": {
+                "type": "string",
+                "description": "See Idempotency."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "required": [
+              "account",
+              "creditAccount",
+              "counterparty"
+            ],
+            "properties": {
+              "account": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "creditAccount": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "counterparty": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        }
+      },
+      "CreateACHRepaymentRequest": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/CreateACHRepaymentData"
+          }
+        }
+      },
+      "CreateBookRepaymentData": {
+        "type": "object",
+        "required": [
+          "type",
+          "attributes",
+          "relationships"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "repayment"
+            ]
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "description",
+              "amount",
+              "transactionSummaryOverride"
+            ],
+            "properties": {
+              "description": {
+                "type": "string",
+                "description": "Repayment description (maximum of 80 characters), this will show up on statement of the counterparty.",
+                "example": "test"
+              },
+              "amount": {
+                "type": "integer",
+                "description": "The amount (cents) to repay.",
+                "example": 20
+              },
+              "transactionSummaryOverride": {
+                "type": "string",
+                "description": "If this field is populated, its contents will be returned as the bookTransaction's summary field (maximum of 100 characters).",
+                "example": "override"
+              },
+              "tags": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "See Tags."
+              },
+              "idempotencyKey": {
+                "type": "string",
+                "description": "See Idempotency.",
+                "example": "3a1a33be-4e12-4603-9ed0-820922389fb8"
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "required": [
+              "account",
+              "creditAccount",
+              "counterpartyAccount"
+            ],
+            "properties": {
+              "account": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "creditAccount": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "counterpartyAccount": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        }
+      },
+      "CreateBookRepaymentRequest": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/CreateBookRepaymentData"
+          }
+        }
+      },
+      "CreateCapitalPartnerACHRepaymentData": {
+        "type": "object",
+        "required": [
+          "type",
+          "attributes",
+          "relationships"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "repayment"
+            ]
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "description",
+              "amount"
+            ],
+            "properties": {
+              "description": {
+                "type": "string",
+                "description": "Payment description (maximum of 10 characters), also known as Company Entry Description, this will show up on statement of the counterparty.",
+                "example": "test"
+              },
+              "amount": {
+                "type": "integer",
+                "description": "The amount to repay.",
+                "example": 200
+              },
+              "addenda": {
+                "type": "string",
+                "description": "Optional, additional payment description (maximum of 80 characters), not all institutions present that."
+              },
+              "tags": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "See Tags."
+              },
+              "sameDay": {
+                "type": "boolean",
+                "description": "Optional, default is false. See Same Day ACH."
+              },
+              "secCode": {
+                "type": "string",
+                "description": "See Use a custom SEC Code."
+              },
+              "idempotencyKey": {
+                "type": "string",
+                "description": "See Idempotency."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "required": [
+              "creditAccount",
+              "counterparty"
+            ],
+            "properties": {
+              "creditAccount": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "counterparty": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        }
+      },
+      "CreateCapitalPartnerACHRepaymentRequest": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/CreateCapitalPartnerACHRepaymentData"
+          }
+        }
+      },
+      "CreateCapitalPartnerBookRepaymentData": {
+        "type": "object",
+        "required": [
+          "type",
+          "attributes",
+          "relationships"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "repayment"
+            ]
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "description",
+              "amount",
+              "transactionSummaryOverride"
+            ],
+            "properties": {
+              "description": {
+                "type": "string",
+                "description": "Repayment description (maximum of 80 characters), this will show up on statement of the counterparty.",
+                "example": "test"
+              },
+              "amount": {
+                "type": "integer",
+                "description": "The amount (cents) to repay.",
+                "example": 20
+              },
+              "transactionSummaryOverride": {
+                "type": "string",
+                "description": "If this field is populated, its contents will be returned as the bookTransaction's summary field (maximum of 100 characters).",
+                "example": "override"
+              },
+              "tags": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "See Tags."
+              },
+              "idempotencyKey": {
+                "type": "string",
+                "description": "See Idempotency.",
+                "example": "3a1a33be-4e12-4603-9ed0-820922389fb8"
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "required": [
+              "creditAccount",
+              "counterpartyAccount"
+            ],
+            "properties": {
+              "creditAccount": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "counterpartyAccount": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        }
+      },
+      "CreateCapitalPartnerBookRepaymentRequest": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/CreateCapitalPartnerBookRepaymentData"
+          }
+        }
+      },
+      "CreateExternalRepaymentData": {
+        "type": "object",
+        "required": [
+          "type",
+          "attributes",
+          "relationships"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "externalRepayment"
+            ]
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "description",
+              "amount"
+            ],
+            "properties": {
+              "description": {
+                "type": "string",
+                "description": "Repayment description (maximum of 80 characters).",
+                "example": "External payment"
+              },
+              "amount": {
+                "type": "integer",
+                "description": "The amount (cents) to repay.",
+                "example": 50000
+              },
+              "tags": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "See Tags."
+              },
+              "idempotencyKey": {
+                "type": "string",
+                "description": "See Idempotency."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "required": [
+              "creditAccount"
+            ],
+            "properties": {
+              "creditAccount": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        }
+      },
+      "CreateExternalRepaymentRequest": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/CreateExternalRepaymentData"
+          }
+        }
+      },
+      "ReturnExternalRepaymentData": {
+        "type": "object",
+        "required": [
+          "type",
+          "attributes",
+          "relationships"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "externalRepaymentReturn"
+            ]
+          },
+          "attributes": {
+            "type": "object"
+          },
+          "relationships": {
+            "type": "object",
+            "required": [
+              "repayment"
+            ],
+            "properties": {
+              "repayment": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        }
+      },
+      "ReturnExternalRepaymentRequest": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/ReturnExternalRepaymentData"
+          }
+        }
+      },
+      "Reward": {
+        "type": "object",
+        "description": "This resource is generated as a result of a reward creation request.",
+        "required": [
+          "type",
+          "id",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "reward"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "createdAt",
+              "amount",
+              "description",
+              "status"
+            ],
+            "properties": {
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the reward was created."
+              },
+              "amount": {
+                "type": "integer",
+                "description": "The amount (in cents) of the reward."
+              },
+              "description": {
+                "type": "string",
+                "description": "Description of the reward."
+              },
+              "status": {
+                "type": "string",
+                "description": "Either Sent or Rejected (see rejectReason for details)."
+              },
+              "rejectReason": {
+                "type": "string",
+                "description": "More information about the status."
+              },
+              "tags": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "See Tags."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "properties": {
+              "receivingAccount": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "fundingAccount": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "rewardedTransaction": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "customer": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "transaction": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "card": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        },
+        "example": {
+          "type": "reward",
+          "id": "20",
+          "attributes": {
+            "createdAt": "2022-03-31T14:42:55.780Z",
+            "status": "Sent",
+            "amount": 4000,
+            "description": "A sample reward",
+            "tags": {}
+          },
+          "relationships": {
+            "receivingAccount": {
+              "data": {
+                "type": "account",
+                "id": "10001"
+              }
+            },
+            "fundingAccount": {
+              "data": {
+                "type": "account",
+                "id": "10000"
+              }
+            },
+            "rewardedTransaction": {
+              "data": {
+                "type": "transaction",
+                "id": "7"
+              }
+            },
+            "customer": {
+              "data": {
+                "type": "customer",
+                "id": "10000"
+              }
+            },
+            "transaction": {
+              "data": {
+                "type": "transaction",
+                "id": "24"
+              }
+            }
+          }
+        }
+      },
+      "CreateRewardData": {
+        "type": "object",
+        "required": [
+          "type",
+          "attributes",
+          "relationships"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "reward"
+            ]
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "amount",
+              "description"
+            ],
+            "properties": {
+              "amount": {
+                "type": "integer",
+                "description": "The amount (in cents) to reward the account.",
+                "example": 3000
+              },
+              "description": {
+                "type": "string",
+                "description": "Description of the reward (maximum of 50 characters).",
+                "example": "Reward for transaction #5678"
+              },
+              "tags": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "See Tags."
+              },
+              "idempotencyKey": {
+                "type": "string",
+                "description": "Optional, but **strongly recommended**. See Idempotency."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "required": [
+              "receivingAccount"
+            ],
+            "properties": {
+              "receivingAccount": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        }
+      },
+      "Statement": {
+        "type": "object",
+        "description": "`Statement` is a JSON:API resource, top-level fields:",
+        "required": [
+          "type",
+          "id",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "statement"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "period"
+            ],
+            "properties": {
+              "period": {
+                "type": "string",
+                "description": "Period of the statement, formatted YYYY-MM, e.g \"2020-05\"."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "properties": {
+              "account": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "customer": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "customers": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        },
+        "example": {
+          "type": "statement",
+          "id": "1",
+          "attributes": {
+            "period": "2020-07"
+          },
+          "relationships": {
+            "account": {
+              "data": {
+                "type": "account",
+                "id": "1000"
+              }
+            },
+            "customer": {
+              "data": {
+                "type": "customer",
+                "id": "1"
+              }
+            }
+          }
+        }
+      },
+      "ACHStopPayment": {
+        "type": "object",
+        "description": "`achStopPayment` is a JSON:API resource, top-level fields:",
+        "required": [
+          "type",
+          "id",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "achStopPayment"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "createdAt",
+              "updatedAt",
+              "direction",
+              "description"
+            ],
+            "properties": {
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the resource was created."
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the resource was updated."
+              },
+              "minAmount": {
+                "type": "integer",
+                "description": "The amount (cents) above which a received ACH payments will be stopped."
+              },
+              "originatorName": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Array of originator names to look on a payment to stop."
+              },
+              "direction": {
+                "type": "string",
+                "description": "Debit only."
+              },
+              "expiration": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Expiration date fo the stop payment"
+              },
+              "isMultiUse": {
+                "type": "boolean"
+              },
+              "description": {
+                "type": "string"
+              },
+              "disableReason": {
+                "type": "string",
+                "description": "One of Expired, Requested or PaymentStopped"
+              },
+              "idempotencyKey": {
+                "type": "string",
+                "description": "Optional, but **strongly recommended**. See Idempotency."
+              },
+              "tags": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "See Tags."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "properties": {
+              "account": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "customer": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "customers": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        },
+        "example": {
+          "type": "achStopPayment",
+          "id": "13235",
+          "attributes": {
+            "createdAt": "2023-02-05T18:32:34.682Z",
+            "updatedAt": "2023-02-05T18:32:34.682Z",
+            "minAmount": 21000,
+            "direction": "Debit",
+            "isMultiUse": true,
+            "expiration": "2025-02-05T18:32:34.682Z",
+            "description": "Test",
+            "tags": {
+              "test": "test"
+            }
+          },
+          "relationships": {
+            "account": {
+              "data": {
+                "type": "account",
+                "id": "123456"
+              }
+            },
+            "customer": {
+              "data": {
+                "type": "customer",
+                "id": "95032"
+              }
+            },
+            "customers": {
+              "data": [
+                {
+                  "type": "customer",
+                  "id": "95032"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "CheckStopPayment": {
+        "type": "object",
+        "description": "`checkStopPayment` is a JSON:API resource, top-level fields:",
+        "required": [
+          "type",
+          "id",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "checkStopPayment"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "createdAt",
+              "updatedAt",
+              "status",
+              "checkNumber"
+            ],
+            "properties": {
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the resource was created."
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date the resource was updated."
+              },
+              "amount": {
+                "type": "integer",
+                "description": "The amount (cents) of the check payment."
+              },
+              "status": {
+                "type": "string",
+                "description": "The status of the stop payment, one of Active or Disabled."
+              },
+              "checkNumber": {
+                "type": "string",
+                "description": "The checkNumber of the check payments that the stop payment operation will be applied to."
+              },
+              "tags": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "See Tags."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "properties": {
+              "account": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "customer": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "customers": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "stoppedPayments": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        },
+        "example": {
+          "type": "checkStopPayment",
+          "id": "13235",
+          "attributes": {
+            "createdAt": "2023-02-05T18:32:34.682Z",
+            "updatedAt": "2023-02-05T18:32:34.682Z",
+            "amount": 21323,
+            "status": "Active",
+            "tags": {
+              "test": "test"
+            },
+            "checkNumber": "006753"
+          },
+          "relationships": {
+            "account": {
+              "data": {
+                "type": "account",
+                "id": "123456"
+              }
+            },
+            "customer": {
+              "data": {
+                "type": "customer",
+                "id": "95032"
+              }
+            },
+            "customers": {
+              "data": [
+                {
+                  "type": "customer",
+                  "id": "95032"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "CreateACHStopPaymentData": {
+        "type": "object",
+        "required": [
+          "type",
+          "attributes",
+          "relationships"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "achStopPayment"
+            ]
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "direction",
+              "description"
+            ],
+            "properties": {
+              "minAmount": {
+                "type": "integer",
+                "description": "The amount (in cents) above which a payment will be stopped. At least one originatorName or minAmount must be provided.",
+                "example": 5001
+              },
+              "originatorName": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "The name of the originator of the payment to look for in payments to stop. At least one originatorName or minAmount must be provided. See guide for further details.",
+                "example": [
+                  "Pied Pier",
+                  "Pied Pier Inc."
+                ]
+              },
+              "direction": {
+                "type": "string",
+                "description": "Debit only.",
+                "example": "Debit"
+              },
+              "expiration": {
+                "type": "string",
+                "format": "date",
+                "description": "Date only (e.g. \"2001-08-15\").",
+                "example": "2025-07-01"
+              },
+              "isMultiUse": {
+                "type": "boolean",
+                "description": "Available only for ACH Stop Payments. False by default.",
+                "example": true
+              },
+              "description": {
+                "type": "string",
+                "description": "Up to 255 characters",
+                "example": "Stop subscription payments greater than $50 to the gym."
+              },
+              "tags": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "See Tags.",
+                "example": {
+                  "test": "test"
+                }
+              },
+              "idempotencyKey": {
+                "type": "string",
+                "description": "Optional, but **strongly recommended**. See Idempotency."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "required": [
+              "account"
+            ],
+            "properties": {
+              "account": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        }
+      },
+      "CreateACHStopPaymentRequest": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/CreateACHStopPaymentData"
+          }
+        }
+      },
+      "CreateCheckStopPaymentData": {
+        "type": "object",
+        "required": [
+          "type",
+          "attributes",
+          "relationships"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "checkStopPayment"
+            ]
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "checkNumber"
+            ],
+            "properties": {
+              "amount": {
+                "type": "integer",
+                "description": "The amount (in cents) to look on payments to stop.",
+                "example": 23
+              },
+              "checkNumber": {
+                "type": "string",
+                "description": "The check number to look on a check payment to stop.",
+                "example": "006753"
+              },
+              "tags": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "See Tags.",
+                "example": {
+                  "test": "test"
+                }
+              },
+              "idempotencyKey": {
+                "type": "string",
+                "description": "Optional, but **strongly recommended**. See Idempotency."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "required": [
+              "account"
+            ],
+            "properties": {
+              "account": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        }
+      },
+      "CreateCheckStopPaymentRequest": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/CreateCheckStopPaymentData"
+          }
+        }
+      },
+      "UpdateAchStopPaymentData": {
+        "type": "object",
+        "required": [
+          "type",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "achStopPayment"
+            ]
+          },
+          "attributes": {
+            "type": "object",
+            "properties": {
+              "tags": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "See Updating Tags.",
+                "example": {
+                  "newTag": "New tag value"
+                }
+              },
+              "expiration": {
+                "type": "string",
+                "format": "date",
+                "description": "Date only (e.g. \"2026-08-15\").",
+                "example": "2025-05-05"
+              }
+            }
+          }
+        }
+      },
+      "UpdateAchStopPaymentRequest": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/UpdateAchStopPaymentData"
+          }
+        }
+      },
+      "TaxForm": {
+        "type": "object",
+        "description": "`taxForm` is a JSON:API resource, top-level fields:",
+        "required": [
+          "type",
+          "id",
+          "attributes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "taxForm"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "object",
+            "required": [
+              "formType",
+              "taxYear"
+            ],
+            "properties": {
+              "formType": {
+                "type": "string",
+                "description": "the type of the tax form."
+              },
+              "taxYear": {
+                "type": "string",
+                "pattern": "^\\d{4}$",
+                "description": "The tax year of the form, formatted YYYY, e.g \"2020\"."
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "properties": {
+              "account": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "accounts": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "customer": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        },
+        "example": {
+          "type": "taxForm",
+          "id": "1",
+          "attributes": {
+            "formType": "1099-INT",
+            "taxYear": "2023"
+          },
+          "relationships": {
+            "customer": {
+              "data": {
+                "type": "customer",
+                "id": "10"
+              }
+            },
+            "account": {
+              "data": {
+                "type": "account",
+                "id": "1000"
+              }
+            }
           }
         }
       }

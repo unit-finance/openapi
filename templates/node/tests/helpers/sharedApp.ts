@@ -1,5 +1,5 @@
 import type { BusinessApplication } from "../..";
-import { buildApi } from "./api";
+import { buildApi, withRetry } from "./api";
 import { buildBusinessApplicationRequest } from "./fixtures";
 
 interface SharedApp {
@@ -14,16 +14,21 @@ let cached: Promise<SharedApp> | null = null;
  * Lazily creates one Business application that downstream tests
  * (`getById`, `update`, `update-beneficial-owner`, `cancel`) reuse.
  *
- * Jest is invoked with `--runInBand`, so files run sequentially in a
- * single worker and this module-level cache is shared across files.
+ * The cache is per *module registry*, which jest creates fresh for every test
+ * file — so this provisions one application per file, not one per run. The
+ * create is therefore retried through transient sandbox failures: at that
+ * volume an occasional 500 is routine, and failing here would fail a suite
+ * over something unrelated to the operation it tests.
  */
 export function getOrCreateSharedBusinessApp(): Promise<SharedApp> {
 	if (cached) return cached;
 	cached = (async () => {
 		const api = buildApi();
-		const { data, status } = await api.createApplication({
-			createApplicationRequest: buildBusinessApplicationRequest(),
-		});
+		const { data, status } = await withRetry(() =>
+			api.createApplication({
+				createApplicationRequest: buildBusinessApplicationRequest(),
+			}),
+		);
 		// Throw rather than `expect(...)` here: this runs inside a module-level
 		// async IIFE, not a test body, so a jest assertion would be attributed
 		// to whichever test first awaits this promise and produce a misleading

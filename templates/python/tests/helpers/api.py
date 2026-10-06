@@ -35,6 +35,12 @@ from unit_finance_sdk import (
     PaymentsApi,
     PositivePayApi,
     ReceivablesManagementApi,
+    RecurringRepaymentsApi,
+    RepaymentsApi,
+    RewardsApi,
+    StatementsApi,
+    StopPaymentsApi,
+    TaxFormsApi,
     TransactionsApi,
 )
 
@@ -194,6 +200,36 @@ def build_credit_applications_api() -> CreditApplicationsApi:
 def build_credit_decisions_api() -> CreditDecisionsApi:
     """Construct a ``CreditDecisionsApi`` bound to the sandbox."""
     return CreditDecisionsApi(ApiClient(_configuration()))
+
+
+def build_stop_payments_api() -> StopPaymentsApi:
+    """Construct a ``StopPaymentsApi`` bound to the sandbox."""
+    return StopPaymentsApi(ApiClient(_configuration()))
+
+
+def build_rewards_api() -> RewardsApi:
+    """Construct a ``RewardsApi`` bound to the sandbox."""
+    return RewardsApi(ApiClient(_configuration()))
+
+
+def build_statements_api() -> StatementsApi:
+    """Construct a ``StatementsApi`` bound to the sandbox."""
+    return StatementsApi(ApiClient(_configuration()))
+
+
+def build_tax_forms_api() -> TaxFormsApi:
+    """Construct a ``TaxFormsApi`` bound to the sandbox."""
+    return TaxFormsApi(ApiClient(_configuration()))
+
+
+def build_repayments_api() -> RepaymentsApi:
+    """Construct a ``RepaymentsApi`` bound to the sandbox."""
+    return RepaymentsApi(ApiClient(_configuration()))
+
+
+def build_recurring_repayments_api() -> RecurringRepaymentsApi:
+    """Construct a ``RecurringRepaymentsApi`` bound to the sandbox."""
+    return RecurringRepaymentsApi(ApiClient(_configuration()))
 
 
 # ``GET /credit-applications/{id}`` and ``GET /credit-decisions/{id}`` reject any
