@@ -1,6 +1,6 @@
 # Implemented API slices
 
-From `spec-version.json` (`slices`), OpenAPI tags on `unit-finance/unit-openapi` **0.18.0**.
+From `spec-version.json` (`slices`), OpenAPI tags on `unit-finance/unit-openapi` **0.19.0**.
 
 Accounts · Application Documents · Applications · Authorized Users ·
 Card Fraud Outreach · Card Holder API Tokens · Cards · Cards ATM Locations ·
@@ -8,7 +8,8 @@ Cards Add To Mobile Wallet · Cards Authorization Requests · Cards Authorizatio
 Check Deposits · Check Payments · Counterparties · Credit Applications ·
 Credit Decisions · Customers · DACA · Disputes · Fees · Institutions ·
 Interest · Lending Programs · Payments · Positive Pay ·
-Receivables Management · Transactions
+Receivables Management · Recurring Repayments · Repayments · Rewards ·
+Statements · Stop Payments · Tax Forms · Transactions
 
 # Test skips and early exits
 
@@ -68,6 +69,17 @@ the same **hard skip** everywhere (the sandbox does not serve the path).
 `getTotalAccruedInterest` and the two Receivables reads **run** in every SDK but
 need a raw-body read in the three strict-typed clients; see below.
 
+**Recurring Repayments · Repayments · Rewards · Statements · Stop Payments ·
+Tax Forms** (new in spec 0.19.0) — the three Rewards operations, all four
+Statements operations and all five Stop Payments operations **run** in every
+SDK, as do `listRepayments`, `listRecurringRepayments` and `listTaxForms`. The
+remaining nine operations are the same **abort** everywhere, for two root
+causes: the eight repayment operations that need a **credit account** the
+sandbox org cannot provide, and the two Tax Forms reads with nothing to read.
+See below. The check-payment half of Stop Payments and `listStatements` both
+return a `type` the spec does not declare, which only the strict-typed clients
+notice; see "Where SDKs differ".
+
 | Mark | Meaning |
 | --- | --- |
 | **hard skip** | Test never calls the API (`it.skip`, `@Disabled`, RSpec/`pytest` skip). |
@@ -110,11 +122,59 @@ need a raw-body read in the three strict-typed clients; see below.
 | `configurePositivePayPolicy` (new in spec 0.18.0) | hard skip | The sandbox does not route `POST /positive-pay-policy` at all: a spec-valid request answers **404 "Please check the path, we don't serve any resource at the specified path"**. The operation exists only in the spec, so there is nothing to exercise. Fix lives in the sandbox (serve the path) or in `unit-openapi` (drop the operation). |
 | `getTotalAccruedInterest` (new in spec 0.18.0) | runs, via raw body in three SDKs | Two separate problems. **Request:** the spec types every filter as a plain `string` and its own example shows `2024-03`, but the API rejects a missing range with **400** ("provide either a since/until or a sinceInterestMonth/untilInterestMonth range"), rejects `YYYY-MM-DD` with **400 `Invalid value`**, and the `sinceInterestMonth`/`untilInterestMonth` pair simply **never responds** (the request hangs past any client timeout). Only full ISO-8601 instants on `filter[since]`/`filter[until]` work, and only over a **narrow window** — a multi-month range also hangs — so the fixtures use a rolling one-day window. **Response:** the spec types `data` as a bare `{ amount }` object, but the sandbox returns a full JSON:API resource (`{ type: "totalAccruedInterest", attributes: { amount } }`). The typed `amount` is therefore absent, which the strict clients reject outright (pydantic/gson "required field missing", Ruby "data cannot be nil"), so Python, Java and Ruby read the raw body. Spec defects owned by `unit-openapi`: model `data` as the JSON:API resource the API returns, and document the accepted datetime format. |
 | `listReceivables` / `getReceivableById` (new in spec 0.18.0) | runs, via raw body in three SDKs | The spec marks `Receivable.attributes.originalAmount` and `remainingAmount` **required**, but the sandbox sends neither — it returns `totalPrincipal`, `remainingPrincipal`, `plan`, `totalInterest` and `remainingInterest` instead. The strict clients therefore fail while **deserializing** a 200 (Python matches neither arm of the response `oneOf`, Java's generated `validateJsonElement` throws, Ruby's `oneOf` builder returns nil and raises "data cannot be nil"). Node (axios) does not validate and reads the typed response directly; Python, Java and Ruby read the raw body so they still assert the same envelope. `getReceivableById` additionally takes the first id off the list and aborts when the org has none — receivables are produced by Unit's lending flows, with no create operation on this surface. Spec defect owned by `unit-openapi`: align `ReceivableAttributes` with what the API actually returns. |
+| `createRepayment` / `returnExternalRepayment` (new in spec 0.19.0) | abort | Every repayment needs a **`creditAccount`** relationship, and this org has none. Creating one requires a `creditTerms` identifier naming a credit product on the org's bank agreement; there is **no list-credit-terms operation**, so the helpers try the documented sandbox default `credit_terms_1` and get **404 "The specified credit terms was not found"**. Scanning `listAccounts` finds no pre-existing `creditAccount` to borrow either. That is org configuration, not a bad request, so the helper returns unavailable and the suites bail. `returnExternalRepayment` is doubly gated: it needs an external repayment in **`Sent`** status, and the sandbox creates them `Pending` with no way to advance one, so the suites also treat a rejected return as unreachable. The request body took two spec readings to get right — `data.type` is **`externalRepaymentReturn`** (not `externalRepayment`) and `data.relationships` takes **`repayment`**, not the `creditAccount` the other repayment variants use. |
+| `createRecurringRepayment` / `enableRecurringRepayment` / `disableRecurringRepayment` (new in spec 0.19.0) | abort | Same missing credit product as above. Note the spec's recurring-repayment create attributes declare only `description` / `addenda` / `sameDay` / `secCode` / `tags` / `idempotencyKey` — no **`schedule`** and no **`amount`**, which the real operation needs to describe a recurring charge. Spec defect owned by `unit-openapi`; it is untestable here either way until the org has a credit product. Each suite mints its own schedule rather than sharing one, because enable/disable flip its status. `enable` additionally disables its own schedule first: a schedule is created `Active` and `enable` is only legal from `Disabled`. |
+| `listRepayments` / `listRecurringRepayments` (new in spec 0.19.0) | runs | Plain paged reads; the sandbox org already has repayments and recurring repayments from other activity. The accepted `type` lists include the **capital partner** variants the org actually returns (`capitalPartnerAchRepayment`, `recurringCapitalPartnerAchRepayment`, ...), not just the plain ACH/book ones. |
+| `getRepayment` / `getRecurringRepayment` (new in spec 0.19.0) | runs via fallback | The create path is unavailable (no credit product), so both reads fall back to the first id from their list endpoint, which this org has. They abort only if the list is empty too. |
+| `createReward` / `listRewards` / `getReward` (new in spec 0.19.0) | runs | The org has a rewards program, so a `reward` against the shared deposit account returns **201** and the reads follow. The create helper still treats a 4xx/5xx as feature-unavailable, because the reward pool is provisioned per bank agreement and cannot be created from the API. |
+| `createStopPayment` (new in spec 0.19.0) | runs, both variants | Check and ACH stop payments both return **201** against the shared account. Two undocumented constraints on the ACH variant, both learned from error bodies: each `originatorName[]` entry is capped at **16 characters** (longer → 400 `invalid_fields`) and must be **unique per account** (a repeat → 409 "Stop Payment with such name already exists"), so the fixtures randomize a 16-character name. The spec also marks both `minAmount` and `originatorName` optional while the API requires at least one. Spec defects owned by `unit-openapi`: document the length limit and the either-or requirement. |
+| `updateAchStopPayment` (new in spec 0.19.0) | runs | PATCHes `expiration` and `tags` on an ACH stop payment the suite mints for itself. It cannot reuse the check variant — the operation only accepts `achStopPayment`. |
+| `getStopPayment` / `disableStopPayment` / `listStopPayments` (new in spec 0.19.0) | runs | Each suite mints its own stop payment rather than sharing one, because `disable` moves it to `Disabled` and a shared resource would make the run order-dependent. The `type` these return is not the spec's; see "Where SDKs differ". |
+| `getBankVerificationPdf` / `getStatementPdf` / `getStatementHtml` (new in spec 0.19.0) | runs | The bank verification PDF is keyed by account id, so the shared account is enough. The two per-statement downloads take the first id off `listStatements` — statements are generated by Unit at the close of each monthly period with **no create operation**, so the suites abort when the org has none. This org does have them, so all three download. They also abort when the id cannot be resolved at all: `/statements` is unpaged (see below) and its cost is unbounded by anything we control — on CI the list has exceeded a 180s read timeout — and an id the sandbox will not hand over leaves the download unreachable rather than broken. |
+| `listStatements` (new in spec 0.19.0) | runs, with no page-size assertion | `/statements` accepts `page[limit]` and **ignores** it: a request for 20 came back with 40. The suites assert envelope shape only. Spec defect owned by `unit-openapi`: drop the parameter or make the API honour it. The returned `type` is also wrong; see "Where SDKs differ". |
+| `listTaxForms` (new in spec 0.19.0) | runs | Plain read — and the only Tax Forms operation that takes no parameters at all; the spec declares no paging for it. Returns an empty array on this org. |
+| `getTaxFormById` / `getTaxFormPdfById` (new in spec 0.19.0) | abort | Both need a tax form id, and tax forms are **issued annually by Unit** with no create operation on this surface — the same shape of gap as `getDisputeById`. The suites read the first id off `listTaxForms` and bail because this org has none. |
 | `updateCreditApplication` (new in spec 0.16.0) | runs | PATCHes the underwriting attributes of a **dedicated** application the suite creates for this test alone, so it never mutates an unrelated org resource. It cannot share the application the other credit suites use: `createCreditDecision` records an approved decision, flipping that application to `Approved`, and the API then rejects the PATCH with 400 `not_supported_for_credit_application_status` ("Credit application cannot be patched when status is Approved"). Sharing made the run order-dependent — it passed under jest/pytest/rspec alphabetical collection but failed on CI for Java, where Surefire's default `filesystem` order ran the decision first. The fallback path likewise only accepts a listed application still in `Pending`. |
 
 ---
 
 ## Where SDKs differ
+
+### `createStopPayment` / `getStopPayment` / `disableStopPayment` / `listStopPayments` (new in spec 0.19.0)
+
+All four **run** everywhere — the difference is only in how the response is
+read. The spec discriminates the check variant as **`checkStopPayment`**, but
+the sandbox answers create, get, disable and list with the bare
+**`stopPayment`** for it. (The ACH variant does return `achStopPayment`, so
+`createStopPayment`'s ACH case and `updateAchStopPayment` stay on the typed
+client in every language.) Node's axios client does not validate response
+discriminators and reads the typed response directly; the three strict-typed
+clients cannot, so they read the raw body and assert the same envelope.
+
+Spec defect owned by `unit-openapi`: align the check stop payment's `type` with
+what the API returns (or have the API return the discriminated value). Then
+drop the raw-body reads.
+
+| Node | Java | Ruby | Python |
+| --- | --- | --- | --- |
+| **Runs** typed. Axios does not validate the discriminator. | **Runs** via raw body — Gson's `oneOf` adapter matches no arm. Uses `ApiSupport.rawGet` plus a new `rawPost` that still serializes the typed fixture through the SDK's own Gson. | **Runs** via raw body — the `oneOf` builder returns nil and the wrapper raises `data cannot be nil`. Uses the generator's `debug_return_type: 'String'`, the precedent set by `helpers/credit.rb`. | **Runs** via raw body — Pydantic raises on the out-of-enum `type`. Uses `*_without_preload_content` plus `json.loads`, the precedent set by the positive-pay cancel suite. |
+
+### `listStatements` (new in spec 0.19.0)
+
+Same shape of problem, different resource: the spec names this resource
+**`statement`** and the sandbox returns **`accountStatementDTO`**. Node reads
+the typed response; the strict-typed clients read the raw body. The three
+single-resource Statements operations are unaffected because they return a
+file or HTML rather than a JSON:API envelope.
+
+Spec defect owned by `unit-openapi`: rename `Statement.type` to the value the
+API sends. Ruby reads the credit-account discovery scan raw for a related
+reason — the account list is a `oneOf` over every account variant, so a lookup
+that only needs `type` and `id` would otherwise be sunk by an unrelated arm.
+
+| Node | Java | Ruby | Python |
+| --- | --- | --- | --- |
+| **Runs** typed. | **Runs** via raw body (Gson `oneOf` matches nothing). | **Runs** via raw body (`Statement#type=` rejects the value). | **Runs** via raw body (Pydantic rejects the value). |
 
 ### `listCheckPayments` / `getCheckPayment` / `getCheckImage` / `returnCheckPayment` / `approveCheckPaymentAdditionalVerification` (new in spec 0.15.0)
 

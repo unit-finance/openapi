@@ -1108,3 +1108,203 @@ export function buildConfigurePositivePayPolicyRequest(accountId: string) {
 		},
 	};
 }
+
+/** A unique idempotency key so re-runs never collide on a replayed request. */
+const idempotencyKey = (prefix: string) =>
+	`${TEST_RUN_ID}-${prefix}-${Math.random().toString(36).slice(2, 10)}`;
+
+/** `YYYY-MM-DD` a year out, for fields that demand a future date. */
+const nextYearDate = () => {
+	const date = new Date();
+	date.setFullYear(date.getFullYear() + 1);
+	return date.toISOString().slice(0, 10);
+};
+
+export function buildCreateCreditAccountRequest(
+	customerId: string,
+	creditTerms: string,
+) {
+	return {
+		data: {
+			type: "creditAccount" as const,
+			attributes: {
+				creditTerms,
+				creditLimit: 200_000,
+				tags: baseTags(),
+				idempotencyKey: idempotencyKey("credit-account"),
+			},
+			relationships: {
+				customer: { data: { type: "customer" as const, id: customerId } },
+			},
+		},
+	};
+}
+
+export function buildCreateCheckStopPaymentRequest(
+	accountId: string,
+	checkNumber: string,
+) {
+	return {
+		data: {
+			type: "checkStopPayment" as const,
+			attributes: {
+				checkNumber,
+				amount: 10_000,
+				tags: baseTags(),
+				idempotencyKey: idempotencyKey("check-stop-payment"),
+			},
+			relationships: {
+				account: { data: { type: "account" as const, id: accountId } },
+			},
+		},
+	};
+}
+
+/**
+ * An `achStopPayment`. The spec marks both `minAmount` and `originatorName` as
+ * optional but the API requires at least one of them, so both are sent.
+ *
+ * Two undocumented constraints on `originatorName`, both learned from 4xx
+ * bodies: each entry is capped at 16 characters (a longer one is rejected with
+ * 400 `invalid_fields`), and the name must be unique per account (a repeat is
+ * rejected with 409). Hence the randomized 16-character name.
+ */
+export function buildCreateAchStopPaymentRequest(accountId: string) {
+	return {
+		data: {
+			type: "achStopPayment" as const,
+			attributes: {
+				minAmount: 10_000,
+				originatorName: [`Payroll ${Math.random().toString(36).slice(2, 10)}`],
+				direction: "Debit",
+				expiration: nextYearDate(),
+				isMultiUse: true,
+				description: "SDK integration test ACH stop payment",
+				tags: baseTags(),
+				idempotencyKey: idempotencyKey("ach-stop-payment"),
+			},
+			relationships: {
+				account: { data: { type: "account" as const, id: accountId } },
+			},
+		},
+	};
+}
+
+export function buildUpdateAchStopPaymentRequest() {
+	return {
+		data: {
+			type: "achStopPayment" as const,
+			attributes: {
+				expiration: nextYearDate(),
+				tags: baseTags(),
+			},
+		},
+	};
+}
+
+export function buildCreateRewardRequest(receivingAccountId: string) {
+	return {
+		data: {
+			type: "reward" as const,
+			attributes: {
+				amount: 1_000,
+				description: "SDK integration test reward",
+				tags: baseTags(),
+				idempotencyKey: idempotencyKey("reward"),
+			},
+			relationships: {
+				receivingAccount: {
+					data: { type: "account" as const, id: receivingAccountId },
+				},
+			},
+		},
+	};
+}
+
+export function buildCreateBookRepaymentRequest(
+	accountId: string,
+	creditAccountId: string,
+	counterpartyAccountId: string,
+) {
+	return {
+		data: {
+			type: "repayment" as const,
+			attributes: {
+				description: "SDK integration test repayment",
+				amount: 1_000,
+				transactionSummaryOverride: "SDK integration test repayment",
+				tags: baseTags(),
+				idempotencyKey: idempotencyKey("book-repayment"),
+			},
+			relationships: {
+				account: { data: { type: "account" as const, id: accountId } },
+				creditAccount: {
+					data: { type: "creditAccount" as const, id: creditAccountId },
+				},
+				counterpartyAccount: {
+					data: { type: "account" as const, id: counterpartyAccountId },
+				},
+			},
+		},
+	};
+}
+
+export function buildCreateExternalRepaymentRequest(creditAccountId: string) {
+	return {
+		data: {
+			type: "externalRepayment" as const,
+			attributes: {
+				description: "SDK integration test external repayment",
+				amount: 1_000,
+				tags: baseTags(),
+				idempotencyKey: idempotencyKey("external-repayment"),
+			},
+			relationships: {
+				creditAccount: {
+					data: { type: "creditAccount" as const, id: creditAccountId },
+				},
+			},
+		},
+	};
+}
+
+export function buildReturnExternalRepaymentRequest(repaymentId: string) {
+	return {
+		data: {
+			type: "externalRepaymentReturn" as const,
+			attributes: {},
+			relationships: {
+				repayment: {
+					data: { type: "repayment" as const, id: repaymentId },
+				},
+			},
+		},
+	};
+}
+
+export function buildCreateRecurringBookRepaymentRequest(
+	accountId: string,
+	creditAccountId: string,
+	counterpartyAccountId: string,
+) {
+	return {
+		data: {
+			type: "recurringBookRepayment" as const,
+			attributes: {
+				description: "SDK integration test recurring",
+				transactionSummaryOverride: "SDK integration test recurring",
+				tags: baseTags(),
+				idempotencyKey: idempotencyKey("recurring-book-repayment"),
+			},
+			relationships: {
+				account: { data: { type: "account" as const, id: accountId } },
+				creditAccount: {
+					data: { type: "creditAccount" as const, id: creditAccountId },
+				},
+				counterpartyAccount: {
+					data: { type: "account" as const, id: counterpartyAccountId },
+				},
+			},
+		},
+	};
+}
