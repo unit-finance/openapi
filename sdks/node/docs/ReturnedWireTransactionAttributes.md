@@ -18,7 +18,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { ReturnedWireTransactionAttributes } from '@unit-finance/unit-node-sdk';
+import { ReturnedWireTransactionAttributes } from 'unit-openapi-node-sdk';
 
 const instance: ReturnedWireTransactionAttributes = {
     createdAt,

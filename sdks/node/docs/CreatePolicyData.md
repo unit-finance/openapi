@@ -12,7 +12,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreatePolicyData } from '@unit-finance/unit-node-sdk';
+import { CreatePolicyData } from 'unit-openapi-node-sdk';
 
 const instance: CreatePolicyData = {
     type,

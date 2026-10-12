@@ -18,7 +18,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { AtmAuthorizationRequestAttributes } from '@unit-finance/unit-node-sdk';
+import { AtmAuthorizationRequestAttributes } from 'unit-openapi-node-sdk';
 
 const instance: AtmAuthorizationRequestAttributes = {
     createdAt,

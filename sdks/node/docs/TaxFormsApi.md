@@ -19,7 +19,7 @@ Get a tax form by id.
 import {
     TaxFormsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new TaxFormsApi(configuration);
@@ -74,7 +74,7 @@ Get a tax form PDF file by id.
 import {
     TaxFormsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new TaxFormsApi(configuration);
@@ -129,7 +129,7 @@ List tax form resources per tax year. Filtering and paging can be applied.
 import {
     TaxFormsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new TaxFormsApi(configuration);

@@ -13,7 +13,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateExternalRepaymentDataAttributes } from '@unit-finance/unit-node-sdk';
+import { CreateExternalRepaymentDataAttributes } from 'unit-openapi-node-sdk';
 
 const instance: CreateExternalRepaymentDataAttributes = {
     description,

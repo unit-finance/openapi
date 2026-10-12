@@ -14,7 +14,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { RealtimeReceivedPayment } from '@unit-finance/unit-node-sdk';
+import { RealtimeReceivedPayment } from 'unit-openapi-node-sdk';
 
 const instance: RealtimeReceivedPayment = {
     type,

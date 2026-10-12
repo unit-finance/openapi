@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CancelApplicationDataAttributes } from '@unit-finance/unit-node-sdk';
+import { CancelApplicationDataAttributes } from 'unit-openapi-node-sdk';
 
 const instance: CancelApplicationDataAttributes = {
     reason,

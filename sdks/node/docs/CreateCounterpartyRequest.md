@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateCounterpartyRequest } from '@unit-finance/unit-node-sdk';
+import { CreateCounterpartyRequest } from 'unit-openapi-node-sdk';
 
 const instance: CreateCounterpartyRequest = {
     data,

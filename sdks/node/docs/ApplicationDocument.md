@@ -13,7 +13,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { ApplicationDocument } from '@unit-finance/unit-node-sdk';
+import { ApplicationDocument } from 'unit-openapi-node-sdk';
 
 const instance: ApplicationDocument = {
     type,

@@ -12,7 +12,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { GenerateBarcodeData } from '@unit-finance/unit-node-sdk';
+import { GenerateBarcodeData } from 'unit-openapi-node-sdk';
 
 const instance: GenerateBarcodeData = {
     type,

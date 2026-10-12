@@ -12,7 +12,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CheckPaymentCounterpartyType } from '@unit-finance/unit-node-sdk';
+import { CheckPaymentCounterpartyType } from 'unit-openapi-node-sdk';
 
 const instance: CheckPaymentCounterpartyType = {
     name,

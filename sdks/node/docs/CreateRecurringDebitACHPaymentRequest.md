@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateRecurringDebitACHPaymentRequest } from '@unit-finance/unit-node-sdk';
+import { CreateRecurringDebitACHPaymentRequest } from 'unit-openapi-node-sdk';
 
 const instance: CreateRecurringDebitACHPaymentRequest = {
     data,

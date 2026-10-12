@@ -21,7 +21,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateACHPaymentPlaidTokenDataAttributes } from '@unit-finance/unit-node-sdk';
+import { CreateACHPaymentPlaidTokenDataAttributes } from 'unit-openapi-node-sdk';
 
 const instance: CreateACHPaymentPlaidTokenDataAttributes = {
     amount,

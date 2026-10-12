@@ -19,7 +19,7 @@ Get an authorization resource by id.
 import {
     CardsAuthorizationsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CardsAuthorizationsApi(configuration);
@@ -74,7 +74,7 @@ List authorizations. Filtering and sorting can be applied. Paging is available o
 import {
     CardsAuthorizationsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CardsAuthorizationsApi(configuration);
@@ -165,7 +165,7 @@ Manually release an authorization that is in `Authorized` status. This removes t
 import {
     CardsAuthorizationsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CardsAuthorizationsApi(configuration);

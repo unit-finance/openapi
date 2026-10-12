@@ -12,7 +12,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { FeeAttributes } from '@unit-finance/unit-node-sdk';
+import { FeeAttributes } from 'unit-openapi-node-sdk';
 
 const instance: FeeAttributes = {
     amount,

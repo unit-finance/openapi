@@ -22,7 +22,7 @@ import {
     StopPaymentsApi,
     Configuration,
     CreateStopPaymentRequest
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new StopPaymentsApi(configuration);
@@ -77,7 +77,7 @@ Disable a Stop Payment by id. When a Stop Payment is disabled, the checkStopPaym
 import {
     StopPaymentsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new StopPaymentsApi(configuration);
@@ -135,7 +135,7 @@ Get a stop payment by id.
 import {
     StopPaymentsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new StopPaymentsApi(configuration);
@@ -190,7 +190,7 @@ List stop payment resources. Filtering, paging and sorting can be applied.
 import {
     StopPaymentsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new StopPaymentsApi(configuration);
@@ -300,7 +300,7 @@ import {
     StopPaymentsApi,
     Configuration,
     UpdateAchStopPaymentRequest
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new StopPaymentsApi(configuration);

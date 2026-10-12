@@ -20,7 +20,7 @@ Get a transaction by transaction id and account id.
 import {
     TransactionsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new TransactionsApi(configuration);
@@ -81,7 +81,7 @@ List transaction resources. Filtering and sorting can be applied. Paging is avai
 import {
     TransactionsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new TransactionsApi(configuration);
@@ -185,7 +185,7 @@ import {
     TransactionsApi,
     Configuration,
     UpdateTransactionRequest
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new TransactionsApi(configuration);
@@ -241,7 +241,7 @@ import {
     TransactionsApi,
     Configuration,
     UpdateTagsRequest
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new TransactionsApi(configuration);

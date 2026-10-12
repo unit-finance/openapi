@@ -14,7 +14,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { AuthorizationRelationships } from '@unit-finance/unit-node-sdk';
+import { AuthorizationRelationships } from 'unit-openapi-node-sdk';
 
 const instance: AuthorizationRelationships = {
     account,

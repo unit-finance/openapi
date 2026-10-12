@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CloseDepositAccountRequest } from '@unit-finance/unit-node-sdk';
+import { CloseDepositAccountRequest } from 'unit-openapi-node-sdk';
 
 const instance: CloseDepositAccountRequest = {
     data,

@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { AddAuthorizedUsersDataAttributes } from '@unit-finance/unit-node-sdk';
+import { AddAuthorizedUsersDataAttributes } from 'unit-openapi-node-sdk';
 
 const instance: AddAuthorizedUsersDataAttributes = {
     authorizedUsers,

@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateOnboardingCreditApplicationDataRelationships } from '@unit-finance/unit-node-sdk';
+import { CreateOnboardingCreditApplicationDataRelationships } from 'unit-openapi-node-sdk';
 
 const instance: CreateOnboardingCreditApplicationDataRelationships = {
     application,

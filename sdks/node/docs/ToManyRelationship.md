@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { ToManyRelationship } from '@unit-finance/unit-node-sdk';
+import { ToManyRelationship } from 'unit-openapi-node-sdk';
 
 const instance: ToManyRelationship = {
     data,

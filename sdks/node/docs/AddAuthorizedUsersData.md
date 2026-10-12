@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { AddAuthorizedUsersData } from '@unit-finance/unit-node-sdk';
+import { AddAuthorizedUsersData } from 'unit-openapi-node-sdk';
 
 const instance: AddAuthorizedUsersData = {
     type,

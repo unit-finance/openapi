@@ -14,7 +14,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { ExistingCustomerCreditApplication } from '@unit-finance/unit-node-sdk';
+import { ExistingCustomerCreditApplication } from 'unit-openapi-node-sdk';
 
 const instance: ExistingCustomerCreditApplication = {
     type,

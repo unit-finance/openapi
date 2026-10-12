@@ -14,7 +14,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { WireDrawdownPositivePay } from '@unit-finance/unit-node-sdk';
+import { WireDrawdownPositivePay } from 'unit-openapi-node-sdk';
 
 const instance: WireDrawdownPositivePay = {
     type,

@@ -13,7 +13,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CashDepositBarcodeAttributes } from '@unit-finance/unit-node-sdk';
+import { CashDepositBarcodeAttributes } from 'unit-openapi-node-sdk';
 
 const instance: CashDepositBarcodeAttributes = {
     barcodeNumber,

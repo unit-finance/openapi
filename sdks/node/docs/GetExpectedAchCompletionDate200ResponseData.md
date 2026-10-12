@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { GetExpectedAchCompletionDate200ResponseData } from '@unit-finance/unit-node-sdk';
+import { GetExpectedAchCompletionDate200ResponseData } from 'unit-openapi-node-sdk';
 
 const instance: GetExpectedAchCompletionDate200ResponseData = {
     type,

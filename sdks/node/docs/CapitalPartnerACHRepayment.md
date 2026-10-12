@@ -14,7 +14,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CapitalPartnerACHRepayment } from '@unit-finance/unit-node-sdk';
+import { CapitalPartnerACHRepayment } from 'unit-openapi-node-sdk';
 
 const instance: CapitalPartnerACHRepayment = {
     type,

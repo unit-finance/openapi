@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { ReleaseAccountHoldDataAttributes } from '@unit-finance/unit-node-sdk';
+import { ReleaseAccountHoldDataAttributes } from 'unit-openapi-node-sdk';
 
 const instance: ReleaseAccountHoldDataAttributes = {
     amount,

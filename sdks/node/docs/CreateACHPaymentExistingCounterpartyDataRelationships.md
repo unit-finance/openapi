@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateACHPaymentExistingCounterpartyDataRelationships } from '@unit-finance/unit-node-sdk';
+import { CreateACHPaymentExistingCounterpartyDataRelationships } from 'unit-openapi-node-sdk';
 
 const instance: CreateACHPaymentExistingCounterpartyDataRelationships = {
     account,

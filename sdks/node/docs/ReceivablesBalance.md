@@ -12,7 +12,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { ReceivablesBalance } from '@unit-finance/unit-node-sdk';
+import { ReceivablesBalance } from 'unit-openapi-node-sdk';
 
 const instance: ReceivablesBalance = {
     type,

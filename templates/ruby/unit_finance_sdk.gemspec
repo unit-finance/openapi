@@ -13,7 +13,7 @@ $:.push File.expand_path("../lib", __FILE__)
 require "unit_finance_sdk/version"
 
 Gem::Specification.new do |s|
-  s.name        = "unit_finance_sdk"
+  s.name        = "unit-openapi-ruby-sdk"
   s.version     = UnitFinanceSdk::VERSION
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Unit"]

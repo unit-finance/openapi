@@ -16,7 +16,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { OriginateCheckPaymentMailPhysicalCheckDataAttributes } from '@unit-finance/unit-node-sdk';
+import { OriginateCheckPaymentMailPhysicalCheckDataAttributes } from 'unit-openapi-node-sdk';
 
 const instance: OriginateCheckPaymentMailPhysicalCheckDataAttributes = {
     amount,

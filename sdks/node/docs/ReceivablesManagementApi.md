@@ -18,7 +18,7 @@ Get a receivable resource by id.
 import {
     ReceivablesManagementApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new ReceivablesManagementApi(configuration);
@@ -73,7 +73,7 @@ List receivables resources. Paging can be applied.  The same endpoint also serve
 import {
     ReceivablesManagementApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new ReceivablesManagementApi(configuration);

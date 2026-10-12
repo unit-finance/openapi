@@ -12,7 +12,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { Institution } from '@unit-finance/unit-node-sdk';
+import { Institution } from 'unit-openapi-node-sdk';
 
 const instance: Institution = {
     type,

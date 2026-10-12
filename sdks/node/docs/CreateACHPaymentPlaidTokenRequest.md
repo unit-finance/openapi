@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateACHPaymentPlaidTokenRequest } from '@unit-finance/unit-node-sdk';
+import { CreateACHPaymentPlaidTokenRequest } from 'unit-openapi-node-sdk';
 
 const instance: CreateACHPaymentPlaidTokenRequest = {
     data,

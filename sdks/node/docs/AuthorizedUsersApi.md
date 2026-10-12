@@ -21,7 +21,7 @@ import {
     AuthorizedUsersApi,
     Configuration,
     AddAuthorizedUsersRequest
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new AuthorizedUsersApi(configuration);
@@ -79,7 +79,7 @@ Get an authorized user resource by id.
 import {
     AuthorizedUsersApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new AuthorizedUsersApi(configuration);
@@ -137,7 +137,7 @@ List of authorized user resources. Filtering can be applied.
 import {
     AuthorizedUsersApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new AuthorizedUsersApi(configuration);
@@ -199,7 +199,7 @@ import {
     AuthorizedUsersApi,
     Configuration,
     RemoveAuthorizedUsersRequest
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new AuthorizedUsersApi(configuration);

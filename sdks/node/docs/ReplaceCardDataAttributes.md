@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { ReplaceCardDataAttributes } from '@unit-finance/unit-node-sdk';
+import { ReplaceCardDataAttributes } from 'unit-openapi-node-sdk';
 
 const instance: ReplaceCardDataAttributes = {
     shippingAddress,

@@ -19,7 +19,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateACHPaymentExistingCounterpartyDataAttributes } from '@unit-finance/unit-node-sdk';
+import { CreateACHPaymentExistingCounterpartyDataAttributes } from 'unit-openapi-node-sdk';
 
 const instance: CreateACHPaymentExistingCounterpartyDataAttributes = {
     amount,

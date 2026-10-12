@@ -20,7 +20,7 @@ import {
     CreditDecisionsApi,
     Configuration,
     CreateCreditDecisionRequest
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CreditDecisionsApi(configuration);
@@ -75,7 +75,7 @@ Get a credit decision resource by id.
 import {
     CreditDecisionsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CreditDecisionsApi(configuration);
@@ -130,7 +130,7 @@ List credit decision resources. Paging can be applied.
 import {
     CreditDecisionsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CreditDecisionsApi(configuration);

@@ -14,7 +14,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { PurchaseAuthorizationRequest } from '@unit-finance/unit-node-sdk';
+import { PurchaseAuthorizationRequest } from 'unit-openapi-node-sdk';
 
 const instance: PurchaseAuthorizationRequest = {
     type,

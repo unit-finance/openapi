@@ -19,7 +19,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { ReturnedACHTransactionAttributes } from '@unit-finance/unit-node-sdk';
+import { ReturnedACHTransactionAttributes } from 'unit-openapi-node-sdk';
 
 const instance: ReturnedACHTransactionAttributes = {
     createdAt,

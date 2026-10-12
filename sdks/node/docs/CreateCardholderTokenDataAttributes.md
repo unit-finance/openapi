@@ -14,7 +14,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateCardholderTokenDataAttributes } from '@unit-finance/unit-node-sdk';
+import { CreateCardholderTokenDataAttributes } from 'unit-openapi-node-sdk';
 
 const instance: CreateCardholderTokenDataAttributes = {
     scope,

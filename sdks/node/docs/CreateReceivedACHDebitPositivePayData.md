@@ -12,7 +12,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateReceivedACHDebitPositivePayData } from '@unit-finance/unit-node-sdk';
+import { CreateReceivedACHDebitPositivePayData } from 'unit-openapi-node-sdk';
 
 const instance: CreateReceivedACHDebitPositivePayData = {
     type,

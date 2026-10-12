@@ -14,7 +14,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { BusinessVirtualCreditCard } from '@unit-finance/unit-node-sdk';
+import { BusinessVirtualCreditCard } from 'unit-openapi-node-sdk';
 
 const instance: BusinessVirtualCreditCard = {
     type,

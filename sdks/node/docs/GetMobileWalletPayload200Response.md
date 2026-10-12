@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { GetMobileWalletPayload200Response } from '@unit-finance/unit-node-sdk';
+import { GetMobileWalletPayload200Response } from 'unit-openapi-node-sdk';
 
 const instance: GetMobileWalletPayload200Response = {
     data,
