@@ -52,7 +52,7 @@ function main(): void {
 	}
 	// Stamp the pinned spec version onto the `[project] version` field so the
 	// published package tracks spec-version.json rather than a stale literal.
-	const version = readPackageVersion();
+	const version = readPackageVersion("python");
 	const src = fs.readFileSync(PYPROJECT_SRC, "utf8");
 	const stamped = stampVersion(src, version);
 	fs.writeFileSync(PYPROJECT_DEST, stamped, "utf8");

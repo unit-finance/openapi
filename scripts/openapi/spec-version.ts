@@ -2,14 +2,15 @@
 /**
  * spec-version.ts
  *
- * Single source of truth for the version stamped onto every generated SDK.
+ * Single source of truth for the versions stamped onto the generated SDKs.
  *
- * The committed SDKs track a pinned `unit-openapi` spec release (`version`)
- * and a shared published package version (`sdkVersion`) in `spec-version.json`.
- * `prepare-*-sdk` stamps `sdkVersion` onto package manifests (package.json /
- * pyproject.toml / version.rb / pom.xml) so every language ships the same
- * number. Regeneration bumps `version` (and `sdkVersion` when the spec is
- * newer); packaging-only releases bump `sdkVersion` alone.
+ * `spec-version.json` holds three kinds of version:
+ *   - `version`: the pinned `unit-openapi` spec release.
+ *   - `globalSdkVersion`: the shared GitHub Release (vX.Y.Z) that triggers
+ *     publishing. Regeneration raises it when the spec is newer.
+ *   - `sdkVersions.<lang>`: each SDK's own package version. `prepare-<lang>-sdk`
+ *     stamps it onto that SDK's manifest (package.json / pom.xml /
+ *     pyproject.toml / version.rb) and it is the version published.
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -17,11 +18,15 @@ import path from "node:path";
 const REPO_ROOT = process.cwd();
 const LOCK_PATH = path.join(REPO_ROOT, "spec-version.json");
 
+export type SdkLanguage = "node" | "java" | "python" | "ruby";
+
 interface SpecLock {
 	repo: string;
 	version: string;
-	/** Shared GitHub Release / package version. Defaults to `version`. */
-	sdkVersion?: string;
+	/** Shared GitHub Release version. Defaults to `version`. */
+	globalSdkVersion?: string;
+	/** Per-language published package versions. */
+	sdkVersions?: Partial<Record<SdkLanguage, string>>;
 	assetName: string;
 	/** API slices (tags) present in the spec; maintained by `fetch-spec`. */
 	slices?: string[];
@@ -60,10 +65,19 @@ export function readSpecVersion(): string {
 }
 
 /**
- * Version stamped onto every SDK package and used for the GitHub Release.
- * `sdkVersion` when set, otherwise the spec pin.
+ * Shared GitHub Release version. `globalSdkVersion` when set, otherwise the
+ * spec pin.
  */
-export function readPackageVersion(): string {
+export function readGlobalSdkVersion(): string {
 	const lock = readSpecLock();
-	return bareSemver(lock.sdkVersion ?? lock.version, "sdkVersion");
+	return bareSemver(lock.globalSdkVersion ?? lock.version, "globalSdkVersion");
+}
+
+/** Package version stamped onto and published for one language's SDK. */
+export function readPackageVersion(lang: SdkLanguage): string {
+	const raw = readSpecLock().sdkVersions?.[lang];
+	if (!raw) {
+		throw new Error(`spec-version.json must set sdkVersions.${lang}`);
+	}
+	return bareSemver(raw, `sdkVersions.${lang}`);
 }

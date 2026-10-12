@@ -106,7 +106,7 @@ function applyOverlay(pom: string, { fragment: file, marker, anchor }: Overlay):
  * project `<name>` — leaving dependency versions untouched.
  */
 function stampVersion(pom: string): string {
-	const version = readPackageVersion();
+	const version = readPackageVersion("java");
 	let replaced = false;
 	const out = pom.replace(
 		/(<name>unit-openapi-java-sdk<\/name>\s*<version>)[^<]*(<\/version>)/,
