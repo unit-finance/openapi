@@ -14,7 +14,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateBookRepaymentDataAttributes } from '@unit-finance/unit-node-sdk';
+import { CreateBookRepaymentDataAttributes } from 'unit-openapi-node-sdk';
 
 const instance: CreateBookRepaymentDataAttributes = {
     description,

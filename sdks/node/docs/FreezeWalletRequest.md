@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { FreezeWalletRequest } from '@unit-finance/unit-node-sdk';
+import { FreezeWalletRequest } from 'unit-openapi-node-sdk';
 
 const instance: FreezeWalletRequest = {
     data,

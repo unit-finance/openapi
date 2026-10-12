@@ -15,7 +15,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { StoreLocationAttributes } from '@unit-finance/unit-node-sdk';
+import { StoreLocationAttributes } from 'unit-openapi-node-sdk';
 
 const instance: StoreLocationAttributes = {
     storeId,

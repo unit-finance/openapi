@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { GenerateCashDepositBarcodeRequest } from '@unit-finance/unit-node-sdk';
+import { GenerateCashDepositBarcodeRequest } from 'unit-openapi-node-sdk';
 
 const instance: GenerateCashDepositBarcodeRequest = {
     data,

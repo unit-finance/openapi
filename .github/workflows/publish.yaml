@@ -1,7 +1,7 @@
 name: Publish SDKs
-# Only Python → PyPI is enabled for now. Re-enable other languages by restoring
-# their dispatch options and jobs below. All SDKs share one version and one
-# GitHub Release vX.Y.Z.
+# Node → npm, Python → PyPI and Ruby → RubyGems use trusted publishing;
+# Java → Maven Central uses environment-gated secrets. All SDKs share one
+# version and one GitHub Release vX.Y.Z.
 on:
   release:
     types: [published]
@@ -11,7 +11,7 @@ on:
         description: 'Which SDK to publish'
         required: true
         type: choice
-        options: [python]
+        options: [node, java, python, ruby]
 
 # Jobs run for a published vX.Y.Z GitHub Release (or the matching manual target).
 # Versions are single-sourced from spec-version.json: `npm run generate-sdks`
@@ -25,10 +25,12 @@ env:
   SPEC_REPO_TOKEN: ${{ secrets.SPEC_REPO_TOKEN }}
 
 jobs:
-  # TEMPORARILY DISABLED: npm publish
   publish-node:
-    if: false
+    if: startsWith(github.ref, 'refs/tags/v') || github.event.inputs.target == 'node'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read   # required to clone this private repo (job permissions replace defaults)
+      id-token: write  # npm trusted publishing
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -41,18 +43,23 @@ jobs:
           java-version: '17'
       - run: npm ci
       - run: npm run generate-sdks
-      - name: Build and publish to npm
+      # Trusted publishing (OIDC) requires npm >= 11.5.1.
+      - run: npm install -g npm@latest
+      - name: Publish to npm (trusted publishing)
         working-directory: sdks/node
         run: |
           npm install --no-audit --no-fund
           npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-  # TEMPORARILY DISABLED: Maven Central
+  # Maven Central has no trusted publishing, so this uses a Central Portal user
+  # token and a GPG signing key. Both live in the `maven-central` environment,
+  # which should require reviewer approval.
   publish-java:
-    if: false
+    if: startsWith(github.ref, 'refs/tags/v') || github.event.inputs.target == 'java'
     runs-on: ubuntu-latest
+    environment: maven-central
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -71,7 +78,7 @@ jobs:
       - run: npm run generate-sdks
       - name: Deploy to Maven Central
         working-directory: sdks/java
-        run: tsx ../../scripts/openapi/run-mvn.ts -B -DskipTests deploy
+        run: npx tsx ../../scripts/openapi/run-mvn.ts -B -DskipTests -Psign-artifacts deploy
         env:
           MAVEN_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
@@ -107,10 +114,12 @@ jobs:
         with:
           packages-dir: sdks/python/dist
 
-  # TEMPORARILY DISABLED: RubyGems
   publish-ruby:
-    if: false
+    if: startsWith(github.ref, 'refs/tags/v') || github.event.inputs.target == 'ruby'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read   # required to clone this private repo (job permissions replace defaults)
+      id-token: write  # RubyGems trusted publishing
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -125,13 +134,10 @@ jobs:
           ruby-version: '3.2'
       - run: npm ci
       - run: npm run generate-sdks
+      - name: Configure RubyGems credentials (trusted publishing)
+        uses: rubygems/configure-rubygems-credentials@v1.0.0
       - name: Build and push gem to RubyGems
         working-directory: sdks/ruby
         run: |
-          mkdir -p $HOME/.gem
-          printf -- "---\n:rubygems_api_key: %s\n" "$RUBYGEMS_API_KEY" > $HOME/.gem/credentials
-          chmod 600 $HOME/.gem/credentials
           gem build unit_finance_sdk.gemspec
-          gem push unit_finance_sdk-*.gem
-        env:
-          RUBYGEMS_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
+          gem push unit-openapi-ruby-sdk-*.gem

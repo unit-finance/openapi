@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { ReverseFee201Response } from '@unit-finance/unit-node-sdk';
+import { ReverseFee201Response } from 'unit-openapi-node-sdk';
 
 const instance: ReverseFee201Response = {
     data,

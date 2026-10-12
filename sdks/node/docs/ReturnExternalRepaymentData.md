@@ -12,7 +12,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { ReturnExternalRepaymentData } from '@unit-finance/unit-node-sdk';
+import { ReturnExternalRepaymentData } from 'unit-openapi-node-sdk';
 
 const instance: ReturnExternalRepaymentData = {
     type,

@@ -14,7 +14,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { RecurringCreditACHPayment } from '@unit-finance/unit-node-sdk';
+import { RecurringCreditACHPayment } from 'unit-openapi-node-sdk';
 
 const instance: RecurringCreditACHPayment = {
     type,

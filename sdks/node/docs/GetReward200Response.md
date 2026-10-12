@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { GetReward200Response } from '@unit-finance/unit-node-sdk';
+import { GetReward200Response } from 'unit-openapi-node-sdk';
 
 const instance: GetReward200Response = {
     data,

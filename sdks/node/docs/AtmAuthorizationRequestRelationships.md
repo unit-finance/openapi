@@ -12,7 +12,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { AtmAuthorizationRequestRelationships } from '@unit-finance/unit-node-sdk';
+import { AtmAuthorizationRequestRelationships } from 'unit-openapi-node-sdk';
 
 const instance: AtmAuthorizationRequestRelationships = {
     account,

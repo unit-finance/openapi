@@ -17,7 +17,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { RecurringCapitalPartnerBookRepaymentAttributes } from '@unit-finance/unit-node-sdk';
+import { RecurringCapitalPartnerBookRepaymentAttributes } from 'unit-openapi-node-sdk';
 
 const instance: RecurringCapitalPartnerBookRepaymentAttributes = {
     createdAt,

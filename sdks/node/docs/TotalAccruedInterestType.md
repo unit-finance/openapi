@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { TotalAccruedInterestType } from '@unit-finance/unit-node-sdk';
+import { TotalAccruedInterestType } from 'unit-openapi-node-sdk';
 
 const instance: TotalAccruedInterestType = {
     amount,

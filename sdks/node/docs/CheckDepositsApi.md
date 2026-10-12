@@ -27,7 +27,7 @@ Clears a check deposit while in `Clearing` status. Overrides the original cleari
 import {
     CheckDepositsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CheckDepositsApi(configuration);
@@ -85,7 +85,7 @@ Confirms a check deposit details when it\'s in `AwaitingCustomerConfirmation` st
 import {
     CheckDepositsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CheckDepositsApi(configuration);
@@ -144,7 +144,7 @@ import {
     CheckDepositsApi,
     Configuration,
     CreateCheckDepositRequest
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CheckDepositsApi(configuration);
@@ -200,7 +200,7 @@ import {
     CheckDepositsApi,
     Configuration,
     CreateCheckDepositSendLinkRequest
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CheckDepositsApi(configuration);
@@ -255,7 +255,7 @@ Get a check deposit by id.
 import {
     CheckDepositsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CheckDepositsApi(configuration);
@@ -313,7 +313,7 @@ Get a check deposit back image by check deposit id.
 import {
     CheckDepositsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CheckDepositsApi(configuration);
@@ -368,7 +368,7 @@ Get a check deposit front image by check deposit id.
 import {
     CheckDepositsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CheckDepositsApi(configuration);
@@ -423,7 +423,7 @@ List check deposit resources. Filtering, paging and sorting can be applied.
 import {
     CheckDepositsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CheckDepositsApi(configuration);
@@ -506,7 +506,7 @@ import {
     CheckDepositsApi,
     Configuration,
     UpdateCheckDepositRequest
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CheckDepositsApi(configuration);
@@ -564,7 +564,7 @@ Uploads a check back-side image file. Currently only `jpeg` file type is support
 import {
     CheckDepositsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CheckDepositsApi(configuration);
@@ -622,7 +622,7 @@ Uploads a check front-side image file. Currently only `jpeg` file type is suppor
 import {
     CheckDepositsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CheckDepositsApi(configuration);

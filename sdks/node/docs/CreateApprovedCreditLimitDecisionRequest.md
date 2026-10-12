@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateApprovedCreditLimitDecisionRequest } from '@unit-finance/unit-node-sdk';
+import { CreateApprovedCreditLimitDecisionRequest } from 'unit-openapi-node-sdk';
 
 const instance: CreateApprovedCreditLimitDecisionRequest = {
     data,

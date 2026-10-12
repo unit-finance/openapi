@@ -23,7 +23,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { WireTransactionAttributes } from '@unit-finance/unit-node-sdk';
+import { WireTransactionAttributes } from 'unit-openapi-node-sdk';
 
 const instance: WireTransactionAttributes = {
     createdAt,

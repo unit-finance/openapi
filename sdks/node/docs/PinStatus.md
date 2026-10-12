@@ -12,7 +12,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { PinStatus } from '@unit-finance/unit-node-sdk';
+import { PinStatus } from 'unit-openapi-node-sdk';
 
 const instance: PinStatus = {
     type,

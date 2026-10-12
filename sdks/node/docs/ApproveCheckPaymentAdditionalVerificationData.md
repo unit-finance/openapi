@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { ApproveCheckPaymentAdditionalVerificationData } from '@unit-finance/unit-node-sdk';
+import { ApproveCheckPaymentAdditionalVerificationData } from 'unit-openapi-node-sdk';
 
 const instance: ApproveCheckPaymentAdditionalVerificationData = {
     type,

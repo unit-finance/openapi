@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateBulkPayment201ResponseDataAttributes } from '@unit-finance/unit-node-sdk';
+import { CreateBulkPayment201ResponseDataAttributes } from 'unit-openapi-node-sdk';
 
 const instance: CreateBulkPayment201ResponseDataAttributes = {
     bulkId,

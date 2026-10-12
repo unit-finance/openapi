@@ -14,7 +14,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { TaxForm } from '@unit-finance/unit-node-sdk';
+import { TaxForm } from 'unit-openapi-node-sdk';
 
 const instance: TaxForm = {
     type,

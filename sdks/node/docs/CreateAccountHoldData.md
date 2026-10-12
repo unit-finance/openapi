@@ -12,7 +12,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateAccountHoldData } from '@unit-finance/unit-node-sdk';
+import { CreateAccountHoldData } from 'unit-openapi-node-sdk';
 
 const instance: CreateAccountHoldData = {
     type,

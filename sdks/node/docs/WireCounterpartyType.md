@@ -13,7 +13,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { WireCounterpartyType } from '@unit-finance/unit-node-sdk';
+import { WireCounterpartyType } from 'unit-openapi-node-sdk';
 
 const instance: WireCounterpartyType = {
     routingNumber,

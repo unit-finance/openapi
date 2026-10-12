@@ -25,7 +25,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateBusinessCreditCardDataAttributes } from '@unit-finance/unit-node-sdk';
+import { CreateBusinessCreditCardDataAttributes } from 'unit-openapi-node-sdk';
 
 const instance: CreateBusinessCreditCardDataAttributes = {
     fullName,

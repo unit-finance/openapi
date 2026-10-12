@@ -19,7 +19,7 @@ import {
     CardHolderAPITokensApi,
     Configuration,
     CreateCardholderTokenRequest
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CardHolderAPITokensApi(configuration);
@@ -78,7 +78,7 @@ import {
     CardHolderAPITokensApi,
     Configuration,
     CreateCardholderTokenVerificationRequest
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CardHolderAPITokensApi(configuration);

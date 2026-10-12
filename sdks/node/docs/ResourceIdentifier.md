@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { ResourceIdentifier } from '@unit-finance/unit-node-sdk';
+import { ResourceIdentifier } from 'unit-openapi-node-sdk';
 
 const instance: ResourceIdentifier = {
     type,

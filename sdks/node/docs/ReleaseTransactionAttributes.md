@@ -20,7 +20,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { ReleaseTransactionAttributes } from '@unit-finance/unit-node-sdk';
+import { ReleaseTransactionAttributes } from 'unit-openapi-node-sdk';
 
 const instance: ReleaseTransactionAttributes = {
     createdAt,

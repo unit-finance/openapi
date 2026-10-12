@@ -21,7 +21,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { BeneficialOwnerAttributes } from '@unit-finance/unit-node-sdk';
+import { BeneficialOwnerAttributes } from 'unit-openapi-node-sdk';
 
 const instance: BeneficialOwnerAttributes = {
     status,

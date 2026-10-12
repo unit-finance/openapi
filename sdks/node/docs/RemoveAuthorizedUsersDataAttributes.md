@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { RemoveAuthorizedUsersDataAttributes } from '@unit-finance/unit-node-sdk';
+import { RemoveAuthorizedUsersDataAttributes } from 'unit-openapi-node-sdk';
 
 const instance: RemoveAuthorizedUsersDataAttributes = {
     authorizedUsersEmails,

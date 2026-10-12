@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { UpdateBusinessCustomerData } from '@unit-finance/unit-node-sdk';
+import { UpdateBusinessCustomerData } from 'unit-openapi-node-sdk';
 
 const instance: UpdateBusinessCustomerData = {
     type,

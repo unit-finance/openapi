@@ -20,7 +20,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { ApplicationDocumentAttributes } from '@unit-finance/unit-node-sdk';
+import { ApplicationDocumentAttributes } from 'unit-openapi-node-sdk';
 
 const instance: ApplicationDocumentAttributes = {
     status,

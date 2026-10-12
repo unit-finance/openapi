@@ -14,7 +14,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CardFraudOutreachPolicy } from '@unit-finance/unit-node-sdk';
+import { CardFraudOutreachPolicy } from 'unit-openapi-node-sdk';
 
 const instance: CardFraudOutreachPolicy = {
     type,

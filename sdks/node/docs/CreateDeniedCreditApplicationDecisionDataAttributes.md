@@ -18,7 +18,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateDeniedCreditApplicationDecisionDataAttributes } from '@unit-finance/unit-node-sdk';
+import { CreateDeniedCreditApplicationDecisionDataAttributes } from 'unit-openapi-node-sdk';
 
 const instance: CreateDeniedCreditApplicationDecisionDataAttributes = {
     externalApplicationId,

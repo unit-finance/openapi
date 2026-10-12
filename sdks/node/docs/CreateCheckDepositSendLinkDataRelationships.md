@@ -12,7 +12,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateCheckDepositSendLinkDataRelationships } from '@unit-finance/unit-node-sdk';
+import { CreateCheckDepositSendLinkDataRelationships } from 'unit-openapi-node-sdk';
 
 const instance: CreateCheckDepositSendLinkDataRelationships = {
     whiteLabelTheme,

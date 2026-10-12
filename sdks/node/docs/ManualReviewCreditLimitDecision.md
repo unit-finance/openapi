@@ -13,7 +13,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { ManualReviewCreditLimitDecision } from '@unit-finance/unit-node-sdk';
+import { ManualReviewCreditLimitDecision } from 'unit-openapi-node-sdk';
 
 const instance: ManualReviewCreditLimitDecision = {
     type,

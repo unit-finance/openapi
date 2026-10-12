@@ -29,7 +29,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { IndividualApplicationAttributes } from '@unit-finance/unit-node-sdk';
+import { IndividualApplicationAttributes } from 'unit-openapi-node-sdk';
 
 const instance: IndividualApplicationAttributes = {
     status,

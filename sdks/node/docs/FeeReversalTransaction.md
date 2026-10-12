@@ -14,7 +14,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { FeeReversalTransaction } from '@unit-finance/unit-node-sdk';
+import { FeeReversalTransaction } from 'unit-openapi-node-sdk';
 
 const instance: FeeReversalTransaction = {
     type,

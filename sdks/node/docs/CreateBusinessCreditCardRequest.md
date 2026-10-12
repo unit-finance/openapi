@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateBusinessCreditCardRequest } from '@unit-finance/unit-node-sdk';
+import { CreateBusinessCreditCardRequest } from 'unit-openapi-node-sdk';
 
 const instance: CreateBusinessCreditCardRequest = {
     data,

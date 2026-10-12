@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { DisputeAttributesStatusHistoryInner } from '@unit-finance/unit-node-sdk';
+import { DisputeAttributesStatusHistoryInner } from 'unit-openapi-node-sdk';
 
 const instance: DisputeAttributesStatusHistoryInner = {
     type,

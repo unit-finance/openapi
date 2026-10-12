@@ -18,7 +18,7 @@ import {
     CardsAddToMobileWalletApi,
     Configuration,
     GetMobileWalletPayloadRequest
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CardsAddToMobileWalletApi(configuration);

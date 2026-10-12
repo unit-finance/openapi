@@ -28,7 +28,7 @@ Close a card.
 import {
     CardsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CardsApi(configuration);
@@ -87,7 +87,7 @@ import {
     CardsApi,
     Configuration,
     CreateCardRequest
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CardsApi(configuration);
@@ -143,7 +143,7 @@ import {
     CardsApi,
     Configuration,
     FreezeCardRequest
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CardsApi(configuration);
@@ -201,7 +201,7 @@ Get a card resource by id.
 import {
     CardsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CardsApi(configuration);
@@ -259,7 +259,7 @@ Get the limits of a card.
 import {
     CardsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CardsApi(configuration);
@@ -314,7 +314,7 @@ Gets the PIN status for the specified card.
 import {
     CardsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CardsApi(configuration);
@@ -369,7 +369,7 @@ List cards. Filtering and paging can be applied.
 import {
     CardsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CardsApi(configuration);
@@ -446,7 +446,7 @@ import {
     CardsApi,
     Configuration,
     ReplaceCardRequest
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CardsApi(configuration);
@@ -504,7 +504,7 @@ Report card as lost.
 import {
     CardsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CardsApi(configuration);
@@ -562,7 +562,7 @@ Report card as stolen.
 import {
     CardsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CardsApi(configuration);
@@ -620,7 +620,7 @@ Unfreeze a frozen card.
 import {
     CardsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CardsApi(configuration);
@@ -679,7 +679,7 @@ import {
     CardsApi,
     Configuration,
     UpdateCardRequest
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CardsApi(configuration);

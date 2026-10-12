@@ -38,7 +38,7 @@ Cancel a previously created ACH or Wire payment. Only payments with status Pendi
 import {
     PaymentsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new PaymentsApi(configuration);
@@ -96,7 +96,7 @@ Clears an ACH debit payment while in clearing status. Overrides the original cle
 import {
     PaymentsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new PaymentsApi(configuration);
@@ -155,7 +155,7 @@ import {
     PaymentsApi,
     Configuration,
     CreateBatchReleasesRequest
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new PaymentsApi(configuration);
@@ -211,7 +211,7 @@ import {
     PaymentsApi,
     Configuration,
     CreateBulkPaymentRequest
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new PaymentsApi(configuration);
@@ -267,7 +267,7 @@ import {
     PaymentsApi,
     Configuration,
     CreatePaymentRequest
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new PaymentsApi(configuration);
@@ -323,7 +323,7 @@ import {
     PaymentsApi,
     Configuration,
     CreateRecurringPaymentRequest
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new PaymentsApi(configuration);
@@ -378,7 +378,7 @@ Delete a Recurring Payment by id. When a Recurring Payment is deleted, the Recur
 import {
     PaymentsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new PaymentsApi(configuration);
@@ -436,7 +436,7 @@ Disable a Recurring Payment by id. When a Recurring Payment is disabled, the Rec
 import {
     PaymentsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new PaymentsApi(configuration);
@@ -494,7 +494,7 @@ Enable a recurring payment by id. When a Recurring Payment is enabled, its statu
 import {
     PaymentsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new PaymentsApi(configuration);
@@ -553,7 +553,7 @@ import {
     PaymentsApi,
     Configuration,
     GenerateCashDepositBarcodeRequest
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new PaymentsApi(configuration);
@@ -608,7 +608,7 @@ Get a cash deposit barcode image by barcode number.
 import {
     PaymentsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new PaymentsApi(configuration);
@@ -664,7 +664,7 @@ import {
     PaymentsApi,
     Configuration,
     GetExpectedAchCompletionDateRequest
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new PaymentsApi(configuration);
@@ -719,7 +719,7 @@ Get a received payment by id.
 import {
     PaymentsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new PaymentsApi(configuration);
@@ -777,7 +777,7 @@ Get a recurring payment by id.
 import {
     PaymentsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new PaymentsApi(configuration);
@@ -832,7 +832,7 @@ Get a wire drawdown by id.
 import {
     PaymentsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new PaymentsApi(configuration);
@@ -890,7 +890,7 @@ List received payments. Filtering, paging and sorting can be applied.
 import {
     PaymentsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new PaymentsApi(configuration);
@@ -987,7 +987,7 @@ List recurring payments resources. Filtering, paging and sorting can be applied.
 import {
     PaymentsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new PaymentsApi(configuration);
@@ -1072,7 +1072,7 @@ List Cash Deposit store locations by coordinates or by postal code.
 import {
     PaymentsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new PaymentsApi(configuration);
@@ -1139,7 +1139,7 @@ List wire drawdowns resources. Filtering and paging can be applied.
 import {
     PaymentsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new PaymentsApi(configuration);
@@ -1207,7 +1207,7 @@ import {
     PaymentsApi,
     Configuration,
     SendDrawdownPaymentRequest
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new PaymentsApi(configuration);
@@ -1266,7 +1266,7 @@ import {
     PaymentsApi,
     Configuration,
     UpdatePaymentRequest
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new PaymentsApi(configuration);
@@ -1325,7 +1325,7 @@ import {
     PaymentsApi,
     Configuration,
     UpdateReceivedPaymentRequest
-} from '@unit-finance/unit-node-sdk';
+} from 'unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new PaymentsApi(configuration);

@@ -17,7 +17,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateACHStopPaymentDataAttributes } from '@unit-finance/unit-node-sdk';
+import { CreateACHStopPaymentDataAttributes } from 'unit-openapi-node-sdk';
 
 const instance: CreateACHStopPaymentDataAttributes = {
     minAmount,

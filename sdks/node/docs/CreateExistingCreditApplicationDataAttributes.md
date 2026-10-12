@@ -15,7 +15,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateExistingCreditApplicationDataAttributes } from '@unit-finance/unit-node-sdk';
+import { CreateExistingCreditApplicationDataAttributes } from 'unit-openapi-node-sdk';
 
 const instance: CreateExistingCreditApplicationDataAttributes = {
     aggregatorAccessTokens,
