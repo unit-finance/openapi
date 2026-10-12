@@ -56,7 +56,7 @@ function replacePackageJson(): void {
 	ensureExists(SDK_DIR, "SDK dir");
 	// Stamp the pinned spec version onto the curated manifest so the published
 	// package version tracks spec-version.json rather than a stale hardcoded one.
-	const version = readPackageVersion();
+	const version = readPackageVersion("node");
 	const pkg = JSON.parse(fs.readFileSync(PKG_SRC, "utf8")) as {
 		version?: string;
 	};

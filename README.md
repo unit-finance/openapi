@@ -83,22 +83,28 @@ drift gate and sandbox suites on the resulting PR, which stays human-reviewed.
 | `SPEC_REPO_TOKEN` | `ci.yaml`, `regenerate-on-spec-release.yaml`, `publish.yaml` | read the private `unit-openapi` releases in `fetch-spec`. PAT/App token with Contents: read on `unit-openapi` |
 | `CURSOR_API_KEY` | `regenerate-on-spec-release.yaml` | run the test-authoring Cursor agent on coverage gaps (optional; step skips when unset) |
 | `UNIT_SANDBOX_TOKEN` | `ci.yaml`, `regenerate-on-spec-release.yaml` | run sandbox integration tests (optional) |
-| `NPM_TOKEN` | `publish.yaml` (disabled) | npm publish |
-| `MAVEN_CENTRAL_USERNAME` / `MAVEN_CENTRAL_PASSWORD` | `publish.yaml` (disabled) | Maven Central |
-| `MAVEN_GPG_PRIVATE_KEY` / `MAVEN_GPG_PASSPHRASE` | `publish.yaml` (disabled) | artifact signing |
-| `RUBYGEMS_API_KEY` | `publish.yaml` (disabled) | gem push |
+| `MAVEN_CENTRAL_USERNAME` / `MAVEN_CENTRAL_PASSWORD` | `publish.yaml` (`maven-central` environment) | Maven Central user token |
+| `MAVEN_GPG_PRIVATE_KEY` / `MAVEN_GPG_PASSPHRASE` | `publish.yaml` (`maven-central` environment) | artifact signing |
 
-Python publish to PyPI uses trusted publishing (OIDC) — configure the publisher
-on PyPI instead of a token. Node, Java, and Ruby publish jobs are currently
-disabled.
+npm, PyPI and RubyGems publish with trusted publishing (OIDC), so they need no
+token: configure `publish.yaml` as the trusted publisher on each registry.
+Maven Central has no trusted publishing, so its secrets live in the
+`maven-central` GitHub Environment, which should require reviewer approval.
 
 ## Versioning
 
-SDK package versions are stamped from `spec-version.json` `sdkVersion`
-(falling back to the spec pin) during `npm run generate-sdks`. After a
-merge to `main`, if CI succeeds, `tag-releases.yaml` creates a missing
-GitHub Release `vX.Y.Z` for that package version. All language SDKs share
-it. Publishing the release triggers `publish.yaml`, which uploads to PyPI.
-Existing releases are left alone, so merges that do not bump `sdkVersion`
-do not republish. Manual `workflow_dispatch` on `publish.yaml` remains an
-escape hatch (Python only for now).
+`spec-version.json` holds two kinds of SDK version:
+
+- `globalSdkVersion` is the shared GitHub Release version. After a merge to
+  `main`, if CI succeeds, `tag-releases.yaml` creates a missing GitHub Release
+  `vX.Y.Z` for it, and publishing that release triggers `publish.yaml`.
+  Regeneration raises it automatically when the new spec is newer.
+- `sdkVersions.<lang>` (`node`, `java`, `python`, `ruby`) is each SDK's own
+  package version. `npm run generate-sdks` stamps it onto that SDK's manifest
+  and it is the version published to the registry. These are bumped by hand.
+
+Each publish job skips when its `sdkVersions` entry is already on the
+registry, so a release only ships the SDKs whose version was bumped. To
+release, bump the `sdkVersions` entries you want to ship and `globalSdkVersion`,
+then merge. Manual `workflow_dispatch` on `publish.yaml` publishes a single
+SDK at its current `sdkVersions` entry.
