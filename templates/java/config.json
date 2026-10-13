@@ -14,7 +14,6 @@
   "scmDeveloperConnection": "scm:git:git@github.com:unit-finance/unit-openapi-sdks.git",
   "scmUrl": "https://github.com/unit-finance/unit-openapi-sdks",
   "developerName": "Unit",
-  "developerEmail": "support@unit.co",
   "developerOrganization": "Unit Finance",
   "developerOrganizationUrl": "https://www.unit.co",
   "hideGenerationTimestamp": true,

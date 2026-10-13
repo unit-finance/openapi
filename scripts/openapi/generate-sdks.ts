@@ -39,6 +39,7 @@ const STEPS: Step[] = [
 	{ script: "generate-sdk:ruby", label: "Generate SDK", group: "Ruby" },
 	{ script: "prepare-ruby-sdk", label: "Prepare SDK", group: "Ruby" },
 	{ script: "place-ruby-tests", label: "Place tests", group: "Ruby" },
+	{ script: "strip-emails", label: "Strip email metadata" },
 ];
 
 const useColor = process.stdout.isTTY && process.env.NO_COLOR === undefined;

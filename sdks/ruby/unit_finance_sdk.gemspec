@@ -17,7 +17,6 @@ Gem::Specification.new do |s|
   s.version     = UnitFinanceSdk::VERSION
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Unit"]
-  s.email       = ["[email protected]"]
   s.homepage    = "https://www.unit.co"
   s.summary     = "Ruby SDK for the Unit banking API."
   s.description = "Ruby SDK for the Unit banking API. Auto-generated from the unit-openapi spec."
