@@ -1,5 +1,5 @@
 {
-  "groupId": "com.unit.finance",
+  "groupId": "co.unit",
   "artifactId": "unit-openapi-java-sdk",
   "artifactVersion": "0.1.0",
   "invokerPackage": "com.unit.finance.sdk",

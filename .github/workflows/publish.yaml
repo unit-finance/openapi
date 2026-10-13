@@ -89,7 +89,7 @@ jobs:
         id: check
         run: |
           VERSION="$(jq -r .sdkVersions.java spec-version.json)"
-          BASE="https://repo1.maven.org/maven2/com/unit/finance/unit-openapi-java-sdk"
+          BASE="https://repo1.maven.org/maven2/co/unit/unit-openapi-java-sdk"
           if curl -sfI "${BASE}/${VERSION}/unit-openapi-java-sdk-${VERSION}.pom" >/dev/null; then
             echo "unit-openapi-java-sdk ${VERSION} is already on Maven Central; skipping"
             echo "published=true" >> "$GITHUB_OUTPUT"

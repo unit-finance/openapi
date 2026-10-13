@@ -7,7 +7,7 @@ spec with `openapi-generator-cli`.
 | Language | Generator | Output | Package |
 |----------|-----------|--------|---------|
 | Node (TS) | `typescript-axios` | `sdks/node/` | `@unit-finance/unit-openapi-node-sdk` (npm) |
-| Java | `java` (okhttp-gson, Maven) | `sdks/java/` | `com.unit.finance:unit-openapi-java-sdk` (Maven Central) |
+| Java | `java` (okhttp-gson, Maven) | `sdks/java/` | `co.unit:unit-openapi-java-sdk` (Maven Central) |
 | Python | `python` (urllib3, pydantic v2) | `sdks/python/` | `unit-python-sdk` (PyPI) |
 | Ruby | `ruby` (typhoeus) | `sdks/ruby/` | `unit_openapi_ruby_sdk` (RubyGems) |
 
