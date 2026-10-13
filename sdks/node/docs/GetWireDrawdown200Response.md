@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { GetWireDrawdown200Response } from '@unit-finance/unit-node-sdk';
+import { GetWireDrawdown200Response } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: GetWireDrawdown200Response = {
     data,

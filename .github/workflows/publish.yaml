@@ -1,7 +1,7 @@
 name: Publish SDKs
-# Only Python → PyPI is enabled for now. Re-enable other languages by restoring
-# their dispatch options and jobs below. All SDKs share one version and one
-# GitHub Release vX.Y.Z.
+# Node → npm and Python → PyPI use trusted publishing. Java (Maven Central) and
+# Ruby (RubyGems) are temporarily disabled: to re-enable, restore their `if:`
+# conditions and add them back to the dispatch options.
 on:
   release:
     types: [published]
@@ -11,24 +11,26 @@ on:
         description: 'Which SDK to publish'
         required: true
         type: choice
-        options: [python]
+        options: [node, python]
 
-# Jobs run for a published vX.Y.Z GitHub Release (or the matching manual target).
-# Versions are single-sourced from spec-version.json: `npm run generate-sdks`
-# stamps that version onto every SDK manifest (package.json / pyproject.toml /
-# version.rb / pom.xml) during the prepare-*-sdk steps. Bump spec-version.json
-# (the regeneration workflow does this automatically), then create a `vX.Y.Z`
-# GitHub Release whose X.Y.Z matches the pinned spec version.
+# Jobs run for a published vX.Y.Z GitHub Release, where X.Y.Z is
+# spec-version.json `globalSdkVersion` (tag-releases.yaml creates it), or for
+# the matching manual target. Each SDK is published at its own
+# `sdkVersions.<lang>`, which `npm run generate-sdks` stamps onto its manifest.
+# A job skips publishing when that version is already on the registry, so a
+# release only ships the SDKs whose `sdkVersions` entry was bumped.
 
 # Token for fetching the (private) unit-openapi spec release in `fetch-spec`.
 env:
   SPEC_REPO_TOKEN: ${{ secrets.SPEC_REPO_TOKEN }}
 
 jobs:
-  # TEMPORARILY DISABLED: npm publish
   publish-node:
-    if: false
+    if: startsWith(github.ref, 'refs/tags/v') || github.event.inputs.target == 'node'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read   # required to clone this private repo (job permissions replace defaults)
+      id-token: write  # npm trusted publishing
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -41,18 +43,33 @@ jobs:
           java-version: '17'
       - run: npm ci
       - run: npm run generate-sdks
-      - name: Build and publish to npm
+      - name: Check whether this version is already published
+        id: check
+        run: |
+          VERSION="$(jq -r .sdkVersions.node spec-version.json)"
+          if npm view "@unit-finance/unit-openapi-node-sdk@${VERSION}" version 2>/dev/null | grep -q .; then
+            echo "@unit-finance/unit-openapi-node-sdk ${VERSION} is already on npm; skipping"
+            echo "published=true" >> "$GITHUB_OUTPUT"
+          fi
+      # Trusted publishing (OIDC) requires npm >= 11.5.1.
+      - if: steps.check.outputs.published != 'true'
+        run: npm install -g npm@latest
+      - name: Publish to npm (trusted publishing)
+        if: steps.check.outputs.published != 'true'
         working-directory: sdks/node
         run: |
           npm install --no-audit --no-fund
           npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-  # TEMPORARILY DISABLED: Maven Central
+  # Maven Central has no trusted publishing, so this uses a Central Portal user
+  # token and a GPG signing key. Both live in the `maven-central` environment,
+  # which should require reviewer approval.
   publish-java:
-    if: false
+    if: false  # TEMPORARILY DISABLED
     runs-on: ubuntu-latest
+    environment: maven-central
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -69,9 +86,19 @@ jobs:
           gpg-passphrase: MAVEN_GPG_PASSPHRASE
       - run: npm ci
       - run: npm run generate-sdks
+      - name: Check whether this version is already published
+        id: check
+        run: |
+          VERSION="$(jq -r .sdkVersions.java spec-version.json)"
+          BASE="https://repo1.maven.org/maven2/com/unit/finance/unit-openapi-java-sdk"
+          if curl -sfI "${BASE}/${VERSION}/unit-openapi-java-sdk-${VERSION}.pom" >/dev/null; then
+            echo "unit-openapi-java-sdk ${VERSION} is already on Maven Central; skipping"
+            echo "published=true" >> "$GITHUB_OUTPUT"
+          fi
       - name: Deploy to Maven Central
+        if: steps.check.outputs.published != 'true'
         working-directory: sdks/java
-        run: tsx ../../scripts/openapi/run-mvn.ts -B -DskipTests deploy
+        run: npx tsx ../../scripts/openapi/run-mvn.ts -B -DskipTests -Psign-artifacts deploy
         env:
           MAVEN_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
@@ -97,20 +124,32 @@ jobs:
           python-version: '3.12'
       - run: npm ci
       - run: npm run generate-sdks
+      - name: Check whether this version is already published
+        id: check
+        run: |
+          VERSION="$(jq -r .sdkVersions.python spec-version.json)"
+          if curl -sf "https://pypi.org/pypi/unit-openapi-python-sdk/${VERSION}/json" >/dev/null; then
+            echo "unit-openapi-python-sdk ${VERSION} is already on PyPI; skipping"
+            echo "published=true" >> "$GITHUB_OUTPUT"
+          fi
       - name: Build distribution
+        if: steps.check.outputs.published != 'true'
         working-directory: sdks/python
         run: |
           python -m pip install --upgrade build
           python -m build
       - name: Publish to PyPI (trusted publishing)
+        if: steps.check.outputs.published != 'true'
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           packages-dir: sdks/python/dist
 
-  # TEMPORARILY DISABLED: RubyGems
   publish-ruby:
-    if: false
+    if: false  # TEMPORARILY DISABLED
     runs-on: ubuntu-latest
+    permissions:
+      contents: read   # required to clone this private repo (job permissions replace defaults)
+      id-token: write  # RubyGems trusted publishing
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -125,13 +164,20 @@ jobs:
           ruby-version: '3.2'
       - run: npm ci
       - run: npm run generate-sdks
+      - name: Check whether this version is already published
+        id: check
+        run: |
+          VERSION="$(jq -r .sdkVersions.ruby spec-version.json)"
+          if curl -sf "https://rubygems.org/api/v2/rubygems/unit-openapi-ruby-sdk/versions/${VERSION}.json" >/dev/null; then
+            echo "unit-openapi-ruby-sdk ${VERSION} is already on RubyGems; skipping"
+            echo "published=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Configure RubyGems credentials (trusted publishing)
+        if: steps.check.outputs.published != 'true'
+        uses: rubygems/configure-rubygems-credentials@v1.0.0
       - name: Build and push gem to RubyGems
+        if: steps.check.outputs.published != 'true'
         working-directory: sdks/ruby
         run: |
-          mkdir -p $HOME/.gem
-          printf -- "---\n:rubygems_api_key: %s\n" "$RUBYGEMS_API_KEY" > $HOME/.gem/credentials
-          chmod 600 $HOME/.gem/credentials
           gem build unit_finance_sdk.gemspec
-          gem push unit_finance_sdk-*.gem
-        env:
-          RUBYGEMS_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
+          gem push unit-openapi-ruby-sdk-*.gem

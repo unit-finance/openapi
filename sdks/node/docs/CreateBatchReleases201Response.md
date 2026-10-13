@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateBatchReleases201Response } from '@unit-finance/unit-node-sdk';
+import { CreateBatchReleases201Response } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: CreateBatchReleases201Response = {
     data,

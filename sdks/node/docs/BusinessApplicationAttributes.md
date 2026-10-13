@@ -36,7 +36,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { BusinessApplicationAttributes } from '@unit-finance/unit-node-sdk';
+import { BusinessApplicationAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: BusinessApplicationAttributes = {
     status,

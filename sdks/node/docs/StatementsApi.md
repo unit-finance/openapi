@@ -20,7 +20,7 @@ Customers may be required, for various reasons, to provide proof that they hold 
 import {
     StatementsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new StatementsApi(configuration);
@@ -78,7 +78,7 @@ Get a statement HTML output by id.
 import {
     StatementsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new StatementsApi(configuration);
@@ -139,7 +139,7 @@ Get a statement PDF output by id.
 import {
     StatementsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new StatementsApi(configuration);
@@ -200,7 +200,7 @@ List statement resources. Filtering and paging can be applied.
 import {
     StatementsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new StatementsApi(configuration);

@@ -18,7 +18,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { ManualReviewCreditLimitDecisionAttributes } from '@unit-finance/unit-node-sdk';
+import { ManualReviewCreditLimitDecisionAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: ManualReviewCreditLimitDecisionAttributes = {
     createdAt,

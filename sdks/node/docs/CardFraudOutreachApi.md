@@ -24,7 +24,7 @@ import {
     CardFraudOutreachApi,
     Configuration,
     CreatePolicyRequest
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CardFraudOutreachApi(configuration);
@@ -79,7 +79,7 @@ Get a card fraud case by id.
 import {
     CardFraudOutreachApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CardFraudOutreachApi(configuration);
@@ -134,7 +134,7 @@ Get a card fraud outreach policy by id.
 import {
     CardFraudOutreachApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CardFraudOutreachApi(configuration);
@@ -189,7 +189,7 @@ List card fraud case resources. Paging can be applied.
 import {
     CardFraudOutreachApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CardFraudOutreachApi(configuration);
@@ -266,7 +266,7 @@ import {
     CardFraudOutreachApi,
     Configuration,
     MarkCardFraudCaseAsFraudRequest
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CardFraudOutreachApi(configuration);
@@ -324,7 +324,7 @@ Mark a card fraud case as no fraud.
 import {
     CardFraudOutreachApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CardFraudOutreachApi(configuration);
@@ -383,7 +383,7 @@ import {
     CardFraudOutreachApi,
     Configuration,
     UpdatePolicyRequest
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CardFraudOutreachApi(configuration);

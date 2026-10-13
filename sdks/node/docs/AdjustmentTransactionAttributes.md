@@ -16,7 +16,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { AdjustmentTransactionAttributes } from '@unit-finance/unit-node-sdk';
+import { AdjustmentTransactionAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: AdjustmentTransactionAttributes = {
     createdAt,

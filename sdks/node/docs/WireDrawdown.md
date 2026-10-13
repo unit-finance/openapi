@@ -14,7 +14,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { WireDrawdown } from '@unit-finance/unit-node-sdk';
+import { WireDrawdown } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: WireDrawdown = {
     type,

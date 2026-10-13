@@ -31,7 +31,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { PurchaseTransactionAttributes } from '@unit-finance/unit-node-sdk';
+import { PurchaseTransactionAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: PurchaseTransactionAttributes = {
     createdAt,

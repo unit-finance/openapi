@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateIndividualVirtualDebitCardRequest } from '@unit-finance/unit-node-sdk';
+import { CreateIndividualVirtualDebitCardRequest } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: CreateIndividualVirtualDebitCardRequest = {
     data,

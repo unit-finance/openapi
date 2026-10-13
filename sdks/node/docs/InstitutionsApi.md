@@ -17,7 +17,7 @@ Get an institution resource by routing number.
 import {
     InstitutionsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new InstitutionsApi(configuration);

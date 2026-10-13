@@ -4,7 +4,7 @@ source 'https://rubygems.org'
 # this spec/ dir). This pulls in the gem's runtime dependency (typhoeus) and
 # its development dependency (rspec) straight from the gemspec, so the test
 # loop installs exactly what the SDK declares.
-gemspec path: '..', name: 'unit_finance_sdk'
+gemspec path: '..', name: 'unit-openapi-ruby-sdk'
 
 # `.env` loading for the sandbox credentials convention (see spec_helper.rb).
 gem 'dotenv', '~> 3.1'

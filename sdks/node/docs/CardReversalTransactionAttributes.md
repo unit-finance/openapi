@@ -16,7 +16,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CardReversalTransactionAttributes } from '@unit-finance/unit-node-sdk';
+import { CardReversalTransactionAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: CardReversalTransactionAttributes = {
     createdAt,

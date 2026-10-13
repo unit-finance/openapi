@@ -29,7 +29,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { PurchaseAuthorizationRequestAttributes } from '@unit-finance/unit-node-sdk';
+import { PurchaseAuthorizationRequestAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: PurchaseAuthorizationRequestAttributes = {
     createdAt,

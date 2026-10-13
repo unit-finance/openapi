@@ -15,7 +15,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { ErrorDocumentErrorsInner } from '@unit-finance/unit-node-sdk';
+import { ErrorDocumentErrorsInner } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: ErrorDocumentErrorsInner = {
     status,

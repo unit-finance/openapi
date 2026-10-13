@@ -23,7 +23,7 @@ import {
     CounterpartiesApi,
     Configuration,
     CreateCounterpartyBody
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CounterpartiesApi(configuration);
@@ -78,7 +78,7 @@ Delete a counterparty resource by id.
 import {
     CounterpartiesApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CounterpartiesApi(configuration);
@@ -136,7 +136,7 @@ Get a counterparty resource by id.
 import {
     CounterpartiesApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CounterpartiesApi(configuration);
@@ -191,7 +191,7 @@ Get a counterparty balance resource by id.
 import {
     CounterpartiesApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CounterpartiesApi(configuration);
@@ -246,7 +246,7 @@ List counterparties. Filtering and paging can be applied.
 import {
     CounterpartiesApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CounterpartiesApi(configuration);
@@ -323,7 +323,7 @@ import {
     CounterpartiesApi,
     Configuration,
     UpdateCounterpartyRequest
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CounterpartiesApi(configuration);

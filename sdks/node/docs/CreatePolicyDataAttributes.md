@@ -17,7 +17,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreatePolicyDataAttributes } from '@unit-finance/unit-node-sdk';
+import { CreatePolicyDataAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: CreatePolicyDataAttributes = {
     contactPhone,

@@ -2,9 +2,10 @@
 /**
  * set-spec-version.ts
  *
- * Updates the `version` field of `spec-version.json` — the single knob that
- * both `fetch-spec` (which release asset to download) and the `prepare-*-sdk`
- * steps (what version to stamp onto every SDK) read from.
+ * Updates the `version` field of `spec-version.json` — the knob `fetch-spec`
+ * reads to pick which release asset to download — and raises
+ * `globalSdkVersion` (the shared GitHub Release) when the new spec is newer.
+ * Per-language `sdkVersions` are left untouched; they are bumped by hand.
  *
  * Used by the regeneration workflow instead of an inline `node -e` so the bump
  * is validated (semver, normalized `v` prefix) and preserves the file's other
@@ -80,10 +81,10 @@ function main(): void {
 		);
 	}
 	lock.version = version;
-	const previousSdk =
-		typeof lock.sdkVersion === "string" ? lock.sdkVersion : previous;
-	if (typeof previousSdk !== "string" || compareCore(version, previousSdk) > 0) {
-		lock.sdkVersion = version;
+	const previousGlobal =
+		typeof lock.globalSdkVersion === "string" ? lock.globalSdkVersion : previous;
+	if (typeof previousGlobal !== "string" || compareCore(version, previousGlobal) > 0) {
+		lock.globalSdkVersion = version;
 	}
 	fs.writeFileSync(LOCK_PATH, `${JSON.stringify(lock, null, 2)}\n`, "utf8");
 

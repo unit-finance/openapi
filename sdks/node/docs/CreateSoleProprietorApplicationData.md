@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateSoleProprietorApplicationData } from '@unit-finance/unit-node-sdk';
+import { CreateSoleProprietorApplicationData } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: CreateSoleProprietorApplicationData = {
     type,

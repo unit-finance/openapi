@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { ReceivableAttributesRepaymentStatus } from '@unit-finance/unit-node-sdk';
+import { ReceivableAttributesRepaymentStatus } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: ReceivableAttributesRepaymentStatus = {
     type,

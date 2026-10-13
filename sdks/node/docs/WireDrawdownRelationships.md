@@ -12,7 +12,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { WireDrawdownRelationships } from '@unit-finance/unit-node-sdk';
+import { WireDrawdownRelationships } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: WireDrawdownRelationships = {
     account,

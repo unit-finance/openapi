@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { UpdateSoleProprietorApplicationRequest } from '@unit-finance/unit-node-sdk';
+import { UpdateSoleProprietorApplicationRequest } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: UpdateSoleProprietorApplicationRequest = {
     data,

@@ -16,7 +16,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { ScheduleType } from '@unit-finance/unit-node-sdk';
+import { ScheduleType } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: ScheduleType = {
     startTime,

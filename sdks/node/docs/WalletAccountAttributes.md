@@ -23,7 +23,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { WalletAccountAttributes } from '@unit-finance/unit-node-sdk';
+import { WalletAccountAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: WalletAccountAttributes = {
     createdAt,

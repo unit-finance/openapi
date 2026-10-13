@@ -12,7 +12,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { RealTimeCounterpartyType } from '@unit-finance/unit-node-sdk';
+import { RealTimeCounterpartyType } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: RealTimeCounterpartyType = {
     routingNumber,

@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { ReleaseAccountHoldRequest } from '@unit-finance/unit-node-sdk';
+import { ReleaseAccountHoldRequest } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: ReleaseAccountHoldRequest = {
     data,

@@ -19,7 +19,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { RecurringACHRepaymentAttributes } from '@unit-finance/unit-node-sdk';
+import { RecurringACHRepaymentAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: RecurringACHRepaymentAttributes = {
     createdAt,

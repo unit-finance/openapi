@@ -15,7 +15,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CheckStopPaymentAttributes } from '@unit-finance/unit-node-sdk';
+import { CheckStopPaymentAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: CheckStopPaymentAttributes = {
     createdAt,

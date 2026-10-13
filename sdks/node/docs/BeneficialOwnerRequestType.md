@@ -21,7 +21,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { BeneficialOwnerRequestType } from '@unit-finance/unit-node-sdk';
+import { BeneficialOwnerRequestType } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: BeneficialOwnerRequestType = {
     fullName,

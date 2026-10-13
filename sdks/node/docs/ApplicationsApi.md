@@ -23,7 +23,7 @@ import {
     ApplicationsApi,
     Configuration,
     CancelApplicationRequest
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new ApplicationsApi(configuration);
@@ -82,7 +82,7 @@ import {
     ApplicationsApi,
     Configuration,
     CreateApplicationRequest
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new ApplicationsApi(configuration);
@@ -137,7 +137,7 @@ Get an application resource by id.
 import {
     ApplicationsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new ApplicationsApi(configuration);
@@ -192,7 +192,7 @@ List application resources. Paging can be applied.
 import {
     ApplicationsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new ApplicationsApi(configuration);
@@ -266,7 +266,7 @@ import {
     ApplicationsApi,
     Configuration,
     UpdateApplicationRequest
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new ApplicationsApi(configuration);
@@ -325,7 +325,7 @@ import {
     ApplicationsApi,
     Configuration,
     UpdateBusinessBeneficialOwnerRequest
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new ApplicationsApi(configuration);

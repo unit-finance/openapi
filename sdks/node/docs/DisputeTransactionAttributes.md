@@ -17,7 +17,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { DisputeTransactionAttributes } from '@unit-finance/unit-node-sdk';
+import { DisputeTransactionAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: DisputeTransactionAttributes = {
     createdAt,

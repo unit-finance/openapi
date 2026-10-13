@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { UpdateCreditAccountDataAttributes } from '@unit-finance/unit-node-sdk';
+import { UpdateCreditAccountDataAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: UpdateCreditAccountDataAttributes = {
     tags,
