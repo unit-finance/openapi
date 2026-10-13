@@ -2,7 +2,7 @@
 /**
  * prepare-node-sdk.ts
  *
- * Two responsibilities, both run after `generate-sdk:node` (which wipes
+ * Three responsibilities, all run after `generate-sdk:node` (which wipes
  * and rewrites `sdks/node/` from the spec):
  *
  *   1. Replace the openapi-generator-emitted `package.json` with the
@@ -16,6 +16,9 @@
  *      the whole SDK tree) would try to compile the test files and
  *      fail because they reference `jest`/`expect`/etc. that aren't in
  *      the SDK's own dep tree.
+ *
+ *   3. Trim the generator README down to the package intro (see
+ *      `polishReadme`).
  *
  * The curated source lives under `templates/node/` —
  * outside the wiped output tree — so it survives every regeneration.
@@ -89,11 +92,32 @@ function patchTsconfig(file: string): void {
 	}
 }
 
+/**
+ * npm uses this README as the package page. Drop everything from the
+ * generator's `### Building` section onward (build/publish/consume
+ * instructions, endpoint/model indexes, authorization stub): they dwarf the
+ * page, describe working on the generated tree rather than using the
+ * package, and the relative `docs/` links 404 on npm.
+ */
+function polishReadme(): void {
+	const readmePath = path.join(SDK_DIR, "README.md");
+	ensureExists(readmePath, "SDK README.md");
+	const readme = fs.readFileSync(readmePath, "utf8");
+	const cut = readme.search(/^### Building\s*$/m);
+	if (cut === -1) {
+		console.error(`could not find \`### Building\` in ${rel(readmePath)}`);
+		process.exit(1);
+	}
+	fs.writeFileSync(readmePath, readme.slice(0, cut).replace(/\s+$/, "\n"), "utf8");
+	console.log(`Wrote SDK README.md (npm description, without generator sections): ${rel(readmePath)}`);
+}
+
 function main(): void {
 	replacePackageJson();
 	for (const tsc of TSCONFIGS) {
 		patchTsconfig(tsc);
 	}
+	polishReadme();
 }
 
 main();
