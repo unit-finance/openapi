@@ -108,7 +108,13 @@ function polishReadme(): void {
 		console.error(`could not find \`### Building\` in ${rel(readmePath)}`);
 		process.exit(1);
 	}
-	fs.writeFileSync(readmePath, readme.slice(0, cut).replace(/\s+$/, "\n"), "utf8");
+	// The generator titles the README `## <npmName>@<npmVersion>` from
+	// config.json, which doesn't track the version stamped into package.json.
+	const body = readme
+		.slice(0, cut)
+		.replace(/^(##\s+@?[^@\s]+)@\S+[ \t]*$/m, "$1")
+		.replace(/\s+$/, "\n");
+	fs.writeFileSync(readmePath, body, "utf8");
 	console.log(`Wrote SDK README.md (npm description, without generator sections): ${rel(readmePath)}`);
 }
 

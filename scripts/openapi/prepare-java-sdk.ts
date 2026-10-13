@@ -76,6 +76,28 @@ function main(): void {
 		pom = applyOverlay(pom, overlay);
 	}
 	fs.writeFileSync(POM, pom, "utf8");
+
+	polishReadme();
+}
+
+/**
+ * Drop everything from the generator's `## Documentation for API Endpoints`
+ * section onward (endpoint/model indexes, authorization stub, author): they
+ * dwarf the page and the relative `docs/` links 404 outside the repo.
+ */
+function polishReadme(): void {
+	const readmePath = path.join(SDK_DIR, "README.md");
+	if (!fs.existsSync(readmePath)) {
+		fail(`SDK README.md not found: ${rel(readmePath)}`);
+	}
+	const readme = fs.readFileSync(readmePath, "utf8");
+	const cut = readme.search(/^## Documentation for API Endpoints\s*$/m);
+	if (cut === -1) {
+		console.log(`${rel(readmePath)} already trimmed; skipping`);
+		return;
+	}
+	fs.writeFileSync(readmePath, readme.slice(0, cut).replace(/\s+$/, "\n"), "utf8");
+	console.log(`Wrote SDK README.md (without generator indexes): ${rel(readmePath)}`);
 }
 
 function applyOverlay(pom: string, { fragment: file, marker, anchor }: Overlay): string {
