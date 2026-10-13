@@ -102,6 +102,14 @@ jobs:
           MAVEN_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+      - name: Upload Central bundle
+        if: always() && steps.check.outputs.published != 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: central-bundle
+          path: sdks/java/target/central-publishing/central-bundle.zip
+          if-no-files-found: ignore
+          retention-days: 7
 
   publish-python:
     if: startsWith(github.ref, 'refs/tags/v') || github.event.inputs.target == 'python'
