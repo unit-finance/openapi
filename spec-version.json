@@ -2,7 +2,7 @@
   "$comment": "Pins the unit-openapi spec version the committed SDKs were generated from. The dispatch-driven regeneration PR bumps `version`; `fetch-spec` downloads the matching bundled spec. Keep `version` in sync with the spec/openapi.json `info.version` in the unit-openapi repo. `globalSdkVersion` is the shared GitHub Release version (tag vX.Y.Z) whose publication triggers publishing; regeneration raises it when the new spec is newer. `sdkVersions` holds the independent package version each language SDK is stamped and published with; bump a language's entry to release it, as publishing skips versions that already exist on the registry. `slices` is derived automatically by `fetch-spec` from the materialized spec's tags — do not edit by hand. When the spec is materialized from a local file or URL rather than the pinned release, `fetch-spec` also syncs `version` from the spec's own `info.version`.",
   "repo": "unit-finance/unit-openapi",
   "version": "0.19.0",
-  "globalSdkVersion": "0.19.2",
+  "globalSdkVersion": "0.19.3",
   "sdkVersions": {
     "node": "0.3.2",
     "java": "0.5.0",

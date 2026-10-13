@@ -83,6 +83,13 @@ jobs:
           server-password: MAVEN_PASSWORD
           gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
           gpg-passphrase: MAVEN_GPG_PASSPHRASE
+      # The runner's preinstalled Maven writes local-repository tracking files
+      # (_remote.repositories, maven-metadata-local.xml) into the Central
+      # bundle, which Central rejects. Pin the version that bundles cleanly.
+      - name: Install pinned Maven
+        run: |
+          curl -fsSL https://archive.apache.org/dist/maven/maven-3/3.9.9/binaries/apache-maven-3.9.9-bin.tar.gz | tar xz -C "$RUNNER_TEMP"
+          echo "UNIT_MVN=$RUNNER_TEMP/apache-maven-3.9.9/bin/mvn" >> "$GITHUB_ENV"
       - run: npm ci
       - run: npm run generate-sdks
       - name: Check whether this version is already published
