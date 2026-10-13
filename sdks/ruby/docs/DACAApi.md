@@ -21,7 +21,7 @@ Set an account with DACA `Activated` status. This action will:
 
 ```ruby
 require 'time'
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 # setup authorization
 UnitFinanceSdk.configure do |config|
   # Configure Bearer authorization (JWT): bearerAuth
@@ -94,7 +94,7 @@ Deactivate an account with DACA `Activated` status. This action will:
 
 ```ruby
 require 'time'
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 # setup authorization
 UnitFinanceSdk.configure do |config|
   # Configure Bearer authorization (JWT): bearerAuth
@@ -167,7 +167,7 @@ Set an account with DACA `Entered` status.
 
 ```ruby
 require 'time'
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 # setup authorization
 UnitFinanceSdk.configure do |config|
   # Configure Bearer authorization (JWT): bearerAuth

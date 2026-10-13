@@ -22,7 +22,7 @@ Create a repayment for a credit account. The request body is one of CreateACHRep
 
 ```ruby
 require 'time'
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 # setup authorization
 UnitFinanceSdk.configure do |config|
   # Configure Bearer authorization (JWT): bearerAuth
@@ -91,7 +91,7 @@ Get a repayment by id.
 
 ```ruby
 require 'time'
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 # setup authorization
 UnitFinanceSdk.configure do |config|
   # Configure Bearer authorization (JWT): bearerAuth
@@ -160,7 +160,7 @@ List repayments resources. Filtering, paging and sorting can be applied.
 
 ```ruby
 require 'time'
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 # setup authorization
 UnitFinanceSdk.configure do |config|
   # Configure Bearer authorization (JWT): bearerAuth
@@ -249,7 +249,7 @@ Returns an external repayment that was previously created with `Sent` status. Th
 
 ```ruby
 require 'time'
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 # setup authorization
 UnitFinanceSdk.configure do |config|
   # Configure Bearer authorization (JWT): bearerAuth

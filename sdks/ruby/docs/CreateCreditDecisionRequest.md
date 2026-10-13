@@ -9,7 +9,7 @@ Returns the list of classes defined in oneOf.
 #### Example
 
 ```ruby
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 
 UnitFinanceSdk::CreateCreditDecisionRequest.openapi_one_of
 # =>
@@ -29,7 +29,7 @@ Find the appropriate object from the `openapi_one_of` list and casts the data in
 #### Example
 
 ```ruby
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 
 UnitFinanceSdk::CreateCreditDecisionRequest.build(data)
 # => #<CreateApprovedCreditLimitDecisionRequest:0x00007fdd4aab02a0>

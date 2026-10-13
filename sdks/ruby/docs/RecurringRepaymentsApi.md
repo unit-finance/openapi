@@ -23,7 +23,7 @@ Originate a recurring repayment. The request body is one of CreateRecurringACHRe
 
 ```ruby
 require 'time'
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 # setup authorization
 UnitFinanceSdk.configure do |config|
   # Configure Bearer authorization (JWT): bearerAuth
@@ -92,7 +92,7 @@ Disable a Recurring Repayment by id. When a Recurring Repayment is disabled, the
 
 ```ruby
 require 'time'
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 # setup authorization
 UnitFinanceSdk.configure do |config|
   # Configure Bearer authorization (JWT): bearerAuth
@@ -165,7 +165,7 @@ Enable a recurring repayment by id. When a Recurring Repayment is enabled, its s
 
 ```ruby
 require 'time'
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 # setup authorization
 UnitFinanceSdk.configure do |config|
   # Configure Bearer authorization (JWT): bearerAuth
@@ -238,7 +238,7 @@ Get a recurring repayment by id.
 
 ```ruby
 require 'time'
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 # setup authorization
 UnitFinanceSdk.configure do |config|
   # Configure Bearer authorization (JWT): bearerAuth
@@ -307,7 +307,7 @@ List recurring repayments resources. Filtering, paging and sorting can be applie
 
 ```ruby
 require 'time'
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 # setup authorization
 UnitFinanceSdk.configure do |config|
   # Configure Bearer authorization (JWT): bearerAuth

@@ -25,7 +25,7 @@ Create a card fraud outreach policy.
 
 ```ruby
 require 'time'
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 # setup authorization
 UnitFinanceSdk.configure do |config|
   # Configure Bearer authorization (JWT): bearerAuth
@@ -94,7 +94,7 @@ Get a card fraud case by id.
 
 ```ruby
 require 'time'
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 # setup authorization
 UnitFinanceSdk.configure do |config|
   # Configure Bearer authorization (JWT): bearerAuth
@@ -163,7 +163,7 @@ Get a card fraud outreach policy by id.
 
 ```ruby
 require 'time'
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 # setup authorization
 UnitFinanceSdk.configure do |config|
   # Configure Bearer authorization (JWT): bearerAuth
@@ -232,7 +232,7 @@ List card fraud case resources. Paging can be applied.
 
 ```ruby
 require 'time'
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 # setup authorization
 UnitFinanceSdk.configure do |config|
   # Configure Bearer authorization (JWT): bearerAuth
@@ -317,7 +317,7 @@ Mark a card fraud case as fraud.
 
 ```ruby
 require 'time'
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 # setup authorization
 UnitFinanceSdk.configure do |config|
   # Configure Bearer authorization (JWT): bearerAuth
@@ -388,7 +388,7 @@ Mark a card fraud case as no fraud.
 
 ```ruby
 require 'time'
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 # setup authorization
 UnitFinanceSdk.configure do |config|
   # Configure Bearer authorization (JWT): bearerAuth
@@ -461,7 +461,7 @@ Update a card fraud outreach policy.
 
 ```ruby
 require 'time'
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 # setup authorization
 UnitFinanceSdk.configure do |config|
   # Configure Bearer authorization (JWT): bearerAuth

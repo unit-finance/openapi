@@ -167,8 +167,8 @@ jobs:
         id: check
         run: |
           VERSION="$(jq -r .sdkVersions.ruby spec-version.json)"
-          if curl -sf "https://rubygems.org/api/v2/rubygems/unit-openapi-ruby-sdk/versions/${VERSION}.json" >/dev/null; then
-            echo "unit-openapi-ruby-sdk ${VERSION} is already on RubyGems; skipping"
+          if curl -sf "https://rubygems.org/api/v2/rubygems/unit_openapi_ruby_sdk/versions/${VERSION}.json" >/dev/null; then
+            echo "unit_openapi_ruby_sdk ${VERSION} is already on RubyGems; skipping"
             echo "published=true" >> "$GITHUB_OUTPUT"
           fi
       - name: Configure RubyGems credentials (trusted publishing)
@@ -178,5 +178,5 @@ jobs:
         if: steps.check.outputs.published != 'true'
         working-directory: sdks/ruby
         run: |
-          gem build unit_finance_sdk.gemspec
-          gem push unit-openapi-ruby-sdk-*.gem
+          gem build unit_openapi_ruby_sdk.gemspec
+          gem push unit_openapi_ruby_sdk-*.gem

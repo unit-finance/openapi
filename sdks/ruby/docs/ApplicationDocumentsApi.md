@@ -25,7 +25,7 @@ Unit allows you to create (and store) **custom documents**. This feature allows 
 
 ```ruby
 require 'time'
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 # setup authorization
 UnitFinanceSdk.configure do |config|
   # Configure Bearer authorization (JWT): bearerAuth
@@ -98,7 +98,7 @@ Download the application document file.
 
 ```ruby
 require 'time'
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 # setup authorization
 UnitFinanceSdk.configure do |config|
   # Configure Bearer authorization (JWT): bearerAuth
@@ -169,7 +169,7 @@ Download the application document back-side file.
 
 ```ruby
 require 'time'
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 # setup authorization
 UnitFinanceSdk.configure do |config|
   # Configure Bearer authorization (JWT): bearerAuth
@@ -240,7 +240,7 @@ List application documents.
 
 ```ruby
 require 'time'
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 # setup authorization
 UnitFinanceSdk.configure do |config|
   # Configure Bearer authorization (JWT): bearerAuth
@@ -309,7 +309,7 @@ Uploads a document file. Supported file types are `pdf`, `jpeg` or `png`. This e
 
 ```ruby
 require 'time'
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 # setup authorization
 UnitFinanceSdk.configure do |config|
   # Configure Bearer authorization (JWT): bearerAuth
@@ -382,7 +382,7 @@ Uploads the back-side of a document. Supported file types are `pdf`, `jpeg` or `
 
 ```ruby
 require 'time'
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 # setup authorization
 UnitFinanceSdk.configure do |config|
   # Configure Bearer authorization (JWT): bearerAuth
@@ -455,7 +455,7 @@ Verify Selfie Verification document
 
 ```ruby
 require 'time'
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 # setup authorization
 UnitFinanceSdk.configure do |config|
   # Configure Bearer authorization (JWT): bearerAuth

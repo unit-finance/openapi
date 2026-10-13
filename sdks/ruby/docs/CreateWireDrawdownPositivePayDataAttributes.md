@@ -10,7 +10,7 @@
 ## Example
 
 ```ruby
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 
 instance = UnitFinanceSdk::CreateWireDrawdownPositivePayDataAttributes.new(
   expiration_date: Thu Dec 31 00:00:00 UTC 2026,

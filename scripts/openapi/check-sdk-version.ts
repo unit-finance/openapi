@@ -33,7 +33,7 @@ const MARKER_FILES: Record<Lang, string> = {
 	node: "sdks/node/base.ts",
 	java: "sdks/java/src/main/java/com/unit/finance/sdk/ApiClient.java",
 	python: "sdks/python/unit_finance_sdk/api_client.py",
-	ruby: "sdks/ruby/lib/unit_finance_sdk/api_client.rb",
+	ruby: "sdks/ruby/lib/unit_openapi_ruby_sdk/api_client.rb",
 };
 
 const MARKER_RE = /version of the OpenAPI document:\s*(\S+)/i;

@@ -1,7 +1,7 @@
 # Repayment helpers, the Ruby analogue of Node's `helpers/repayments.ts` and
 # Python's `helpers/repayments.py`.
 
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 require_relative 'api'
 require_relative 'capabilities'
 require_relative 'credit_accounts'
