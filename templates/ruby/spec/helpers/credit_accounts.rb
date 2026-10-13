@@ -2,7 +2,7 @@
 # and Python's `helpers/credit_accounts.py`.
 
 require 'json'
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 require_relative 'api'
 require_relative 'capabilities'
 require_relative 'fixtures'

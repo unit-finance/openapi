@@ -18,7 +18,7 @@
 ## Example
 
 ```ruby
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 
 instance = UnitFinanceSdk::CreateACHPaymentDataAttributes.new(
   amount: 10000,

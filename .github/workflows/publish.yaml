@@ -1,7 +1,6 @@
 name: Publish SDKs
-# Node → npm and Python → PyPI use trusted publishing. Java (Maven Central) and
-# Ruby (RubyGems) are temporarily disabled: to re-enable, restore their `if:`
-# conditions and add them back to the dispatch options.
+# Node → npm, Python → PyPI, and Ruby → RubyGems use trusted publishing.
+# Java → Maven Central uses a Central Portal user token and a GPG signing key.
 on:
   release:
     types: [published]
@@ -11,7 +10,7 @@ on:
         description: 'Which SDK to publish'
         required: true
         type: choice
-        options: [node, python]
+        options: [node, java, python, ruby]
 
 # Jobs run for a published vX.Y.Z GitHub Release, where X.Y.Z is
 # spec-version.json `globalSdkVersion` (tag-releases.yaml creates it), or for
@@ -65,7 +64,7 @@ jobs:
   # token and a GPG signing key. Both live in the `maven-central` environment,
   # which should require reviewer approval.
   publish-java:
-    if: false  # TEMPORARILY DISABLED
+    if: startsWith(github.ref, 'refs/tags/v') || github.event.inputs.target == 'java'
     runs-on: ubuntu-latest
     environment: maven-central
     permissions:
@@ -145,7 +144,7 @@ jobs:
           packages-dir: sdks/python/dist
 
   publish-ruby:
-    if: false  # TEMPORARILY DISABLED
+    if: startsWith(github.ref, 'refs/tags/v') || github.event.inputs.target == 'ruby'
     runs-on: ubuntu-latest
     permissions:
       contents: read   # required to clone this private repo (job permissions replace defaults)
@@ -168,8 +167,8 @@ jobs:
         id: check
         run: |
           VERSION="$(jq -r .sdkVersions.ruby spec-version.json)"
-          if curl -sf "https://rubygems.org/api/v2/rubygems/unit-openapi-ruby-sdk/versions/${VERSION}.json" >/dev/null; then
-            echo "unit-openapi-ruby-sdk ${VERSION} is already on RubyGems; skipping"
+          if curl -sf "https://rubygems.org/api/v2/rubygems/unit_openapi_ruby_sdk/versions/${VERSION}.json" >/dev/null; then
+            echo "unit_openapi_ruby_sdk ${VERSION} is already on RubyGems; skipping"
             echo "published=true" >> "$GITHUB_OUTPUT"
           fi
       - name: Configure RubyGems credentials (trusted publishing)
@@ -179,5 +178,5 @@ jobs:
         if: steps.check.outputs.published != 'true'
         working-directory: sdks/ruby
         run: |
-          gem build unit_finance_sdk.gemspec
-          gem push unit-openapi-ruby-sdk-*.gem
+          gem build unit_openapi_ruby_sdk.gemspec
+          gem push unit_openapi_ruby_sdk-*.gem

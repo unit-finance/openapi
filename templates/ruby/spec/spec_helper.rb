@@ -14,7 +14,7 @@
 #
 # RSpec adds `spec/` to the load path, so specs `require 'helpers/api'` etc.
 
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 
 # Namespaced so the bootstrap doesn't define a method on the global `Object`.
 module SandboxEnv

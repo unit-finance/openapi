@@ -10,14 +10,13 @@
 # `rspec` development dependency is what the placed integration suite runs on.
 
 $:.push File.expand_path("../lib", __FILE__)
-require "unit_finance_sdk/version"
+require "unit_openapi_ruby_sdk/version"
 
 Gem::Specification.new do |s|
-  s.name        = "unit-openapi-ruby-sdk"
+  s.name        = "unit_openapi_ruby_sdk"
   s.version     = UnitFinanceSdk::VERSION
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Unit"]
-  s.email       = ["[email protected]"]
   s.homepage    = "https://www.unit.co"
   s.summary     = "Ruby SDK for the Unit banking API."
   s.description = "Ruby SDK for the Unit banking API. Auto-generated from the unit-openapi spec."
@@ -38,7 +37,7 @@ Gem::Specification.new do |s|
   # excluded from the published gem. Enumerated explicitly (no shelling out to
   # `find`) so packaging is portable and never sweeps in stray files such as a
   # local .env.
-  s.files         = Dir["lib/**/*.rb"] + %w[README.md unit_finance_sdk.gemspec]
+  s.files         = Dir["lib/**/*.rb"] + %w[README.md unit_openapi_ruby_sdk.gemspec]
   s.executables   = []
   s.require_paths = ["lib"]
 end

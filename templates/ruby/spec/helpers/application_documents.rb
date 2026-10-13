@@ -19,7 +19,7 @@
 # as feature-unavailable (skip) rather than a failure -- the holds pattern.
 
 require 'json'
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 require_relative 'api'
 require_relative 'check_deposits'
 

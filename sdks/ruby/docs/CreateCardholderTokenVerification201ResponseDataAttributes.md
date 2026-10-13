@@ -9,7 +9,7 @@
 ## Example
 
 ```ruby
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 
 instance = UnitFinanceSdk::CreateCardholderTokenVerification201ResponseDataAttributes.new(
   verification_token: i8FWKLBjXEg3TdeK93G3K9PKLzhbT6CRhn/VKkTsm....

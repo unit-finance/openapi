@@ -1,6 +1,6 @@
 # Check-payment helpers, the Ruby analogue of Node's `helpers/checkPayments.ts`.
 
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 require_relative 'api'
 require_relative 'fixtures'
 require_relative 'funding'

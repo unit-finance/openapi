@@ -2,7 +2,7 @@
 # and Python's `helpers/stop_payments.py`.
 
 require 'json'
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 require_relative 'api'
 require_relative 'fixtures'
 require_relative 'shared_account'

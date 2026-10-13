@@ -9,7 +9,7 @@
 ## Example
 
 ```ruby
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 
 instance = UnitFinanceSdk::UpdateBookPaymentDataAttributes.new(
   tags: {&quot;by&quot;:null,&quot;uuid&quot;:&quot;83033b64-38f8-4dbc-91a1-313ff0156d02&quot;}
