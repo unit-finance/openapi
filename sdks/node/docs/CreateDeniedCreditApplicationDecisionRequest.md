@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateDeniedCreditApplicationDecisionRequest } from '@unit-finance/unit-node-sdk';
+import { CreateDeniedCreditApplicationDecisionRequest } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: CreateDeniedCreditApplicationDecisionRequest = {
     data,

@@ -15,7 +15,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { RewardAttributes } from '@unit-finance/unit-node-sdk';
+import { RewardAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: RewardAttributes = {
     createdAt,

@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { GetAuthorization200Response } from '@unit-finance/unit-node-sdk';
+import { GetAuthorization200Response } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: GetAuthorization200Response = {
     data,

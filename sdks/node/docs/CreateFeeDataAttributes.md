@@ -13,7 +13,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateFeeDataAttributes } from '@unit-finance/unit-node-sdk';
+import { CreateFeeDataAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: CreateFeeDataAttributes = {
     amount,

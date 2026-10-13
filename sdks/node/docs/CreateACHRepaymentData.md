@@ -12,7 +12,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateACHRepaymentData } from '@unit-finance/unit-node-sdk';
+import { CreateACHRepaymentData } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: CreateACHRepaymentData = {
     type,

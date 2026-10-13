@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { PhoneType } from '@unit-finance/unit-node-sdk';
+import { PhoneType } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: PhoneType = {
     countryCode,

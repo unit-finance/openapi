@@ -24,7 +24,7 @@ import {
     CheckPaymentsApi,
     Configuration,
     ApproveCheckPaymentAdditionalVerificationRequest
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CheckPaymentsApi(configuration);
@@ -82,7 +82,7 @@ Cancels a previously processed check payment. Only check payments in status `Pen
 import {
     CheckPaymentsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CheckPaymentsApi(configuration);
@@ -140,7 +140,7 @@ Get a check payment image by check payment id, side (front or back), and type (p
 import {
     CheckPaymentsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CheckPaymentsApi(configuration);
@@ -201,7 +201,7 @@ Get a check payment by id.
 import {
     CheckPaymentsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CheckPaymentsApi(configuration);
@@ -259,7 +259,7 @@ List check payments resources. Filtering, paging and sorting can be applied.
 import {
     CheckPaymentsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CheckPaymentsApi(configuration);
@@ -351,7 +351,7 @@ import {
     CheckPaymentsApi,
     Configuration,
     OriginateCheckPaymentMailPhysicalCheckRequest
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CheckPaymentsApi(configuration);
@@ -407,7 +407,7 @@ import {
     CheckPaymentsApi,
     Configuration,
     ReturnCheckPaymentRequest
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CheckPaymentsApi(configuration);

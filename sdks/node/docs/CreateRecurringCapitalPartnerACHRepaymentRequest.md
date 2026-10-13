@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateRecurringCapitalPartnerACHRepaymentRequest } from '@unit-finance/unit-node-sdk';
+import { CreateRecurringCapitalPartnerACHRepaymentRequest } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: CreateRecurringCapitalPartnerACHRepaymentRequest = {
     data,

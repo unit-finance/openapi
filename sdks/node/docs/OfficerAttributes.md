@@ -22,7 +22,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { OfficerAttributes } from '@unit-finance/unit-node-sdk';
+import { OfficerAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: OfficerAttributes = {
     status,

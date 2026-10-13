@@ -2,16 +2,16 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.unit.finance</groupId>
-    <artifactId>unit-java-sdk</artifactId>
+    <artifactId>unit-openapi-java-sdk</artifactId>
     <packaging>jar</packaging>
-    <name>unit-java-sdk</name>
-    <version>0.19.0</version>
-    <url>https://github.com/openapitools/openapi-generator</url>
-    <description>OpenAPI Java</description>
+    <name>unit-openapi-java-sdk</name>
+    <version>0.5.0</version>
+    <url>https://github.com/unit-finance/unit-openapi-sdks</url>
+    <description>Java SDK for the Unit banking API. Auto-generated from the unit-openapi spec.</description>
     <scm>
-        <connection>scm:git:git@github.com:openapitools/openapi-generator.git</connection>
-        <developerConnection>scm:git:git@github.com:openapitools/openapi-generator.git</developerConnection>
-        <url>https://github.com/openapitools/openapi-generator</url>
+        <connection>scm:git:https://github.com/unit-finance/unit-openapi-sdks.git</connection>
+        <developerConnection>scm:git:git@github.com:unit-finance/unit-openapi-sdks.git</developerConnection>
+        <url>https://github.com/unit-finance/unit-openapi-sdks</url>
     </scm>
 
     <licenses>
@@ -24,10 +24,10 @@
 
     <developers>
         <developer>
-            <name>OpenAPI-Generator Contributors</name>
-            <email>team@openapitools.org</email>
-            <organization>OpenAPITools.org</organization>
-            <organizationUrl>http://openapitools.org</organizationUrl>
+            <name>Unit</name>
+            <email>support@unit.co</email>
+            <organization>Unit Finance</organization>
+            <organizationUrl>https://www.unit.co</organizationUrl>
         </developer>
     </developers>
 
@@ -251,6 +251,19 @@
                                 </goals>
                             </execution>
                         </executions>
+                    </plugin>
+                    <!-- Custom publishing plugins injected by scripts/openapi/prepare-java-sdk.ts -->
+                    <!-- Source of truth: templates/java/pom-publishing.xml -->
+                    <plugin>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>0.9.0</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <publishingServerId>central</publishingServerId>
+                            <autoPublish>true</autoPublish>
+                            <waitUntil>published</waitUntil>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>

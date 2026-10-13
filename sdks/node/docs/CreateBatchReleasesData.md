@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateBatchReleasesData } from '@unit-finance/unit-node-sdk';
+import { CreateBatchReleasesData } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: CreateBatchReleasesData = {
     type,

@@ -17,7 +17,7 @@ The response to this API call includes the sum of customer accrued interest (in 
 import {
     InterestApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new InterestApi(configuration);

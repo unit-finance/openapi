@@ -20,7 +20,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { OriginatedACHTransactionAttributes } from '@unit-finance/unit-node-sdk';
+import { OriginatedACHTransactionAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: OriginatedACHTransactionAttributes = {
     createdAt,

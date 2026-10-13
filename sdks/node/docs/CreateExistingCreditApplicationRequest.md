@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateExistingCreditApplicationRequest } from '@unit-finance/unit-node-sdk';
+import { CreateExistingCreditApplicationRequest } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: CreateExistingCreditApplicationRequest = {
     data,

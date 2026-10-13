@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { ApprovedCreditLimitDecisionRelationships } from '@unit-finance/unit-node-sdk';
+import { ApprovedCreditLimitDecisionRelationships } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: ApprovedCreditLimitDecisionRelationships = {
     account,

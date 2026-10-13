@@ -50,7 +50,7 @@ Copy this checklist and track progress:
 
 ### Step 1: Orient
 
-Confirm you are on the regeneration branch. Note the `version` / `sdkVersion`
+Confirm you are on the regeneration branch. Note the `version` / `globalSdkVersion` / `sdkVersions`
 bump and the `slices` list in `spec-version.json`. A spec bump can remove
 operations, rename JSON:API discriminator `type` literals, and add new models —
 expect breakage of those three kinds.

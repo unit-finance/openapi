@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { ReverseFeeDataRelationships } from '@unit-finance/unit-node-sdk';
+import { ReverseFeeDataRelationships } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: ReverseFeeDataRelationships = {
     account,

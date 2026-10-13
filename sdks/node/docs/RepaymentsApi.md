@@ -21,7 +21,7 @@ import {
     RepaymentsApi,
     Configuration,
     CreateRepaymentRequest
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new RepaymentsApi(configuration);
@@ -76,7 +76,7 @@ Get a repayment by id.
 import {
     RepaymentsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new RepaymentsApi(configuration);
@@ -131,7 +131,7 @@ List repayments resources. Filtering, paging and sorting can be applied.
 import {
     RepaymentsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new RepaymentsApi(configuration);
@@ -214,7 +214,7 @@ import {
     RepaymentsApi,
     Configuration,
     ReturnExternalRepaymentRequest
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new RepaymentsApi(configuration);

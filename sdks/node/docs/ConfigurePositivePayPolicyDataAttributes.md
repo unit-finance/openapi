@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { ConfigurePositivePayPolicyDataAttributes } from '@unit-finance/unit-node-sdk';
+import { ConfigurePositivePayPolicyDataAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: ConfigurePositivePayPolicyDataAttributes = {
     optInTypes,

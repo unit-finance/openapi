@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { GenerateBarcodeDataAttributes } from '@unit-finance/unit-node-sdk';
+import { GenerateBarcodeDataAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: GenerateBarcodeDataAttributes = {
     storeId,

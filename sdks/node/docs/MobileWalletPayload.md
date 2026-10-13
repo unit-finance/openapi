@@ -12,7 +12,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { MobileWalletPayload } from '@unit-finance/unit-node-sdk';
+import { MobileWalletPayload } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: MobileWalletPayload = {
     type,

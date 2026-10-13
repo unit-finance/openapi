@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateCheckDepositSendLinkRequest } from '@unit-finance/unit-node-sdk';
+import { CreateCheckDepositSendLinkRequest } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: CreateCheckDepositSendLinkRequest = {
     data,

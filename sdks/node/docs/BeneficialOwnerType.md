@@ -22,7 +22,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { BeneficialOwnerType } from '@unit-finance/unit-node-sdk';
+import { BeneficialOwnerType } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: BeneficialOwnerType = {
     status,

@@ -67,7 +67,7 @@ function stampVersion(): void {
 	if (!fs.existsSync(VERSION_RB)) {
 		fail(`version.rb not found: ${rel(VERSION_RB)}. Run \`npm run generate-sdk:ruby\` first.`);
 	}
-	const version = readPackageVersion();
+	const version = readPackageVersion("ruby");
 	const src = fs.readFileSync(VERSION_RB, "utf8");
 	let replaced = false;
 	const out = src.replace(/^(\s*VERSION\s*=\s*)'[^']*'(\s*)$/m, (_m, p1, p2) => {

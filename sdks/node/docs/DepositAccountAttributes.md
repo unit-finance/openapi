@@ -26,7 +26,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { DepositAccountAttributes } from '@unit-finance/unit-node-sdk';
+import { DepositAccountAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: DepositAccountAttributes = {
     createdAt,

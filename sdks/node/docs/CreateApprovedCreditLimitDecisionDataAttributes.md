@@ -17,7 +17,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateApprovedCreditLimitDecisionDataAttributes } from '@unit-finance/unit-node-sdk';
+import { CreateApprovedCreditLimitDecisionDataAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: CreateApprovedCreditLimitDecisionDataAttributes = {
     externalApplicationId,

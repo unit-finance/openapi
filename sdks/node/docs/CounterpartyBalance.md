@@ -14,7 +14,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CounterpartyBalance } from '@unit-finance/unit-node-sdk';
+import { CounterpartyBalance } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: CounterpartyBalance = {
     type,

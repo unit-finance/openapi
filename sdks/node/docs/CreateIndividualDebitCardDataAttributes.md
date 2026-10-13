@@ -17,7 +17,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateIndividualDebitCardDataAttributes } from '@unit-finance/unit-node-sdk';
+import { CreateIndividualDebitCardDataAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: CreateIndividualDebitCardDataAttributes = {
     shippingAddress,

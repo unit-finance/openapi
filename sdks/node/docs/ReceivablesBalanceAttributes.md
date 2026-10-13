@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { ReceivablesBalanceAttributes } from '@unit-finance/unit-node-sdk';
+import { ReceivablesBalanceAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: ReceivablesBalanceAttributes = {
     pendingPurchaseReceivablesAmount,

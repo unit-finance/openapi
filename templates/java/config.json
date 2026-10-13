@@ -1,6 +1,6 @@
 {
   "groupId": "com.unit.finance",
-  "artifactId": "unit-java-sdk",
+  "artifactId": "unit-openapi-java-sdk",
   "artifactVersion": "0.1.0",
   "invokerPackage": "com.unit.finance.sdk",
   "apiPackage": "com.unit.finance.sdk.api",
@@ -8,6 +8,15 @@
   "library": "okhttp-gson",
   "licenseName": "MPL-2.0",
   "licenseUrl": "https://www.mozilla.org/en-US/MPL/2.0/",
+  "artifactUrl": "https://github.com/unit-finance/unit-openapi-sdks",
+  "artifactDescription": "Java SDK for the Unit banking API. Auto-generated from the unit-openapi spec.",
+  "scmConnection": "scm:git:https://github.com/unit-finance/unit-openapi-sdks.git",
+  "scmDeveloperConnection": "scm:git:git@github.com:unit-finance/unit-openapi-sdks.git",
+  "scmUrl": "https://github.com/unit-finance/unit-openapi-sdks",
+  "developerName": "Unit",
+  "developerEmail": "support@unit.co",
+  "developerOrganization": "Unit Finance",
+  "developerOrganizationUrl": "https://www.unit.co",
   "hideGenerationTimestamp": true,
   "disallowAdditionalPropertiesIfNotPresent": false,
   "containerDefaultToNull": true

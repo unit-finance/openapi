@@ -26,13 +26,29 @@ import { readPackageVersion } from "./spec-version";
 const REPO_ROOT = process.cwd();
 const SDK_DIR = path.join(REPO_ROOT, "sdks", "java");
 const POM = path.join(SDK_DIR, "pom.xml");
-const FRAGMENT = path.join(REPO_ROOT, "templates", "java", "pom-dependencies.xml");
 
-/** Marks an already-overlaid pom so re-runs are no-ops. Must appear in the fragment. */
-const MARKER = "Custom dependencies injected by scripts/openapi/prepare-java-sdk.ts";
+interface Overlay {
+	fragment: string;
+	/** Marks an already-overlaid pom so re-runs are no-ops. Must appear in the fragment. */
+	marker: string;
+	/** Fragment is inserted immediately before this unique string. */
+	anchor: string;
+}
 
-/** The project-level `</dependencies>` is uniquely followed by `<properties>`. */
-const ANCHOR = "    </dependencies>\n    <properties>";
+const OVERLAYS: Overlay[] = [
+	{
+		fragment: path.join(REPO_ROOT, "templates", "java", "pom-dependencies.xml"),
+		marker: "Custom dependencies injected by scripts/openapi/prepare-java-sdk.ts",
+		// The project-level `</dependencies>` is uniquely followed by `<properties>`.
+		anchor: "    </dependencies>\n    <properties>",
+	},
+	{
+		fragment: path.join(REPO_ROOT, "templates", "java", "pom-publishing.xml"),
+		marker: "Custom publishing plugins injected by scripts/openapi/prepare-java-sdk.ts",
+		// End of the plugin list in the generator's `sign-artifacts` profile.
+		anchor: "                </plugins>\n            </build>\n        </profile>",
+	},
+];
 
 function rel(p: string): string {
 	return path.relative(REPO_ROOT, p);
@@ -47,40 +63,42 @@ function main(): void {
 	if (!fs.existsSync(POM)) {
 		fail(`pom not found: ${rel(POM)}. Run \`npm run generate-sdk:java\` first.`);
 	}
-	if (!fs.existsSync(FRAGMENT)) {
-		fail(`dependency fragment not found: ${rel(FRAGMENT)}`);
-	}
 
 	let pom = fs.readFileSync(POM, "utf8");
 
 	// Stamp the pinned spec version onto the project's own <version> so the
 	// published artifact tracks spec-version.json rather than the config's
 	// hardcoded artifactVersion. Idempotent, so it also corrects a pom that was
-	// already dependency-overlaid on a prior run.
+	// already overlaid on a prior run.
 	pom = stampVersion(pom);
 
-	if (pom.includes(MARKER)) {
-		fs.writeFileSync(POM, pom, "utf8");
-		console.log(`pom already overlaid; stamped version only (${rel(POM)})`);
-		return;
+	for (const overlay of OVERLAYS) {
+		pom = applyOverlay(pom, overlay);
 	}
+	fs.writeFileSync(POM, pom, "utf8");
+}
 
-	const fragment = fs.readFileSync(FRAGMENT, "utf8").replace(/\s+$/, "");
-	if (!fragment.includes(MARKER)) {
-		fail(`fragment ${rel(FRAGMENT)} is missing the idempotency marker comment`);
+function applyOverlay(pom: string, { fragment: file, marker, anchor }: Overlay): string {
+	if (pom.includes(marker)) {
+		console.log(`pom already contains ${rel(file)}; skipping`);
+		return pom;
 	}
-
-	const idx = pom.indexOf(ANCHOR);
-	if (idx === -1) {
+	if (!fs.existsSync(file)) {
+		fail(`fragment not found: ${rel(file)}`);
+	}
+	const fragment = fs.readFileSync(file, "utf8").replace(/\s+$/, "");
+	if (!fragment.includes(marker)) {
+		fail(`fragment ${rel(file)} is missing the idempotency marker comment`);
+	}
+	const idx = pom.indexOf(anchor);
+	if (idx === -1 || pom.indexOf(anchor, idx + 1) !== -1) {
 		fail(
-			"could not find the project-level </dependencies> anchor; the generator " +
+			`could not find a unique anchor for ${rel(file)}; the generator ` +
 				"output may have changed and the anchor needs updating.",
 		);
 	}
-
-	const merged = `${pom.slice(0, idx)}${fragment}\n${pom.slice(idx)}`;
-	fs.writeFileSync(POM, merged, "utf8");
-	console.log(`Overlaid ${rel(FRAGMENT)} into ${rel(POM)}`);
+	console.log(`Overlaid ${rel(file)} into ${rel(POM)}`);
+	return `${pom.slice(0, idx)}${fragment}\n${pom.slice(idx)}`;
 }
 
 /**
@@ -88,10 +106,10 @@ function main(): void {
  * project `<name>` — leaving dependency versions untouched.
  */
 function stampVersion(pom: string): string {
-	const version = readPackageVersion();
+	const version = readPackageVersion("java");
 	let replaced = false;
 	const out = pom.replace(
-		/(<name>unit-java-sdk<\/name>\s*<version>)[^<]*(<\/version>)/,
+		/(<name>unit-openapi-java-sdk<\/name>\s*<version>)[^<]*(<\/version>)/,
 		(_m, p1, p2) => {
 			replaced = true;
 			return `${p1}${version}${p2}`;
@@ -99,7 +117,7 @@ function stampVersion(pom: string): string {
 	);
 	if (!replaced) {
 		fail(
-			"could not find the project-level <version> after <name>unit-java-sdk</name>; " +
+			"could not find the project-level <version> after <name>unit-openapi-java-sdk</name>; " +
 				"the generator output may have changed.",
 		);
 	}

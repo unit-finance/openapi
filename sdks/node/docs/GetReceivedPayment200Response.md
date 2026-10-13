@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { GetReceivedPayment200Response } from '@unit-finance/unit-node-sdk';
+import { GetReceivedPayment200Response } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: GetReceivedPayment200Response = {
     data,

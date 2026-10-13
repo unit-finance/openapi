@@ -13,7 +13,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { WireDrawdownPositivePayAttributes } from '@unit-finance/unit-node-sdk';
+import { WireDrawdownPositivePayAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: WireDrawdownPositivePayAttributes = {
     createdAt,

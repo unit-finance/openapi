@@ -12,7 +12,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { GetAccountLimits200ResponseData } from '@unit-finance/unit-node-sdk';
+import { GetAccountLimits200ResponseData } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: GetAccountLimits200ResponseData = {
     type,

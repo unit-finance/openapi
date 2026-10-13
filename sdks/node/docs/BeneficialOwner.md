@@ -13,7 +13,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { BeneficialOwner } from '@unit-finance/unit-node-sdk';
+import { BeneficialOwner } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: BeneficialOwner = {
     type,

@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateCardholderTokenVerification201ResponseData } from '@unit-finance/unit-node-sdk';
+import { CreateCardholderTokenVerification201ResponseData } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: CreateCardholderTokenVerification201ResponseData = {
     type,

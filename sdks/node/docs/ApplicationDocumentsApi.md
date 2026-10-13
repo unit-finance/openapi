@@ -23,7 +23,7 @@ Unit allows you to create (and store) **custom documents**. This feature allows 
 import {
     ApplicationDocumentsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new ApplicationDocumentsApi(configuration);
@@ -81,7 +81,7 @@ Download the application document file.
 import {
     ApplicationDocumentsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new ApplicationDocumentsApi(configuration);
@@ -139,7 +139,7 @@ Download the application document back-side file.
 import {
     ApplicationDocumentsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new ApplicationDocumentsApi(configuration);
@@ -197,7 +197,7 @@ List application documents.
 import {
     ApplicationDocumentsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new ApplicationDocumentsApi(configuration);
@@ -252,7 +252,7 @@ Uploads a document file. Supported file types are `pdf`, `jpeg` or `png`. This e
 import {
     ApplicationDocumentsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new ApplicationDocumentsApi(configuration);
@@ -313,7 +313,7 @@ Uploads the back-side of a document. Supported file types are `pdf`, `jpeg` or `
 import {
     ApplicationDocumentsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new ApplicationDocumentsApi(configuration);
@@ -375,7 +375,7 @@ import {
     ApplicationDocumentsApi,
     Configuration,
     VerifyDocumentRequest
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new ApplicationDocumentsApi(configuration);

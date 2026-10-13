@@ -12,7 +12,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { LendingProgramExtendedInformation } from '@unit-finance/unit-node-sdk';
+import { LendingProgramExtendedInformation } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: LendingProgramExtendedInformation = {
     type,

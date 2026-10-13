@@ -1,5 +1,5 @@
 {
-  "npmName": "@unit-finance/unit-node-sdk",
+  "npmName": "@unit-finance/unit-openapi-node-sdk",
   "npmVersion": "0.1.0",
   "supportsES6": true,
   "withInterfaces": true,

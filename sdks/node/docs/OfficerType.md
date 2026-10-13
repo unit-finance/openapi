@@ -23,7 +23,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { OfficerType } from '@unit-finance/unit-node-sdk';
+import { OfficerType } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: OfficerType = {
     status,

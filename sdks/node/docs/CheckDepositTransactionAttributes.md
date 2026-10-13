@@ -15,7 +15,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CheckDepositTransactionAttributes } from '@unit-finance/unit-node-sdk';
+import { CheckDepositTransactionAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: CheckDepositTransactionAttributes = {
     createdAt,

@@ -17,7 +17,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { RichMerchantDataType } from '@unit-finance/unit-node-sdk';
+import { RichMerchantDataType } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: RichMerchantDataType = {
     name,

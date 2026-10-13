@@ -24,7 +24,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CardTransactionAuthorizationRequestAttributes } from '@unit-finance/unit-node-sdk';
+import { CardTransactionAuthorizationRequestAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: CardTransactionAuthorizationRequestAttributes = {
     createdAt,

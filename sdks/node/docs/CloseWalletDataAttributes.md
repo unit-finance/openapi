@@ -12,7 +12,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CloseWalletDataAttributes } from '@unit-finance/unit-node-sdk';
+import { CloseWalletDataAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: CloseWalletDataAttributes = {
     reason,

@@ -14,7 +14,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateReceivedACHDebitPositivePayDataAttributes } from '@unit-finance/unit-node-sdk';
+import { CreateReceivedACHDebitPositivePayDataAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: CreateReceivedACHDebitPositivePayDataAttributes = {
     originatorName,

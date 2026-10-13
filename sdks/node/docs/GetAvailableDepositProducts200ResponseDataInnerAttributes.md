@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { GetAvailableDepositProducts200ResponseDataInnerAttributes } from '@unit-finance/unit-node-sdk';
+import { GetAvailableDepositProducts200ResponseDataInnerAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: GetAvailableDepositProducts200ResponseDataInnerAttributes = {
     name,

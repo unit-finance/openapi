@@ -1,4 +1,4 @@
-# unit-java-sdk
+# unit-openapi-java-sdk
 
 Unit API
 - API version: 0.19.0
@@ -39,7 +39,7 @@ Add this dependency to your project's POM:
 ```xml
 <dependency>
   <groupId>com.unit.finance</groupId>
-  <artifactId>unit-java-sdk</artifactId>
+  <artifactId>unit-openapi-java-sdk</artifactId>
   <version>0.1.0</version>
   <scope>compile</scope>
 </dependency>
@@ -51,12 +51,12 @@ Add this dependency to your project's build file:
 
 ```groovy
   repositories {
-    mavenCentral()     // Needed if the 'unit-java-sdk' jar has been published to maven central.
-    mavenLocal()       // Needed if the 'unit-java-sdk' jar has been published to the local maven repo.
+    mavenCentral()     // Needed if the 'unit-openapi-java-sdk' jar has been published to maven central.
+    mavenLocal()       // Needed if the 'unit-openapi-java-sdk' jar has been published to the local maven repo.
   }
 
   dependencies {
-     implementation "com.unit.finance:unit-java-sdk:0.1.0"
+     implementation "com.unit.finance:unit-openapi-java-sdk:0.1.0"
   }
 ```
 
@@ -70,7 +70,7 @@ mvn clean package
 
 Then manually install the following JARs:
 
-* `target/unit-java-sdk-0.1.0.jar`
+* `target/unit-openapi-java-sdk-0.1.0.jar`
 * `target/lib/*.jar`
 
 ## Getting Started

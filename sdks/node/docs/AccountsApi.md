@@ -34,7 +34,7 @@ import {
     AccountsApi,
     Configuration,
     AddAccountOwnersRequest
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new AccountsApi(configuration);
@@ -93,7 +93,7 @@ import {
     AccountsApi,
     Configuration,
     CloseAccountRequest
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new AccountsApi(configuration);
@@ -152,7 +152,7 @@ import {
     AccountsApi,
     Configuration,
     CreateAccountRequest
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new AccountsApi(configuration);
@@ -208,7 +208,7 @@ import {
     AccountsApi,
     Configuration,
     CreateAccountHoldRequest
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new AccountsApi(configuration);
@@ -264,7 +264,7 @@ import {
     AccountsApi,
     Configuration,
     FreezeAccountRequest
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new AccountsApi(configuration);
@@ -322,7 +322,7 @@ Get an account resource (deposit account, credit account, or wallet) by id.
 import {
     AccountsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new AccountsApi(configuration);
@@ -383,7 +383,7 @@ List account end-of-day balances history (filtering and paging can be applied).
 import {
     AccountsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new AccountsApi(configuration);
@@ -453,7 +453,7 @@ Get an account hold resource by id.
 import {
     AccountsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new AccountsApi(configuration);
@@ -508,7 +508,7 @@ Get the limits of an account (deposit account, credit account, or wallet).
 import {
     AccountsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new AccountsApi(configuration);
@@ -563,7 +563,7 @@ Get the deposit products available for an account.
 import {
     AccountsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new AccountsApi(configuration);
@@ -618,7 +618,7 @@ List account hold resources. Paging can be applied.
 import {
     AccountsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new AccountsApi(configuration);
@@ -682,7 +682,7 @@ List account resources (deposit accounts, credit accounts, and wallets). Paging 
 import {
     AccountsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new AccountsApi(configuration);
@@ -762,7 +762,7 @@ import {
     AccountsApi,
     Configuration,
     ReleaseAccountHoldRequest
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new AccountsApi(configuration);
@@ -821,7 +821,7 @@ import {
     AccountsApi,
     Configuration,
     RemoveAccountOwnersRequest
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new AccountsApi(configuration);
@@ -879,7 +879,7 @@ Reopens a closed account. Applies to deposit accounts and wallets.
 import {
     AccountsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new AccountsApi(configuration);
@@ -937,7 +937,7 @@ Unfreezes an account.
 import {
     AccountsApi,
     Configuration
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new AccountsApi(configuration);
@@ -996,7 +996,7 @@ import {
     AccountsApi,
     Configuration,
     UpdateAccountRequest
-} from '@unit-finance/unit-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new AccountsApi(configuration);

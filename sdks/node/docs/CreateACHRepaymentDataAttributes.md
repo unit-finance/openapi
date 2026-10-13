@@ -17,7 +17,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateACHRepaymentDataAttributes } from '@unit-finance/unit-node-sdk';
+import { CreateACHRepaymentDataAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: CreateACHRepaymentDataAttributes = {
     description,

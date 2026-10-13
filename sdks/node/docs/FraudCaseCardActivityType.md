@@ -20,7 +20,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { FraudCaseCardActivityType } from '@unit-finance/unit-node-sdk';
+import { FraudCaseCardActivityType } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: FraudCaseCardActivityType = {
     id,

@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateCheckDepositSendLinkDataAttributes } from '@unit-finance/unit-node-sdk';
+import { CreateCheckDepositSendLinkDataAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: CreateCheckDepositSendLinkDataAttributes = {
     qrCode,
