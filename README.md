@@ -65,7 +65,7 @@ unit-openapi release ──(repository_dispatch: spec-released)──▶ regener
       CURSOR_API_KEY is set) a Cursor agent authors/repairs tests under templates/<lang>/,
       then opens "Regenerate SDKs for spec X" PR  (step 3)
   ──▶ merge to main ──▶ CI succeeds ──▶ tag-releases.yaml publishes a missing GitHub Release vX.Y.Z
-  ──▶ publish.yaml publishes the Python SDK to PyPI  (step 4; other languages disabled)
+  ──▶ publish.yaml publishes Node, Java, Python, and Ruby (step 4)
 ```
 
 When new spec operations land without integration coverage, the regeneration
@@ -90,8 +90,6 @@ npm, PyPI and RubyGems publish with trusted publishing (OIDC), so they need no
 token: configure `publish.yaml` as the trusted publisher on each registry.
 Maven Central has no trusted publishing, so its secrets live in the
 `maven-central` GitHub Environment, which should require reviewer approval.
-The Java and Ruby publish jobs are currently disabled (`if: false`); only Node
-and Python publish.
 
 ## Versioning
 

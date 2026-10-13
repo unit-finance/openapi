@@ -231,7 +231,7 @@ jobs:
 
             Merging this PR is step 3 of the pipeline; merging to `main` runs CI,
             then `tag-releases.yaml` creates a missing GitHub Release `vX.Y.Z`
-            which publishes the Python SDK to PyPI (step 4).
+            which publishes the Node, Java, Python, and Ruby SDKs (step 4).
           labels: |
             sdk-regeneration
             automated
