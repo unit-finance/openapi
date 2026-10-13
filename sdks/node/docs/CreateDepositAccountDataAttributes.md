@@ -12,7 +12,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateDepositAccountDataAttributes } from 'unit-openapi-node-sdk';
+import { CreateDepositAccountDataAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: CreateDepositAccountDataAttributes = {
     depositProduct,

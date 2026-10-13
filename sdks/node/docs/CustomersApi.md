@@ -23,7 +23,7 @@ import {
     CustomersApi,
     Configuration,
     ArchiveCustomerRequest
-} from 'unit-openapi-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CustomersApi(configuration);
@@ -82,7 +82,7 @@ import {
     CustomersApi,
     Configuration,
     CreateBusinessWalletCustomerRequest
-} from 'unit-openapi-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CustomersApi(configuration);
@@ -137,7 +137,7 @@ Get a customer resource by id.
 import {
     CustomersApi,
     Configuration
-} from 'unit-openapi-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CustomersApi(configuration);
@@ -195,7 +195,7 @@ List customer resources. Paging can be applied.
 import {
     CustomersApi,
     Configuration
-} from 'unit-openapi-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CustomersApi(configuration);
@@ -269,7 +269,7 @@ import {
     CustomersApi,
     Configuration,
     UpdateBusinessCustomerOfficerRequest
-} from 'unit-openapi-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CustomersApi(configuration);
@@ -331,7 +331,7 @@ import {
     CustomersApi,
     Configuration,
     UpdateCustomerRequest
-} from 'unit-openapi-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CustomersApi(configuration);

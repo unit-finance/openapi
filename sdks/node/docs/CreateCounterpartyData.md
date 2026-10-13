@@ -12,7 +12,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateCounterpartyData } from 'unit-openapi-node-sdk';
+import { CreateCounterpartyData } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: CreateCounterpartyData = {
     type,

@@ -14,7 +14,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { ACHCounterparty } from 'unit-openapi-node-sdk';
+import { ACHCounterparty } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: ACHCounterparty = {
     type,

@@ -18,7 +18,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { RecurringCreditBookPaymentAttributes } from 'unit-openapi-node-sdk';
+import { RecurringCreditBookPaymentAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: RecurringCreditBookPaymentAttributes = {
     createdAt,

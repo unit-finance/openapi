@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { ApproveCheckPaymentAdditionalVerificationRequest } from 'unit-openapi-node-sdk';
+import { ApproveCheckPaymentAdditionalVerificationRequest } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: ApproveCheckPaymentAdditionalVerificationRequest = {
     data,

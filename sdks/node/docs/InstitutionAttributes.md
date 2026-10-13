@@ -14,7 +14,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { InstitutionAttributes } from 'unit-openapi-node-sdk';
+import { InstitutionAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: InstitutionAttributes = {
     routingNumber,

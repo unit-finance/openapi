@@ -17,7 +17,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { RealtimeReceivedPaymentAttributes } from 'unit-openapi-node-sdk';
+import { RealtimeReceivedPaymentAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: RealtimeReceivedPaymentAttributes = {
     createdAt,

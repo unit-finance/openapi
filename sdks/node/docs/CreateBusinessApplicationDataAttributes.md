@@ -33,7 +33,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateBusinessApplicationDataAttributes } from 'unit-openapi-node-sdk';
+import { CreateBusinessApplicationDataAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: CreateBusinessApplicationDataAttributes = {
     name,

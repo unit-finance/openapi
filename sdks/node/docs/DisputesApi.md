@@ -18,7 +18,7 @@ Get a dispute resource by id.
 import {
     DisputesApi,
     Configuration
-} from 'unit-openapi-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new DisputesApi(configuration);
@@ -73,7 +73,7 @@ List dispute resources. Paging can be applied.
 import {
     DisputesApi,
     Configuration
-} from 'unit-openapi-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new DisputesApi(configuration);

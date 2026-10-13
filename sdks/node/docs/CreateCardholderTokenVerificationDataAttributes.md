@@ -13,7 +13,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateCardholderTokenVerificationDataAttributes } from 'unit-openapi-node-sdk';
+import { CreateCardholderTokenVerificationDataAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: CreateCardholderTokenVerificationDataAttributes = {
     channel,

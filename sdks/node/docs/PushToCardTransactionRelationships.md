@@ -14,7 +14,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { PushToCardTransactionRelationships } from 'unit-openapi-node-sdk';
+import { PushToCardTransactionRelationships } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: PushToCardTransactionRelationships = {
     account,

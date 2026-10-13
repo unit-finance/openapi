@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { VerifyDocumentRequest } from 'unit-openapi-node-sdk';
+import { VerifyDocumentRequest } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: VerifyDocumentRequest = {
     data,

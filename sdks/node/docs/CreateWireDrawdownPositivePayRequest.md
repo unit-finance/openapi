@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateWireDrawdownPositivePayRequest } from 'unit-openapi-node-sdk';
+import { CreateWireDrawdownPositivePayRequest } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: CreateWireDrawdownPositivePayRequest = {
     data,

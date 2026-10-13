@@ -14,7 +14,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { AuthorizedUserType } from 'unit-openapi-node-sdk';
+import { AuthorizedUserType } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: AuthorizedUserType = {
     fullName,

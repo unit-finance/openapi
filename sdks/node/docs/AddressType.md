@@ -15,7 +15,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { AddressType } from 'unit-openapi-node-sdk';
+import { AddressType } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: AddressType = {
     street,

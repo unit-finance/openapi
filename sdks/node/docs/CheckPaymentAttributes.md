@@ -33,7 +33,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CheckPaymentAttributes } from 'unit-openapi-node-sdk';
+import { CheckPaymentAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: CheckPaymentAttributes = {
     createdAt,

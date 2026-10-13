@@ -16,7 +16,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { AccountLowBalanceClosureTransactionAttributes } from 'unit-openapi-node-sdk';
+import { AccountLowBalanceClosureTransactionAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: AccountLowBalanceClosureTransactionAttributes = {
     createdAt,

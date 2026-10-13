@@ -22,7 +22,7 @@ Cancel a Positive Pay rule by ID. Cancelled rules stop authorizing payments.
 import {
     PositivePayApi,
     Configuration
-} from 'unit-openapi-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new PositivePayApi(configuration);
@@ -81,7 +81,7 @@ import {
     PositivePayApi,
     Configuration,
     ConfigurePositivePayPolicyRequest
-} from 'unit-openapi-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new PositivePayApi(configuration);
@@ -137,7 +137,7 @@ import {
     PositivePayApi,
     Configuration,
     CreatePositivePayRequest
-} from 'unit-openapi-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new PositivePayApi(configuration);
@@ -192,7 +192,7 @@ Get a Positive Pay rule by ID.
 import {
     PositivePayApi,
     Configuration
-} from 'unit-openapi-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new PositivePayApi(configuration);
@@ -247,7 +247,7 @@ List Positive Pay rules. Filtering, paging, and sorting can be applied.
 import {
     PositivePayApi,
     Configuration
-} from 'unit-openapi-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new PositivePayApi(configuration);
@@ -319,7 +319,7 @@ Upload the authorization document required to activate a drawdown rule (Wire Dra
 import {
     PositivePayApi,
     Configuration
-} from 'unit-openapi-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new PositivePayApi(configuration);

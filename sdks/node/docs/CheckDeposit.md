@@ -14,7 +14,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CheckDeposit } from 'unit-openapi-node-sdk';
+import { CheckDeposit } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: CheckDeposit = {
     type,

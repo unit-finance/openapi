@@ -18,7 +18,7 @@ Get an authorization request resource by id.
 import {
     CardsAuthorizationRequestsApi,
     Configuration
-} from 'unit-openapi-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CardsAuthorizationRequestsApi(configuration);
@@ -73,7 +73,7 @@ List authorization requests. Filtering and paging can be applied.
 import {
     CardsAuthorizationRequestsApi,
     Configuration
-} from 'unit-openapi-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CardsAuthorizationRequestsApi(configuration);

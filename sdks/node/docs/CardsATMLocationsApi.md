@@ -17,7 +17,7 @@ List ATM locations by address, by coordinates, or by postal code.
 import {
     CardsATMLocationsApi,
     Configuration
-} from 'unit-openapi-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CardsATMLocationsApi(configuration);

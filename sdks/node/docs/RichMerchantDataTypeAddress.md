@@ -14,7 +14,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { RichMerchantDataTypeAddress } from 'unit-openapi-node-sdk';
+import { RichMerchantDataTypeAddress } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: RichMerchantDataTypeAddress = {
     street,

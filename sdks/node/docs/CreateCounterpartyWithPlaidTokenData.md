@@ -12,7 +12,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateCounterpartyWithPlaidTokenData } from 'unit-openapi-node-sdk';
+import { CreateCounterpartyWithPlaidTokenData } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: CreateCounterpartyWithPlaidTokenData = {
     type,

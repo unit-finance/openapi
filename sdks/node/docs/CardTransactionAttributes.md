@@ -27,7 +27,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CardTransactionAttributes } from 'unit-openapi-node-sdk';
+import { CardTransactionAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: CardTransactionAttributes = {
     createdAt,

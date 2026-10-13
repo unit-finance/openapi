@@ -19,7 +19,7 @@ Get a lending program resource by id.
 import {
     LendingProgramsApi,
     Configuration
-} from 'unit-openapi-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new LendingProgramsApi(configuration);
@@ -74,7 +74,7 @@ Get lending program extended information resource by id.
 import {
     LendingProgramsApi,
     Configuration
-} from 'unit-openapi-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new LendingProgramsApi(configuration);
@@ -129,7 +129,7 @@ List lending program resources. Paging can be applied.
 import {
     LendingProgramsApi,
     Configuration
-} from 'unit-openapi-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new LendingProgramsApi(configuration);

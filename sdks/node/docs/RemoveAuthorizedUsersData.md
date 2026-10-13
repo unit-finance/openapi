@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { RemoveAuthorizedUsersData } from 'unit-openapi-node-sdk';
+import { RemoveAuthorizedUsersData } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: RemoveAuthorizedUsersData = {
     type,

@@ -15,7 +15,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { HealthcareAmountsType } from 'unit-openapi-node-sdk';
+import { HealthcareAmountsType } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: HealthcareAmountsType = {
     dentalAmount,

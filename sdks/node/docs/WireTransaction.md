@@ -14,7 +14,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { WireTransaction } from 'unit-openapi-node-sdk';
+import { WireTransaction } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: WireTransaction = {
     type,

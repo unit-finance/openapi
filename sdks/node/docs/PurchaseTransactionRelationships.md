@@ -15,7 +15,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { PurchaseTransactionRelationships } from 'unit-openapi-node-sdk';
+import { PurchaseTransactionRelationships } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: PurchaseTransactionRelationships = {
     account,

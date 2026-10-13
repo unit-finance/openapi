@@ -13,7 +13,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateAccountHoldDataAttributes } from 'unit-openapi-node-sdk';
+import { CreateAccountHoldDataAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: CreateAccountHoldDataAttributes = {
     amount,

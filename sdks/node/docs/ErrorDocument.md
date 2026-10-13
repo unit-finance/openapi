@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { ErrorDocument } from 'unit-openapi-node-sdk';
+import { ErrorDocument } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: ErrorDocument = {
     errors,

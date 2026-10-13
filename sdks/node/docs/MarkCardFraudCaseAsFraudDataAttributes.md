@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { MarkCardFraudCaseAsFraudDataAttributes } from 'unit-openapi-node-sdk';
+import { MarkCardFraudCaseAsFraudDataAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: MarkCardFraudCaseAsFraudDataAttributes = {
     fraudulentActivityIds,

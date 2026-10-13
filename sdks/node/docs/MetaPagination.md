@@ -12,7 +12,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { MetaPagination } from 'unit-openapi-node-sdk';
+import { MetaPagination } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: MetaPagination = {
     total,

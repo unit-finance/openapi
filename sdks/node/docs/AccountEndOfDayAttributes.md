@@ -14,7 +14,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { AccountEndOfDayAttributes } from 'unit-openapi-node-sdk';
+import { AccountEndOfDayAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: AccountEndOfDayAttributes = {
     date,

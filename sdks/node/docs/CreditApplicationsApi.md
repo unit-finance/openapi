@@ -21,7 +21,7 @@ import {
     CreditApplicationsApi,
     Configuration,
     CreateCreditApplicationRequest
-} from 'unit-openapi-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CreditApplicationsApi(configuration);
@@ -76,7 +76,7 @@ Get a credit application resource by id.
 import {
     CreditApplicationsApi,
     Configuration
-} from 'unit-openapi-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CreditApplicationsApi(configuration);
@@ -131,7 +131,7 @@ List credit applications resources. Paging can be applied.
 import {
     CreditApplicationsApi,
     Configuration
-} from 'unit-openapi-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CreditApplicationsApi(configuration);
@@ -205,7 +205,7 @@ import {
     CreditApplicationsApi,
     Configuration,
     UpdateCreditApplicationRequest
-} from 'unit-openapi-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new CreditApplicationsApi(configuration);

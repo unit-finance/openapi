@@ -14,7 +14,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { AuthorizationCardFraudCase } from 'unit-openapi-node-sdk';
+import { AuthorizationCardFraudCase } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: AuthorizationCardFraudCase = {
     type,

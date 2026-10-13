@@ -18,7 +18,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { BusinessWalletCustomerAttributes } from 'unit-openapi-node-sdk';
+import { BusinessWalletCustomerAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: BusinessWalletCustomerAttributes = {
     createdAt,

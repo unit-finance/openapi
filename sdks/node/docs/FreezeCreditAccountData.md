@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { FreezeCreditAccountData } from 'unit-openapi-node-sdk';
+import { FreezeCreditAccountData } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: FreezeCreditAccountData = {
     type,

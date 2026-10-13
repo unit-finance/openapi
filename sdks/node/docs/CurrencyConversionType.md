@@ -12,7 +12,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CurrencyConversionType } from 'unit-openapi-node-sdk';
+import { CurrencyConversionType } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: CurrencyConversionType = {
     originalCurrency,
