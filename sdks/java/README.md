@@ -38,7 +38,7 @@ Add this dependency to your project's POM:
 
 ```xml
 <dependency>
-  <groupId>com.unit.finance</groupId>
+  <groupId>co.unit</groupId>
   <artifactId>unit-openapi-java-sdk</artifactId>
   <version>0.1.0</version>
   <scope>compile</scope>
@@ -56,7 +56,7 @@ Add this dependency to your project's build file:
   }
 
   dependencies {
-     implementation "com.unit.finance:unit-openapi-java-sdk:0.1.0"
+     implementation "co.unit:unit-openapi-java-sdk:0.1.0"
   }
 ```
 
