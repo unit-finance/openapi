@@ -1,4 +1,4 @@
-## @unit-finance/unit-openapi-node-sdk@0.1.0
+## @unit-finance/unit-openapi-node-sdk
 
 This generator creates TypeScript/JavaScript client that utilizes [axios](https://github.com/axios/axios). The generated Node module can be used in the following environments:
 
