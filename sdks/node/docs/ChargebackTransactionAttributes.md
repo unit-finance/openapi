@@ -16,7 +16,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { ChargebackTransactionAttributes } from 'unit-openapi-node-sdk';
+import { ChargebackTransactionAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: ChargebackTransactionAttributes = {
     createdAt,

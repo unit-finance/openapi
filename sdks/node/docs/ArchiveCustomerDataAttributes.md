@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { ArchiveCustomerDataAttributes } from 'unit-openapi-node-sdk';
+import { ArchiveCustomerDataAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: ArchiveCustomerDataAttributes = {
     reason,

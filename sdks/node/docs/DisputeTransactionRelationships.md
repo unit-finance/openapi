@@ -13,7 +13,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { DisputeTransactionRelationships } from 'unit-openapi-node-sdk';
+import { DisputeTransactionRelationships } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: DisputeTransactionRelationships = {
     account,

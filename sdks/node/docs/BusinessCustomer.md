@@ -13,7 +13,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { BusinessCustomer } from 'unit-openapi-node-sdk';
+import { BusinessCustomer } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: BusinessCustomer = {
     type,

@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateApplication201Response } from 'unit-openapi-node-sdk';
+import { CreateApplication201Response } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: CreateApplication201Response = {
     data,

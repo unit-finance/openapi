@@ -20,7 +20,7 @@ import {
     RewardsApi,
     Configuration,
     CreateRewardRequest
-} from 'unit-openapi-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new RewardsApi(configuration);
@@ -75,7 +75,7 @@ Get a reward by id.
 import {
     RewardsApi,
     Configuration
-} from 'unit-openapi-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new RewardsApi(configuration);
@@ -133,7 +133,7 @@ List rewards resources. Filtering, paging and sorting can be applied.
 import {
     RewardsApi,
     Configuration
-} from 'unit-openapi-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new RewardsApi(configuration);

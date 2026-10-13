@@ -27,7 +27,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateIndividualApplicationDataAttributes } from 'unit-openapi-node-sdk';
+import { CreateIndividualApplicationDataAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: CreateIndividualApplicationDataAttributes = {
     ssn,

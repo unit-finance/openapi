@@ -19,7 +19,7 @@ Set an account with DACA `Activated` status. This action will:
 import {
     DACAApi,
     Configuration
-} from 'unit-openapi-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new DACAApi(configuration);
@@ -77,7 +77,7 @@ Deactivate an account with DACA `Activated` status. This action will:
 import {
     DACAApi,
     Configuration
-} from 'unit-openapi-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new DACAApi(configuration);
@@ -135,7 +135,7 @@ Set an account with DACA `Entered` status.
 import {
     DACAApi,
     Configuration
-} from 'unit-openapi-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new DACAApi(configuration);

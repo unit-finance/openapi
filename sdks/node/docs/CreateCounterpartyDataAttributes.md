@@ -17,7 +17,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateCounterpartyDataAttributes } from 'unit-openapi-node-sdk';
+import { CreateCounterpartyDataAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: CreateCounterpartyDataAttributes = {
     name,

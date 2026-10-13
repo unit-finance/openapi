@@ -14,7 +14,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateCheckPaymentPositivePayDataAttributes } from 'unit-openapi-node-sdk';
+import { CreateCheckPaymentPositivePayDataAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: CreateCheckPaymentPositivePayDataAttributes = {
     checkNumber,

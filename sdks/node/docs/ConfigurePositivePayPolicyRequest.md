@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { ConfigurePositivePayPolicyRequest } from 'unit-openapi-node-sdk';
+import { ConfigurePositivePayPolicyRequest } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: ConfigurePositivePayPolicyRequest = {
     data,

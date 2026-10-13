@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { Meta } from 'unit-openapi-node-sdk';
+import { Meta } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: Meta = {
     pagination,

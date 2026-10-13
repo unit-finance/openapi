@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateWireDrawdownPositivePayDataAttributes } from 'unit-openapi-node-sdk';
+import { CreateWireDrawdownPositivePayDataAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: CreateWireDrawdownPositivePayDataAttributes = {
     expirationDate,

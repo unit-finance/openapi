@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { ListRecurringPayments200Response } from 'unit-openapi-node-sdk';
+import { ListRecurringPayments200Response } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: ListRecurringPayments200Response = {
     data,

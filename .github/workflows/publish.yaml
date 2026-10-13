@@ -1,6 +1,7 @@
 name: Publish SDKs
-# Node → npm, Python → PyPI and Ruby → RubyGems use trusted publishing;
-# Java → Maven Central uses environment-gated secrets.
+# Node → npm and Python → PyPI use trusted publishing. Java (Maven Central) and
+# Ruby (RubyGems) are temporarily disabled: to re-enable, restore their `if:`
+# conditions and add them back to the dispatch options.
 on:
   release:
     types: [published]
@@ -10,7 +11,7 @@ on:
         description: 'Which SDK to publish'
         required: true
         type: choice
-        options: [node, java, python, ruby]
+        options: [node, python]
 
 # Jobs run for a published vX.Y.Z GitHub Release, where X.Y.Z is
 # spec-version.json `globalSdkVersion` (tag-releases.yaml creates it), or for
@@ -46,8 +47,8 @@ jobs:
         id: check
         run: |
           VERSION="$(jq -r .sdkVersions.node spec-version.json)"
-          if npm view "unit-openapi-node-sdk@${VERSION}" version 2>/dev/null | grep -q .; then
-            echo "unit-openapi-node-sdk ${VERSION} is already on npm; skipping"
+          if npm view "@unit-finance/unit-openapi-node-sdk@${VERSION}" version 2>/dev/null | grep -q .; then
+            echo "@unit-finance/unit-openapi-node-sdk ${VERSION} is already on npm; skipping"
             echo "published=true" >> "$GITHUB_OUTPUT"
           fi
       # Trusted publishing (OIDC) requires npm >= 11.5.1.
@@ -64,7 +65,7 @@ jobs:
   # token and a GPG signing key. Both live in the `maven-central` environment,
   # which should require reviewer approval.
   publish-java:
-    if: startsWith(github.ref, 'refs/tags/v') || github.event.inputs.target == 'java'
+    if: false  # TEMPORARILY DISABLED
     runs-on: ubuntu-latest
     environment: maven-central
     permissions:
@@ -144,7 +145,7 @@ jobs:
           packages-dir: sdks/python/dist
 
   publish-ruby:
-    if: startsWith(github.ref, 'refs/tags/v') || github.event.inputs.target == 'ruby'
+    if: false  # TEMPORARILY DISABLED
     runs-on: ubuntu-latest
     permissions:
       contents: read   # required to clone this private repo (job permissions replace defaults)

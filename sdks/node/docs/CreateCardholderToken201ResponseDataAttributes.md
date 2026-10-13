@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateCardholderToken201ResponseDataAttributes } from 'unit-openapi-node-sdk';
+import { CreateCardholderToken201ResponseDataAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: CreateCardholderToken201ResponseDataAttributes = {
     token,

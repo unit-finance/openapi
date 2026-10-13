@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CardTransactionAttributesCardVerificationData } from 'unit-openapi-node-sdk';
+import { CardTransactionAttributesCardVerificationData } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: CardTransactionAttributesCardVerificationData = {
     verificationMethod,

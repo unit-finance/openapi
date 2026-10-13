@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { LendingProgramExtendedInformationAttributes } from 'unit-openapi-node-sdk';
+import { LendingProgramExtendedInformationAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: LendingProgramExtendedInformationAttributes = {
     programSizeAvailable,

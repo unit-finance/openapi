@@ -12,7 +12,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { ReverseFeeDataAttributes } from 'unit-openapi-node-sdk';
+import { ReverseFeeDataAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: ReverseFeeDataAttributes = {
     description,

@@ -12,7 +12,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateCheckStopPaymentData } from 'unit-openapi-node-sdk';
+import { CreateCheckStopPaymentData } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: CreateCheckStopPaymentData = {
     type,

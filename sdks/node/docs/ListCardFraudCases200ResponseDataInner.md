@@ -13,7 +13,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { ListCardFraudCases200ResponseDataInner } from 'unit-openapi-node-sdk';
+import { ListCardFraudCases200ResponseDataInner } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: ListCardFraudCases200ResponseDataInner = {
     type,

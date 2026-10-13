@@ -13,7 +13,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateRecurringCapitalPartnerBookRepaymentDataAttributes } from 'unit-openapi-node-sdk';
+import { CreateRecurringCapitalPartnerBookRepaymentDataAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: CreateRecurringCapitalPartnerBookRepaymentDataAttributes = {
     description,

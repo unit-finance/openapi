@@ -22,7 +22,7 @@ import {
     RecurringRepaymentsApi,
     Configuration,
     CreateRecurringRepaymentRequest
-} from 'unit-openapi-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new RecurringRepaymentsApi(configuration);
@@ -77,7 +77,7 @@ Disable a Recurring Repayment by id. When a Recurring Repayment is disabled, the
 import {
     RecurringRepaymentsApi,
     Configuration
-} from 'unit-openapi-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new RecurringRepaymentsApi(configuration);
@@ -135,7 +135,7 @@ Enable a recurring repayment by id. When a Recurring Repayment is enabled, its s
 import {
     RecurringRepaymentsApi,
     Configuration
-} from 'unit-openapi-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new RecurringRepaymentsApi(configuration);
@@ -193,7 +193,7 @@ Get a recurring repayment by id.
 import {
     RecurringRepaymentsApi,
     Configuration
-} from 'unit-openapi-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new RecurringRepaymentsApi(configuration);
@@ -248,7 +248,7 @@ List recurring repayments resources. Filtering, paging and sorting can be applie
 import {
     RecurringRepaymentsApi,
     Configuration
-} from 'unit-openapi-node-sdk';
+} from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new RecurringRepaymentsApi(configuration);

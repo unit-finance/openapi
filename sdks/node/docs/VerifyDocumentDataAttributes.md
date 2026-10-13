@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { VerifyDocumentDataAttributes } from 'unit-openapi-node-sdk';
+import { VerifyDocumentDataAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: VerifyDocumentDataAttributes = {
     jobId,

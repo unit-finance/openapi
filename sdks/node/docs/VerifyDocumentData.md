@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { VerifyDocumentData } from 'unit-openapi-node-sdk';
+import { VerifyDocumentData } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: VerifyDocumentData = {
     type,

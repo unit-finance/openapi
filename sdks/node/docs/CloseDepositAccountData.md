@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CloseDepositAccountData } from 'unit-openapi-node-sdk';
+import { CloseDepositAccountData } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: CloseDepositAccountData = {
     type,

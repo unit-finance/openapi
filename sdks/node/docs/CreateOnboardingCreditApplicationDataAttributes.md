@@ -15,7 +15,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateOnboardingCreditApplicationDataAttributes } from 'unit-openapi-node-sdk';
+import { CreateOnboardingCreditApplicationDataAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: CreateOnboardingCreditApplicationDataAttributes = {
     aggregatorAccessTokens,

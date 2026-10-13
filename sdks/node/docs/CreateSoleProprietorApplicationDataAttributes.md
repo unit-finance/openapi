@@ -32,7 +32,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateSoleProprietorApplicationDataAttributes } from 'unit-openapi-node-sdk';
+import { CreateSoleProprietorApplicationDataAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: CreateSoleProprietorApplicationDataAttributes = {
     ssn,

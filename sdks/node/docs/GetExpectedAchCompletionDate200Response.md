@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { GetExpectedAchCompletionDate200Response } from 'unit-openapi-node-sdk';
+import { GetExpectedAchCompletionDate200Response } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: GetExpectedAchCompletionDate200Response = {
     data,

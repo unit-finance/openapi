@@ -16,7 +16,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { ReturnedCheckDepositTransactionAttributes } from 'unit-openapi-node-sdk';
+import { ReturnedCheckDepositTransactionAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: ReturnedCheckDepositTransactionAttributes = {
     createdAt,

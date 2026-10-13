@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateAccountHoldRequest } from 'unit-openapi-node-sdk';
+import { CreateAccountHoldRequest } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: CreateAccountHoldRequest = {
     data,

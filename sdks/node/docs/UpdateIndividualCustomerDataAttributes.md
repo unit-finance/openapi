@@ -23,7 +23,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { UpdateIndividualCustomerDataAttributes } from 'unit-openapi-node-sdk';
+import { UpdateIndividualCustomerDataAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: UpdateIndividualCustomerDataAttributes = {
     address,

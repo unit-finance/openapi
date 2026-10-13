@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CancelApplicationData } from 'unit-openapi-node-sdk';
+import { CancelApplicationData } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: CancelApplicationData = {
     type,

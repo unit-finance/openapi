@@ -21,7 +21,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { DishonoredACHTransactionAttributes } from 'unit-openapi-node-sdk';
+import { DishonoredACHTransactionAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: DishonoredACHTransactionAttributes = {
     createdAt,

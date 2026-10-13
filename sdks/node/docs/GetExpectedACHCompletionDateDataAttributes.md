@@ -13,7 +13,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { GetExpectedACHCompletionDateDataAttributes } from 'unit-openapi-node-sdk';
+import { GetExpectedACHCompletionDateDataAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: GetExpectedACHCompletionDateDataAttributes = {
     direction,

@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateIndividualApplicationData } from 'unit-openapi-node-sdk';
+import { CreateIndividualApplicationData } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: CreateIndividualApplicationData = {
     type,

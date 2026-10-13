@@ -13,7 +13,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { CreateIndividualVirtualDebitCardDataAttributes } from 'unit-openapi-node-sdk';
+import { CreateIndividualVirtualDebitCardDataAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: CreateIndividualVirtualDebitCardDataAttributes = {
     idempotencyKey,

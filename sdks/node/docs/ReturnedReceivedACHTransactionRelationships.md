@@ -13,7 +13,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { ReturnedReceivedACHTransactionRelationships } from 'unit-openapi-node-sdk';
+import { ReturnedReceivedACHTransactionRelationships } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: ReturnedReceivedACHTransactionRelationships = {
     account,

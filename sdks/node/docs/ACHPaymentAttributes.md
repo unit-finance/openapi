@@ -23,7 +23,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { ACHPaymentAttributes } from 'unit-openapi-node-sdk';
+import { ACHPaymentAttributes } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: ACHPaymentAttributes = {
     createdAt,

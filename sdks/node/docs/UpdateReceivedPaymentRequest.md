@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { UpdateReceivedPaymentRequest } from 'unit-openapi-node-sdk';
+import { UpdateReceivedPaymentRequest } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: UpdateReceivedPaymentRequest = {
     data,

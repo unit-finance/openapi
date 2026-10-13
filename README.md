@@ -6,7 +6,7 @@ spec with `openapi-generator-cli`.
 
 | Language | Generator | Output | Package |
 |----------|-----------|--------|---------|
-| Node (TS) | `typescript-axios` | `sdks/node/` | `unit-openapi-node-sdk` (npm) |
+| Node (TS) | `typescript-axios` | `sdks/node/` | `@unit-finance/unit-openapi-node-sdk` (npm) |
 | Java | `java` (okhttp-gson, Maven) | `sdks/java/` | `com.unit.finance:unit-openapi-java-sdk` (Maven Central) |
 | Python | `python` (urllib3, pydantic v2) | `sdks/python/` | `unit-python-sdk` (PyPI) |
 | Ruby | `ruby` (typhoeus) | `sdks/ruby/` | `unit-openapi-ruby-sdk` (RubyGems) |
@@ -90,6 +90,8 @@ npm, PyPI and RubyGems publish with trusted publishing (OIDC), so they need no
 token: configure `publish.yaml` as the trusted publisher on each registry.
 Maven Central has no trusted publishing, so its secrets live in the
 `maven-central` GitHub Environment, which should require reviewer approval.
+The Java and Ruby publish jobs are currently disabled (`if: false`); only Node
+and Python publish.
 
 ## Versioning
 

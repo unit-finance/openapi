@@ -12,7 +12,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { UpdateBusinessBeneficialOwnerData } from 'unit-openapi-node-sdk';
+import { UpdateBusinessBeneficialOwnerData } from '@unit-finance/unit-openapi-node-sdk';
 
 const instance: UpdateBusinessBeneficialOwnerData = {
     type,
