@@ -9,7 +9,7 @@ spec with `openapi-generator-cli`.
 | Node (TS) | `typescript-axios` | `sdks/node/` | `@unit-finance/unit-openapi-node-sdk` (npm) |
 | Java | `java` (okhttp-gson, Maven) | `sdks/java/` | `com.unit.finance:unit-openapi-java-sdk` (Maven Central) |
 | Python | `python` (urllib3, pydantic v2) | `sdks/python/` | `unit-python-sdk` (PyPI) |
-| Ruby | `ruby` (typhoeus) | `sdks/ruby/` | `unit-openapi-ruby-sdk` (RubyGems) |
+| Ruby | `ruby` (typhoeus) | `sdks/ruby/` | `unit_openapi_ruby_sdk` (RubyGems) |
 
 Per-language source of truth (generator config, curated manifests, integration
 tests) lives under [`templates/<lang>/`](templates/), outside the wiped output

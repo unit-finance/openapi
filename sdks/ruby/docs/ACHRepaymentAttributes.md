@@ -13,7 +13,7 @@
 ## Example
 
 ```ruby
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 
 instance = UnitFinanceSdk::ACHRepaymentAttributes.new(
   created_at: null,

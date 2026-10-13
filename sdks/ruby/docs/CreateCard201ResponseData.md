@@ -9,7 +9,7 @@ Returns the list of classes defined in oneOf.
 #### Example
 
 ```ruby
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 
 UnitFinanceSdk::CreateCard201ResponseData.openapi_one_of
 # =>
@@ -30,7 +30,7 @@ Returns the discriminator's property name.
 #### Example
 
 ```ruby
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 
 UnitFinanceSdk::CreateCard201ResponseData.openapi_discriminator_name
 # => :'type'
@@ -43,7 +43,7 @@ Returns the discriminator's mapping.
 #### Example
 
 ```ruby
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 
 UnitFinanceSdk::CreateCard201ResponseData.openapi_discriminator_mapping
 # =>
@@ -64,7 +64,7 @@ Find the appropriate object from the `openapi_one_of` list and casts the data in
 #### Example
 
 ```ruby
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 
 UnitFinanceSdk::CreateCard201ResponseData.build(data)
 # => #<BusinessCreditCard:0x00007fdd4aab02a0>

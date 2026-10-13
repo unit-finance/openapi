@@ -1,4 +1,4 @@
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 require 'helpers/api'
 require 'helpers/capabilities'
 require 'helpers/fixtures'

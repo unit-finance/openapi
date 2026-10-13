@@ -12,7 +12,7 @@
 ## Example
 
 ```ruby
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 
 instance = UnitFinanceSdk::UpdateCounterpartyDataAttributes.new(
   plaid_processor_token: processor-sandbox-b14ad1fd-3398-46a8-a316-5bf574fc2459,

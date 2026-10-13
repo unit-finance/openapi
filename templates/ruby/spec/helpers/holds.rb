@@ -1,7 +1,7 @@
 # Account-hold helpers, the Ruby analogue of Node's `helpers/holds.ts` and
 # Python's `helpers/holds.py`.
 
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 require_relative 'api'
 require_relative 'fixtures'
 

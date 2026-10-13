@@ -31,7 +31,7 @@ const TARGETS: Target[] = [
 		strip: (src) => src.replace(/\n[ \t]*<email>[^<]*<\/email>/g, ""),
 	},
 	{
-		file: path.join(REPO_ROOT, "sdks", "ruby", "unit_finance_sdk.gemspec"),
+		file: path.join(REPO_ROOT, "sdks", "ruby", "unit_openapi_ruby_sdk.gemspec"),
 		strip: (src) => src.replace(/^[ \t]*s\.email\s*=.*\n/gm, ""),
 	},
 	{

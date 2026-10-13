@@ -1,7 +1,7 @@
 # Reward helpers, the Ruby analogue of Node's `helpers/rewards.ts` and
 # Python's `helpers/rewards.py`.
 
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 require_relative 'api'
 require_relative 'capabilities'
 require_relative 'fixtures'
