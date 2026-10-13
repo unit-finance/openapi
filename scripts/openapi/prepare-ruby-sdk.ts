@@ -55,6 +55,46 @@ function main(): void {
 		`Replaced SDK gemspec: ${rel(GEMSPEC_SRC)} -> ${rel(GEMSPEC_DEST)}`,
 	);
 	stampVersion();
+	polishReadme();
+}
+
+/**
+ * Drop everything from the generator's `## Documentation for API Endpoints`
+ * section onward (endpoint/model indexes, authorization stub): they dwarf the
+ * page and the relative `docs/` links 404 outside the repo.
+ */
+function polishReadme(): void {
+	const readmePath = path.join(SDK_DIR, "README.md");
+	if (!fs.existsSync(readmePath)) {
+		fail(`SDK README.md not found: ${rel(readmePath)}`);
+	}
+	const readme = fs.readFileSync(readmePath, "utf8");
+	const cut = readme.search(/^## Documentation for API Endpoints\s*$/m);
+	const trimmed = cut === -1 ? readme : readme.slice(0, cut).replace(/\s+$/, "\n");
+	fs.writeFileSync(readmePath, stampReadmeVersion(trimmed), "utf8");
+	console.log(`Wrote SDK README.md (without generator indexes): ${rel(readmePath)}`);
+}
+
+/**
+ * The generator bakes the config's `gemVersion` into the install
+ * instructions; rewrite each mention to the pinned spec version.
+ */
+function stampReadmeVersion(readme: string): string {
+	const version = readPackageVersion("ruby");
+	const patterns: RegExp[] = [
+		/^(- Package version: )\S+$/m,
+		/(unit_openapi_ruby_sdk-)[^\s/]+?(?=\.gem\b)/g,
+		/('unit_openapi_ruby_sdk', '~> )[^']+(?=')/g,
+	];
+	let out = readme;
+	for (const re of patterns) {
+		if (!re.test(out)) {
+			fail(`could not find a version to stamp in the SDK README (${re}); the generator output may have changed.`);
+		}
+		re.lastIndex = 0;
+		out = out.replace(re, `$1${version}`);
+	}
+	return out;
 }
 
 /**
