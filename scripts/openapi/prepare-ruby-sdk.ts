@@ -5,8 +5,8 @@
  * Runs after `generate-sdk:ruby` (which wipes and rewrites
  * `sdks/ruby/` from the spec). The Ruby analogue of
  * `prepare-python-sdk.ts`: replace the openapi-generator-emitted
- * `unit_finance_sdk.gemspec` with the hand-curated
- * `templates/ruby/unit_finance_sdk.gemspec` so the gem ships
+ * `unit_openapi_ruby_sdk.gemspec` with the hand-curated
+ * `templates/ruby/unit_openapi_ruby_sdk.gemspec` so the gem ships
  * stable, branded metadata and deps (rather than the generator's
  * OpenAPI-Generator/Unlicense defaults). The curated gemspec keeps the
  * `typhoeus` runtime dependency and the `rspec` development dependency.
@@ -24,8 +24,8 @@ import { readPackageVersion } from "./spec-version";
 
 const REPO_ROOT = process.cwd();
 const SDK_DIR = path.join(REPO_ROOT, "sdks", "ruby");
-const VERSION_RB = path.join(SDK_DIR, "lib", "unit_finance_sdk", "version.rb");
-const GEMSPEC_NAME = "unit_finance_sdk.gemspec";
+const VERSION_RB = path.join(SDK_DIR, "lib", "unit_openapi_ruby_sdk", "version.rb");
+const GEMSPEC_NAME = "unit_openapi_ruby_sdk.gemspec";
 const GEMSPEC_SRC = path.join(
 	REPO_ROOT,
 	"templates",
@@ -59,7 +59,7 @@ function main(): void {
 
 /**
  * The curated gemspec pulls its version from `UnitFinanceSdk::VERSION`
- * (lib/unit_finance_sdk/version.rb), which the generator emits from the
+ * (lib/unit_openapi_ruby_sdk/version.rb), which the generator emits from the
  * config's `gemVersion`. Rewrite that constant to the pinned spec version so
  * the built gem tracks spec-version.json.
  */

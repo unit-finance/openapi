@@ -9,7 +9,7 @@ Real integration tests that exercise every operation of the generated Ruby SDK
 This directory is the **source of truth** for the tests. After running
 `npm run generate-sdks` from the repo root, the test sources are mirrored into
 `sdks/ruby/spec/` (git-ignored) where they are runnable as a
-sibling of the generated SDK and load it as the installed `unit_finance_sdk`
+sibling of the generated SDK and load it as the installed `unit_openapi_ruby_sdk`
 gem. The generator's own `spec/**` stubs are suppressed, so the placed
 integration suite owns `spec/` exclusively.
 

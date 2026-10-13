@@ -7,7 +7,7 @@
 # so the helpers that hit them return nil (unavailable) and the calling example
 # returns early instead of failing. Same pattern as `holds.rb` and `credit.rb`.
 
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 
 module Helpers
   module Capabilities

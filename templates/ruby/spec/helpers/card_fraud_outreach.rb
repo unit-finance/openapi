@@ -14,7 +14,7 @@
 # omit (same pattern as authorized-users list).
 
 require 'json'
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 require_relative 'api'
 require_relative 'fixtures'
 

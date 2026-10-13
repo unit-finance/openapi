@@ -9,7 +9,7 @@
 ## Example
 
 ```ruby
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 
 instance = UnitFinanceSdk::ConfigurePositivePayPolicyDataAttributes.new(
   opt_in_types: [&quot;CheckPayment&quot;,&quot;ReceivedAchDebit&quot;,&quot;ReceivedAchCredit&quot;]

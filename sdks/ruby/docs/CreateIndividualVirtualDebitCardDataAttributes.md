@@ -12,7 +12,7 @@
 ## Example
 
 ```ruby
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 
 instance = UnitFinanceSdk::CreateIndividualVirtualDebitCardDataAttributes.new(
   idempotency_key: 3a1a33be-4e12-4603-9ed0-820922389fb8,

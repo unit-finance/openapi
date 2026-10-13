@@ -5,7 +5,7 @@ require 'json'
 require 'net/http'
 require 'securerandom'
 require 'uri'
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 
 module Helpers
   module Api

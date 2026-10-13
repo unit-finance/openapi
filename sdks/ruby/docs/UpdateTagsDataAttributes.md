@@ -9,7 +9,7 @@
 ## Example
 
 ```ruby
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 
 instance = UnitFinanceSdk::UpdateTagsDataAttributes.new(
   tags: {&quot;trackUserId&quot;:&quot;1234&quot;}

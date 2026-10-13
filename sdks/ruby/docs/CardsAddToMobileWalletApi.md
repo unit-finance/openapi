@@ -19,7 +19,7 @@ Get the mobile wallet encrypted payload for the specified card. The encrypted pa
 
 ```ruby
 require 'time'
-require 'unit_finance_sdk'
+require 'unit_openapi_ruby_sdk'
 # setup authorization
 UnitFinanceSdk.configure do |config|
   # Configure Bearer authorization (JWT): bearerAuth
