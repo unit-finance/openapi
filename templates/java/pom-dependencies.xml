@@ -1,8 +1,0 @@
-        <!-- Custom dependencies injected by scripts/openapi/prepare-java-sdk.ts -->
-        <!-- Source of truth: templates/java/pom-dependencies.xml -->
-        <dependency>
-            <groupId>io.github.cdimascio</groupId>
-            <artifactId>dotenv-java</artifactId>
-            <version>3.2.0</version>
-            <scope>test</scope>
-        </dependency>

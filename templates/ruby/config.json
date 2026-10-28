@@ -1,8 +1,0 @@
-{
-  "gemName": "unit_openapi_ruby_sdk",
-  "moduleName": "UnitFinanceSdk",
-  "gemVersion": "0.3.0",
-  "library": "typhoeus",
-  "hideGenerationTimestamp": true,
-  "disallowAdditionalPropertiesIfNotPresent": false
-}
