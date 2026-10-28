@@ -1,25 +1,24 @@
 name: Create SDK release
-# After CI succeeds on main, publish a missing GitHub Release vX.Y.Z from
+# When spec-version.json changes on main, publish a missing GitHub Release vX.Y.Z from
 # spec-version.json globalSdkVersion (else version). Publishing that release
 # triggers publish.yaml, which publishes each SDK at its own sdkVersions entry.
 on:
-  workflow_run:
-    workflows: [CI]
-    types: [completed]
+  push:
     branches:
       - main
+    paths:
+      - spec-version.json
+  workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
   release:
-    if: github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
         with:
-          ref: ${{ github.event.workflow_run.head_sha }}
           fetch-depth: 0
 
       - name: Create missing GitHub Release
@@ -42,7 +41,7 @@ jobs:
             exit 0
           fi
           gh release create "$tag" \
-            --target "${{ github.event.workflow_run.head_sha }}" \
+            --target "${{ github.sha }}" \
             --title "$tag" \
             --generate-notes \
             --notes "SDK release ${SDK_VERSION}, generated from unit-openapi ${SPEC_VERSION}.
