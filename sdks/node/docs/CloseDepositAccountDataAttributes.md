@@ -5,9 +5,10 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**reason** | **string** | The reason for closing the account. Either ByCustomer, Fraud, ByBank, or NegativeBalance. | [default to undefined]
+**reason** | **string** | The reason for closing the account. One of ByCustomer, Fraud, ByBank, NegativeBalance, BreachOfTermsAndConditions, NoAccountActivity, ProgramChange, ProgramClosed, or CustomerDeceased. | [default to undefined]
+**reasonText** | **string** | Optional. Free-text reason (up to 255 characters). | [optional] [default to undefined]
 **fraudReason** | **string** | Optional. The expanded fraud reason for closing the account when Fraud is specified as the reason. Can be one of: (ACHActivity, CardActivity, CheckActivity, ApplicationHistory, AccountActivity, ClientIdentified, IdentityTheft, LinkedToFraudulentCustomer). | [optional] [default to undefined]
-**bankReason** | **string** | Optional. The expanded bank reason for closing the account when ByBank is specified as the reason. Can be one of: (ProhibitedBusiness, MissingCddEdd, NonUsOperations, SuspectedFraud). This list is subject to change. | [optional] [default to undefined]
+**bankReason** | **string** | Optional. The expanded bank reason for closing the account when ByBank is specified as the reason. Can be one of: (ProhibitedBusiness, MissingCddEdd, NonUsOperations, SuspectedFraud, Unfunded, Inactive). This list is subject to change. | [optional] [default to undefined]
 
 ## Example
 
@@ -16,6 +17,7 @@ import { CloseDepositAccountDataAttributes } from '@unit-finance/unit-openapi-no
 
 const instance: CloseDepositAccountDataAttributes = {
     reason,
+    reasonText,
     fraudReason,
     bankReason,
 };

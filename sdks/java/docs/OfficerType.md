@@ -7,9 +7,9 @@
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-|**status** | **String** | One of Approved, Denied or PendingReview. |  |
+|**status** | **String** | One of Approved, Denied or PendingReview. |  [optional] |
 |**fullName** | [**FullNameType**](FullNameType.md) | Full name of the officer. |  |
-|**title** | **String** | One of CEO, COO, CFO, President, BenefitsAdministrationOfficer, CIO, VP, AVP, Treasurer, Secretary, Controller, Manager, Partner or Member. |  |
+|**title** | **String** | Title of the officer. One of CEO, COO, CFO, President, BenefitsAdministrationOfficer, CIO, VP, AVP, Treasurer, Secretary, Controller, Manager, Partner or Member. |  [optional] |
 |**ssn** | **String** | SSN of the officer (numbers only). One of ssn or passport is required. |  [optional] |
 |**passport** | **String** | Passport of the officer. One of ssn or passport is required. |  [optional] |
 |**nationality** | **String** | Always when Passport is populated and optional when SSN is populated. Two letters representing the officer&#39;s nationality. |  [optional] |
@@ -21,6 +21,7 @@
 |**occupation** | **OccupationType** | Optional. Occupation of the officer. |  [optional] |
 |**annualIncome** | **AnnualIncomeType** | Optional. Annual income of the officer. |  [optional] |
 |**sourceOfIncome** | **SourceOfIncomeType** | Optional. Source of income of the officer. |  [optional] |
+|**createdAt** | **OffsetDateTime** | Optional. Date and time the officer was created (full timestamp, e.g. 2026-09-09T13:09:03.379Z). |  [optional] |
 
 
 

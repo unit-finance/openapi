@@ -33,7 +33,7 @@ end
 
 api_instance = UnitFinanceSdk::CustomersApi.new
 customer_id = 'customer_id_example' # String | 
-archive_customer_request = UnitFinanceSdk::ArchiveCustomerRequest.new({data: UnitFinanceSdk::ArchiveCustomerData.new({type: 'customerArchive', attributes: UnitFinanceSdk::ArchiveCustomerDataAttributes.new({reason: 'FraudCardActivity'})})}) # ArchiveCustomerRequest | 
+archive_customer_request = UnitFinanceSdk::ArchiveCustomerRequest.new({data: UnitFinanceSdk::ArchiveCustomerData.new({type: 'archiveCustomer', attributes: UnitFinanceSdk::ArchiveCustomerDataAttributes.new({reason: 'FraudCardActivity'})})}) # ArchiveCustomerRequest | 
 
 begin
   # Archive a customer

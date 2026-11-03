@@ -5,10 +5,11 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**amount** | **int** | The amount (in cents). | 
-**expired_at** | **date** | Optional. Date only (e.g. \&quot;2001-08-15\&quot;). the date the account hold will be automatically released at. | [optional] 
-**description** | **str** | Description of the AccountHold (maximum of 80 characters). | 
-**idempotency_key** | **str** | Optional. See Idempotency. | [optional] 
+**amount** | **int** | The amount (in cents). Minimum is 1. | 
+**idempotency_key** | **str** | 1 to 255 characters. See Idempotency. | 
+**expired_at** | **date** | Optional. Date only (e.g. \&quot;2024-10-29\&quot;). The date the account hold will be automatically released at. | [optional] 
+**description** | **str** | Optional. Description of the AccountHold (maximum of 80 characters). | [optional] 
+**tags** | **Dict[str, object]** | Optional. See Tags. | [optional] 
 
 ## Example
 

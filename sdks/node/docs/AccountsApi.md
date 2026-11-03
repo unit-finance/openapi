@@ -5,6 +5,7 @@ All URIs are relative to *https://api.s.unit.sh*
 |Method | HTTP request | Description|
 |------------- | ------------- | -------------|
 |[**addAccountOwners**](#addaccountowners) | **POST** /accounts/{accountId}/relationships/customers | Add account owners|
+|[**addSecondaryRoutingNumber**](#addsecondaryroutingnumber) | **POST** /accounts/{accountId}/secondary-routing-number | Add secondary routing number|
 |[**closeAccount**](#closeaccount) | **POST** /accounts/{accountId}/close | Close an account|
 |[**createAccount**](#createaccount) | **POST** /accounts | Create an account|
 |[**createAccountHold**](#createaccounthold) | **POST** /account-holds | Create an account hold|
@@ -19,6 +20,7 @@ All URIs are relative to *https://api.s.unit.sh*
 |[**releaseAccountHold**](#releaseaccounthold) | **POST** /account-holds/{id}/release | Release an account hold|
 |[**removeAccountOwners**](#removeaccountowners) | **DELETE** /accounts/{accountId}/relationships/customers | Remove account owners|
 |[**reopenAccount**](#reopenaccount) | **POST** /accounts/{accountId}/reopen | Reopen an account|
+|[**switchAccountNumbers**](#switchaccountnumbers) | **POST** /accounts/{accountId}/switch-account-numbers | Switch account numbers|
 |[**unfreezeAccount**](#unfreezeaccount) | **POST** /accounts/{accountId}/unfreeze | Unfreeze an account|
 |[**updateAccount**](#updateaccount) | **PATCH** /accounts/{accountId} | Update an account|
 
@@ -74,6 +76,65 @@ const { status, data } = await apiInstance.addAccountOwners(
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 |**200** | The updated deposit account resource. |  -  |
+|**400** | Bad request. The request body or query parameters failed validation; &#x60;errors[].source.pointer&#x60; identifies the offending field. |  -  |
+|**401** | Unauthorized. The bearer token is missing, invalid or expired. |  -  |
+|**404** | Not found. No resource matches the supplied identifier. |  -  |
+|**0** | Error response |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **addSecondaryRoutingNumber**
+> AddAccountOwners200Response addSecondaryRoutingNumber(addSecondaryRoutingNumberRequest)
+
+Add a secondary routing/account-number pair to an existing deposit account.
+
+### Example
+
+```typescript
+import {
+    AccountsApi,
+    Configuration,
+    AddSecondaryRoutingNumberRequest
+} from '@unit-finance/unit-openapi-node-sdk';
+
+const configuration = new Configuration();
+const apiInstance = new AccountsApi(configuration);
+
+let accountId: string; // (default to undefined)
+let addSecondaryRoutingNumberRequest: AddSecondaryRoutingNumberRequest; //
+
+const { status, data } = await apiInstance.addSecondaryRoutingNumber(
+    accountId,
+    addSecondaryRoutingNumberRequest
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **addSecondaryRoutingNumberRequest** | **AddSecondaryRoutingNumberRequest**|  | |
+| **accountId** | [**string**] |  | defaults to undefined|
+
+
+### Return type
+
+**AddAccountOwners200Response**
+
+### Authorization
+
+[bearerAuth](../README.md#bearerAuth)
+
+### HTTP request headers
+
+ - **Content-Type**: application/vnd.api+json
+ - **Accept**: application/vnd.api+json
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** | Updated account resource after assigning the secondary routing/account number pair. |  -  |
 |**400** | Bad request. The request body or query parameters failed validation; &#x60;errors[].source.pointer&#x60; identifies the offending field. |  -  |
 |**401** | Unauthorized. The bearer token is missing, invalid or expired. |  -  |
 |**404** | Not found. No resource matches the supplied identifier. |  -  |
@@ -328,8 +389,8 @@ const configuration = new Configuration();
 const apiInstance = new AccountsApi(configuration);
 
 let accountId: string; // (default to undefined)
-let include: string; //Optional. Related resource available to include: customer. See Getting Related Resources (optional) (default to undefined)
-let extraFieldsAccount: string; //Optional. Use extraFields[account]=interestTerms to include the interestTerms object in the account\'s attributes section of the response. (optional) (default to undefined)
+let include: string; //Optional. Related resources to include are relationship-backed resources such as customer, customers, and org. See Getting Related Resources (optional) (default to undefined)
+let extraFieldsAccount: string; //Optional. Comma-separated fields. Supported values currently include interestTerms and maskedAccountNumber. (optional) (default to undefined)
 
 const { status, data } = await apiInstance.getAccount(
     accountId,
@@ -343,8 +404,8 @@ const { status, data } = await apiInstance.getAccount(
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
 | **accountId** | [**string**] |  | defaults to undefined|
-| **include** | [**string**] | Optional. Related resource available to include: customer. See Getting Related Resources | (optional) defaults to undefined|
-| **extraFieldsAccount** | [**string**] | Optional. Use extraFields[account]&#x3D;interestTerms to include the interestTerms object in the account\&#39;s attributes section of the response. | (optional) defaults to undefined|
+| **include** | [**string**] | Optional. Related resources to include are relationship-backed resources such as customer, customers, and org. See Getting Related Resources | (optional) defaults to undefined|
+| **extraFieldsAccount** | [**string**] | Optional. Comma-separated fields. Supported values currently include interestTerms and maskedAccountNumber. | (optional) defaults to undefined|
 
 
 ### Return type
@@ -626,13 +687,17 @@ const apiInstance = new AccountsApi(configuration);
 let pageLimit: string; //Optional. Maximum number of resources that will be returned. Maximum is 10000 resources. See Pagination. (optional) (default to '100')
 let pageOffset: string; //Optional. Number of resources to skip. See Pagination. (optional) (default to '0')
 let filterStatus: string; //Optional. Filter by status. Can be one of the following values: Active, Released, PartiallyReleased. (optional) (default to undefined)
-let filterExpiredAt: string; //Optional. Date only (e.g. \"2001-08-15\"). the date the account hold will be automatically released at. (optional) (default to undefined)
+let filterExpiredAt: string; //Optional. Date only (e.g. \"2001-08-15\"). Filters by the date the account hold will be automatically released at. (optional) (default to undefined)
+let filterCustomerId: string; //Optional. Filters the results by the specified customer id. (optional) (default to undefined)
+let filterAccountId: string; //Optional. Filters the results by the specified account id. (optional) (default to undefined)
 
 const { status, data } = await apiInstance.listAccountHolds(
     pageLimit,
     pageOffset,
     filterStatus,
-    filterExpiredAt
+    filterExpiredAt,
+    filterCustomerId,
+    filterAccountId
 );
 ```
 
@@ -643,7 +708,9 @@ const { status, data } = await apiInstance.listAccountHolds(
 | **pageLimit** | [**string**] | Optional. Maximum number of resources that will be returned. Maximum is 10000 resources. See Pagination. | (optional) defaults to '100'|
 | **pageOffset** | [**string**] | Optional. Number of resources to skip. See Pagination. | (optional) defaults to '0'|
 | **filterStatus** | [**string**] | Optional. Filter by status. Can be one of the following values: Active, Released, PartiallyReleased. | (optional) defaults to undefined|
-| **filterExpiredAt** | [**string**] | Optional. Date only (e.g. \&quot;2001-08-15\&quot;). the date the account hold will be automatically released at. | (optional) defaults to undefined|
+| **filterExpiredAt** | [**string**] | Optional. Date only (e.g. \&quot;2001-08-15\&quot;). Filters by the date the account hold will be automatically released at. | (optional) defaults to undefined|
+| **filterCustomerId** | [**string**] | Optional. Filters the results by the specified customer id. | (optional) defaults to undefined|
+| **filterAccountId** | [**string**] | Optional. Filters the results by the specified account id. | (optional) defaults to undefined|
 
 
 ### Return type
@@ -689,24 +756,32 @@ const apiInstance = new AccountsApi(configuration);
 
 let pageLimit: string; //Optional. Maximum number of resources that will be returned. Maximum is 10000 resources. See Pagination. (optional) (default to '100')
 let pageOffset: string; //Optional. Number of resources to skip. See Pagination. (optional) (default to '0')
+let sort: string; //Optional. Sort by createdAt, -createdAt, updatedAt, -updatedAt, balance, -balance, type, or -type. (optional) (default to undefined)
 let filterCustomerId: string; //Optional. Filters the results by the specified customer id. (optional) (default to undefined)
 let filterDepositProductId: string; //Optional. Filters the results by the specified deposit product id. (optional) (default to undefined)
+let filterRoutingNumber: string; //Optional. Filters the results by the specified routing number (9 digits). Usage example: *filter[routingNumber]=051000017*. Must be used together with filter[accountNumber]. (optional) (default to undefined)
+let filterAccountNumber: string; //Optional. Filters the results by the specified account number (5-17 digits). Usage example: *filter[accountNumber]=10000123*. Must be used together with filter[routingNumber]. (optional) (default to undefined)
 let filterTags: string; //Optional. Filter Accounts by Tags. (optional) (default to undefined)
-let filterStatus: string; //Optional. Filter Account by its status (Open, Frozen, or Closed). Usage example: filter[status][0]=Closed (optional) (default to undefined)
+let filterStatus: string; //Optional. Filter Account by its status (Open, Frozen, or Closed). Single-value and array forms are supported. Usage example: *filter[status][0]=Closed* (optional) (default to undefined)
 let filterFromBalance: string; //Optional. Filters Accounts that have balance higher or equal to the specified amount (in cents). e.g. 5000 (optional) (default to undefined)
 let filterToBalance: string; //Optional. Filters Accounts that have balance lower or equal to the specified amount (in cents). e.g. 7000 (optional) (default to undefined)
-let include: string; //Optional. Related resource available to include: customer. See Getting Related Resources (optional) (default to undefined)
+let include: string; //Optional. Commonly used includes are customer, org, and bank. See Getting Related Resources (optional) (default to undefined)
+let extraFieldsAccount: string; //Optional. Comma-separated fields. Supported values currently include interestTerms and maskedAccountNumber. (optional) (default to undefined)
 
 const { status, data } = await apiInstance.listAccounts(
     pageLimit,
     pageOffset,
+    sort,
     filterCustomerId,
     filterDepositProductId,
+    filterRoutingNumber,
+    filterAccountNumber,
     filterTags,
     filterStatus,
     filterFromBalance,
     filterToBalance,
-    include
+    include,
+    extraFieldsAccount
 );
 ```
 
@@ -716,13 +791,17 @@ const { status, data } = await apiInstance.listAccounts(
 |------------- | ------------- | ------------- | -------------|
 | **pageLimit** | [**string**] | Optional. Maximum number of resources that will be returned. Maximum is 10000 resources. See Pagination. | (optional) defaults to '100'|
 | **pageOffset** | [**string**] | Optional. Number of resources to skip. See Pagination. | (optional) defaults to '0'|
+| **sort** | [**string**] | Optional. Sort by createdAt, -createdAt, updatedAt, -updatedAt, balance, -balance, type, or -type. | (optional) defaults to undefined|
 | **filterCustomerId** | [**string**] | Optional. Filters the results by the specified customer id. | (optional) defaults to undefined|
 | **filterDepositProductId** | [**string**] | Optional. Filters the results by the specified deposit product id. | (optional) defaults to undefined|
+| **filterRoutingNumber** | [**string**] | Optional. Filters the results by the specified routing number (9 digits). Usage example: *filter[routingNumber]&#x3D;051000017*. Must be used together with filter[accountNumber]. | (optional) defaults to undefined|
+| **filterAccountNumber** | [**string**] | Optional. Filters the results by the specified account number (5-17 digits). Usage example: *filter[accountNumber]&#x3D;10000123*. Must be used together with filter[routingNumber]. | (optional) defaults to undefined|
 | **filterTags** | [**string**] | Optional. Filter Accounts by Tags. | (optional) defaults to undefined|
-| **filterStatus** | [**string**] | Optional. Filter Account by its status (Open, Frozen, or Closed). Usage example: filter[status][0]&#x3D;Closed | (optional) defaults to undefined|
+| **filterStatus** | [**string**] | Optional. Filter Account by its status (Open, Frozen, or Closed). Single-value and array forms are supported. Usage example: *filter[status][0]&#x3D;Closed* | (optional) defaults to undefined|
 | **filterFromBalance** | [**string**] | Optional. Filters Accounts that have balance higher or equal to the specified amount (in cents). e.g. 5000 | (optional) defaults to undefined|
 | **filterToBalance** | [**string**] | Optional. Filters Accounts that have balance lower or equal to the specified amount (in cents). e.g. 7000 | (optional) defaults to undefined|
-| **include** | [**string**] | Optional. Related resource available to include: customer. See Getting Related Resources | (optional) defaults to undefined|
+| **include** | [**string**] | Optional. Commonly used includes are customer, org, and bank. See Getting Related Resources | (optional) defaults to undefined|
+| **extraFieldsAccount** | [**string**] | Optional. Comma-separated fields. Supported values currently include interestTerms and maskedAccountNumber. | (optional) defaults to undefined|
 
 
 ### Return type
@@ -919,6 +998,64 @@ const { status, data } = await apiInstance.reopenAccount(
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 |**200** | The reopened account resource. |  -  |
+|**400** | Bad request. The request body or query parameters failed validation; &#x60;errors[].source.pointer&#x60; identifies the offending field. |  -  |
+|**401** | Unauthorized. The bearer token is missing, invalid or expired. |  -  |
+|**404** | Not found. No resource matches the supplied identifier. |  -  |
+|**0** | Error response |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **switchAccountNumbers**
+> AddAccountOwners200Response switchAccountNumbers()
+
+Switch primary and secondary account numbers for an existing deposit account.
+
+### Example
+
+```typescript
+import {
+    AccountsApi,
+    Configuration
+} from '@unit-finance/unit-openapi-node-sdk';
+
+const configuration = new Configuration();
+const apiInstance = new AccountsApi(configuration);
+
+let accountId: string; // (default to undefined)
+let body: object; // (optional)
+
+const { status, data } = await apiInstance.switchAccountNumbers(
+    accountId,
+    body
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **body** | **object**|  | |
+| **accountId** | [**string**] |  | defaults to undefined|
+
+
+### Return type
+
+**AddAccountOwners200Response**
+
+### Authorization
+
+[bearerAuth](../README.md#bearerAuth)
+
+### HTTP request headers
+
+ - **Content-Type**: application/vnd.api+json
+ - **Accept**: application/vnd.api+json
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** | Updated account resource after switching primary and secondary account numbers. |  -  |
 |**400** | Bad request. The request body or query parameters failed validation; &#x60;errors[].source.pointer&#x60; identifies the offending field. |  -  |
 |**401** | Unauthorized. The bearer token is missing, invalid or expired. |  -  |
 |**404** | Not found. No resource matches the supplied identifier. |  -  |

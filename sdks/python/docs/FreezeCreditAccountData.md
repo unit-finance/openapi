@@ -6,7 +6,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **type** | **str** |  | 
-**attributes** | [**FreezeDepositAccountDataAttributes**](FreezeDepositAccountDataAttributes.md) |  | 
+**attributes** | [**FreezeCreditAccountDataAttributes**](FreezeCreditAccountDataAttributes.md) |  | 
 
 ## Example
 

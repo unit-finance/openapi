@@ -6,7 +6,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **type** | **string** |  | [default to undefined]
-**attributes** | [**FreezeDepositAccountDataAttributes**](FreezeDepositAccountDataAttributes.md) |  | [default to undefined]
+**attributes** | [**FreezeCreditAccountDataAttributes**](FreezeCreditAccountDataAttributes.md) |  | [default to undefined]
 
 ## Example
 

@@ -4,9 +4,9 @@
 
 | Name | Type | Description | Notes |
 | ---- | ---- | ----------- | ----- |
-| **status** | **String** | One of Approved, Denied or PendingReview. |  |
+| **status** | **String** | One of Approved, Denied or PendingReview. | [optional] |
 | **full_name** | [**FullNameType**](FullNameType.md) | Full name of the officer. |  |
-| **title** | **String** | One of CEO, COO, CFO, President, BenefitsAdministrationOfficer, CIO, VP, AVP, Treasurer, Secretary, Controller, Manager, Partner or Member. |  |
+| **title** | **String** | Title of the officer. One of CEO, COO, CFO, President, BenefitsAdministrationOfficer, CIO, VP, AVP, Treasurer, Secretary, Controller, Manager, Partner or Member. | [optional] |
 | **ssn** | **String** | SSN of the officer (numbers only). One of ssn or passport is required. | [optional] |
 | **passport** | **String** | Passport of the officer. One of ssn or passport is required. | [optional] |
 | **nationality** | **String** | Always when Passport is populated and optional when SSN is populated. Two letters representing the officer&#39;s nationality. | [optional] |
@@ -18,6 +18,7 @@
 | **occupation** | [**OccupationType**](OccupationType.md) | Optional. Occupation of the officer. | [optional] |
 | **annual_income** | [**AnnualIncomeType**](AnnualIncomeType.md) | Optional. Annual income of the officer. | [optional] |
 | **source_of_income** | [**SourceOfIncomeType**](SourceOfIncomeType.md) | Optional. Source of income of the officer. | [optional] |
+| **created_at** | **Time** | Optional. Date and time the officer was created (full timestamp, e.g. 2026-09-09T13:09:03.379Z). | [optional] |
 
 ## Example
 
@@ -38,7 +39,8 @@ instance = UnitFinanceSdk::OfficerType.new(
   id_theft_score: null,
   occupation: null,
   annual_income: null,
-  source_of_income: null
+  source_of_income: null,
+  created_at: null
 )
 ```
 
