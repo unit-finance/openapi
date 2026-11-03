@@ -33,6 +33,9 @@ docs/AddAccountOwnersRequest.md
 docs/AddAuthorizedUsersData.md
 docs/AddAuthorizedUsersDataAttributes.md
 docs/AddAuthorizedUsersRequest.md
+docs/AddSecondaryRoutingNumberData.md
+docs/AddSecondaryRoutingNumberDataRelationships.md
+docs/AddSecondaryRoutingNumberRequest.md
 docs/AddressType.md
 docs/AdjustmentTransaction.md
 docs/AdjustmentTransactionAttributes.md
@@ -414,6 +417,7 @@ docs/DeniedCreditApplicationDecisionRelationships.md
 docs/DeniedCreditLimitDecision.md
 docs/DepositAccount.md
 docs/DepositAccountAttributes.md
+docs/DepositAccountAttributesSecondaryAccountNumber.md
 docs/DepositAccountRelationships.md
 docs/DeviceFingerprintType.md
 docs/DishonoredACHTransaction.md
@@ -452,6 +456,7 @@ docs/FreezeCardData.md
 docs/FreezeCardDataAttributes.md
 docs/FreezeCardRequest.md
 docs/FreezeCreditAccountData.md
+docs/FreezeCreditAccountDataAttributes.md
 docs/FreezeCreditAccountRequest.md
 docs/FreezeDepositAccountData.md
 docs/FreezeDepositAccountDataAttributes.md
@@ -929,6 +934,9 @@ src/main/java/com/unit/finance/sdk/model/AddAccountOwnersRequest.java
 src/main/java/com/unit/finance/sdk/model/AddAuthorizedUsersData.java
 src/main/java/com/unit/finance/sdk/model/AddAuthorizedUsersDataAttributes.java
 src/main/java/com/unit/finance/sdk/model/AddAuthorizedUsersRequest.java
+src/main/java/com/unit/finance/sdk/model/AddSecondaryRoutingNumberData.java
+src/main/java/com/unit/finance/sdk/model/AddSecondaryRoutingNumberDataRelationships.java
+src/main/java/com/unit/finance/sdk/model/AddSecondaryRoutingNumberRequest.java
 src/main/java/com/unit/finance/sdk/model/AddressType.java
 src/main/java/com/unit/finance/sdk/model/AdjustmentTransaction.java
 src/main/java/com/unit/finance/sdk/model/AdjustmentTransactionAttributes.java
@@ -1293,6 +1301,7 @@ src/main/java/com/unit/finance/sdk/model/DeniedCreditApplicationDecisionRelation
 src/main/java/com/unit/finance/sdk/model/DeniedCreditLimitDecision.java
 src/main/java/com/unit/finance/sdk/model/DepositAccount.java
 src/main/java/com/unit/finance/sdk/model/DepositAccountAttributes.java
+src/main/java/com/unit/finance/sdk/model/DepositAccountAttributesSecondaryAccountNumber.java
 src/main/java/com/unit/finance/sdk/model/DepositAccountRelationships.java
 src/main/java/com/unit/finance/sdk/model/DeviceFingerprintType.java
 src/main/java/com/unit/finance/sdk/model/DishonoredACHTransaction.java
@@ -1329,6 +1338,7 @@ src/main/java/com/unit/finance/sdk/model/FreezeCardData.java
 src/main/java/com/unit/finance/sdk/model/FreezeCardDataAttributes.java
 src/main/java/com/unit/finance/sdk/model/FreezeCardRequest.java
 src/main/java/com/unit/finance/sdk/model/FreezeCreditAccountData.java
+src/main/java/com/unit/finance/sdk/model/FreezeCreditAccountDataAttributes.java
 src/main/java/com/unit/finance/sdk/model/FreezeCreditAccountRequest.java
 src/main/java/com/unit/finance/sdk/model/FreezeDepositAccountData.java
 src/main/java/com/unit/finance/sdk/model/FreezeDepositAccountDataAttributes.java
