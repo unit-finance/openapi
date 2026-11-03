@@ -5,8 +5,9 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**reason** | **str** | The reason for freezing the account. Either Fraud or Other, with a specified reasonText. | 
-**reason_text** | **str** | Optional. The free-text reason for freezing the account (up to 255 characters) when Other is specified. | [optional] 
+**reason** | **str** | One of Fraud, ByBank, or Other. | 
+**sub_reason** | **str** | Optional for Fraud and required for ByBank. For Fraud: AchActivity, CardActivity, AccountActivity, CheckActivity, WireActivity, HoldHarmlessReceived, LinkedToFraudulentCustomer. For ByBank: ProhibitedBusiness, MissingCddEdd, NonUsOperations, SuspectedFraud, Inactive, Unfunded, OngoingReevaluation, LegalRequestReceived, ErroneousPayment, Other. | [optional] 
+**reason_text** | **str** | Required when reason&#x3D;Other (1..255). Optional for Fraud and ByBank (max 255). | [optional] 
 
 ## Example
 

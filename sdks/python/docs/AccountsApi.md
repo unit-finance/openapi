@@ -5,6 +5,7 @@ All URIs are relative to *https://api.s.unit.sh*
 Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**add_account_owners**](AccountsApi.md#add_account_owners) | **POST** /accounts/{accountId}/relationships/customers | Add account owners
+[**add_secondary_routing_number**](AccountsApi.md#add_secondary_routing_number) | **POST** /accounts/{accountId}/secondary-routing-number | Add secondary routing number
 [**close_account**](AccountsApi.md#close_account) | **POST** /accounts/{accountId}/close | Close an account
 [**create_account**](AccountsApi.md#create_account) | **POST** /accounts | Create an account
 [**create_account_hold**](AccountsApi.md#create_account_hold) | **POST** /account-holds | Create an account hold
@@ -19,6 +20,7 @@ Method | HTTP request | Description
 [**release_account_hold**](AccountsApi.md#release_account_hold) | **POST** /account-holds/{id}/release | Release an account hold
 [**remove_account_owners**](AccountsApi.md#remove_account_owners) | **DELETE** /accounts/{accountId}/relationships/customers | Remove account owners
 [**reopen_account**](AccountsApi.md#reopen_account) | **POST** /accounts/{accountId}/reopen | Reopen an account
+[**switch_account_numbers**](AccountsApi.md#switch_account_numbers) | **POST** /accounts/{accountId}/switch-account-numbers | Switch account numbers
 [**unfreeze_account**](AccountsApi.md#unfreeze_account) | **POST** /accounts/{accountId}/unfreeze | Unfreeze an account
 [**update_account**](AccountsApi.md#update_account) | **PATCH** /accounts/{accountId} | Update an account
 
@@ -101,6 +103,91 @@ Name | Type | Description  | Notes
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 **200** | The updated deposit account resource. |  -  |
+**400** | Bad request. The request body or query parameters failed validation; &#x60;errors[].source.pointer&#x60; identifies the offending field. |  -  |
+**401** | Unauthorized. The bearer token is missing, invalid or expired. |  -  |
+**404** | Not found. No resource matches the supplied identifier. |  -  |
+**0** | Error response |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **add_secondary_routing_number**
+> AddAccountOwners200Response add_secondary_routing_number(account_id, add_secondary_routing_number_request)
+
+Add secondary routing number
+
+Add a secondary routing/account-number pair to an existing deposit account.
+
+### Example
+
+* Bearer (JWT) Authentication (bearerAuth):
+
+```python
+import unit_finance_sdk
+from unit_finance_sdk.models.add_account_owners200_response import AddAccountOwners200Response
+from unit_finance_sdk.models.add_secondary_routing_number_request import AddSecondaryRoutingNumberRequest
+from unit_finance_sdk.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://api.s.unit.sh
+# See configuration.py for a list of all supported configuration parameters.
+configuration = unit_finance_sdk.Configuration(
+    host = "https://api.s.unit.sh"
+)
+
+# The client must configure the authentication and authorization parameters
+# in accordance with the API server security policy.
+# Examples for each auth method are provided below, use the example that
+# satisfies your auth use case.
+
+# Configure Bearer authorization (JWT): bearerAuth
+configuration = unit_finance_sdk.Configuration(
+    access_token = os.environ["BEARER_TOKEN"]
+)
+
+# Enter a context with an instance of the API client
+with unit_finance_sdk.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = unit_finance_sdk.AccountsApi(api_client)
+    account_id = 'account_id_example' # str | 
+    add_secondary_routing_number_request = unit_finance_sdk.AddSecondaryRoutingNumberRequest() # AddSecondaryRoutingNumberRequest | 
+
+    try:
+        # Add secondary routing number
+        api_response = api_instance.add_secondary_routing_number(account_id, add_secondary_routing_number_request)
+        print("The response of AccountsApi->add_secondary_routing_number:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling AccountsApi->add_secondary_routing_number: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **account_id** | **str**|  | 
+ **add_secondary_routing_number_request** | [**AddSecondaryRoutingNumberRequest**](AddSecondaryRoutingNumberRequest.md)|  | 
+
+### Return type
+
+[**AddAccountOwners200Response**](AddAccountOwners200Response.md)
+
+### Authorization
+
+[bearerAuth](../README.md#bearerAuth)
+
+### HTTP request headers
+
+ - **Content-Type**: application/vnd.api+json
+ - **Accept**: application/vnd.api+json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | Updated account resource after assigning the secondary routing/account number pair. |  -  |
 **400** | Bad request. The request body or query parameters failed validation; &#x60;errors[].source.pointer&#x60; identifies the offending field. |  -  |
 **401** | Unauthorized. The bearer token is missing, invalid or expired. |  -  |
 **404** | Not found. No resource matches the supplied identifier. |  -  |
@@ -482,8 +569,8 @@ with unit_finance_sdk.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = unit_finance_sdk.AccountsApi(api_client)
     account_id = 'account_id_example' # str | 
-    include = 'include_example' # str | Optional. Related resource available to include: customer. See Getting Related Resources (optional)
-    extra_fields_account = 'extra_fields_account_example' # str | Optional. Use extraFields[account]=interestTerms to include the interestTerms object in the account's attributes section of the response. (optional)
+    include = 'include_example' # str | Optional. Related resources to include are relationship-backed resources such as customer, customers, and org. See Getting Related Resources (optional)
+    extra_fields_account = 'extra_fields_account_example' # str | Optional. Comma-separated fields. Supported values currently include interestTerms and maskedAccountNumber. (optional)
 
     try:
         # Get an account by id
@@ -502,8 +589,8 @@ with unit_finance_sdk.ApiClient(configuration) as api_client:
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **account_id** | **str**|  | 
- **include** | **str**| Optional. Related resource available to include: customer. See Getting Related Resources | [optional] 
- **extra_fields_account** | **str**| Optional. Use extraFields[account]&#x3D;interestTerms to include the interestTerms object in the account&#39;s attributes section of the response. | [optional] 
+ **include** | **str**| Optional. Related resources to include are relationship-backed resources such as customer, customers, and org. See Getting Related Resources | [optional] 
+ **extra_fields_account** | **str**| Optional. Comma-separated fields. Supported values currently include interestTerms and maskedAccountNumber. | [optional] 
 
 ### Return type
 
@@ -869,7 +956,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **list_account_holds**
-> ListAccountHolds200Response list_account_holds(page_limit=page_limit, page_offset=page_offset, filter_status=filter_status, filter_expired_at=filter_expired_at)
+> ListAccountHolds200Response list_account_holds(page_limit=page_limit, page_offset=page_offset, filter_status=filter_status, filter_expired_at=filter_expired_at, filter_customer_id=filter_customer_id, filter_account_id=filter_account_id)
 
 List account holds
 
@@ -908,11 +995,13 @@ with unit_finance_sdk.ApiClient(configuration) as api_client:
     page_limit = '100' # str | Optional. Maximum number of resources that will be returned. Maximum is 10000 resources. See Pagination. (optional) (default to '100')
     page_offset = '0' # str | Optional. Number of resources to skip. See Pagination. (optional) (default to '0')
     filter_status = 'filter_status_example' # str | Optional. Filter by status. Can be one of the following values: Active, Released, PartiallyReleased. (optional)
-    filter_expired_at = 'filter_expired_at_example' # str | Optional. Date only (e.g. \"2001-08-15\"). the date the account hold will be automatically released at. (optional)
+    filter_expired_at = 'filter_expired_at_example' # str | Optional. Date only (e.g. \"2001-08-15\"). Filters by the date the account hold will be automatically released at. (optional)
+    filter_customer_id = 'filter_customer_id_example' # str | Optional. Filters the results by the specified customer id. (optional)
+    filter_account_id = 'filter_account_id_example' # str | Optional. Filters the results by the specified account id. (optional)
 
     try:
         # List account holds
-        api_response = api_instance.list_account_holds(page_limit=page_limit, page_offset=page_offset, filter_status=filter_status, filter_expired_at=filter_expired_at)
+        api_response = api_instance.list_account_holds(page_limit=page_limit, page_offset=page_offset, filter_status=filter_status, filter_expired_at=filter_expired_at, filter_customer_id=filter_customer_id, filter_account_id=filter_account_id)
         print("The response of AccountsApi->list_account_holds:\n")
         pprint(api_response)
     except Exception as e:
@@ -929,7 +1018,9 @@ Name | Type | Description  | Notes
  **page_limit** | **str**| Optional. Maximum number of resources that will be returned. Maximum is 10000 resources. See Pagination. | [optional] [default to &#39;100&#39;]
  **page_offset** | **str**| Optional. Number of resources to skip. See Pagination. | [optional] [default to &#39;0&#39;]
  **filter_status** | **str**| Optional. Filter by status. Can be one of the following values: Active, Released, PartiallyReleased. | [optional] 
- **filter_expired_at** | **str**| Optional. Date only (e.g. \&quot;2001-08-15\&quot;). the date the account hold will be automatically released at. | [optional] 
+ **filter_expired_at** | **str**| Optional. Date only (e.g. \&quot;2001-08-15\&quot;). Filters by the date the account hold will be automatically released at. | [optional] 
+ **filter_customer_id** | **str**| Optional. Filters the results by the specified customer id. | [optional] 
+ **filter_account_id** | **str**| Optional. Filters the results by the specified account id. | [optional] 
 
 ### Return type
 
@@ -957,7 +1048,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **list_accounts**
-> ListAccounts200Response list_accounts(page_limit=page_limit, page_offset=page_offset, filter_customer_id=filter_customer_id, filter_deposit_product_id=filter_deposit_product_id, filter_tags=filter_tags, filter_status=filter_status, filter_from_balance=filter_from_balance, filter_to_balance=filter_to_balance, include=include)
+> ListAccounts200Response list_accounts(page_limit=page_limit, page_offset=page_offset, sort=sort, filter_customer_id=filter_customer_id, filter_deposit_product_id=filter_deposit_product_id, filter_routing_number=filter_routing_number, filter_account_number=filter_account_number, filter_tags=filter_tags, filter_status=filter_status, filter_from_balance=filter_from_balance, filter_to_balance=filter_to_balance, include=include, extra_fields_account=extra_fields_account)
 
 List accounts
 
@@ -995,17 +1086,21 @@ with unit_finance_sdk.ApiClient(configuration) as api_client:
     api_instance = unit_finance_sdk.AccountsApi(api_client)
     page_limit = '100' # str | Optional. Maximum number of resources that will be returned. Maximum is 10000 resources. See Pagination. (optional) (default to '100')
     page_offset = '0' # str | Optional. Number of resources to skip. See Pagination. (optional) (default to '0')
+    sort = 'sort_example' # str | Optional. Sort by createdAt, -createdAt, updatedAt, -updatedAt, balance, -balance, type, or -type. (optional)
     filter_customer_id = 'filter_customer_id_example' # str | Optional. Filters the results by the specified customer id. (optional)
     filter_deposit_product_id = 'filter_deposit_product_id_example' # str | Optional. Filters the results by the specified deposit product id. (optional)
+    filter_routing_number = 'filter_routing_number_example' # str | Optional. Filters the results by the specified routing number (9 digits). Usage example: *filter[routingNumber]=051000017*. Must be used together with filter[accountNumber]. (optional)
+    filter_account_number = 'filter_account_number_example' # str | Optional. Filters the results by the specified account number (5-17 digits). Usage example: *filter[accountNumber]=10000123*. Must be used together with filter[routingNumber]. (optional)
     filter_tags = 'filter_tags_example' # str | Optional. Filter Accounts by Tags. (optional)
-    filter_status = 'filter_status_example' # str | Optional. Filter Account by its status (Open, Frozen, or Closed). Usage example: filter[status][0]=Closed (optional)
+    filter_status = 'filter_status_example' # str | Optional. Filter Account by its status (Open, Frozen, or Closed). Single-value and array forms are supported. Usage example: *filter[status][0]=Closed* (optional)
     filter_from_balance = 'filter_from_balance_example' # str | Optional. Filters Accounts that have balance higher or equal to the specified amount (in cents). e.g. 5000 (optional)
     filter_to_balance = 'filter_to_balance_example' # str | Optional. Filters Accounts that have balance lower or equal to the specified amount (in cents). e.g. 7000 (optional)
-    include = 'include_example' # str | Optional. Related resource available to include: customer. See Getting Related Resources (optional)
+    include = 'include_example' # str | Optional. Commonly used includes are customer, org, and bank. See Getting Related Resources (optional)
+    extra_fields_account = 'extra_fields_account_example' # str | Optional. Comma-separated fields. Supported values currently include interestTerms and maskedAccountNumber. (optional)
 
     try:
         # List accounts
-        api_response = api_instance.list_accounts(page_limit=page_limit, page_offset=page_offset, filter_customer_id=filter_customer_id, filter_deposit_product_id=filter_deposit_product_id, filter_tags=filter_tags, filter_status=filter_status, filter_from_balance=filter_from_balance, filter_to_balance=filter_to_balance, include=include)
+        api_response = api_instance.list_accounts(page_limit=page_limit, page_offset=page_offset, sort=sort, filter_customer_id=filter_customer_id, filter_deposit_product_id=filter_deposit_product_id, filter_routing_number=filter_routing_number, filter_account_number=filter_account_number, filter_tags=filter_tags, filter_status=filter_status, filter_from_balance=filter_from_balance, filter_to_balance=filter_to_balance, include=include, extra_fields_account=extra_fields_account)
         print("The response of AccountsApi->list_accounts:\n")
         pprint(api_response)
     except Exception as e:
@@ -1021,13 +1116,17 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **page_limit** | **str**| Optional. Maximum number of resources that will be returned. Maximum is 10000 resources. See Pagination. | [optional] [default to &#39;100&#39;]
  **page_offset** | **str**| Optional. Number of resources to skip. See Pagination. | [optional] [default to &#39;0&#39;]
+ **sort** | **str**| Optional. Sort by createdAt, -createdAt, updatedAt, -updatedAt, balance, -balance, type, or -type. | [optional] 
  **filter_customer_id** | **str**| Optional. Filters the results by the specified customer id. | [optional] 
  **filter_deposit_product_id** | **str**| Optional. Filters the results by the specified deposit product id. | [optional] 
+ **filter_routing_number** | **str**| Optional. Filters the results by the specified routing number (9 digits). Usage example: *filter[routingNumber]&#x3D;051000017*. Must be used together with filter[accountNumber]. | [optional] 
+ **filter_account_number** | **str**| Optional. Filters the results by the specified account number (5-17 digits). Usage example: *filter[accountNumber]&#x3D;10000123*. Must be used together with filter[routingNumber]. | [optional] 
  **filter_tags** | **str**| Optional. Filter Accounts by Tags. | [optional] 
- **filter_status** | **str**| Optional. Filter Account by its status (Open, Frozen, or Closed). Usage example: filter[status][0]&#x3D;Closed | [optional] 
+ **filter_status** | **str**| Optional. Filter Account by its status (Open, Frozen, or Closed). Single-value and array forms are supported. Usage example: *filter[status][0]&#x3D;Closed* | [optional] 
  **filter_from_balance** | **str**| Optional. Filters Accounts that have balance higher or equal to the specified amount (in cents). e.g. 5000 | [optional] 
  **filter_to_balance** | **str**| Optional. Filters Accounts that have balance lower or equal to the specified amount (in cents). e.g. 7000 | [optional] 
- **include** | **str**| Optional. Related resource available to include: customer. See Getting Related Resources | [optional] 
+ **include** | **str**| Optional. Commonly used includes are customer, org, and bank. See Getting Related Resources | [optional] 
+ **extra_fields_account** | **str**| Optional. Comma-separated fields. Supported values currently include interestTerms and maskedAccountNumber. | [optional] 
 
 ### Return type
 
@@ -1301,6 +1400,90 @@ Name | Type | Description  | Notes
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 **200** | The reopened account resource. |  -  |
+**400** | Bad request. The request body or query parameters failed validation; &#x60;errors[].source.pointer&#x60; identifies the offending field. |  -  |
+**401** | Unauthorized. The bearer token is missing, invalid or expired. |  -  |
+**404** | Not found. No resource matches the supplied identifier. |  -  |
+**0** | Error response |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **switch_account_numbers**
+> AddAccountOwners200Response switch_account_numbers(account_id, body=body)
+
+Switch account numbers
+
+Switch primary and secondary account numbers for an existing deposit account.
+
+### Example
+
+* Bearer (JWT) Authentication (bearerAuth):
+
+```python
+import unit_finance_sdk
+from unit_finance_sdk.models.add_account_owners200_response import AddAccountOwners200Response
+from unit_finance_sdk.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://api.s.unit.sh
+# See configuration.py for a list of all supported configuration parameters.
+configuration = unit_finance_sdk.Configuration(
+    host = "https://api.s.unit.sh"
+)
+
+# The client must configure the authentication and authorization parameters
+# in accordance with the API server security policy.
+# Examples for each auth method are provided below, use the example that
+# satisfies your auth use case.
+
+# Configure Bearer authorization (JWT): bearerAuth
+configuration = unit_finance_sdk.Configuration(
+    access_token = os.environ["BEARER_TOKEN"]
+)
+
+# Enter a context with an instance of the API client
+with unit_finance_sdk.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = unit_finance_sdk.AccountsApi(api_client)
+    account_id = 'account_id_example' # str | 
+    body = None # object |  (optional)
+
+    try:
+        # Switch account numbers
+        api_response = api_instance.switch_account_numbers(account_id, body=body)
+        print("The response of AccountsApi->switch_account_numbers:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling AccountsApi->switch_account_numbers: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **account_id** | **str**|  | 
+ **body** | **object**|  | [optional] 
+
+### Return type
+
+[**AddAccountOwners200Response**](AddAccountOwners200Response.md)
+
+### Authorization
+
+[bearerAuth](../README.md#bearerAuth)
+
+### HTTP request headers
+
+ - **Content-Type**: application/vnd.api+json
+ - **Accept**: application/vnd.api+json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | Updated account resource after switching primary and secondary account numbers. |  -  |
 **400** | Bad request. The request body or query parameters failed validation; &#x60;errors[].source.pointer&#x60; identifies the offending field. |  -  |
 **401** | Unauthorized. The bearer token is missing, invalid or expired. |  -  |
 **404** | Not found. No resource matches the supplied identifier. |  -  |

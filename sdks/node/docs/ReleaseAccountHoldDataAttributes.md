@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**amount** | **number** | The amount (in cents) to release from the hold. The hold status will become PartiallyReleased. | [default to undefined]
-**idempotencyKey** | **string** | See Idempotency. | [optional] [default to undefined]
+**amount** | **number** | Minimum is 1. The amount (in cents) to release from the hold. The hold status will become PartiallyReleased, unless this equals the full remaining hold amount, in which case it becomes Released. | [default to undefined]
+**idempotencyKey** | **string** | 1 to 255 characters. See Idempotency. | [optional] [default to undefined]
 
 ## Example
 

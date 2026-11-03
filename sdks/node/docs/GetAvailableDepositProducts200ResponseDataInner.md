@@ -6,6 +6,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **type** | **string** |  | [optional] [default to undefined]
+**id** | **string** |  | [optional] [default to undefined]
 **attributes** | [**GetAvailableDepositProducts200ResponseDataInnerAttributes**](GetAvailableDepositProducts200ResponseDataInnerAttributes.md) |  | [optional] [default to undefined]
 
 ## Example
@@ -15,6 +16,7 @@ import { GetAvailableDepositProducts200ResponseDataInner } from '@unit-finance/u
 
 const instance: GetAvailableDepositProducts200ResponseDataInner = {
     type,
+    id,
     attributes,
 };
 ```

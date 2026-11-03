@@ -5,8 +5,9 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**reason** | **string** | The reason for freezing the account. Either Fraud or Other, with a specified reasonText. | [default to undefined]
-**reasonText** | **string** | Optional. The free-text reason for freezing the account (up to 255 characters) when Other is specified. | [optional] [default to undefined]
+**reason** | **string** | One of Fraud, ByBank, or Other. | [default to undefined]
+**subReason** | **string** | Optional for Fraud and required for ByBank. For Fraud: AchActivity, CardActivity, AccountActivity, CheckActivity, WireActivity, HoldHarmlessReceived, LinkedToFraudulentCustomer. For ByBank: ProhibitedBusiness, MissingCddEdd, NonUsOperations, SuspectedFraud, Inactive, Unfunded, OngoingReevaluation, LegalRequestReceived, ErroneousPayment, Other. | [optional] [default to undefined]
+**reasonText** | **string** | Required when reason&#x3D;Other (1..255). Optional for Fraud and ByBank (max 255). | [optional] [default to undefined]
 
 ## Example
 
@@ -15,6 +16,7 @@ import { FreezeDepositAccountDataAttributes } from '@unit-finance/unit-openapi-n
 
 const instance: FreezeDepositAccountDataAttributes = {
     reason,
+    subReason,
     reasonText,
 };
 ```

@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**type** | **string** | The lending program type, e.g. &#x60;bankSponsoredChargeCardProgram&#x60;. The set of program types is open-ended and is not enumerated here. | [default to undefined]
+**type** | **string** | Type of the lending program, e.g. bankSponsoredChargeCardProgram, clientSponsoredChargeCardProgram or receivablesRetentionProgram. | [default to undefined]
 **id** | **string** |  | [default to undefined]
 **attributes** | [**LendingProgramAttributes**](LendingProgramAttributes.md) |  | [default to undefined]
 

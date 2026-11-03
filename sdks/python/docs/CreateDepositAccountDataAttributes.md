@@ -8,6 +8,7 @@ Name | Type | Description | Notes
 **deposit_product** | **str** | The name of the deposit product. | 
 **tags** | **Dict[str, object]** | Optional. See Tags. | [optional] 
 **idempotency_key** | **str** | Optional. See Idempotency. | [optional] 
+**overdraft_limit** | **int** | Optional. Overdraft limit in cents. Must be 0 or greater. | [optional] 
 
 ## Example
 

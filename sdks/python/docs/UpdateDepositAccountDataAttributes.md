@@ -7,6 +7,8 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **tags** | **Dict[str, object]** | Optional. See Updating Tags. | [optional] 
 **deposit_product** | **str** | Optional. Name of the selected deposit product (you can get the list of available deposit products using a dedicated API endpoint). | [optional] 
+**name** | **str** | Optional. Account display name. | [optional] 
+**overdraft_limit** | **int** | Optional. Overdraft limit in cents. Must be 0 or greater. | [optional] 
 
 ## Example
 

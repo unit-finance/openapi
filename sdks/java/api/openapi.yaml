@@ -5,7 +5,7 @@ info:
     name: Proprietary
     url: https://www.unit.co/terms-of-service
   title: Unit API
-  version: 0.19.0
+  version: 0.21.0
 servers:
 - url: https://api.s.unit.sh
 security:
@@ -1102,6 +1102,15 @@ paths:
           default: "0"
           type: string
         style: form
+      - description: "Optional. Sort by createdAt, -createdAt, updatedAt, -updatedAt,\
+          \ balance, -balance, type, or -type."
+        explode: true
+        in: query
+        name: sort
+        required: false
+        schema:
+          type: string
+        style: form
       - description: Optional. Filters the results by the specified customer id.
         explode: true
         in: query
@@ -1119,6 +1128,26 @@ paths:
         schema:
           type: string
         style: form
+      - description: "Optional. Filters the results by the specified routing number\
+          \ (9 digits). Usage example: *filter[routingNumber]=051000017*. Must be\
+          \ used together with filter[accountNumber]."
+        explode: true
+        in: query
+        name: "filter[routingNumber]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: "Optional. Filters the results by the specified account number\
+          \ (5-17 digits). Usage example: *filter[accountNumber]=10000123*. Must be\
+          \ used together with filter[routingNumber]."
+        explode: true
+        in: query
+        name: "filter[accountNumber]"
+        required: false
+        schema:
+          type: string
+        style: form
       - description: Optional. Filter Accounts by Tags.
         explode: true
         in: query
@@ -1128,7 +1157,7 @@ paths:
           type: string
         style: form
       - description: "Optional. Filter Account by its status (Open, Frozen, or Closed).\
-          \ Usage example: filter[status][0]=Closed"
+          \ Single-value and array forms are supported. Usage example: *filter[status][0]=Closed*"
         explode: true
         in: query
         name: "filter[status]"
@@ -1154,11 +1183,20 @@ paths:
         schema:
           type: string
         style: form
-      - description: "Optional. Related resource available to include: customer. See\
-          \ Getting Related Resources"
+      - description: "Optional. Commonly used includes are customer, org, and bank.\
+          \ See Getting Related Resources"
         explode: true
         in: query
         name: include
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Comma-separated fields. Supported values currently
+          include interestTerms and maskedAccountNumber.
+        explode: true
+        in: query
+        name: "extraFields[account]"
         required: false
         schema:
           type: string
@@ -1268,8 +1306,8 @@ paths:
         schema:
           type: string
         style: simple
-      - description: "Optional. Related resource available to include: customer. See\
-          \ Getting Related Resources"
+      - description: "Optional. Related resources to include are relationship-backed\
+          \ resources such as customer, customers, and org. See Getting Related Resources"
         explode: true
         in: query
         name: include
@@ -1277,8 +1315,8 @@ paths:
         schema:
           type: string
         style: form
-      - description: "Optional. Use extraFields[account]=interestTerms to include\
-          \ the interestTerms object in the account's attributes section of the response."
+      - description: Optional. Comma-separated fields. Supported values currently
+          include interestTerms and maskedAccountNumber.
         explode: true
         in: query
         name: "extraFields[account]"
@@ -1845,6 +1883,128 @@ paths:
       x-content-type: application/vnd.api+json
       x-accepts:
       - application/vnd.api+json
+  /accounts/{accountId}/secondary-routing-number:
+    post:
+      description: Add a secondary routing/account-number pair to an existing deposit
+        account.
+      operationId: addSecondaryRoutingNumber
+      parameters:
+      - explode: false
+        in: path
+        name: accountId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/AddSecondaryRoutingNumberRequest"
+        required: true
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/addAccountOwners_200_response"
+          description: Updated account resource after assigning the secondary routing/account
+            number pair.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - accounts-write
+      summary: Add secondary routing number
+      tags:
+      - Accounts
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
+  /accounts/{accountId}/switch-account-numbers:
+    post:
+      description: Switch primary and secondary account numbers for an existing deposit
+        account.
+      operationId: switchAccountNumbers
+      parameters:
+      - explode: false
+        in: path
+        name: accountId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+        required: false
+      responses:
+        "200":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/addAccountOwners_200_response"
+          description: Updated account resource after switching primary and secondary
+            account numbers.
+        "400":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Bad request. The request body or query parameters failed validation;\
+            \ `errors[].source.pointer` identifies the offending field."
+        "401":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: "Unauthorized. The bearer token is missing, invalid or expired."
+        "404":
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Not found. No resource matches the supplied identifier.
+        default:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ErrorDocument"
+          description: Error response
+      security:
+      - bearerAuth:
+        - accounts-write
+      summary: Switch account numbers
+      tags:
+      - Accounts
+      x-content-type: application/vnd.api+json
+      x-accepts:
+      - application/vnd.api+json
   /account-end-of-day:
     get:
       description: List account end-of-day balances history (filtering and paging
@@ -1979,11 +2139,27 @@ paths:
         schema:
           type: string
         style: form
-      - description: Optional. Date only (e.g. "2001-08-15"). the date the account
-          hold will be automatically released at.
+      - description: Optional. Date only (e.g. "2001-08-15"). Filters by the date
+          the account hold will be automatically released at.
         explode: true
         in: query
         name: "filter[expiredAt]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filters the results by the specified customer id.
+        explode: true
+        in: query
+        name: "filter[customerId]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Optional. Filters the results by the specified account id.
+        explode: true
+        in: query
+        name: "filter[accountId]"
         required: false
         schema:
           type: string
@@ -2020,6 +2196,9 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorDocument"
           description: Error response
+      security:
+      - bearerAuth:
+        - accountHolds
       summary: List account holds
       tags:
       - Accounts
@@ -2066,6 +2245,9 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorDocument"
           description: Error response
+      security:
+      - bearerAuth:
+        - accountHolds-write
       summary: Create an account hold
       tags:
       - Accounts
@@ -2116,6 +2298,9 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorDocument"
           description: Error response
+      security:
+      - bearerAuth:
+        - accountHolds
       summary: Get an account hold by id
       tags:
       - Accounts
@@ -2172,6 +2357,9 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorDocument"
           description: Error response
+      security:
+      - bearerAuth:
+        - accountHolds-write
       summary: Release an account hold
       tags:
       - Accounts
@@ -11930,7 +12118,7 @@ components:
           - $ref: "#/components/schemas/FullNameType"
           description: Full name of the officer.
         title:
-          description: "One of CEO, COO, CFO, President, BenefitsAdministrationOfficer,\
+          description: "Title of the officer. One of CEO, COO, CFO, President, BenefitsAdministrationOfficer,\
             \ CIO, VP, AVP, Treasurer, Secretary, Controller, Manager, Partner or\
             \ Member."
           type: string
@@ -11978,14 +12166,17 @@ components:
           allOf:
           - $ref: "#/components/schemas/SourceOfIncomeType"
           description: Optional. Source of income of the officer.
+        createdAt:
+          description: "Optional. Date and time the officer was created (full timestamp,\
+            \ e.g. 2026-09-09T13:09:03.379Z)."
+          format: date-time
+          type: string
       required:
       - address
       - dateOfBirth
       - email
       - fullName
       - phone
-      - status
-      - title
       type: object
     OfficerRequestType:
       example:
@@ -13261,7 +13452,7 @@ components:
           - creditAccountFreeze
           type: string
         attributes:
-          $ref: "#/components/schemas/FreezeDepositAccountData_attributes"
+          $ref: "#/components/schemas/FreezeCreditAccountData_attributes"
       required:
       - attributes
       - type
@@ -16965,7 +17156,7 @@ components:
       properties:
         type:
           enum:
-          - customerArchive
+          - archiveCustomer
           type: string
         attributes:
           $ref: "#/components/schemas/ArchiveCustomerData_attributes"
@@ -18463,8 +18654,8 @@ components:
           programSizeLimit: 10900000
       properties:
         type:
-          description: "The lending program type, e.g. `bankSponsoredChargeCardProgram`.\
-            \ The set of program types is open-ended and is not enumerated here."
+          description: "Type of the lending program, e.g. bankSponsoredChargeCardProgram,\
+            \ clientSponsoredChargeCardProgram or receivablesRetentionProgram."
           type: string
         id:
           type: string
@@ -19692,6 +19883,28 @@ components:
       - id
       - type
       type: object
+    AddSecondaryRoutingNumberData:
+      properties:
+        type:
+          enum:
+          - secondaryRoutingNumber
+          type: string
+        attributes:
+          properties: {}
+          type: object
+        relationships:
+          $ref: "#/components/schemas/AddSecondaryRoutingNumberData_relationships"
+      required:
+      - relationships
+      - type
+      type: object
+    AddSecondaryRoutingNumberRequest:
+      properties:
+        data:
+          $ref: "#/components/schemas/AddSecondaryRoutingNumberData"
+      required:
+      - data
+      type: object
     list_200_response_data_inner:
       discriminator:
         mapping:
@@ -19913,6 +20126,8 @@ components:
     getAvailableDepositProducts_200_response_data_inner:
       properties:
         type:
+          type: string
+        id:
           type: string
         attributes:
           $ref: "#/components/schemas/getAvailableDepositProducts_200_response_data_inner_attributes"
@@ -22440,6 +22655,16 @@ components:
         transaction:
           $ref: "#/components/schemas/Relationship"
       type: object
+    DepositAccount_attributes_secondaryAccountNumber:
+      description: Optional. Secondary account/routing pair.
+      properties:
+        routingNumber:
+          description: Secondary routing number (9 digits).
+          type: string
+        accountNumber:
+          description: Secondary account number (10-12 digits).
+          type: string
+      type: object
     DepositAccount_attributes:
       properties:
         createdAt:
@@ -22457,12 +22682,14 @@ components:
           description: The name of the deposit product.
           type: string
         routingNumber:
-          description: Routing number of account.
+          description: Routing number of account (9 digits).
           type: string
         accountNumber:
-          description: "Account number, together with the routingNumber forms the\
-            \ identifier of the account on the ACH network."
+          description: "Optional. Account number (10-12 digits), together with the\
+            \ routingNumber forms the identifier of the account on the ACH network."
           type: string
+        secondaryAccountNumber:
+          $ref: "#/components/schemas/DepositAccount_attributes_secondaryAccountNumber"
         currency:
           description: Currency of the account.
           type: string
@@ -22478,6 +22705,9 @@ components:
         available:
           description: The available balance for spending (in cents). Equals the balance
             minus the hold amount.
+          type: integer
+        overdraftLimit:
+          description: Optional. Overdraft limit in cents.
           type: integer
         tags:
           additionalProperties: true
@@ -22496,8 +22726,11 @@ components:
             \ ByBank, or free-text description."
           type: string
         closeReason:
-          description: "Optional. The reason the account was closed, either ByCustomer,\
-            \ Fraud or ByBank."
+          description: "Optional. The reason the account was closed (for example ByCustomer,\
+            \ Fraud, ByBank, or NegativeBalance)."
+          type: string
+        closeReasonText:
+          description: Optional. Free-text close reason details (up to 255 characters).
           type: string
         fraudReason:
           description: "Optional. The expanded fraud reason for closing the account\
@@ -22505,12 +22738,25 @@ components:
             \ CardActivity, CheckActivity, ApplicationHistory, AccountActivity, ClientIdentified,\
             \ IdentityTheft, LinkedToFraudulentCustomer)."
           type: string
+        maskedAccountNumber:
+          description: "Optional. Masked account number. Only available if extraFields[account]=maskedAccountNumber\
+            \ is used."
+          type: string
+        isOverdrawnWithinLimit:
+          description: Optional. Whether the account is overdrawn while still within
+            the configured overdraft limit.
+          type: boolean
         dacaStatus:
           description: "Optional. The account DACA (Deposit Account Control Agreements)\
             \ status. Can be one of: Entered, Activated."
           type: string
+        dacaOperators:
+          description: "Optional. DACA operators. Values can include Org, Unit, and\
+            \ Bank."
+          items:
+            type: string
+          type: array
       required:
-      - accountNumber
       - available
       - balance
       - createdAt
@@ -22678,22 +22924,27 @@ components:
           format: date-time
           type: string
         status:
-          description: "Status of the account hold, either Active, Released, PartiallyReleased."
+          description: "Status of the account hold: Active, PartiallyReleased or Released."
           type: string
         amount:
-          description: The amount (cents) of the payment.
+          description: The original amount (cents) of the account hold.
           type: integer
         remainingHoldAmount:
-          description: Optional. The remaining amount (cents) being held. Only present
-            when status is PartiallyReleased.
+          description: Optional. The remaining amount (cents) still being held. Only
+            present when status is PartiallyReleased.
           type: integer
+        releasedAt:
+          description: Optional. Date only (e.g. "2001-08-15"). The date the account
+            hold was fully released. Only present when status is Released.
+          format: date
+          type: string
         expiredAt:
-          description: Optional. Date only (e.g. "2001-08-15"). the date the account
+          description: Optional. Date only (e.g. "2001-08-15"). The date the account
             hold will be automatically released at.
           format: date
           type: string
         description:
-          description: Account hold description (maximum of 80 characters).
+          description: Optional. Account hold description (maximum of 80 characters).
           type: string
         tags:
           additionalProperties: true
@@ -22702,7 +22953,6 @@ components:
       required:
       - amount
       - createdAt
-      - description
       - status
       type: object
     AccountEndOfDay_attributes:
@@ -22752,6 +23002,10 @@ components:
         idempotencyKey:
           description: Optional. See Idempotency.
           type: string
+        overdraftLimit:
+          description: Optional. Overdraft limit in cents. Must be 0 or greater.
+          minimum: 0
+          type: integer
       required:
       - depositProduct
       type: object
@@ -22809,6 +23063,13 @@ components:
           description: Optional. Name of the selected deposit product (you can get
             the list of available deposit products using a dedicated API endpoint).
           type: string
+        name:
+          description: Optional. Account display name.
+          type: string
+        overdraftLimit:
+          description: Optional. Overdraft limit in cents. Must be 0 or greater.
+          minimum: 0
+          type: integer
       type: object
     UpdateCreditAccountData_attributes:
       properties:
@@ -22836,9 +23097,13 @@ components:
     CloseDepositAccountData_attributes:
       properties:
         reason:
-          description: "The reason for closing the account. Either ByCustomer, Fraud,\
-            \ ByBank, or NegativeBalance."
+          description: "The reason for closing the account. One of ByCustomer, Fraud,\
+            \ ByBank, NegativeBalance, BreachOfTermsAndConditions, NoAccountActivity,\
+            \ ProgramChange, ProgramClosed, or CustomerDeceased."
           example: ByCustomer
+          type: string
+        reasonText:
+          description: Optional. Free-text reason (up to 255 characters).
           type: string
         fraudReason:
           description: "Optional. The expanded fraud reason for closing the account\
@@ -22849,8 +23114,8 @@ components:
         bankReason:
           description: "Optional. The expanded bank reason for closing the account\
             \ when ByBank is specified as the reason. Can be one of: (ProhibitedBusiness,\
-            \ MissingCddEdd, NonUsOperations, SuspectedFraud). This list is subject\
-            \ to change."
+            \ MissingCddEdd, NonUsOperations, SuspectedFraud, Unfunded, Inactive).\
+            \ This list is subject to change."
           type: string
       required:
       - reason
@@ -22894,6 +23159,27 @@ components:
     FreezeDepositAccountData_attributes:
       properties:
         reason:
+          description: "One of Fraud, ByBank, or Other."
+          example: Other
+          type: string
+        subReason:
+          description: "Optional for Fraud and required for ByBank. For Fraud: AchActivity,\
+            \ CardActivity, AccountActivity, CheckActivity, WireActivity, HoldHarmlessReceived,\
+            \ LinkedToFraudulentCustomer. For ByBank: ProhibitedBusiness, MissingCddEdd,\
+            \ NonUsOperations, SuspectedFraud, Inactive, Unfunded, OngoingReevaluation,\
+            \ LegalRequestReceived, ErroneousPayment, Other."
+          type: string
+        reasonText:
+          description: Required when reason=Other (1..255). Optional for Fraud and
+            ByBank (max 255).
+          example: Per request from customer
+          type: string
+      required:
+      - reason
+      type: object
+    FreezeCreditAccountData_attributes:
+      properties:
+        reason:
           description: "The reason for freezing the account. Either Fraud or Other,\
             \ with a specified reasonText."
           example: Other
@@ -22924,35 +23210,47 @@ components:
     CreateAccountHoldData_attributes:
       properties:
         amount:
-          description: The amount (in cents).
+          description: The amount (in cents). Minimum is 1.
           example: 6000
+          minimum: 1
           type: integer
+        idempotencyKey:
+          description: 1 to 255 characters. See Idempotency.
+          example: "1234567890"
+          maxLength: 255
+          minLength: 1
+          type: string
         expiredAt:
-          description: Optional. Date only (e.g. "2001-08-15"). the date the account
+          description: Optional. Date only (e.g. "2024-10-29"). The date the account
             hold will be automatically released at.
           example: 2024-10-29
           format: date
           type: string
         description:
-          description: Description of the AccountHold (maximum of 80 characters).
+          description: Optional. Description of the AccountHold (maximum of 80 characters).
           example: Hold reason
           type: string
-        idempotencyKey:
-          description: Optional. See Idempotency.
-          type: string
+        tags:
+          additionalProperties: true
+          description: Optional. See Tags.
+          type: object
       required:
       - amount
-      - description
+      - idempotencyKey
       type: object
     ReleaseAccountHoldData_attributes:
       properties:
         amount:
-          description: The amount (in cents) to release from the hold. The hold status
-            will become PartiallyReleased.
-          example: 2500
+          description: "Minimum is 1. The amount (in cents) to release from the hold.\
+            \ The hold status will become PartiallyReleased, unless this equals the\
+            \ full remaining hold amount, in which case it becomes Released."
+          example: 4433
+          minimum: 1
           type: integer
         idempotencyKey:
-          description: See Idempotency.
+          description: 1 to 255 characters. See Idempotency.
+          maxLength: 255
+          minLength: 1
           type: string
       required:
       - amount
@@ -29641,6 +29939,13 @@ components:
           $ref: "#/components/schemas/Relationship"
         customer:
           $ref: "#/components/schemas/Relationship"
+      type: object
+    AddSecondaryRoutingNumberData_relationships:
+      properties:
+        bankRouting:
+          $ref: "#/components/schemas/Relationship"
+      required:
+      - bankRouting
       type: object
   securitySchemes:
     bearerAuth:

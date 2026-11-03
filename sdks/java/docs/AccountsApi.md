@@ -5,6 +5,7 @@ All URIs are relative to *https://api.s.unit.sh*
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
 | [**addAccountOwners**](AccountsApi.md#addAccountOwners) | **POST** /accounts/{accountId}/relationships/customers | Add account owners |
+| [**addSecondaryRoutingNumber**](AccountsApi.md#addSecondaryRoutingNumber) | **POST** /accounts/{accountId}/secondary-routing-number | Add secondary routing number |
 | [**closeAccount**](AccountsApi.md#closeAccount) | **POST** /accounts/{accountId}/close | Close an account |
 | [**createAccount**](AccountsApi.md#createAccount) | **POST** /accounts | Create an account |
 | [**createAccountHold**](AccountsApi.md#createAccountHold) | **POST** /account-holds | Create an account hold |
@@ -19,6 +20,7 @@ All URIs are relative to *https://api.s.unit.sh*
 | [**releaseAccountHold**](AccountsApi.md#releaseAccountHold) | **POST** /account-holds/{id}/release | Release an account hold |
 | [**removeAccountOwners**](AccountsApi.md#removeAccountOwners) | **DELETE** /accounts/{accountId}/relationships/customers | Remove account owners |
 | [**reopenAccount**](AccountsApi.md#reopenAccount) | **POST** /accounts/{accountId}/reopen | Reopen an account |
+| [**switchAccountNumbers**](AccountsApi.md#switchAccountNumbers) | **POST** /accounts/{accountId}/switch-account-numbers | Switch account numbers |
 | [**unfreezeAccount**](AccountsApi.md#unfreezeAccount) | **POST** /accounts/{accountId}/unfreeze | Unfreeze an account |
 | [**updateAccount**](AccountsApi.md#updateAccount) | **PATCH** /accounts/{accountId} | Update an account |
 
@@ -91,6 +93,79 @@ public class Example {
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 | **200** | The updated deposit account resource. |  -  |
+| **400** | Bad request. The request body or query parameters failed validation; &#x60;errors[].source.pointer&#x60; identifies the offending field. |  -  |
+| **401** | Unauthorized. The bearer token is missing, invalid or expired. |  -  |
+| **404** | Not found. No resource matches the supplied identifier. |  -  |
+| **0** | Error response |  -  |
+
+<a id="addSecondaryRoutingNumber"></a>
+# **addSecondaryRoutingNumber**
+> AddAccountOwners200Response addSecondaryRoutingNumber(accountId, addSecondaryRoutingNumberRequest)
+
+Add secondary routing number
+
+Add a secondary routing/account-number pair to an existing deposit account.
+
+### Example
+```java
+// Import classes:
+import com.unit.finance.sdk.ApiClient;
+import com.unit.finance.sdk.ApiException;
+import com.unit.finance.sdk.Configuration;
+import com.unit.finance.sdk.auth.*;
+import com.unit.finance.sdk.models.*;
+import com.unit.finance.sdk.api.AccountsApi;
+
+public class Example {
+  public static void main(String[] args) {
+    ApiClient defaultClient = Configuration.getDefaultApiClient();
+    defaultClient.setBasePath("https://api.s.unit.sh");
+    
+    // Configure HTTP bearer authorization: bearerAuth
+    HttpBearerAuth bearerAuth = (HttpBearerAuth) defaultClient.getAuthentication("bearerAuth");
+    bearerAuth.setBearerToken("BEARER TOKEN");
+
+    AccountsApi apiInstance = new AccountsApi(defaultClient);
+    String accountId = "accountId_example"; // String | 
+    AddSecondaryRoutingNumberRequest addSecondaryRoutingNumberRequest = new AddSecondaryRoutingNumberRequest(); // AddSecondaryRoutingNumberRequest | 
+    try {
+      AddAccountOwners200Response result = apiInstance.addSecondaryRoutingNumber(accountId, addSecondaryRoutingNumberRequest);
+      System.out.println(result);
+    } catch (ApiException e) {
+      System.err.println("Exception when calling AccountsApi#addSecondaryRoutingNumber");
+      System.err.println("Status code: " + e.getCode());
+      System.err.println("Reason: " + e.getResponseBody());
+      System.err.println("Response headers: " + e.getResponseHeaders());
+      e.printStackTrace();
+    }
+  }
+}
+```
+
+### Parameters
+
+| Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **accountId** | **String**|  | |
+| **addSecondaryRoutingNumberRequest** | [**AddSecondaryRoutingNumberRequest**](AddSecondaryRoutingNumberRequest.md)|  | |
+
+### Return type
+
+[**AddAccountOwners200Response**](AddAccountOwners200Response.md)
+
+### Authorization
+
+[bearerAuth](../README.md#bearerAuth)
+
+### HTTP request headers
+
+ - **Content-Type**: application/vnd.api+json
+ - **Accept**: application/vnd.api+json
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+| **200** | Updated account resource after assigning the secondary routing/account number pair. |  -  |
 | **400** | Bad request. The request body or query parameters failed validation; &#x60;errors[].source.pointer&#x60; identifies the offending field. |  -  |
 | **401** | Unauthorized. The bearer token is missing, invalid or expired. |  -  |
 | **404** | Not found. No resource matches the supplied identifier. |  -  |
@@ -413,8 +488,8 @@ public class Example {
 
     AccountsApi apiInstance = new AccountsApi(defaultClient);
     String accountId = "accountId_example"; // String | 
-    String include = "include_example"; // String | Optional. Related resource available to include: customer. See Getting Related Resources
-    String extraFieldsAccount = "extraFieldsAccount_example"; // String | Optional. Use extraFields[account]=interestTerms to include the interestTerms object in the account's attributes section of the response.
+    String include = "include_example"; // String | Optional. Related resources to include are relationship-backed resources such as customer, customers, and org. See Getting Related Resources
+    String extraFieldsAccount = "extraFieldsAccount_example"; // String | Optional. Comma-separated fields. Supported values currently include interestTerms and maskedAccountNumber.
     try {
       CreateAccount201Response result = apiInstance.getAccount(accountId, include, extraFieldsAccount);
       System.out.println(result);
@@ -434,8 +509,8 @@ public class Example {
 | Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
 | **accountId** | **String**|  | |
-| **include** | **String**| Optional. Related resource available to include: customer. See Getting Related Resources | [optional] |
-| **extraFieldsAccount** | **String**| Optional. Use extraFields[account]&#x3D;interestTerms to include the interestTerms object in the account&#39;s attributes section of the response. | [optional] |
+| **include** | **String**| Optional. Related resources to include are relationship-backed resources such as customer, customers, and org. See Getting Related Resources | [optional] |
+| **extraFieldsAccount** | **String**| Optional. Comma-separated fields. Supported values currently include interestTerms and maskedAccountNumber. | [optional] |
 
 ### Return type
 
@@ -755,7 +830,7 @@ public class Example {
 
 <a id="listAccountHolds"></a>
 # **listAccountHolds**
-> ListAccountHolds200Response listAccountHolds(pageLimit, pageOffset, filterStatus, filterExpiredAt)
+> ListAccountHolds200Response listAccountHolds(pageLimit, pageOffset, filterStatus, filterExpiredAt, filterCustomerId, filterAccountId)
 
 List account holds
 
@@ -784,9 +859,11 @@ public class Example {
     String pageLimit = "100"; // String | Optional. Maximum number of resources that will be returned. Maximum is 10000 resources. See Pagination.
     String pageOffset = "0"; // String | Optional. Number of resources to skip. See Pagination.
     String filterStatus = "filterStatus_example"; // String | Optional. Filter by status. Can be one of the following values: Active, Released, PartiallyReleased.
-    String filterExpiredAt = "filterExpiredAt_example"; // String | Optional. Date only (e.g. \"2001-08-15\"). the date the account hold will be automatically released at.
+    String filterExpiredAt = "filterExpiredAt_example"; // String | Optional. Date only (e.g. \"2001-08-15\"). Filters by the date the account hold will be automatically released at.
+    String filterCustomerId = "filterCustomerId_example"; // String | Optional. Filters the results by the specified customer id.
+    String filterAccountId = "filterAccountId_example"; // String | Optional. Filters the results by the specified account id.
     try {
-      ListAccountHolds200Response result = apiInstance.listAccountHolds(pageLimit, pageOffset, filterStatus, filterExpiredAt);
+      ListAccountHolds200Response result = apiInstance.listAccountHolds(pageLimit, pageOffset, filterStatus, filterExpiredAt, filterCustomerId, filterAccountId);
       System.out.println(result);
     } catch (ApiException e) {
       System.err.println("Exception when calling AccountsApi#listAccountHolds");
@@ -806,7 +883,9 @@ public class Example {
 | **pageLimit** | **String**| Optional. Maximum number of resources that will be returned. Maximum is 10000 resources. See Pagination. | [optional] [default to 100] |
 | **pageOffset** | **String**| Optional. Number of resources to skip. See Pagination. | [optional] [default to 0] |
 | **filterStatus** | **String**| Optional. Filter by status. Can be one of the following values: Active, Released, PartiallyReleased. | [optional] |
-| **filterExpiredAt** | **String**| Optional. Date only (e.g. \&quot;2001-08-15\&quot;). the date the account hold will be automatically released at. | [optional] |
+| **filterExpiredAt** | **String**| Optional. Date only (e.g. \&quot;2001-08-15\&quot;). Filters by the date the account hold will be automatically released at. | [optional] |
+| **filterCustomerId** | **String**| Optional. Filters the results by the specified customer id. | [optional] |
+| **filterAccountId** | **String**| Optional. Filters the results by the specified account id. | [optional] |
 
 ### Return type
 
@@ -832,7 +911,7 @@ public class Example {
 
 <a id="listAccounts"></a>
 # **listAccounts**
-> ListAccounts200Response listAccounts(pageLimit, pageOffset, filterCustomerId, filterDepositProductId, filterTags, filterStatus, filterFromBalance, filterToBalance, include)
+> ListAccounts200Response listAccounts(pageLimit, pageOffset, sort, filterCustomerId, filterDepositProductId, filterRoutingNumber, filterAccountNumber, filterTags, filterStatus, filterFromBalance, filterToBalance, include, extraFieldsAccount)
 
 List accounts
 
@@ -860,15 +939,19 @@ public class Example {
     AccountsApi apiInstance = new AccountsApi(defaultClient);
     String pageLimit = "100"; // String | Optional. Maximum number of resources that will be returned. Maximum is 10000 resources. See Pagination.
     String pageOffset = "0"; // String | Optional. Number of resources to skip. See Pagination.
+    String sort = "sort_example"; // String | Optional. Sort by createdAt, -createdAt, updatedAt, -updatedAt, balance, -balance, type, or -type.
     String filterCustomerId = "filterCustomerId_example"; // String | Optional. Filters the results by the specified customer id.
     String filterDepositProductId = "filterDepositProductId_example"; // String | Optional. Filters the results by the specified deposit product id.
+    String filterRoutingNumber = "filterRoutingNumber_example"; // String | Optional. Filters the results by the specified routing number (9 digits). Usage example: *filter[routingNumber]=051000017*. Must be used together with filter[accountNumber].
+    String filterAccountNumber = "filterAccountNumber_example"; // String | Optional. Filters the results by the specified account number (5-17 digits). Usage example: *filter[accountNumber]=10000123*. Must be used together with filter[routingNumber].
     String filterTags = "filterTags_example"; // String | Optional. Filter Accounts by Tags.
-    String filterStatus = "filterStatus_example"; // String | Optional. Filter Account by its status (Open, Frozen, or Closed). Usage example: filter[status][0]=Closed
+    String filterStatus = "filterStatus_example"; // String | Optional. Filter Account by its status (Open, Frozen, or Closed). Single-value and array forms are supported. Usage example: *filter[status][0]=Closed*
     String filterFromBalance = "filterFromBalance_example"; // String | Optional. Filters Accounts that have balance higher or equal to the specified amount (in cents). e.g. 5000
     String filterToBalance = "filterToBalance_example"; // String | Optional. Filters Accounts that have balance lower or equal to the specified amount (in cents). e.g. 7000
-    String include = "include_example"; // String | Optional. Related resource available to include: customer. See Getting Related Resources
+    String include = "include_example"; // String | Optional. Commonly used includes are customer, org, and bank. See Getting Related Resources
+    String extraFieldsAccount = "extraFieldsAccount_example"; // String | Optional. Comma-separated fields. Supported values currently include interestTerms and maskedAccountNumber.
     try {
-      ListAccounts200Response result = apiInstance.listAccounts(pageLimit, pageOffset, filterCustomerId, filterDepositProductId, filterTags, filterStatus, filterFromBalance, filterToBalance, include);
+      ListAccounts200Response result = apiInstance.listAccounts(pageLimit, pageOffset, sort, filterCustomerId, filterDepositProductId, filterRoutingNumber, filterAccountNumber, filterTags, filterStatus, filterFromBalance, filterToBalance, include, extraFieldsAccount);
       System.out.println(result);
     } catch (ApiException e) {
       System.err.println("Exception when calling AccountsApi#listAccounts");
@@ -887,13 +970,17 @@ public class Example {
 |------------- | ------------- | ------------- | -------------|
 | **pageLimit** | **String**| Optional. Maximum number of resources that will be returned. Maximum is 10000 resources. See Pagination. | [optional] [default to 100] |
 | **pageOffset** | **String**| Optional. Number of resources to skip. See Pagination. | [optional] [default to 0] |
+| **sort** | **String**| Optional. Sort by createdAt, -createdAt, updatedAt, -updatedAt, balance, -balance, type, or -type. | [optional] |
 | **filterCustomerId** | **String**| Optional. Filters the results by the specified customer id. | [optional] |
 | **filterDepositProductId** | **String**| Optional. Filters the results by the specified deposit product id. | [optional] |
+| **filterRoutingNumber** | **String**| Optional. Filters the results by the specified routing number (9 digits). Usage example: *filter[routingNumber]&#x3D;051000017*. Must be used together with filter[accountNumber]. | [optional] |
+| **filterAccountNumber** | **String**| Optional. Filters the results by the specified account number (5-17 digits). Usage example: *filter[accountNumber]&#x3D;10000123*. Must be used together with filter[routingNumber]. | [optional] |
 | **filterTags** | **String**| Optional. Filter Accounts by Tags. | [optional] |
-| **filterStatus** | **String**| Optional. Filter Account by its status (Open, Frozen, or Closed). Usage example: filter[status][0]&#x3D;Closed | [optional] |
+| **filterStatus** | **String**| Optional. Filter Account by its status (Open, Frozen, or Closed). Single-value and array forms are supported. Usage example: *filter[status][0]&#x3D;Closed* | [optional] |
 | **filterFromBalance** | **String**| Optional. Filters Accounts that have balance higher or equal to the specified amount (in cents). e.g. 5000 | [optional] |
 | **filterToBalance** | **String**| Optional. Filters Accounts that have balance lower or equal to the specified amount (in cents). e.g. 7000 | [optional] |
-| **include** | **String**| Optional. Related resource available to include: customer. See Getting Related Resources | [optional] |
+| **include** | **String**| Optional. Commonly used includes are customer, org, and bank. See Getting Related Resources | [optional] |
+| **extraFieldsAccount** | **String**| Optional. Comma-separated fields. Supported values currently include interestTerms and maskedAccountNumber. | [optional] |
 
 ### Return type
 
@@ -1131,6 +1218,79 @@ public class Example {
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 | **200** | The reopened account resource. |  -  |
+| **400** | Bad request. The request body or query parameters failed validation; &#x60;errors[].source.pointer&#x60; identifies the offending field. |  -  |
+| **401** | Unauthorized. The bearer token is missing, invalid or expired. |  -  |
+| **404** | Not found. No resource matches the supplied identifier. |  -  |
+| **0** | Error response |  -  |
+
+<a id="switchAccountNumbers"></a>
+# **switchAccountNumbers**
+> AddAccountOwners200Response switchAccountNumbers(accountId, body)
+
+Switch account numbers
+
+Switch primary and secondary account numbers for an existing deposit account.
+
+### Example
+```java
+// Import classes:
+import com.unit.finance.sdk.ApiClient;
+import com.unit.finance.sdk.ApiException;
+import com.unit.finance.sdk.Configuration;
+import com.unit.finance.sdk.auth.*;
+import com.unit.finance.sdk.models.*;
+import com.unit.finance.sdk.api.AccountsApi;
+
+public class Example {
+  public static void main(String[] args) {
+    ApiClient defaultClient = Configuration.getDefaultApiClient();
+    defaultClient.setBasePath("https://api.s.unit.sh");
+    
+    // Configure HTTP bearer authorization: bearerAuth
+    HttpBearerAuth bearerAuth = (HttpBearerAuth) defaultClient.getAuthentication("bearerAuth");
+    bearerAuth.setBearerToken("BEARER TOKEN");
+
+    AccountsApi apiInstance = new AccountsApi(defaultClient);
+    String accountId = "accountId_example"; // String | 
+    Object body = null; // Object | 
+    try {
+      AddAccountOwners200Response result = apiInstance.switchAccountNumbers(accountId, body);
+      System.out.println(result);
+    } catch (ApiException e) {
+      System.err.println("Exception when calling AccountsApi#switchAccountNumbers");
+      System.err.println("Status code: " + e.getCode());
+      System.err.println("Reason: " + e.getResponseBody());
+      System.err.println("Response headers: " + e.getResponseHeaders());
+      e.printStackTrace();
+    }
+  }
+}
+```
+
+### Parameters
+
+| Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **accountId** | **String**|  | |
+| **body** | **Object**|  | [optional] |
+
+### Return type
+
+[**AddAccountOwners200Response**](AddAccountOwners200Response.md)
+
+### Authorization
+
+[bearerAuth](../README.md#bearerAuth)
+
+### HTTP request headers
+
+ - **Content-Type**: application/vnd.api+json
+ - **Accept**: application/vnd.api+json
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+| **200** | Updated account resource after switching primary and secondary account numbers. |  -  |
 | **400** | Bad request. The request body or query parameters failed validation; &#x60;errors[].source.pointer&#x60; identifies the offending field. |  -  |
 | **401** | Unauthorized. The bearer token is missing, invalid or expired. |  -  |
 | **404** | Not found. No resource matches the supplied identifier. |  -  |

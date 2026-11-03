@@ -8,7 +8,7 @@
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
 |**type** | [**TypeEnum**](#TypeEnum) |  |  |
-|**attributes** | [**FreezeDepositAccountDataAttributes**](FreezeDepositAccountDataAttributes.md) |  |  |
+|**attributes** | [**FreezeCreditAccountDataAttributes**](FreezeCreditAccountDataAttributes.md) |  |  |
 
 
 

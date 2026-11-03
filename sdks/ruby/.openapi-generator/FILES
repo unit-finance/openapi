@@ -36,6 +36,9 @@ docs/AddAccountOwnersRequest.md
 docs/AddAuthorizedUsersData.md
 docs/AddAuthorizedUsersDataAttributes.md
 docs/AddAuthorizedUsersRequest.md
+docs/AddSecondaryRoutingNumberData.md
+docs/AddSecondaryRoutingNumberDataRelationships.md
+docs/AddSecondaryRoutingNumberRequest.md
 docs/AddressType.md
 docs/AdjustmentTransaction.md
 docs/AdjustmentTransactionAttributes.md
@@ -417,6 +420,7 @@ docs/DeniedCreditApplicationDecisionRelationships.md
 docs/DeniedCreditLimitDecision.md
 docs/DepositAccount.md
 docs/DepositAccountAttributes.md
+docs/DepositAccountAttributesSecondaryAccountNumber.md
 docs/DepositAccountRelationships.md
 docs/DeviceFingerprintType.md
 docs/DishonoredACHTransaction.md
@@ -455,6 +459,7 @@ docs/FreezeCardData.md
 docs/FreezeCardDataAttributes.md
 docs/FreezeCardRequest.md
 docs/FreezeCreditAccountData.md
+docs/FreezeCreditAccountDataAttributes.md
 docs/FreezeCreditAccountRequest.md
 docs/FreezeDepositAccountData.md
 docs/FreezeDepositAccountDataAttributes.md
@@ -913,6 +918,9 @@ lib/unit_openapi_ruby_sdk/models/add_account_owners_request.rb
 lib/unit_openapi_ruby_sdk/models/add_authorized_users_data.rb
 lib/unit_openapi_ruby_sdk/models/add_authorized_users_data_attributes.rb
 lib/unit_openapi_ruby_sdk/models/add_authorized_users_request.rb
+lib/unit_openapi_ruby_sdk/models/add_secondary_routing_number_data.rb
+lib/unit_openapi_ruby_sdk/models/add_secondary_routing_number_data_relationships.rb
+lib/unit_openapi_ruby_sdk/models/add_secondary_routing_number_request.rb
 lib/unit_openapi_ruby_sdk/models/address_type.rb
 lib/unit_openapi_ruby_sdk/models/adjustment_transaction.rb
 lib/unit_openapi_ruby_sdk/models/adjustment_transaction_attributes.rb
@@ -1282,6 +1290,7 @@ lib/unit_openapi_ruby_sdk/models/denied_credit_application_decision_relationship
 lib/unit_openapi_ruby_sdk/models/denied_credit_limit_decision.rb
 lib/unit_openapi_ruby_sdk/models/deposit_account.rb
 lib/unit_openapi_ruby_sdk/models/deposit_account_attributes.rb
+lib/unit_openapi_ruby_sdk/models/deposit_account_attributes_secondary_account_number.rb
 lib/unit_openapi_ruby_sdk/models/deposit_account_relationships.rb
 lib/unit_openapi_ruby_sdk/models/device_fingerprint_type.rb
 lib/unit_openapi_ruby_sdk/models/dishonored_ach_transaction.rb
@@ -1318,6 +1327,7 @@ lib/unit_openapi_ruby_sdk/models/freeze_card_data.rb
 lib/unit_openapi_ruby_sdk/models/freeze_card_data_attributes.rb
 lib/unit_openapi_ruby_sdk/models/freeze_card_request.rb
 lib/unit_openapi_ruby_sdk/models/freeze_credit_account_data.rb
+lib/unit_openapi_ruby_sdk/models/freeze_credit_account_data_attributes.rb
 lib/unit_openapi_ruby_sdk/models/freeze_credit_account_request.rb
 lib/unit_openapi_ruby_sdk/models/freeze_deposit_account_data.rb
 lib/unit_openapi_ruby_sdk/models/freeze_deposit_account_data_attributes.rb
