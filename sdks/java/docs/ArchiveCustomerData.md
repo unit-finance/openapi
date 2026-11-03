@@ -16,7 +16,7 @@
 
 | Name | Value |
 |---- | -----|
-| CUSTOMER_ARCHIVE | &quot;customerArchive&quot; |
+| ARCHIVE_CUSTOMER | &quot;archiveCustomer&quot; |
 
 
 

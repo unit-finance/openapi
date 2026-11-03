@@ -5,6 +5,7 @@ All URIs are relative to *https://api.s.unit.sh*
 | Method | HTTP request | Description |
 | ------ | ------------ | ----------- |
 | [**add_account_owners**](AccountsApi.md#add_account_owners) | **POST** /accounts/{accountId}/relationships/customers | Add account owners |
+| [**add_secondary_routing_number**](AccountsApi.md#add_secondary_routing_number) | **POST** /accounts/{accountId}/secondary-routing-number | Add secondary routing number |
 | [**close_account**](AccountsApi.md#close_account) | **POST** /accounts/{accountId}/close | Close an account |
 | [**create_account**](AccountsApi.md#create_account) | **POST** /accounts | Create an account |
 | [**create_account_hold**](AccountsApi.md#create_account_hold) | **POST** /account-holds | Create an account hold |
@@ -19,6 +20,7 @@ All URIs are relative to *https://api.s.unit.sh*
 | [**release_account_hold**](AccountsApi.md#release_account_hold) | **POST** /account-holds/{id}/release | Release an account hold |
 | [**remove_account_owners**](AccountsApi.md#remove_account_owners) | **DELETE** /accounts/{accountId}/relationships/customers | Remove account owners |
 | [**reopen_account**](AccountsApi.md#reopen_account) | **POST** /accounts/{accountId}/reopen | Reopen an account |
+| [**switch_account_numbers**](AccountsApi.md#switch_account_numbers) | **POST** /accounts/{accountId}/switch-account-numbers | Switch account numbers |
 | [**unfreeze_account**](AccountsApi.md#unfreeze_account) | **POST** /accounts/{accountId}/unfreeze | Unfreeze an account |
 | [**update_account**](AccountsApi.md#update_account) | **PATCH** /accounts/{accountId} | Update an account |
 
@@ -79,6 +81,77 @@ end
 | ---- | ---- | ----------- | ----- |
 | **account_id** | **String** |  |  |
 | **add_account_owners_request** | [**AddAccountOwnersRequest**](AddAccountOwnersRequest.md) |  |  |
+
+### Return type
+
+[**AddAccountOwners200Response**](AddAccountOwners200Response.md)
+
+### Authorization
+
+[bearerAuth](../README.md#bearerAuth)
+
+### HTTP request headers
+
+- **Content-Type**: application/vnd.api+json
+- **Accept**: application/vnd.api+json
+
+
+## add_secondary_routing_number
+
+> <AddAccountOwners200Response> add_secondary_routing_number(account_id, add_secondary_routing_number_request)
+
+Add secondary routing number
+
+Add a secondary routing/account-number pair to an existing deposit account.
+
+### Examples
+
+```ruby
+require 'time'
+require 'unit_openapi_ruby_sdk'
+# setup authorization
+UnitFinanceSdk.configure do |config|
+  # Configure Bearer authorization (JWT): bearerAuth
+  config.access_token = 'YOUR_BEARER_TOKEN'
+end
+
+api_instance = UnitFinanceSdk::AccountsApi.new
+account_id = 'account_id_example' # String | 
+add_secondary_routing_number_request = UnitFinanceSdk::AddSecondaryRoutingNumberRequest.new({data: UnitFinanceSdk::AddSecondaryRoutingNumberData.new({type: 'secondaryRoutingNumber', relationships: UnitFinanceSdk::AddSecondaryRoutingNumberDataRelationships.new({bank_routing: UnitFinanceSdk::Relationship.new})})}) # AddSecondaryRoutingNumberRequest | 
+
+begin
+  # Add secondary routing number
+  result = api_instance.add_secondary_routing_number(account_id, add_secondary_routing_number_request)
+  p result
+rescue UnitFinanceSdk::ApiError => e
+  puts "Error when calling AccountsApi->add_secondary_routing_number: #{e}"
+end
+```
+
+#### Using the add_secondary_routing_number_with_http_info variant
+
+This returns an Array which contains the response data, status code and headers.
+
+> <Array(<AddAccountOwners200Response>, Integer, Hash)> add_secondary_routing_number_with_http_info(account_id, add_secondary_routing_number_request)
+
+```ruby
+begin
+  # Add secondary routing number
+  data, status_code, headers = api_instance.add_secondary_routing_number_with_http_info(account_id, add_secondary_routing_number_request)
+  p status_code # => 2xx
+  p headers # => { ... }
+  p data # => <AddAccountOwners200Response>
+rescue UnitFinanceSdk::ApiError => e
+  puts "Error when calling AccountsApi->add_secondary_routing_number_with_http_info: #{e}"
+end
+```
+
+### Parameters
+
+| Name | Type | Description | Notes |
+| ---- | ---- | ----------- | ----- |
+| **account_id** | **String** |  |  |
+| **add_secondary_routing_number_request** | [**AddSecondaryRoutingNumberRequest**](AddSecondaryRoutingNumberRequest.md) |  |  |
 
 ### Return type
 
@@ -254,7 +327,7 @@ UnitFinanceSdk.configure do |config|
 end
 
 api_instance = UnitFinanceSdk::AccountsApi.new
-create_account_hold_request = UnitFinanceSdk::CreateAccountHoldRequest.new({data: UnitFinanceSdk::CreateAccountHoldData.new({type: 'accountHold', attributes: UnitFinanceSdk::CreateAccountHoldDataAttributes.new({amount: 6000, description: 'Hold reason'}), relationships: UnitFinanceSdk::CreateFeeDataRelationships.new({account: UnitFinanceSdk::Relationship.new})})}) # CreateAccountHoldRequest | 
+create_account_hold_request = UnitFinanceSdk::CreateAccountHoldRequest.new({data: UnitFinanceSdk::CreateAccountHoldData.new({type: 'accountHold', attributes: UnitFinanceSdk::CreateAccountHoldDataAttributes.new({amount: 6000, idempotency_key: '1234567890'}), relationships: UnitFinanceSdk::CreateFeeDataRelationships.new({account: UnitFinanceSdk::Relationship.new})})}) # CreateAccountHoldRequest | 
 
 begin
   # Create an account hold
@@ -324,7 +397,7 @@ end
 
 api_instance = UnitFinanceSdk::AccountsApi.new
 account_id = 'account_id_example' # String | 
-freeze_account_request = UnitFinanceSdk::FreezeCreditAccountRequest.new({data: UnitFinanceSdk::FreezeCreditAccountData.new({type: 'creditAccountFreeze', attributes: UnitFinanceSdk::FreezeDepositAccountDataAttributes.new({reason: 'Other'})})}) # FreezeAccountRequest | 
+freeze_account_request = UnitFinanceSdk::FreezeCreditAccountRequest.new({data: UnitFinanceSdk::FreezeCreditAccountData.new({type: 'creditAccountFreeze', attributes: UnitFinanceSdk::FreezeCreditAccountDataAttributes.new({reason: 'Other'})})}) # FreezeAccountRequest | 
 
 begin
   # Freeze an account
@@ -396,8 +469,8 @@ end
 api_instance = UnitFinanceSdk::AccountsApi.new
 account_id = 'account_id_example' # String | 
 opts = {
-  include: 'include_example', # String | Optional. Related resource available to include: customer. See Getting Related Resources
-  extra_fields_account: 'extra_fields_account_example' # String | Optional. Use extraFields[account]=interestTerms to include the interestTerms object in the account's attributes section of the response.
+  include: 'include_example', # String | Optional. Related resources to include are relationship-backed resources such as customer, customers, and org. See Getting Related Resources
+  extra_fields_account: 'extra_fields_account_example' # String | Optional. Comma-separated fields. Supported values currently include interestTerms and maskedAccountNumber.
 }
 
 begin
@@ -432,8 +505,8 @@ end
 | Name | Type | Description | Notes |
 | ---- | ---- | ----------- | ----- |
 | **account_id** | **String** |  |  |
-| **include** | **String** | Optional. Related resource available to include: customer. See Getting Related Resources | [optional] |
-| **extra_fields_account** | **String** | Optional. Use extraFields[account]&#x3D;interestTerms to include the interestTerms object in the account&#39;s attributes section of the response. | [optional] |
+| **include** | **String** | Optional. Related resources to include are relationship-backed resources such as customer, customers, and org. See Getting Related Resources | [optional] |
+| **extra_fields_account** | **String** | Optional. Comma-separated fields. Supported values currently include interestTerms and maskedAccountNumber. | [optional] |
 
 ### Return type
 
@@ -761,7 +834,9 @@ opts = {
   page_limit: 'page_limit_example', # String | Optional. Maximum number of resources that will be returned. Maximum is 10000 resources. See Pagination.
   page_offset: 'page_offset_example', # String | Optional. Number of resources to skip. See Pagination.
   filter_status: 'filter_status_example', # String | Optional. Filter by status. Can be one of the following values: Active, Released, PartiallyReleased.
-  filter_expired_at: 'filter_expired_at_example' # String | Optional. Date only (e.g. \"2001-08-15\"). the date the account hold will be automatically released at.
+  filter_expired_at: 'filter_expired_at_example', # String | Optional. Date only (e.g. \"2001-08-15\"). Filters by the date the account hold will be automatically released at.
+  filter_customer_id: 'filter_customer_id_example', # String | Optional. Filters the results by the specified customer id.
+  filter_account_id: 'filter_account_id_example' # String | Optional. Filters the results by the specified account id.
 }
 
 begin
@@ -798,7 +873,9 @@ end
 | **page_limit** | **String** | Optional. Maximum number of resources that will be returned. Maximum is 10000 resources. See Pagination. | [optional][default to &#39;100&#39;] |
 | **page_offset** | **String** | Optional. Number of resources to skip. See Pagination. | [optional][default to &#39;0&#39;] |
 | **filter_status** | **String** | Optional. Filter by status. Can be one of the following values: Active, Released, PartiallyReleased. | [optional] |
-| **filter_expired_at** | **String** | Optional. Date only (e.g. \&quot;2001-08-15\&quot;). the date the account hold will be automatically released at. | [optional] |
+| **filter_expired_at** | **String** | Optional. Date only (e.g. \&quot;2001-08-15\&quot;). Filters by the date the account hold will be automatically released at. | [optional] |
+| **filter_customer_id** | **String** | Optional. Filters the results by the specified customer id. | [optional] |
+| **filter_account_id** | **String** | Optional. Filters the results by the specified account id. | [optional] |
 
 ### Return type
 
@@ -837,13 +914,17 @@ api_instance = UnitFinanceSdk::AccountsApi.new
 opts = {
   page_limit: 'page_limit_example', # String | Optional. Maximum number of resources that will be returned. Maximum is 10000 resources. See Pagination.
   page_offset: 'page_offset_example', # String | Optional. Number of resources to skip. See Pagination.
+  sort: 'sort_example', # String | Optional. Sort by createdAt, -createdAt, updatedAt, -updatedAt, balance, -balance, type, or -type.
   filter_customer_id: 'filter_customer_id_example', # String | Optional. Filters the results by the specified customer id.
   filter_deposit_product_id: 'filter_deposit_product_id_example', # String | Optional. Filters the results by the specified deposit product id.
+  filter_routing_number: 'filter_routing_number_example', # String | Optional. Filters the results by the specified routing number (9 digits). Usage example: *filter[routingNumber]=051000017*. Must be used together with filter[accountNumber].
+  filter_account_number: 'filter_account_number_example', # String | Optional. Filters the results by the specified account number (5-17 digits). Usage example: *filter[accountNumber]=10000123*. Must be used together with filter[routingNumber].
   filter_tags: 'filter_tags_example', # String | Optional. Filter Accounts by Tags.
-  filter_status: 'filter_status_example', # String | Optional. Filter Account by its status (Open, Frozen, or Closed). Usage example: filter[status][0]=Closed
+  filter_status: 'filter_status_example', # String | Optional. Filter Account by its status (Open, Frozen, or Closed). Single-value and array forms are supported. Usage example: *filter[status][0]=Closed*
   filter_from_balance: 'filter_from_balance_example', # String | Optional. Filters Accounts that have balance higher or equal to the specified amount (in cents). e.g. 5000
   filter_to_balance: 'filter_to_balance_example', # String | Optional. Filters Accounts that have balance lower or equal to the specified amount (in cents). e.g. 7000
-  include: 'include_example' # String | Optional. Related resource available to include: customer. See Getting Related Resources
+  include: 'include_example', # String | Optional. Commonly used includes are customer, org, and bank. See Getting Related Resources
+  extra_fields_account: 'extra_fields_account_example' # String | Optional. Comma-separated fields. Supported values currently include interestTerms and maskedAccountNumber.
 }
 
 begin
@@ -879,13 +960,17 @@ end
 | ---- | ---- | ----------- | ----- |
 | **page_limit** | **String** | Optional. Maximum number of resources that will be returned. Maximum is 10000 resources. See Pagination. | [optional][default to &#39;100&#39;] |
 | **page_offset** | **String** | Optional. Number of resources to skip. See Pagination. | [optional][default to &#39;0&#39;] |
+| **sort** | **String** | Optional. Sort by createdAt, -createdAt, updatedAt, -updatedAt, balance, -balance, type, or -type. | [optional] |
 | **filter_customer_id** | **String** | Optional. Filters the results by the specified customer id. | [optional] |
 | **filter_deposit_product_id** | **String** | Optional. Filters the results by the specified deposit product id. | [optional] |
+| **filter_routing_number** | **String** | Optional. Filters the results by the specified routing number (9 digits). Usage example: *filter[routingNumber]&#x3D;051000017*. Must be used together with filter[accountNumber]. | [optional] |
+| **filter_account_number** | **String** | Optional. Filters the results by the specified account number (5-17 digits). Usage example: *filter[accountNumber]&#x3D;10000123*. Must be used together with filter[routingNumber]. | [optional] |
 | **filter_tags** | **String** | Optional. Filter Accounts by Tags. | [optional] |
-| **filter_status** | **String** | Optional. Filter Account by its status (Open, Frozen, or Closed). Usage example: filter[status][0]&#x3D;Closed | [optional] |
+| **filter_status** | **String** | Optional. Filter Account by its status (Open, Frozen, or Closed). Single-value and array forms are supported. Usage example: *filter[status][0]&#x3D;Closed* | [optional] |
 | **filter_from_balance** | **String** | Optional. Filters Accounts that have balance higher or equal to the specified amount (in cents). e.g. 5000 | [optional] |
 | **filter_to_balance** | **String** | Optional. Filters Accounts that have balance lower or equal to the specified amount (in cents). e.g. 7000 | [optional] |
-| **include** | **String** | Optional. Related resource available to include: customer. See Getting Related Resources | [optional] |
+| **include** | **String** | Optional. Commonly used includes are customer, org, and bank. See Getting Related Resources | [optional] |
+| **extra_fields_account** | **String** | Optional. Comma-separated fields. Supported values currently include interestTerms and maskedAccountNumber. | [optional] |
 
 ### Return type
 
@@ -922,7 +1007,7 @@ end
 
 api_instance = UnitFinanceSdk::AccountsApi.new
 id = 'id_example' # String | 
-release_account_hold_request = UnitFinanceSdk::ReleaseAccountHoldRequest.new({data: UnitFinanceSdk::ReleaseAccountHoldData.new({type: 'accountHold', attributes: UnitFinanceSdk::ReleaseAccountHoldDataAttributes.new({amount: 2500})})}) # ReleaseAccountHoldRequest | 
+release_account_hold_request = UnitFinanceSdk::ReleaseAccountHoldRequest.new({data: UnitFinanceSdk::ReleaseAccountHoldData.new({type: 'accountHold', attributes: UnitFinanceSdk::ReleaseAccountHoldDataAttributes.new({amount: 4433})})}) # ReleaseAccountHoldRequest | 
 
 begin
   # Release an account hold
@@ -1105,6 +1190,79 @@ end
 ### Return type
 
 [**ReopenAccount200Response**](ReopenAccount200Response.md)
+
+### Authorization
+
+[bearerAuth](../README.md#bearerAuth)
+
+### HTTP request headers
+
+- **Content-Type**: application/vnd.api+json
+- **Accept**: application/vnd.api+json
+
+
+## switch_account_numbers
+
+> <AddAccountOwners200Response> switch_account_numbers(account_id, opts)
+
+Switch account numbers
+
+Switch primary and secondary account numbers for an existing deposit account.
+
+### Examples
+
+```ruby
+require 'time'
+require 'unit_openapi_ruby_sdk'
+# setup authorization
+UnitFinanceSdk.configure do |config|
+  # Configure Bearer authorization (JWT): bearerAuth
+  config.access_token = 'YOUR_BEARER_TOKEN'
+end
+
+api_instance = UnitFinanceSdk::AccountsApi.new
+account_id = 'account_id_example' # String | 
+opts = {
+  body: { ... } # Object | 
+}
+
+begin
+  # Switch account numbers
+  result = api_instance.switch_account_numbers(account_id, opts)
+  p result
+rescue UnitFinanceSdk::ApiError => e
+  puts "Error when calling AccountsApi->switch_account_numbers: #{e}"
+end
+```
+
+#### Using the switch_account_numbers_with_http_info variant
+
+This returns an Array which contains the response data, status code and headers.
+
+> <Array(<AddAccountOwners200Response>, Integer, Hash)> switch_account_numbers_with_http_info(account_id, opts)
+
+```ruby
+begin
+  # Switch account numbers
+  data, status_code, headers = api_instance.switch_account_numbers_with_http_info(account_id, opts)
+  p status_code # => 2xx
+  p headers # => { ... }
+  p data # => <AddAccountOwners200Response>
+rescue UnitFinanceSdk::ApiError => e
+  puts "Error when calling AccountsApi->switch_account_numbers_with_http_info: #{e}"
+end
+```
+
+### Parameters
+
+| Name | Type | Description | Notes |
+| ---- | ---- | ----------- | ----- |
+| **account_id** | **String** |  |  |
+| **body** | **Object** |  | [optional] |
+
+### Return type
+
+[**AddAccountOwners200Response**](AddAccountOwners200Response.md)
 
 ### Authorization
 

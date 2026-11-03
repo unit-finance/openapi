@@ -38,6 +38,9 @@ docs/AddAccountOwnersRequest.md
 docs/AddAuthorizedUsersData.md
 docs/AddAuthorizedUsersDataAttributes.md
 docs/AddAuthorizedUsersRequest.md
+docs/AddSecondaryRoutingNumberData.md
+docs/AddSecondaryRoutingNumberDataRelationships.md
+docs/AddSecondaryRoutingNumberRequest.md
 docs/AddressType.md
 docs/AdjustmentTransaction.md
 docs/AdjustmentTransactionAttributes.md
@@ -419,6 +422,7 @@ docs/DeniedCreditApplicationDecisionRelationships.md
 docs/DeniedCreditLimitDecision.md
 docs/DepositAccount.md
 docs/DepositAccountAttributes.md
+docs/DepositAccountAttributesSecondaryAccountNumber.md
 docs/DepositAccountRelationships.md
 docs/DeviceFingerprintType.md
 docs/DishonoredACHTransaction.md
@@ -457,6 +461,7 @@ docs/FreezeCardData.md
 docs/FreezeCardDataAttributes.md
 docs/FreezeCardRequest.md
 docs/FreezeCreditAccountData.md
+docs/FreezeCreditAccountDataAttributes.md
 docs/FreezeCreditAccountRequest.md
 docs/FreezeDepositAccountData.md
 docs/FreezeDepositAccountDataAttributes.md

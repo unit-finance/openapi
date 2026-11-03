@@ -5,9 +5,9 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**status** | **string** | One of Approved, Denied or PendingReview. | [default to undefined]
+**status** | **string** | One of Approved, Denied or PendingReview. | [optional] [default to undefined]
 **fullName** | [**FullNameType**](FullNameType.md) | Full name of the officer. | [default to undefined]
-**title** | **string** | One of CEO, COO, CFO, President, BenefitsAdministrationOfficer, CIO, VP, AVP, Treasurer, Secretary, Controller, Manager, Partner or Member. | [default to undefined]
+**title** | **string** | Title of the officer. One of CEO, COO, CFO, President, BenefitsAdministrationOfficer, CIO, VP, AVP, Treasurer, Secretary, Controller, Manager, Partner or Member. | [optional] [default to undefined]
 **ssn** | **string** | SSN of the officer (numbers only). One of ssn or passport is required. | [optional] [default to undefined]
 **passport** | **string** | Passport of the officer. One of ssn or passport is required. | [optional] [default to undefined]
 **nationality** | **string** | Always when Passport is populated and optional when SSN is populated. Two letters representing the officer\&#39;s nationality. | [optional] [default to undefined]
@@ -19,6 +19,7 @@ Name | Type | Description | Notes
 **occupation** | [**OccupationType**](OccupationType.md) | Optional. Occupation of the officer. | [optional] [default to undefined]
 **annualIncome** | [**AnnualIncomeType**](AnnualIncomeType.md) | Optional. Annual income of the officer. | [optional] [default to undefined]
 **sourceOfIncome** | [**SourceOfIncomeType**](SourceOfIncomeType.md) | Optional. Source of income of the officer. | [optional] [default to undefined]
+**createdAt** | **string** | Optional. Date and time the officer was created (full timestamp, e.g. 2026-09-09T13:09:03.379Z). | [optional] [default to undefined]
 
 ## Example
 
@@ -40,6 +41,7 @@ const instance: OfficerType = {
     occupation,
     annualIncome,
     sourceOfIncome,
+    createdAt,
 };
 ```
 

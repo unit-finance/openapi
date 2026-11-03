@@ -6,6 +6,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **type** | **str** |  | [optional] 
+**id** | **str** |  | [optional] 
 **attributes** | [**GetAvailableDepositProducts200ResponseDataInnerAttributes**](GetAvailableDepositProducts200ResponseDataInnerAttributes.md) |  | [optional] 
 
 ## Example
