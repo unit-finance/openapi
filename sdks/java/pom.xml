@@ -6,12 +6,12 @@
     <packaging>jar</packaging>
     <name>unit-openapi-java-sdk</name>
     <version>0.6.0</version>
-    <url>https://github.com/unit-finance/unit-openapi-sdks</url>
+    <url>https://github.com/unit-finance/openapi</url>
     <description>Java SDK for the Unit banking API. Auto-generated from the unit-openapi spec.</description>
     <scm>
-        <connection>scm:git:https://github.com/unit-finance/unit-openapi-sdks.git</connection>
-        <developerConnection>scm:git:git@github.com:unit-finance/unit-openapi-sdks.git</developerConnection>
-        <url>https://github.com/unit-finance/unit-openapi-sdks</url>
+        <connection>scm:git:https://github.com/unit-finance/openapi.git</connection>
+        <developerConnection>scm:git:git@github.com:unit-finance/openapi.git</developerConnection>
+        <url>https://github.com/unit-finance/openapi</url>
     </scm>
 
     <licenses>
