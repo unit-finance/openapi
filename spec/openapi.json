@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Unit API",
-    "version": "0.21.0",
+    "version": "0.21.1",
     "description": "JSON:API-compliant banking API.",
     "license": {
       "name": "Proprietary",
@@ -10804,7 +10804,7 @@
                         "type": {
                           "type": "string",
                           "enum": [
-                            "cardholderToken"
+                            "cardholderBearerToken"
                           ]
                         },
                         "attributes": {
@@ -24407,7 +24407,6 @@
             }
           }
         },
-        "x-todo": "pre-generation source missing: no resources/BusinessCreditCard.json in the docs export. Only the JSON:API type literal (businessCreditCard) is known, from the CreateBusinessCreditCard request. Attributes are left open (additionalProperties: true) until the docs pipeline emits this resource.",
         "description": "`BusinessCreditCard` is a JSON:API resource returned by the Create Business Credit Card operation."
       },
       "BusinessDebitCard": {
@@ -24629,7 +24628,6 @@
             }
           }
         },
-        "x-todo": "pre-generation source missing: no resources/BusinessVirtualCreditCard.json in the docs export. Only the JSON:API type literal (businessVirtualCreditCard) is known, from the CreateBusinessVirtualCreditCard request. Attributes are left open (additionalProperties: true) until the docs pipeline emits this resource.",
         "description": "`BusinessVirtualCreditCard` is a JSON:API resource returned by the Create Business Virtual Credit Card operation."
       },
       "BusinessVirtualDebitCard": {
@@ -30699,7 +30697,6 @@
               }
             },
             "required": [
-              "status",
               "fullName",
               "title",
               "dateOfBirth",
@@ -33094,9 +33091,7 @@
           "attributes": {
             "type": "object",
             "required": [
-              "scope",
-              "verificationToken",
-              "verificationCode"
+              "scope"
             ],
             "properties": {
               "scope": {

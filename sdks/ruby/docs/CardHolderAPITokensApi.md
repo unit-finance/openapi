@@ -29,7 +29,7 @@ end
 
 api_instance = UnitFinanceSdk::CardHolderAPITokensApi.new
 card_id = 'card_id_example' # String | 
-create_cardholder_token_request = UnitFinanceSdk::CreateCardholderTokenRequest.new({data: UnitFinanceSdk::CreateCardholderTokenData.new({type: 'cardholderToken', attributes: UnitFinanceSdk::CreateCardholderTokenDataAttributes.new({scope: 'cards', verification_token: 'verification_token_example', verification_code: 'verification_code_example'})})}) # CreateCardholderTokenRequest | 
+create_cardholder_token_request = UnitFinanceSdk::CreateCardholderTokenRequest.new({data: UnitFinanceSdk::CreateCardholderTokenData.new({type: 'cardholderToken', attributes: UnitFinanceSdk::CreateCardholderTokenDataAttributes.new({scope: 'cards'})})}) # CreateCardholderTokenRequest | 
 
 begin
   # Create a cardholder token

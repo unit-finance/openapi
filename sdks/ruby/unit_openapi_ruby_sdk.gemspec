@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   s.authors     = ["Unit"]
   s.homepage    = "https://www.unit.co"
   s.summary     = "Ruby SDK for the Unit banking API."
-  s.description = "Ruby SDK for the Unit banking API. Auto-generated from the unit-openapi spec."
+  s.description = "Ruby SDK for the Unit banking API. Auto-generated from the Unit OpenAPI spec."
   s.license     = "MPL-2.0"
   s.required_ruby_version = ">= 2.7"
   s.metadata    = {

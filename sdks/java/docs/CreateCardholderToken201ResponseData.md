@@ -16,7 +16,7 @@
 
 | Name | Value |
 |---- | -----|
-| CARDHOLDER_TOKEN | &quot;cardholderToken&quot; |
+| CARDHOLDER_BEARER_TOKEN | &quot;cardholderBearerToken&quot; |
 
 
 

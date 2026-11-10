@@ -1,7 +1,7 @@
 # unit-openapi-java-sdk
 
 Unit API
-- API version: 0.21.0
+- API version: 0.21.1
   - Generator version: 7.22.0
 
 JSON:API-compliant banking API.
