@@ -5,9 +5,9 @@
     <artifactId>unit-openapi-java-sdk</artifactId>
     <packaging>jar</packaging>
     <name>unit-openapi-java-sdk</name>
-    <version>0.6.0</version>
+    <version>0.6.3</version>
     <url>https://github.com/unit-finance/openapi</url>
-    <description>Java SDK for the Unit banking API. Auto-generated from the unit-openapi spec.</description>
+    <description>Java SDK for the Unit banking API. Auto-generated from the Unit OpenAPI spec.</description>
     <scm>
         <connection>scm:git:https://github.com/unit-finance/openapi.git</connection>
         <developerConnection>scm:git:git@github.com:unit-finance/openapi.git</developerConnection>
@@ -251,8 +251,7 @@
                             </execution>
                         </executions>
                     </plugin>
-                    <!-- Custom publishing plugins injected by scripts/openapi/prepare-java-sdk.ts -->
-                    <!-- Source of truth: templates/java/pom-publishing.xml -->
+                    <!-- Custom publishing plugins added after generation -->
                     <plugin>
                         <groupId>org.sonatype.central</groupId>
                         <artifactId>central-publishing-maven-plugin</artifactId>
@@ -331,8 +330,7 @@
             <version>${junit-platform-runner.version}</version>
             <scope>test</scope>
         </dependency>
-        <!-- Custom dependencies injected by scripts/openapi/prepare-java-sdk.ts -->
-        <!-- Source of truth: templates/java/pom-dependencies.xml -->
+        <!-- Custom dependencies added after generation -->
         <dependency>
             <groupId>io.github.cdimascio</groupId>
             <artifactId>dotenv-java</artifactId>

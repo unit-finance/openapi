@@ -5,7 +5,7 @@ info:
     name: Proprietary
     url: https://www.unit.co/terms-of-service
   title: Unit API
-  version: 0.21.0
+  version: 0.21.1
 servers:
 - url: https://api.s.unit.sh
 security:
@@ -14737,10 +14737,6 @@ components:
       - id
       - type
       type: object
-      x-todo: "pre-generation source missing: no resources/BusinessCreditCard.json\
-        \ in the docs export. Only the JSON:API type literal (businessCreditCard)\
-        \ is known, from the CreateBusinessCreditCard request. Attributes are left\
-        \ open (additionalProperties: true) until the docs pipeline emits this resource."
     BusinessDebitCard:
       description: "`BusinessDebitCard` is a JSON:API resource, top-level fields:"
       example:
@@ -14821,11 +14817,6 @@ components:
       - id
       - type
       type: object
-      x-todo: "pre-generation source missing: no resources/BusinessVirtualCreditCard.json\
-        \ in the docs export. Only the JSON:API type literal (businessVirtualCreditCard)\
-        \ is known, from the CreateBusinessVirtualCreditCard request. Attributes are\
-        \ left open (additionalProperties: true) until the docs pipeline emits this\
-        \ resource."
     BusinessVirtualDebitCard:
       description: "`BusinessVirtualDebitCard` is a JSON:API resource, top-level fields:"
       example:
@@ -21030,7 +21021,7 @@ components:
       properties:
         type:
           enum:
-          - cardholderToken
+          - cardholderBearerToken
           type: string
         attributes:
           $ref: "#/components/schemas/createCardholderToken_201_response_data_attributes"
@@ -26738,7 +26729,6 @@ components:
       - email
       - fullName
       - phone
-      - status
       - title
       type: object
     Officer_relationships:
@@ -27749,8 +27739,6 @@ components:
           type: string
       required:
       - scope
-      - verificationCode
-      - verificationToken
       type: object
     CreateCardholderTokenVerificationData_attributes:
       properties:

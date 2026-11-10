@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**status** | **string** | One of Approved, Denied or PendingReview. | [default to undefined]
+**status** | **string** | One of Approved, Denied or PendingReview. | [optional] [default to undefined]
 **fullName** | [**FullNameType**](FullNameType.md) | Full name of the officer. | [default to undefined]
 **title** | **string** | Title of the officer. One of CEO, COO, CFO, President, BenefitsAdministrationOfficer, CIO, VP, AVP, Treasurer, Secretary, Controller, Manager, Partner or Member. | [default to undefined]
 **ssn** | **string** | SSN (or ITIN) of the officer (numbers only). Either an ssn or passport is required. | [optional] [default to undefined]
