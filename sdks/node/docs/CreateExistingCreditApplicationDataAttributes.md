@@ -10,7 +10,6 @@ Name | Type | Description | Notes
 **numberOfEmployees** | [**BusinessNumberOfEmployeesType**](BusinessNumberOfEmployeesType.md) | Number of employees of the business. | [optional] [default to undefined]
 **yearsInBusiness** | **number** | Number of years the business has been in operation. | [optional] [default to undefined]
 **additionalUnderwritingData** | **{ [key: string]: any; }** | Object containing key-value pairs of underwriting data per credit policy. | [optional] [default to undefined]
-**idempotencyKey** | **string** | See Idempotency. | [optional] [default to undefined]
 
 ## Example
 
@@ -23,7 +22,6 @@ const instance: CreateExistingCreditApplicationDataAttributes = {
     numberOfEmployees,
     yearsInBusiness,
     additionalUnderwritingData,
-    idempotencyKey,
 };
 ```
 

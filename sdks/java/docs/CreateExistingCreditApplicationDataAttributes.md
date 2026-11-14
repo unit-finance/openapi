@@ -12,7 +12,6 @@
 |**numberOfEmployees** | **BusinessNumberOfEmployeesType** | Number of employees of the business. |  [optional] |
 |**yearsInBusiness** | **Integer** | Number of years the business has been in operation. |  [optional] |
 |**additionalUnderwritingData** | **Map&lt;String, Object&gt;** | Object containing key-value pairs of underwriting data per credit policy. |  [optional] |
-|**idempotencyKey** | **String** | See Idempotency. |  [optional] |
 
 
 

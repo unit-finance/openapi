@@ -10,7 +10,6 @@ Name | Type | Description | Notes
 **number_of_employees** | [**BusinessNumberOfEmployeesType**](BusinessNumberOfEmployeesType.md) | Number of employees of the business. | [optional] 
 **years_in_business** | **int** | Number of years the business has been in operation. | [optional] 
 **additional_underwriting_data** | **Dict[str, object]** | Object containing key-value pairs of underwriting data per credit policy. | [optional] 
-**idempotency_key** | **str** | See Idempotency. | [optional] 
 
 ## Example
 
