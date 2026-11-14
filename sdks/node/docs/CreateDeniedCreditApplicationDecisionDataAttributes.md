@@ -6,8 +6,8 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **externalApplicationId** | **string** | Identifier for client\&#39;s credit evaluation related to this decision. Max 200 char. | [default to undefined]
-**submissionTimestamp** | **string** | Timestamp when the corresponding credit application was submitted. | [default to undefined]
-**decisionTimestamp** | **string** | Timestamp when the credit decision was made. | [default to undefined]
+**submissionTimestamp** | **string** | Timestamp when the corresponding credit application was submitted. Must be UTC with exactly millisecond precision: YYYY-MM-DDTHH:MM:SS.sssZ (e.g. 2023-09-19T09:10:09.206Z). | [default to undefined]
+**decisionTimestamp** | **string** | Timestamp when the credit decision was made. Must be UTC with exactly millisecond precision: YYYY-MM-DDTHH:MM:SS.sssZ (e.g. 2023-09-19T09:10:09.206Z). | [default to undefined]
 **decisionReason** | **string** | Reason for denial per credit policy. Max 200 char. | [default to undefined]
 **adverseActionReasons** | **Array&lt;string&gt;** | Array of strings representing Adverse action reasons (must have at least one). Max 200 char per reason. | [default to undefined]
 **policyException** | **boolean** | One of true or false. | [default to undefined]

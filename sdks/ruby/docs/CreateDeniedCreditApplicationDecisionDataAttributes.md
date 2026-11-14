@@ -5,8 +5,8 @@
 | Name | Type | Description | Notes |
 | ---- | ---- | ----------- | ----- |
 | **external_application_id** | **String** | Identifier for client&#39;s credit evaluation related to this decision. Max 200 char. |  |
-| **submission_timestamp** | **Time** | Timestamp when the corresponding credit application was submitted. |  |
-| **decision_timestamp** | **Time** | Timestamp when the credit decision was made. |  |
+| **submission_timestamp** | **Time** | Timestamp when the corresponding credit application was submitted. Must be UTC with exactly millisecond precision: YYYY-MM-DDTHH:MM:SS.sssZ (e.g. 2023-09-19T09:10:09.206Z). |  |
+| **decision_timestamp** | **Time** | Timestamp when the credit decision was made. Must be UTC with exactly millisecond precision: YYYY-MM-DDTHH:MM:SS.sssZ (e.g. 2023-09-19T09:10:09.206Z). |  |
 | **decision_reason** | **String** | Reason for denial per credit policy. Max 200 char. |  |
 | **adverse_action_reasons** | **Array&lt;String&gt;** | Array of strings representing Adverse action reasons (must have at least one). Max 200 char per reason. |  |
 | **policy_exception** | **Boolean** | One of true or false. |  |

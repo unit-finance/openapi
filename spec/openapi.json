@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Unit API",
-    "version": "0.21.1",
+    "version": "0.21.2",
     "description": "JSON:API-compliant banking API.",
     "license": {
       "name": "Proprietary",
@@ -34403,10 +34403,6 @@
                 "example": {
                   "dad": "dada"
                 }
-              },
-              "idempotencyKey": {
-                "type": "string",
-                "description": "See Idempotency."
               }
             }
           },
@@ -34482,10 +34478,6 @@
                 "type": "object",
                 "additionalProperties": true,
                 "description": "Object containing key-value pairs of underwriting data per credit policy."
-              },
-              "idempotencyKey": {
-                "type": "string",
-                "description": "See Idempotency."
               }
             }
           },
@@ -35166,13 +35158,13 @@
               "submissionTimestamp": {
                 "type": "string",
                 "format": "date-time",
-                "description": "Timestamp when the corresponding credit application was submitted.",
+                "description": "Timestamp when the corresponding credit application was submitted. Must be UTC with exactly millisecond precision: YYYY-MM-DDTHH:MM:SS.sssZ (e.g. 2023-09-19T09:10:09.206Z).",
                 "example": "2023-09-19T09:10:09.206Z"
               },
               "decisionTimestamp": {
                 "type": "string",
                 "format": "date-time",
-                "description": "Timestamp when the credit decision was made.",
+                "description": "Timestamp when the credit decision was made. Must be UTC with exactly millisecond precision: YYYY-MM-DDTHH:MM:SS.sssZ (e.g. 2023-09-19T09:10:09.206Z).",
                 "example": "2023-09-19T09:10:09.206Z"
               },
               "creditLimit": {
@@ -35266,13 +35258,13 @@
               "submissionTimestamp": {
                 "type": "string",
                 "format": "date-time",
-                "description": "Timestamp when the corresponding credit application was submitted.",
+                "description": "Timestamp when the corresponding credit application was submitted. Must be UTC with exactly millisecond precision: YYYY-MM-DDTHH:MM:SS.sssZ (e.g. 2023-09-19T09:10:09.206Z).",
                 "example": "2023-09-19T09:10:09.206Z"
               },
               "decisionTimestamp": {
                 "type": "string",
                 "format": "date-time",
-                "description": "Timestamp when the credit decision was made.",
+                "description": "Timestamp when the credit decision was made. Must be UTC with exactly millisecond precision: YYYY-MM-DDTHH:MM:SS.sssZ (e.g. 2023-09-19T09:10:09.206Z).",
                 "example": "2023-09-19T09:10:09.206Z"
               },
               "policyException": {
@@ -35375,13 +35367,13 @@
               "submissionTimestamp": {
                 "type": "string",
                 "format": "date-time",
-                "description": "Timestamp when the corresponding credit application was submitted.",
+                "description": "Timestamp when the corresponding credit application was submitted. Must be UTC with exactly millisecond precision: YYYY-MM-DDTHH:MM:SS.sssZ (e.g. 2023-09-19T09:10:09.206Z).",
                 "example": "2023-09-19T09:10:09.206Z"
               },
               "decisionTimestamp": {
                 "type": "string",
                 "format": "date-time",
-                "description": "Timestamp when the credit decision was made.",
+                "description": "Timestamp when the credit decision was made. Must be UTC with exactly millisecond precision: YYYY-MM-DDTHH:MM:SS.sssZ (e.g. 2023-09-19T09:10:09.206Z).",
                 "example": "2023-09-19T09:10:09.206Z"
               },
               "policyException": {
@@ -35470,13 +35462,13 @@
               "submissionTimestamp": {
                 "type": "string",
                 "format": "date-time",
-                "description": "Timestamp when the corresponding credit application was submitted.",
+                "description": "Timestamp when the corresponding credit application was submitted. Must be UTC with exactly millisecond precision: YYYY-MM-DDTHH:MM:SS.sssZ (e.g. 2023-09-19T09:10:09.206Z).",
                 "example": "2023-09-19T09:10:09.206Z"
               },
               "decisionTimestamp": {
                 "type": "string",
                 "format": "date-time",
-                "description": "Timestamp when the credit decision was made.",
+                "description": "Timestamp when the credit decision was made. Must be UTC with exactly millisecond precision: YYYY-MM-DDTHH:MM:SS.sssZ (e.g. 2023-09-19T09:10:09.206Z).",
                 "example": "2023-09-19T09:10:09.206Z"
               },
               "decisionReason": {
@@ -35577,13 +35569,13 @@
               "submissionTimestamp": {
                 "type": "string",
                 "format": "date-time",
-                "description": "Timestamp when the corresponding credit application was submitted.",
+                "description": "Timestamp when the corresponding credit application was submitted. Must be UTC with exactly millisecond precision: YYYY-MM-DDTHH:MM:SS.sssZ (e.g. 2023-09-19T09:10:09.206Z).",
                 "example": "2023-09-19T09:10:09.206Z"
               },
               "decisionTimestamp": {
                 "type": "string",
                 "format": "date-time",
-                "description": "Timestamp when the credit decision was made.",
+                "description": "Timestamp when the credit decision was made. Must be UTC with exactly millisecond precision: YYYY-MM-DDTHH:MM:SS.sssZ (e.g. 2023-09-19T09:10:09.206Z).",
                 "example": "2023-09-19T09:10:09.206Z"
               },
               "policyException": {

@@ -9,7 +9,6 @@
 | **number_of_employees** | [**BusinessNumberOfEmployeesType**](BusinessNumberOfEmployeesType.md) | Number of employees of the business. | [optional] |
 | **years_in_business** | **Integer** | Number of years the business has been in operation. | [optional] |
 | **additional_underwriting_data** | **Hash&lt;String, Object&gt;** | Object containing key-value pairs of underwriting data per credit policy. | [optional] |
-| **idempotency_key** | **String** | See Idempotency. | [optional] |
 
 ## Example
 
@@ -21,8 +20,7 @@ instance = UnitFinanceSdk::CreateExistingCreditApplicationDataAttributes.new(
   annual_income: 1,
   number_of_employees: null,
   years_in_business: 4,
-  additional_underwriting_data: {&quot;dad&quot;:&quot;dada&quot;},
-  idempotency_key: null
+  additional_underwriting_data: {&quot;dad&quot;:&quot;dada&quot;}
 )
 ```
 

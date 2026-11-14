@@ -6,8 +6,8 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **external_application_id** | **str** | Identifier for client&#39;s credit evaluation related to this decision. Max 200 char. | 
-**submission_timestamp** | **datetime** | Timestamp when the corresponding credit application was submitted. | 
-**decision_timestamp** | **datetime** | Timestamp when the credit decision was made. | 
+**submission_timestamp** | **datetime** | Timestamp when the corresponding credit application was submitted. Must be UTC with exactly millisecond precision: YYYY-MM-DDTHH:MM:SS.sssZ (e.g. 2023-09-19T09:10:09.206Z). | 
+**decision_timestamp** | **datetime** | Timestamp when the credit decision was made. Must be UTC with exactly millisecond precision: YYYY-MM-DDTHH:MM:SS.sssZ (e.g. 2023-09-19T09:10:09.206Z). | 
 **policy_exception** | **bool** | One of true or false. | 
 **policy_exception_reason** | **str** | Conditional if policyException is true. Brief description of reason for policy exception. Max 200 char. | 
 **additional_underwriting_data** | **Dict[str, object]** | Object containing key-value pairs of underwriting data per credit policy. | 

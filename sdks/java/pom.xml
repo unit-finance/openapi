@@ -5,7 +5,7 @@
     <artifactId>unit-openapi-java-sdk</artifactId>
     <packaging>jar</packaging>
     <name>unit-openapi-java-sdk</name>
-    <version>0.6.3</version>
+    <version>0.6.4</version>
     <url>https://github.com/unit-finance/openapi</url>
     <description>Java SDK for the Unit banking API. Auto-generated from the Unit OpenAPI spec.</description>
     <scm>

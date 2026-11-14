@@ -5,7 +5,7 @@ info:
     name: Proprietary
     url: https://www.unit.co/terms-of-service
   title: Unit API
-  version: 0.21.1
+  version: 0.21.2
 servers:
 - url: https://api.s.unit.sh
 security:
@@ -28205,9 +28205,6 @@ components:
           example:
             dad: dada
           type: object
-        idempotencyKey:
-          description: See Idempotency.
-          type: string
       type: object
     CreateExistingCreditApplicationData_relationships:
       properties:
@@ -28242,9 +28239,6 @@ components:
           description: Object containing key-value pairs of underwriting data per
             credit policy.
           type: object
-        idempotencyKey:
-          description: See Idempotency.
-          type: string
       type: object
     CreateOnboardingCreditApplicationData_relationships:
       properties:
@@ -28483,12 +28477,15 @@ components:
           example: A1234
           type: string
         submissionTimestamp:
-          description: Timestamp when the corresponding credit application was submitted.
+          description: "Timestamp when the corresponding credit application was submitted.\
+            \ Must be UTC with exactly millisecond precision: YYYY-MM-DDTHH:MM:SS.sssZ\
+            \ (e.g. 2023-09-19T09:10:09.206Z)."
           example: 2023-09-19T09:10:09.206Z
           format: date-time
           type: string
         decisionTimestamp:
-          description: Timestamp when the credit decision was made.
+          description: "Timestamp when the credit decision was made. Must be UTC with\
+            \ exactly millisecond precision: YYYY-MM-DDTHH:MM:SS.sssZ (e.g. 2023-09-19T09:10:09.206Z)."
           example: 2023-09-19T09:10:09.206Z
           format: date-time
           type: string
@@ -28542,12 +28539,15 @@ components:
           example: A1234
           type: string
         submissionTimestamp:
-          description: Timestamp when the corresponding credit application was submitted.
+          description: "Timestamp when the corresponding credit application was submitted.\
+            \ Must be UTC with exactly millisecond precision: YYYY-MM-DDTHH:MM:SS.sssZ\
+            \ (e.g. 2023-09-19T09:10:09.206Z)."
           example: 2023-09-19T09:10:09.206Z
           format: date-time
           type: string
         decisionTimestamp:
-          description: Timestamp when the credit decision was made.
+          description: "Timestamp when the credit decision was made. Must be UTC with\
+            \ exactly millisecond precision: YYYY-MM-DDTHH:MM:SS.sssZ (e.g. 2023-09-19T09:10:09.206Z)."
           example: 2023-09-19T09:10:09.206Z
           format: date-time
           type: string
@@ -28604,12 +28604,15 @@ components:
           example: A1234
           type: string
         submissionTimestamp:
-          description: Timestamp when the corresponding credit application was submitted.
+          description: "Timestamp when the corresponding credit application was submitted.\
+            \ Must be UTC with exactly millisecond precision: YYYY-MM-DDTHH:MM:SS.sssZ\
+            \ (e.g. 2023-09-19T09:10:09.206Z)."
           example: 2023-09-19T09:10:09.206Z
           format: date-time
           type: string
         decisionTimestamp:
-          description: Timestamp when the credit decision was made.
+          description: "Timestamp when the credit decision was made. Must be UTC with\
+            \ exactly millisecond precision: YYYY-MM-DDTHH:MM:SS.sssZ (e.g. 2023-09-19T09:10:09.206Z)."
           example: 2023-09-19T09:10:09.206Z
           format: date-time
           type: string
@@ -28651,12 +28654,15 @@ components:
           example: A1234
           type: string
         submissionTimestamp:
-          description: Timestamp when the corresponding credit application was submitted.
+          description: "Timestamp when the corresponding credit application was submitted.\
+            \ Must be UTC with exactly millisecond precision: YYYY-MM-DDTHH:MM:SS.sssZ\
+            \ (e.g. 2023-09-19T09:10:09.206Z)."
           example: 2023-09-19T09:10:09.206Z
           format: date-time
           type: string
         decisionTimestamp:
-          description: Timestamp when the credit decision was made.
+          description: "Timestamp when the credit decision was made. Must be UTC with\
+            \ exactly millisecond precision: YYYY-MM-DDTHH:MM:SS.sssZ (e.g. 2023-09-19T09:10:09.206Z)."
           example: 2023-09-19T09:10:09.206Z
           format: date-time
           type: string
@@ -28712,12 +28718,15 @@ components:
           example: A1234
           type: string
         submissionTimestamp:
-          description: Timestamp when the corresponding credit application was submitted.
+          description: "Timestamp when the corresponding credit application was submitted.\
+            \ Must be UTC with exactly millisecond precision: YYYY-MM-DDTHH:MM:SS.sssZ\
+            \ (e.g. 2023-09-19T09:10:09.206Z)."
           example: 2023-09-19T09:10:09.206Z
           format: date-time
           type: string
         decisionTimestamp:
-          description: Timestamp when the credit decision was made.
+          description: "Timestamp when the credit decision was made. Must be UTC with\
+            \ exactly millisecond precision: YYYY-MM-DDTHH:MM:SS.sssZ (e.g. 2023-09-19T09:10:09.206Z)."
           example: 2023-09-19T09:10:09.206Z
           format: date-time
           type: string
