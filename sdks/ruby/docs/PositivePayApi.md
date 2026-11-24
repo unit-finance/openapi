@@ -5,7 +5,7 @@ All URIs are relative to *https://api.s.unit.sh*
 | Method | HTTP request | Description |
 | ------ | ------------ | ----------- |
 | [**cancel_positive_pay**](PositivePayApi.md#cancel_positive_pay) | **POST** /positive-pay/{positivePayId}/cancel | Cancel a positive pay rule |
-| [**configure_positive_pay_policy**](PositivePayApi.md#configure_positive_pay_policy) | **POST** /positive-pay-policy | Configure a positive pay policy |
+| [**configure_positive_pay_policy**](PositivePayApi.md#configure_positive_pay_policy) | **POST** /positive-pay-policies | Configure a positive pay policy |
 | [**create_positive_pay**](PositivePayApi.md#create_positive_pay) | **POST** /positive-pay | Create a positive pay rule |
 | [**get_positive_pay_by_id**](PositivePayApi.md#get_positive_pay_by_id) | **GET** /positive-pay/{positivePayId} | Get a positive pay rule by id |
 | [**list_positive_pay**](PositivePayApi.md#list_positive_pay) | **GET** /positive-pay | List positive pay rules |
@@ -14,7 +14,7 @@ All URIs are relative to *https://api.s.unit.sh*
 
 ## cancel_positive_pay
 
-> <CancelPositivePay200Response> cancel_positive_pay(positive_pay_id, opts)
+> <CancelPositivePay201Response> cancel_positive_pay(positive_pay_id, opts)
 
 Cancel a positive pay rule
 
@@ -50,7 +50,7 @@ end
 
 This returns an Array which contains the response data, status code and headers.
 
-> <Array(<CancelPositivePay200Response>, Integer, Hash)> cancel_positive_pay_with_http_info(positive_pay_id, opts)
+> <Array(<CancelPositivePay201Response>, Integer, Hash)> cancel_positive_pay_with_http_info(positive_pay_id, opts)
 
 ```ruby
 begin
@@ -58,7 +58,7 @@ begin
   data, status_code, headers = api_instance.cancel_positive_pay_with_http_info(positive_pay_id, opts)
   p status_code # => 2xx
   p headers # => { ... }
-  p data # => <CancelPositivePay200Response>
+  p data # => <CancelPositivePay201Response>
 rescue UnitFinanceSdk::ApiError => e
   puts "Error when calling PositivePayApi->cancel_positive_pay_with_http_info: #{e}"
 end
@@ -73,7 +73,7 @@ end
 
 ### Return type
 
-[**CancelPositivePay200Response**](CancelPositivePay200Response.md)
+[**CancelPositivePay201Response**](CancelPositivePay201Response.md)
 
 ### Authorization
 
@@ -376,7 +376,7 @@ end
 
 ## upload_positive_pay_document
 
-> upload_positive_pay_document(positive_pay_id, body)
+> <UploadPositivePayDocument200Response> upload_positive_pay_document(positive_pay_id, body)
 
 Upload a positive pay document
 
@@ -399,7 +399,8 @@ body = File.new('/path/to/some/file') # File |
 
 begin
   # Upload a positive pay document
-  api_instance.upload_positive_pay_document(positive_pay_id, body)
+  result = api_instance.upload_positive_pay_document(positive_pay_id, body)
+  p result
 rescue UnitFinanceSdk::ApiError => e
   puts "Error when calling PositivePayApi->upload_positive_pay_document: #{e}"
 end
@@ -407,9 +408,9 @@ end
 
 #### Using the upload_positive_pay_document_with_http_info variant
 
-This returns an Array which contains the response data (`nil` in this case), status code and headers.
+This returns an Array which contains the response data, status code and headers.
 
-> <Array(nil, Integer, Hash)> upload_positive_pay_document_with_http_info(positive_pay_id, body)
+> <Array(<UploadPositivePayDocument200Response>, Integer, Hash)> upload_positive_pay_document_with_http_info(positive_pay_id, body)
 
 ```ruby
 begin
@@ -417,7 +418,7 @@ begin
   data, status_code, headers = api_instance.upload_positive_pay_document_with_http_info(positive_pay_id, body)
   p status_code # => 2xx
   p headers # => { ... }
-  p data # => nil
+  p data # => <UploadPositivePayDocument200Response>
 rescue UnitFinanceSdk::ApiError => e
   puts "Error when calling PositivePayApi->upload_positive_pay_document_with_http_info: #{e}"
 end
@@ -432,7 +433,7 @@ end
 
 ### Return type
 
-nil (empty response body)
+[**UploadPositivePayDocument200Response**](UploadPositivePayDocument200Response.md)
 
 ### Authorization
 

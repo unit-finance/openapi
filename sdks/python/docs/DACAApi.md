@@ -10,7 +10,7 @@ Method | HTTP request | Description
 
 
 # **activate_control_agreement**
-> EnterControlAgreement200Response activate_control_agreement(account_id, body=body)
+> EnterControlAgreement200Response activate_control_agreement(account_id, activate_daca_request)
 
 Activate control agreement
 
@@ -22,6 +22,7 @@ Set an account with DACA `Activated` status. This action will:
 
 ```python
 import unit_finance_sdk
+from unit_finance_sdk.models.activate_daca_request import ActivateDacaRequest
 from unit_finance_sdk.models.enter_control_agreement200_response import EnterControlAgreement200Response
 from unit_finance_sdk.rest import ApiException
 from pprint import pprint
@@ -47,11 +48,11 @@ with unit_finance_sdk.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = unit_finance_sdk.DACAApi(api_client)
     account_id = 'account_id_example' # str | 
-    body = None # object |  (optional)
+    activate_daca_request = unit_finance_sdk.ActivateDacaRequest() # ActivateDacaRequest | 
 
     try:
         # Activate control agreement
-        api_response = api_instance.activate_control_agreement(account_id, body=body)
+        api_response = api_instance.activate_control_agreement(account_id, activate_daca_request)
         print("The response of DACAApi->activate_control_agreement:\n")
         pprint(api_response)
     except Exception as e:
@@ -66,7 +67,7 @@ with unit_finance_sdk.ApiClient(configuration) as api_client:
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **account_id** | **str**|  | 
- **body** | **object**|  | [optional] 
+ **activate_daca_request** | [**ActivateDacaRequest**](ActivateDacaRequest.md)|  | 
 
 ### Return type
 
@@ -94,7 +95,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **deactivate_control_agreement**
-> EnterControlAgreement200Response deactivate_control_agreement(account_id, body=body)
+> EnterControlAgreement200Response deactivate_control_agreement(account_id, deactivate_daca_request)
 
 Deactivate control agreement
 
@@ -106,6 +107,7 @@ Deactivate an account with DACA `Activated` status. This action will:
 
 ```python
 import unit_finance_sdk
+from unit_finance_sdk.models.deactivate_daca_request import DeactivateDacaRequest
 from unit_finance_sdk.models.enter_control_agreement200_response import EnterControlAgreement200Response
 from unit_finance_sdk.rest import ApiException
 from pprint import pprint
@@ -131,11 +133,11 @@ with unit_finance_sdk.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = unit_finance_sdk.DACAApi(api_client)
     account_id = 'account_id_example' # str | 
-    body = None # object |  (optional)
+    deactivate_daca_request = unit_finance_sdk.DeactivateDacaRequest() # DeactivateDacaRequest | 
 
     try:
         # Deactivate control agreement
-        api_response = api_instance.deactivate_control_agreement(account_id, body=body)
+        api_response = api_instance.deactivate_control_agreement(account_id, deactivate_daca_request)
         print("The response of DACAApi->deactivate_control_agreement:\n")
         pprint(api_response)
     except Exception as e:
@@ -150,7 +152,7 @@ with unit_finance_sdk.ApiClient(configuration) as api_client:
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **account_id** | **str**|  | 
- **body** | **object**|  | [optional] 
+ **deactivate_daca_request** | [**DeactivateDacaRequest**](DeactivateDacaRequest.md)|  | 
 
 ### Return type
 
@@ -178,7 +180,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **enter_control_agreement**
-> EnterControlAgreement200Response enter_control_agreement(account_id, body=body)
+> EnterControlAgreement200Response enter_control_agreement(account_id, enter_daca_request)
 
 Enter control agreement
 
@@ -191,6 +193,7 @@ Set an account with DACA `Entered` status.
 ```python
 import unit_finance_sdk
 from unit_finance_sdk.models.enter_control_agreement200_response import EnterControlAgreement200Response
+from unit_finance_sdk.models.enter_daca_request import EnterDacaRequest
 from unit_finance_sdk.rest import ApiException
 from pprint import pprint
 
@@ -215,11 +218,11 @@ with unit_finance_sdk.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = unit_finance_sdk.DACAApi(api_client)
     account_id = 'account_id_example' # str | 
-    body = None # object |  (optional)
+    enter_daca_request = unit_finance_sdk.EnterDacaRequest() # EnterDacaRequest | 
 
     try:
         # Enter control agreement
-        api_response = api_instance.enter_control_agreement(account_id, body=body)
+        api_response = api_instance.enter_control_agreement(account_id, enter_daca_request)
         print("The response of DACAApi->enter_control_agreement:\n")
         pprint(api_response)
     except Exception as e:
@@ -234,7 +237,7 @@ with unit_finance_sdk.ApiClient(configuration) as api_client:
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **account_id** | **str**|  | 
- **body** | **object**|  | [optional] 
+ **enter_daca_request** | [**EnterDacaRequest**](EnterDacaRequest.md)|  | 
 
 ### Return type
 

@@ -5,7 +5,7 @@ info:
     name: Proprietary
     url: https://www.unit.co/terms-of-service
   title: Unit API
-  version: 0.21.2
+  version: 0.22.0
 servers:
 - url: https://api.s.unit.sh
 security:
@@ -8880,8 +8880,8 @@ paths:
         content:
           application/vnd.api+json:
             schema:
-              type: object
-        required: false
+              $ref: "#/components/schemas/EnterDacaRequest"
+        required: true
       responses:
         "200":
           content:
@@ -8939,8 +8939,8 @@ paths:
         content:
           application/vnd.api+json:
             schema:
-              type: object
-        required: false
+              $ref: "#/components/schemas/ActivateDacaRequest"
+        required: true
       responses:
         "200":
           content:
@@ -8999,8 +8999,8 @@ paths:
         content:
           application/vnd.api+json:
             schema:
-              type: object
-        required: false
+              $ref: "#/components/schemas/DeactivateDacaRequest"
+        required: true
       responses:
         "200":
           content:
@@ -9736,11 +9736,11 @@ paths:
               type: object
         required: false
       responses:
-        "200":
+        "201":
           content:
             application/vnd.api+json:
               schema:
-                $ref: "#/components/schemas/cancelPositivePay_200_response"
+                $ref: "#/components/schemas/cancelPositivePay_201_response"
           description: The cancelled Positive Pay rule.
         "400":
           content:
@@ -9808,7 +9808,11 @@ paths:
         required: true
       responses:
         "200":
-          description: The authorization document was uploaded.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/uploadPositivePayDocument_200_response"
+          description: The Positive Pay rule after activation.
         "400":
           content:
             application/vnd.api+json:
@@ -9843,7 +9847,7 @@ paths:
       x-content-type: application/pdf
       x-accepts:
       - application/vnd.api+json
-  /positive-pay-policy:
+  /positive-pay-policies:
     post:
       description: Configure Positive Pay policy to control which payment types require
         matching Positive Pay rules before they can be processed.
@@ -18877,8 +18881,14 @@ components:
         attributes:
           createdAt: 2024-12-08T08:58:55.515Z
           updatedAt: 2024-12-08T08:58:55.515Z
-          originalAmount: 100
-          remainingAmount: 100
+          totalPrincipal:
+            value: 100
+          remainingPrincipal: 100
+          totalInterest:
+            charged: 0
+            accrued: "0.4008906629981401373428240492184565"
+          remainingInterest: 0
+          plan: Purchase
           purchaseDueDate: 2023-05-25
           repaymentStatus:
             type: notRepaid
@@ -18903,6 +18913,8 @@ components:
         type:
           enum:
           - bankReceivable
+          - orgReceivable
+          - capitalPartnerReceivable
           type: string
         id:
           type: string
@@ -19893,6 +19905,72 @@ components:
       properties:
         data:
           $ref: "#/components/schemas/AddSecondaryRoutingNumberData"
+      required:
+      - data
+      type: object
+    EnterDacaData:
+      properties:
+        type:
+          enum:
+          - updateDacaPoliciesRequest
+          type: string
+        attributes:
+          properties: {}
+          type: object
+        relationships:
+          $ref: "#/components/schemas/CreateFeeData_relationships"
+      required:
+      - relationships
+      - type
+      type: object
+    EnterDacaRequest:
+      properties:
+        data:
+          $ref: "#/components/schemas/EnterDacaData"
+      required:
+      - data
+      type: object
+    ActivateDacaData:
+      properties:
+        type:
+          enum:
+          - updateDacaPoliciesRequest
+          type: string
+        attributes:
+          properties: {}
+          type: object
+        relationships:
+          $ref: "#/components/schemas/CreateFeeData_relationships"
+      required:
+      - relationships
+      - type
+      type: object
+    ActivateDacaRequest:
+      properties:
+        data:
+          $ref: "#/components/schemas/ActivateDacaData"
+      required:
+      - data
+      type: object
+    DeactivateDacaData:
+      properties:
+        type:
+          enum:
+          - updateDacaPoliciesRequest
+          type: string
+        attributes:
+          properties: {}
+          type: object
+        relationships:
+          $ref: "#/components/schemas/CreateFeeData_relationships"
+      required:
+      - relationships
+      - type
+      type: object
+    DeactivateDacaRequest:
+      properties:
+        data:
+          $ref: "#/components/schemas/DeactivateDacaData"
       required:
       - data
       type: object
@@ -21331,7 +21409,7 @@ components:
       required:
       - data
       type: object
-    cancelPositivePay_200_response_data:
+    cancelPositivePay_201_response_data:
       description: The cancelled Positive Pay rule.
       discriminator:
         mapping:
@@ -21343,10 +21421,19 @@ components:
       - $ref: "#/components/schemas/ReceivedACHDebitPositivePay"
       - $ref: "#/components/schemas/CheckPaymentPositivePay"
       - $ref: "#/components/schemas/WireDrawdownPositivePay"
-    cancelPositivePay_200_response:
+    cancelPositivePay_201_response:
       properties:
         data:
-          $ref: "#/components/schemas/cancelPositivePay_200_response_data"
+          $ref: "#/components/schemas/cancelPositivePay_201_response_data"
+      required:
+      - data
+      type: object
+    uploadPositivePayDocument_200_response:
+      properties:
+        data:
+          allOf:
+          - $ref: "#/components/schemas/WireDrawdownPositivePay"
+          description: The Positive Pay rule after activation.
       required:
       - data
       type: object
@@ -21763,16 +21850,12 @@ components:
           type: array
       required:
       - address
-      - annualRevenue
       - beneficialOwners
       - businessVertical
-      - cashFlow
       - contact
-      - countriesOfOperation
       - ein
       - entityType
       - name
-      - numberOfEmployees
       - officer
       - phone
       - stateOfIncorporation
@@ -21869,13 +21952,11 @@ components:
           type: array
       required:
       - address
-      - annualIncome
       - dateOfBirth
       - email
       - fullName
       - occupation
       - phone
-      - sourceOfIncome
       type: object
     CreateSoleProprietorApplicationData_attributes:
       properties:
@@ -21996,12 +22077,10 @@ components:
           type: array
       required:
       - address
-      - annualRevenue
       - businessVertical
       - dateOfBirth
       - email
       - fullName
-      - numberOfEmployees
       - phone
       - soleProprietorship
       - website
@@ -28973,6 +29052,28 @@ components:
       required:
       - optInTypes
       type: object
+    Receivable_attributes_totalPrincipal:
+      additionalProperties: true
+      description: "JSON Object holding the original principal of the receivable that\
+        \ needs to be repaid, as value (Integer, cents)."
+      properties:
+        value:
+          description: "The original principal of the receivable, in cents."
+          type: integer
+      type: object
+    Receivable_attributes_totalInterest:
+      additionalProperties: true
+      description: "JSON Object holding the interest of the receivable: charged (Integer,\
+        \ cents) is the interest charged so far and accrued (decimal String, cents)\
+        \ is the interest accrued so far."
+      properties:
+        charged:
+          description: "The interest charged so far, in cents."
+          type: integer
+        accrued:
+          description: "The interest accrued so far, in cents, as a decimal string."
+          type: string
+      type: object
     Receivable_attributes_repaymentStatus:
       additionalProperties: true
       description: "JSON Object representing The status of the repayment and last\
@@ -28994,12 +29095,20 @@ components:
           description: The date the resource was updated.
           format: date-time
           type: string
-        originalAmount:
-          description: The original amount of the receivable that need to be repaid.
+        totalPrincipal:
+          $ref: "#/components/schemas/Receivable_attributes_totalPrincipal"
+        remainingPrincipal:
+          description: The remaining principal of the receivable that needs to be
+            repaid.
           type: integer
-        remainingAmount:
-          description: The remaining amount of the receivable that need to be repaid.
+        totalInterest:
+          $ref: "#/components/schemas/Receivable_attributes_totalInterest"
+        remainingInterest:
+          description: The remaining interest of the receivable that needs to be repaid.
           type: integer
+        plan:
+          description: "The plan the receivable belongs to, e.g. Purchase or Fee."
+          type: string
         repaymentStatus:
           $ref: "#/components/schemas/Receivable_attributes_repaymentStatus"
         purchaseDueDate:
@@ -29015,9 +29124,12 @@ components:
           type: string
       required:
       - createdAt
-      - originalAmount
-      - remainingAmount
+      - plan
+      - remainingInterest
+      - remainingPrincipal
       - repaymentStatus
+      - totalInterest
+      - totalPrincipal
       - updatedAt
       type: object
     Receivable_relationships:

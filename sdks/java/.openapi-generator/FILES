@@ -28,6 +28,8 @@ docs/AccountLowBalanceClosureTransaction.md
 docs/AccountLowBalanceClosureTransactionAttributes.md
 docs/AccountLowBalanceClosureTransactionRelationships.md
 docs/AccountsApi.md
+docs/ActivateDacaData.md
+docs/ActivateDacaRequest.md
 docs/AddAccountOwners200Response.md
 docs/AddAccountOwnersRequest.md
 docs/AddAuthorizedUsersData.md
@@ -105,8 +107,8 @@ docs/CancelApplicationDataAttributes.md
 docs/CancelApplicationRequest.md
 docs/CancelPayment200Response.md
 docs/CancelPayment200ResponseData.md
-docs/CancelPositivePay200Response.md
-docs/CancelPositivePay200ResponseData.md
+docs/CancelPositivePay201Response.md
+docs/CancelPositivePay201ResponseData.md
 docs/CapitalPartnerACHRepayment.md
 docs/CapitalPartnerACHRepaymentRelationships.md
 docs/CapitalPartnerBookRepayment.md
@@ -411,6 +413,8 @@ docs/CreditDecisionsApi.md
 docs/CurrencyConversionType.md
 docs/CustomersApi.md
 docs/DacaApi.md
+docs/DeactivateDacaData.md
+docs/DeactivateDacaRequest.md
 docs/DeniedCreditApplicationDecision.md
 docs/DeniedCreditApplicationDecisionAttributes.md
 docs/DeniedCreditApplicationDecisionRelationships.md
@@ -431,6 +435,8 @@ docs/DisputeTransactionAttributes.md
 docs/DisputeTransactionRelationships.md
 docs/DisputesApi.md
 docs/EnterControlAgreement200Response.md
+docs/EnterDacaData.md
+docs/EnterDacaRequest.md
 docs/ErrorDocument.md
 docs/ErrorDocumentErrorsInner.md
 docs/ErrorDocumentErrorsInnerSource.md
@@ -637,6 +643,8 @@ docs/RealtimeReceivedPaymentRelationships.md
 docs/Receivable.md
 docs/ReceivableAttributes.md
 docs/ReceivableAttributesRepaymentStatus.md
+docs/ReceivableAttributesTotalInterest.md
+docs/ReceivableAttributesTotalPrincipal.md
 docs/ReceivableRelationships.md
 docs/ReceivablesBalance.md
 docs/ReceivablesBalanceAttributes.md
@@ -834,6 +842,7 @@ docs/UpdateTransactionRequest.md
 docs/UpdateWalletData.md
 docs/UpdateWalletDataAttributes.md
 docs/UpdateWalletRequest.md
+docs/UploadPositivePayDocument200Response.md
 docs/VerifyDocumentData.md
 docs/VerifyDocumentDataAttributes.md
 docs/VerifyDocumentRequest.md
@@ -929,6 +938,8 @@ src/main/java/com/unit/finance/sdk/model/AccountHoldAttributes.java
 src/main/java/com/unit/finance/sdk/model/AccountLowBalanceClosureTransaction.java
 src/main/java/com/unit/finance/sdk/model/AccountLowBalanceClosureTransactionAttributes.java
 src/main/java/com/unit/finance/sdk/model/AccountLowBalanceClosureTransactionRelationships.java
+src/main/java/com/unit/finance/sdk/model/ActivateDacaData.java
+src/main/java/com/unit/finance/sdk/model/ActivateDacaRequest.java
 src/main/java/com/unit/finance/sdk/model/AddAccountOwners200Response.java
 src/main/java/com/unit/finance/sdk/model/AddAccountOwnersRequest.java
 src/main/java/com/unit/finance/sdk/model/AddAuthorizedUsersData.java
@@ -1003,8 +1014,8 @@ src/main/java/com/unit/finance/sdk/model/CancelApplicationDataAttributes.java
 src/main/java/com/unit/finance/sdk/model/CancelApplicationRequest.java
 src/main/java/com/unit/finance/sdk/model/CancelPayment200Response.java
 src/main/java/com/unit/finance/sdk/model/CancelPayment200ResponseData.java
-src/main/java/com/unit/finance/sdk/model/CancelPositivePay200Response.java
-src/main/java/com/unit/finance/sdk/model/CancelPositivePay200ResponseData.java
+src/main/java/com/unit/finance/sdk/model/CancelPositivePay201Response.java
+src/main/java/com/unit/finance/sdk/model/CancelPositivePay201ResponseData.java
 src/main/java/com/unit/finance/sdk/model/CapitalPartnerACHRepayment.java
 src/main/java/com/unit/finance/sdk/model/CapitalPartnerACHRepaymentRelationships.java
 src/main/java/com/unit/finance/sdk/model/CapitalPartnerBookRepayment.java
@@ -1295,6 +1306,8 @@ src/main/java/com/unit/finance/sdk/model/CreditAccount.java
 src/main/java/com/unit/finance/sdk/model/CreditAccountAttributes.java
 src/main/java/com/unit/finance/sdk/model/CreditAccountRelationships.java
 src/main/java/com/unit/finance/sdk/model/CurrencyConversionType.java
+src/main/java/com/unit/finance/sdk/model/DeactivateDacaData.java
+src/main/java/com/unit/finance/sdk/model/DeactivateDacaRequest.java
 src/main/java/com/unit/finance/sdk/model/DeniedCreditApplicationDecision.java
 src/main/java/com/unit/finance/sdk/model/DeniedCreditApplicationDecisionAttributes.java
 src/main/java/com/unit/finance/sdk/model/DeniedCreditApplicationDecisionRelationships.java
@@ -1314,6 +1327,8 @@ src/main/java/com/unit/finance/sdk/model/DisputeTransaction.java
 src/main/java/com/unit/finance/sdk/model/DisputeTransactionAttributes.java
 src/main/java/com/unit/finance/sdk/model/DisputeTransactionRelationships.java
 src/main/java/com/unit/finance/sdk/model/EnterControlAgreement200Response.java
+src/main/java/com/unit/finance/sdk/model/EnterDacaData.java
+src/main/java/com/unit/finance/sdk/model/EnterDacaRequest.java
 src/main/java/com/unit/finance/sdk/model/ErrorDocument.java
 src/main/java/com/unit/finance/sdk/model/ErrorDocumentErrorsInner.java
 src/main/java/com/unit/finance/sdk/model/ErrorDocumentErrorsInnerSource.java
@@ -1514,6 +1529,8 @@ src/main/java/com/unit/finance/sdk/model/RealtimeReceivedPaymentRelationships.ja
 src/main/java/com/unit/finance/sdk/model/Receivable.java
 src/main/java/com/unit/finance/sdk/model/ReceivableAttributes.java
 src/main/java/com/unit/finance/sdk/model/ReceivableAttributesRepaymentStatus.java
+src/main/java/com/unit/finance/sdk/model/ReceivableAttributesTotalInterest.java
+src/main/java/com/unit/finance/sdk/model/ReceivableAttributesTotalPrincipal.java
 src/main/java/com/unit/finance/sdk/model/ReceivableRelationships.java
 src/main/java/com/unit/finance/sdk/model/ReceivablesBalance.java
 src/main/java/com/unit/finance/sdk/model/ReceivablesBalanceAttributes.java
@@ -1703,6 +1720,7 @@ src/main/java/com/unit/finance/sdk/model/UpdateTransactionRequest.java
 src/main/java/com/unit/finance/sdk/model/UpdateWalletData.java
 src/main/java/com/unit/finance/sdk/model/UpdateWalletDataAttributes.java
 src/main/java/com/unit/finance/sdk/model/UpdateWalletRequest.java
+src/main/java/com/unit/finance/sdk/model/UploadPositivePayDocument200Response.java
 src/main/java/com/unit/finance/sdk/model/VerifyDocumentData.java
 src/main/java/com/unit/finance/sdk/model/VerifyDocumentDataAttributes.java
 src/main/java/com/unit/finance/sdk/model/VerifyDocumentRequest.java

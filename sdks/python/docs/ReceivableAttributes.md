@@ -7,8 +7,11 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **created_at** | **datetime** | The date the resource was created. | 
 **updated_at** | **datetime** | The date the resource was updated. | 
-**original_amount** | **int** | The original amount of the receivable that need to be repaid. | 
-**remaining_amount** | **int** | The remaining amount of the receivable that need to be repaid. | 
+**total_principal** | [**ReceivableAttributesTotalPrincipal**](ReceivableAttributesTotalPrincipal.md) |  | 
+**remaining_principal** | **int** | The remaining principal of the receivable that needs to be repaid. | 
+**total_interest** | [**ReceivableAttributesTotalInterest**](ReceivableAttributesTotalInterest.md) |  | 
+**remaining_interest** | **int** | The remaining interest of the receivable that needs to be repaid. | 
+**plan** | **str** | The plan the receivable belongs to, e.g. Purchase or Fee. | 
 **repayment_status** | [**ReceivableAttributesRepaymentStatus**](ReceivableAttributesRepaymentStatus.md) |  | 
 **purchase_due_date** | **date** | The date the receivable is due e.g. 2024-12-31. | [optional] 
 **purchased_timestamp** | **datetime** | The date the receivable was purchased | [optional] 

@@ -18,11 +18,11 @@
 |**contact** | [**BusinessContactType**](BusinessContactType.md) | Primary contact of the business. This person is the one that will have access to the account. |  |
 |**officer** | [**OfficerRequestType**](OfficerRequestType.md) | Officer representing the business (must be the CEO, COO, CFO, President, BenefitsAdministrationOfficer, CIO, VP, AVP, Treasurer, Secretary, Controller, Manager, Partner or Member). To onboard a business successfully, you must provide the officer&#39;s personal details. |  |
 |**beneficialOwners** | [**List&lt;BeneficialOwnerRequestType&gt;**](BeneficialOwnerRequestType.md) | Array of beneficial owners in the business. Beneficial owners are all people that, directly or indirectly, own 25% or more of the business. To onboard a business successfully, you must provide each beneficial owner&#39;s personal details. If the business has no beneficial owners, the array should be empty. |  |
-|**annualRevenue** | **BusinessAnnualRevenueType** | Required if any of the officer / BeneficialOwner of the business have a non US nationality. Annual revenue of the business. |  |
-|**numberOfEmployees** | **BusinessNumberOfEmployeesType** | Required if any of the officer / BeneficialOwner of the business have a non US nationality. Number of employees of the business. |  |
-|**cashFlow** | **CashFlowType** | Required if any of the officer / BeneficialOwner of the business have a non US nationality. Cash flow of the business. |  |
+|**annualRevenue** | **BusinessAnnualRevenueType** | Required if any of the officer / BeneficialOwner of the business have a non US nationality. Annual revenue of the business. |  [optional] |
+|**numberOfEmployees** | **BusinessNumberOfEmployeesType** | Required if any of the officer / BeneficialOwner of the business have a non US nationality. Number of employees of the business. |  [optional] |
+|**cashFlow** | **CashFlowType** | Required if any of the officer / BeneficialOwner of the business have a non US nationality. Cash flow of the business. |  [optional] |
 |**yearOfIncorporation** | **String** | Required. Year of incorporation of the business as a 4-digit year string (e.g., \&quot;2014\&quot;). |  |
-|**countriesOfOperation** | **List&lt;String&gt;** | Required if any of the officer / BeneficialOwner of the business have a non US nationality. An array of two letter codes representing the countries of operation of the business. |  |
+|**countriesOfOperation** | **List&lt;String&gt;** | Required if any of the officer / BeneficialOwner of the business have a non US nationality. An array of two letter codes representing the countries of operation of the business. |  [optional] |
 |**stockSymbol** | **String** | Optional. The stock symbol (ticker) of the business. |  [optional] |
 |**businessVertical** | **BusinessVerticalType** | The business vertical of the business. |  |
 |**ip** | **String** | Optional. IP address of the end-customer creating the application. Both IPv4 and IPv6 formats are supported. Highly recommended as a fraud prevention measure, if the information is available when submitting the application. |  [optional] |

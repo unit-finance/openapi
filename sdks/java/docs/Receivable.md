@@ -19,6 +19,8 @@
 | Name | Value |
 |---- | -----|
 | BANK_RECEIVABLE | &quot;bankReceivable&quot; |
+| ORG_RECEIVABLE | &quot;orgReceivable&quot; |
+| CAPITAL_PARTNER_RECEIVABLE | &quot;capitalPartnerReceivable&quot; |
 
 
 

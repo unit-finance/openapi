@@ -11,7 +11,7 @@ All URIs are relative to *https://api.s.unit.sh*
 
 ## activate_control_agreement
 
-> <EnterControlAgreement200Response> activate_control_agreement(account_id, opts)
+> <EnterControlAgreement200Response> activate_control_agreement(account_id, activate_daca_request)
 
 Activate control agreement
 
@@ -30,13 +30,11 @@ end
 
 api_instance = UnitFinanceSdk::DACAApi.new
 account_id = 'account_id_example' # String | 
-opts = {
-  body: { ... } # Object | 
-}
+activate_daca_request = UnitFinanceSdk::ActivateDacaRequest.new({data: UnitFinanceSdk::ActivateDacaData.new({type: 'updateDacaPoliciesRequest', relationships: UnitFinanceSdk::CreateFeeDataRelationships.new({account: UnitFinanceSdk::Relationship.new})})}) # ActivateDacaRequest | 
 
 begin
   # Activate control agreement
-  result = api_instance.activate_control_agreement(account_id, opts)
+  result = api_instance.activate_control_agreement(account_id, activate_daca_request)
   p result
 rescue UnitFinanceSdk::ApiError => e
   puts "Error when calling DACAApi->activate_control_agreement: #{e}"
@@ -47,12 +45,12 @@ end
 
 This returns an Array which contains the response data, status code and headers.
 
-> <Array(<EnterControlAgreement200Response>, Integer, Hash)> activate_control_agreement_with_http_info(account_id, opts)
+> <Array(<EnterControlAgreement200Response>, Integer, Hash)> activate_control_agreement_with_http_info(account_id, activate_daca_request)
 
 ```ruby
 begin
   # Activate control agreement
-  data, status_code, headers = api_instance.activate_control_agreement_with_http_info(account_id, opts)
+  data, status_code, headers = api_instance.activate_control_agreement_with_http_info(account_id, activate_daca_request)
   p status_code # => 2xx
   p headers # => { ... }
   p data # => <EnterControlAgreement200Response>
@@ -66,7 +64,7 @@ end
 | Name | Type | Description | Notes |
 | ---- | ---- | ----------- | ----- |
 | **account_id** | **String** |  |  |
-| **body** | **Object** |  | [optional] |
+| **activate_daca_request** | [**ActivateDacaRequest**](ActivateDacaRequest.md) |  |  |
 
 ### Return type
 
@@ -84,7 +82,7 @@ end
 
 ## deactivate_control_agreement
 
-> <EnterControlAgreement200Response> deactivate_control_agreement(account_id, opts)
+> <EnterControlAgreement200Response> deactivate_control_agreement(account_id, deactivate_daca_request)
 
 Deactivate control agreement
 
@@ -103,13 +101,11 @@ end
 
 api_instance = UnitFinanceSdk::DACAApi.new
 account_id = 'account_id_example' # String | 
-opts = {
-  body: { ... } # Object | 
-}
+deactivate_daca_request = UnitFinanceSdk::DeactivateDacaRequest.new({data: UnitFinanceSdk::DeactivateDacaData.new({type: 'updateDacaPoliciesRequest', relationships: UnitFinanceSdk::CreateFeeDataRelationships.new({account: UnitFinanceSdk::Relationship.new})})}) # DeactivateDacaRequest | 
 
 begin
   # Deactivate control agreement
-  result = api_instance.deactivate_control_agreement(account_id, opts)
+  result = api_instance.deactivate_control_agreement(account_id, deactivate_daca_request)
   p result
 rescue UnitFinanceSdk::ApiError => e
   puts "Error when calling DACAApi->deactivate_control_agreement: #{e}"
@@ -120,12 +116,12 @@ end
 
 This returns an Array which contains the response data, status code and headers.
 
-> <Array(<EnterControlAgreement200Response>, Integer, Hash)> deactivate_control_agreement_with_http_info(account_id, opts)
+> <Array(<EnterControlAgreement200Response>, Integer, Hash)> deactivate_control_agreement_with_http_info(account_id, deactivate_daca_request)
 
 ```ruby
 begin
   # Deactivate control agreement
-  data, status_code, headers = api_instance.deactivate_control_agreement_with_http_info(account_id, opts)
+  data, status_code, headers = api_instance.deactivate_control_agreement_with_http_info(account_id, deactivate_daca_request)
   p status_code # => 2xx
   p headers # => { ... }
   p data # => <EnterControlAgreement200Response>
@@ -139,7 +135,7 @@ end
 | Name | Type | Description | Notes |
 | ---- | ---- | ----------- | ----- |
 | **account_id** | **String** |  |  |
-| **body** | **Object** |  | [optional] |
+| **deactivate_daca_request** | [**DeactivateDacaRequest**](DeactivateDacaRequest.md) |  |  |
 
 ### Return type
 
@@ -157,7 +153,7 @@ end
 
 ## enter_control_agreement
 
-> <EnterControlAgreement200Response> enter_control_agreement(account_id, opts)
+> <EnterControlAgreement200Response> enter_control_agreement(account_id, enter_daca_request)
 
 Enter control agreement
 
@@ -176,13 +172,11 @@ end
 
 api_instance = UnitFinanceSdk::DACAApi.new
 account_id = 'account_id_example' # String | 
-opts = {
-  body: { ... } # Object | 
-}
+enter_daca_request = UnitFinanceSdk::EnterDacaRequest.new({data: UnitFinanceSdk::EnterDacaData.new({type: 'updateDacaPoliciesRequest', relationships: UnitFinanceSdk::CreateFeeDataRelationships.new({account: UnitFinanceSdk::Relationship.new})})}) # EnterDacaRequest | 
 
 begin
   # Enter control agreement
-  result = api_instance.enter_control_agreement(account_id, opts)
+  result = api_instance.enter_control_agreement(account_id, enter_daca_request)
   p result
 rescue UnitFinanceSdk::ApiError => e
   puts "Error when calling DACAApi->enter_control_agreement: #{e}"
@@ -193,12 +187,12 @@ end
 
 This returns an Array which contains the response data, status code and headers.
 
-> <Array(<EnterControlAgreement200Response>, Integer, Hash)> enter_control_agreement_with_http_info(account_id, opts)
+> <Array(<EnterControlAgreement200Response>, Integer, Hash)> enter_control_agreement_with_http_info(account_id, enter_daca_request)
 
 ```ruby
 begin
   # Enter control agreement
-  data, status_code, headers = api_instance.enter_control_agreement_with_http_info(account_id, opts)
+  data, status_code, headers = api_instance.enter_control_agreement_with_http_info(account_id, enter_daca_request)
   p status_code # => 2xx
   p headers # => { ... }
   p data # => <EnterControlAgreement200Response>
@@ -212,7 +206,7 @@ end
 | Name | Type | Description | Notes |
 | ---- | ---- | ----------- | ----- |
 | **account_id** | **String** |  |  |
-| **body** | **Object** |  | [optional] |
+| **enter_daca_request** | [**EnterDacaRequest**](EnterDacaRequest.md) |  |  |
 
 ### Return type
 

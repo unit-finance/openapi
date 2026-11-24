@@ -5,14 +5,14 @@ All URIs are relative to *https://api.s.unit.sh*
 |Method | HTTP request | Description|
 |------------- | ------------- | -------------|
 |[**cancelPositivePay**](#cancelpositivepay) | **POST** /positive-pay/{positivePayId}/cancel | Cancel a positive pay rule|
-|[**configurePositivePayPolicy**](#configurepositivepaypolicy) | **POST** /positive-pay-policy | Configure a positive pay policy|
+|[**configurePositivePayPolicy**](#configurepositivepaypolicy) | **POST** /positive-pay-policies | Configure a positive pay policy|
 |[**createPositivePay**](#createpositivepay) | **POST** /positive-pay | Create a positive pay rule|
 |[**getPositivePayById**](#getpositivepaybyid) | **GET** /positive-pay/{positivePayId} | Get a positive pay rule by id|
 |[**listPositivePay**](#listpositivepay) | **GET** /positive-pay | List positive pay rules|
 |[**uploadPositivePayDocument**](#uploadpositivepaydocument) | **PUT** /positive-pay/{positivePayId}/documents | Upload a positive pay document|
 
 # **cancelPositivePay**
-> CancelPositivePay200Response cancelPositivePay()
+> CancelPositivePay201Response cancelPositivePay()
 
 Cancel a Positive Pay rule by ID. Cancelled rules stop authorizing payments.
 
@@ -46,7 +46,7 @@ const { status, data } = await apiInstance.cancelPositivePay(
 
 ### Return type
 
-**CancelPositivePay200Response**
+**CancelPositivePay201Response**
 
 ### Authorization
 
@@ -61,7 +61,7 @@ const { status, data } = await apiInstance.cancelPositivePay(
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-|**200** | The cancelled Positive Pay rule. |  -  |
+|**201** | The cancelled Positive Pay rule. |  -  |
 |**400** | Bad request. The request body or query parameters failed validation; &#x60;errors[].source.pointer&#x60; identifies the offending field. |  -  |
 |**401** | Unauthorized. The bearer token is missing, invalid or expired. |  -  |
 |**404** | Not found. No resource matches the supplied identifier. |  -  |
@@ -309,7 +309,7 @@ const { status, data } = await apiInstance.listPositivePay(
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **uploadPositivePayDocument**
-> uploadPositivePayDocument(body)
+> UploadPositivePayDocument200Response uploadPositivePayDocument(body)
 
 Upload the authorization document required to activate a drawdown rule (Wire Drawdown Only).
 
@@ -343,7 +343,7 @@ const { status, data } = await apiInstance.uploadPositivePayDocument(
 
 ### Return type
 
-void (empty response body)
+**UploadPositivePayDocument200Response**
 
 ### Authorization
 
@@ -358,7 +358,7 @@ void (empty response body)
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-|**200** | The authorization document was uploaded. |  -  |
+|**200** | The Positive Pay rule after activation. |  -  |
 |**400** | Bad request. The request body or query parameters failed validation; &#x60;errors[].source.pointer&#x60; identifies the offending field. |  -  |
 |**401** | Unauthorized. The bearer token is missing, invalid or expired. |  -  |
 |**404** | Not found. No resource matches the supplied identifier. |  -  |

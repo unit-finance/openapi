@@ -27,6 +27,8 @@ docs/AccountLowBalanceClosureTransaction.md
 docs/AccountLowBalanceClosureTransactionAttributes.md
 docs/AccountLowBalanceClosureTransactionRelationships.md
 docs/AccountsApi.md
+docs/ActivateDacaData.md
+docs/ActivateDacaRequest.md
 docs/AddAccountOwners200Response.md
 docs/AddAccountOwnersRequest.md
 docs/AddAuthorizedUsersData.md
@@ -104,8 +106,8 @@ docs/CancelApplicationDataAttributes.md
 docs/CancelApplicationRequest.md
 docs/CancelPayment200Response.md
 docs/CancelPayment200ResponseData.md
-docs/CancelPositivePay200Response.md
-docs/CancelPositivePay200ResponseData.md
+docs/CancelPositivePay201Response.md
+docs/CancelPositivePay201ResponseData.md
 docs/CapitalPartnerACHRepayment.md
 docs/CapitalPartnerACHRepaymentRelationships.md
 docs/CapitalPartnerBookRepayment.md
@@ -410,6 +412,8 @@ docs/CreditDecisionsApi.md
 docs/CurrencyConversionType.md
 docs/CustomersApi.md
 docs/DACAApi.md
+docs/DeactivateDacaData.md
+docs/DeactivateDacaRequest.md
 docs/DeniedCreditApplicationDecision.md
 docs/DeniedCreditApplicationDecisionAttributes.md
 docs/DeniedCreditApplicationDecisionRelationships.md
@@ -430,6 +434,8 @@ docs/DisputeTransactionAttributes.md
 docs/DisputeTransactionRelationships.md
 docs/DisputesApi.md
 docs/EnterControlAgreement200Response.md
+docs/EnterDacaData.md
+docs/EnterDacaRequest.md
 docs/ErrorDocument.md
 docs/ErrorDocumentErrorsInner.md
 docs/ErrorDocumentErrorsInnerSource.md
@@ -636,6 +642,8 @@ docs/RealtimeReceivedPaymentRelationships.md
 docs/Receivable.md
 docs/ReceivableAttributes.md
 docs/ReceivableAttributesRepaymentStatus.md
+docs/ReceivableAttributesTotalInterest.md
+docs/ReceivableAttributesTotalPrincipal.md
 docs/ReceivableRelationships.md
 docs/ReceivablesBalance.md
 docs/ReceivablesBalanceAttributes.md
@@ -833,6 +841,7 @@ docs/UpdateTransactionRequest.md
 docs/UpdateWalletData.md
 docs/UpdateWalletDataAttributes.md
 docs/UpdateWalletRequest.md
+docs/UploadPositivePayDocument200Response.md
 docs/VerifyDocumentData.md
 docs/VerifyDocumentDataAttributes.md
 docs/VerifyDocumentRequest.md
@@ -912,6 +921,8 @@ unit_finance_sdk/models/ach_repayment_attributes.py
 unit_finance_sdk/models/ach_repayment_relationships.py
 unit_finance_sdk/models/ach_stop_payment.py
 unit_finance_sdk/models/ach_stop_payment_attributes.py
+unit_finance_sdk/models/activate_daca_data.py
+unit_finance_sdk/models/activate_daca_request.py
 unit_finance_sdk/models/add_account_owners200_response.py
 unit_finance_sdk/models/add_account_owners_request.py
 unit_finance_sdk/models/add_authorized_users_data.py
@@ -991,8 +1002,8 @@ unit_finance_sdk/models/cancel_application_data_attributes.py
 unit_finance_sdk/models/cancel_application_request.py
 unit_finance_sdk/models/cancel_payment200_response.py
 unit_finance_sdk/models/cancel_payment200_response_data.py
-unit_finance_sdk/models/cancel_positive_pay200_response.py
-unit_finance_sdk/models/cancel_positive_pay200_response_data.py
+unit_finance_sdk/models/cancel_positive_pay201_response.py
+unit_finance_sdk/models/cancel_positive_pay201_response_data.py
 unit_finance_sdk/models/capital_partner_ach_repayment.py
 unit_finance_sdk/models/capital_partner_ach_repayment_relationships.py
 unit_finance_sdk/models/capital_partner_book_repayment.py
@@ -1283,6 +1294,8 @@ unit_finance_sdk/models/credit_account.py
 unit_finance_sdk/models/credit_account_attributes.py
 unit_finance_sdk/models/credit_account_relationships.py
 unit_finance_sdk/models/currency_conversion_type.py
+unit_finance_sdk/models/deactivate_daca_data.py
+unit_finance_sdk/models/deactivate_daca_request.py
 unit_finance_sdk/models/denied_credit_application_decision.py
 unit_finance_sdk/models/denied_credit_application_decision_attributes.py
 unit_finance_sdk/models/denied_credit_application_decision_relationships.py
@@ -1302,6 +1315,8 @@ unit_finance_sdk/models/dispute_transaction.py
 unit_finance_sdk/models/dispute_transaction_attributes.py
 unit_finance_sdk/models/dispute_transaction_relationships.py
 unit_finance_sdk/models/enter_control_agreement200_response.py
+unit_finance_sdk/models/enter_daca_data.py
+unit_finance_sdk/models/enter_daca_request.py
 unit_finance_sdk/models/error_document.py
 unit_finance_sdk/models/error_document_errors_inner.py
 unit_finance_sdk/models/error_document_errors_inner_source.py
@@ -1502,6 +1517,8 @@ unit_finance_sdk/models/realtime_received_payment_relationships.py
 unit_finance_sdk/models/receivable.py
 unit_finance_sdk/models/receivable_attributes.py
 unit_finance_sdk/models/receivable_attributes_repayment_status.py
+unit_finance_sdk/models/receivable_attributes_total_interest.py
+unit_finance_sdk/models/receivable_attributes_total_principal.py
 unit_finance_sdk/models/receivable_relationships.py
 unit_finance_sdk/models/receivables_balance.py
 unit_finance_sdk/models/receivables_balance_attributes.py
@@ -1691,6 +1708,7 @@ unit_finance_sdk/models/update_transaction_request.py
 unit_finance_sdk/models/update_wallet_data.py
 unit_finance_sdk/models/update_wallet_data_attributes.py
 unit_finance_sdk/models/update_wallet_request.py
+unit_finance_sdk/models/upload_positive_pay_document200_response.py
 unit_finance_sdk/models/verify_document_data.py
 unit_finance_sdk/models/verify_document_data_attributes.py
 unit_finance_sdk/models/verify_document_request.py
