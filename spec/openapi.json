@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Unit API",
-    "version": "0.21.2",
+    "version": "0.22.0",
     "description": "JSON:API-compliant banking API.",
     "license": {
       "name": "Proprietary",
@@ -12481,6 +12481,16 @@
             ]
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "$ref": "#/components/schemas/EnterDacaRequest"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "The deposit account resource.",
@@ -12521,16 +12531,6 @@
                 "schema": {
                   "$ref": "#/components/schemas/ErrorDocument"
                 }
-              }
-            }
-          }
-        },
-        "requestBody": {
-          "required": false,
-          "content": {
-            "application/vnd.api+json": {
-              "schema": {
-                "type": "object"
               }
             }
           }
@@ -12562,6 +12562,16 @@
             ]
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActivateDacaRequest"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "The deposit account resource.",
@@ -12602,16 +12612,6 @@
                 "schema": {
                   "$ref": "#/components/schemas/ErrorDocument"
                 }
-              }
-            }
-          }
-        },
-        "requestBody": {
-          "required": false,
-          "content": {
-            "application/vnd.api+json": {
-              "schema": {
-                "type": "object"
               }
             }
           }
@@ -12643,6 +12643,16 @@
             ]
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeactivateDacaRequest"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "The deposit account resource.",
@@ -12683,16 +12693,6 @@
                 "schema": {
                   "$ref": "#/components/schemas/ErrorDocument"
                 }
-              }
-            }
-          }
-        },
-        "requestBody": {
-          "required": false,
-          "content": {
-            "application/vnd.api+json": {
-              "schema": {
-                "type": "object"
               }
             }
           }
@@ -13647,7 +13647,7 @@
           }
         ],
         "responses": {
-          "200": {
+          "201": {
             "description": "The cancelled Positive Pay rule.",
             "content": {
               "application/vnd.api+json": {
@@ -13768,7 +13768,27 @@
         },
         "responses": {
           "200": {
-            "description": "The authorization document was uploaded."
+            "description": "The Positive Pay rule after activation.",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/WireDrawdownPositivePay"
+                        }
+                      ],
+                      "description": "The Positive Pay rule after activation."
+                    }
+                  }
+                }
+              }
+            }
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
@@ -13792,7 +13812,7 @@
         }
       }
     },
-    "/positive-pay-policy": {
+    "/positive-pay-policies": {
       "post": {
         "operationId": "configurePositivePayPolicy",
         "summary": "Configure a positive pay policy",
@@ -16746,11 +16766,7 @@
               "contact",
               "officer",
               "beneficialOwners",
-              "annualRevenue",
-              "numberOfEmployees",
-              "cashFlow",
               "yearOfIncorporation",
-              "countriesOfOperation",
               "businessVertical"
             ]
           }
@@ -16893,9 +16909,7 @@
               "address",
               "phone",
               "email",
-              "occupation",
-              "annualIncome",
-              "sourceOfIncome"
+              "occupation"
             ]
           }
         }
@@ -17064,8 +17078,6 @@
               "phone",
               "email",
               "soleProprietorship",
-              "annualRevenue",
-              "numberOfEmployees",
               "businessVertical",
               "website"
             ]
@@ -36303,7 +36315,9 @@
           "type": {
             "type": "string",
             "enum": [
-              "bankReceivable"
+              "bankReceivable",
+              "orgReceivable",
+              "capitalPartnerReceivable"
             ]
           },
           "id": {
@@ -36314,8 +36328,11 @@
             "required": [
               "createdAt",
               "updatedAt",
-              "originalAmount",
-              "remainingAmount",
+              "totalPrincipal",
+              "remainingPrincipal",
+              "totalInterest",
+              "remainingInterest",
+              "plan",
               "repaymentStatus"
             ],
             "properties": {
@@ -36329,13 +36346,43 @@
                 "format": "date-time",
                 "description": "The date the resource was updated."
               },
-              "originalAmount": {
-                "type": "integer",
-                "description": "The original amount of the receivable that need to be repaid."
+              "totalPrincipal": {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": "integer",
+                    "description": "The original principal of the receivable, in cents."
+                  }
+                },
+                "additionalProperties": true,
+                "description": "JSON Object holding the original principal of the receivable that needs to be repaid, as value (Integer, cents)."
               },
-              "remainingAmount": {
+              "remainingPrincipal": {
                 "type": "integer",
-                "description": "The remaining amount of the receivable that need to be repaid."
+                "description": "The remaining principal of the receivable that needs to be repaid."
+              },
+              "totalInterest": {
+                "type": "object",
+                "properties": {
+                  "charged": {
+                    "type": "integer",
+                    "description": "The interest charged so far, in cents."
+                  },
+                  "accrued": {
+                    "type": "string",
+                    "description": "The interest accrued so far, in cents, as a decimal string."
+                  }
+                },
+                "additionalProperties": true,
+                "description": "JSON Object holding the interest of the receivable: charged (Integer, cents) is the interest charged so far and accrued (decimal String, cents) is the interest accrued so far."
+              },
+              "remainingInterest": {
+                "type": "integer",
+                "description": "The remaining interest of the receivable that needs to be repaid."
+              },
+              "plan": {
+                "type": "string",
+                "description": "The plan the receivable belongs to, e.g. Purchase or Fee."
               },
               "repaymentStatus": {
                 "type": "object",
@@ -36388,8 +36435,16 @@
           "attributes": {
             "createdAt": "2024-12-08T08:58:55.515Z",
             "updatedAt": "2024-12-08T08:58:55.515Z",
-            "originalAmount": 100,
-            "remainingAmount": 100,
+            "totalPrincipal": {
+              "value": 100
+            },
+            "remainingPrincipal": 100,
+            "totalInterest": {
+              "charged": 0,
+              "accrued": "0.4008906629981401373428240492184565"
+            },
+            "remainingInterest": 0,
+            "plan": "Purchase",
             "purchaseDueDate": "2023-05-25",
             "repaymentStatus": {
               "type": "notRepaid"
@@ -39180,6 +39235,129 @@
         "properties": {
           "data": {
             "$ref": "#/components/schemas/AddSecondaryRoutingNumberData"
+          }
+        }
+      },
+      "EnterDacaData": {
+        "type": "object",
+        "required": [
+          "type",
+          "relationships"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "updateDacaPoliciesRequest"
+            ]
+          },
+          "attributes": {
+            "type": "object",
+            "properties": {}
+          },
+          "relationships": {
+            "type": "object",
+            "required": [
+              "account"
+            ],
+            "properties": {
+              "account": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        }
+      },
+      "EnterDacaRequest": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/EnterDacaData"
+          }
+        }
+      },
+      "ActivateDacaData": {
+        "type": "object",
+        "required": [
+          "type",
+          "relationships"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "updateDacaPoliciesRequest"
+            ]
+          },
+          "attributes": {
+            "type": "object",
+            "properties": {}
+          },
+          "relationships": {
+            "type": "object",
+            "required": [
+              "account"
+            ],
+            "properties": {
+              "account": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        }
+      },
+      "ActivateDacaRequest": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/ActivateDacaData"
+          }
+        }
+      },
+      "DeactivateDacaData": {
+        "type": "object",
+        "required": [
+          "type",
+          "relationships"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "updateDacaPoliciesRequest"
+            ]
+          },
+          "attributes": {
+            "type": "object",
+            "properties": {}
+          },
+          "relationships": {
+            "type": "object",
+            "required": [
+              "account"
+            ],
+            "properties": {
+              "account": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            }
+          }
+        }
+      },
+      "DeactivateDacaRequest": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/DeactivateDacaData"
           }
         }
       }

@@ -31,6 +31,8 @@ docs/AccountLowBalanceClosureTransaction.md
 docs/AccountLowBalanceClosureTransactionAttributes.md
 docs/AccountLowBalanceClosureTransactionRelationships.md
 docs/AccountsApi.md
+docs/ActivateDacaData.md
+docs/ActivateDacaRequest.md
 docs/AddAccountOwners200Response.md
 docs/AddAccountOwnersRequest.md
 docs/AddAuthorizedUsersData.md
@@ -108,8 +110,8 @@ docs/CancelApplicationDataAttributes.md
 docs/CancelApplicationRequest.md
 docs/CancelPayment200Response.md
 docs/CancelPayment200ResponseData.md
-docs/CancelPositivePay200Response.md
-docs/CancelPositivePay200ResponseData.md
+docs/CancelPositivePay201Response.md
+docs/CancelPositivePay201ResponseData.md
 docs/CapitalPartnerACHRepayment.md
 docs/CapitalPartnerACHRepaymentRelationships.md
 docs/CapitalPartnerBookRepayment.md
@@ -414,6 +416,8 @@ docs/CreditDecisionsApi.md
 docs/CurrencyConversionType.md
 docs/CustomersApi.md
 docs/DACAApi.md
+docs/DeactivateDacaData.md
+docs/DeactivateDacaRequest.md
 docs/DeniedCreditApplicationDecision.md
 docs/DeniedCreditApplicationDecisionAttributes.md
 docs/DeniedCreditApplicationDecisionRelationships.md
@@ -434,6 +438,8 @@ docs/DisputeTransactionAttributes.md
 docs/DisputeTransactionRelationships.md
 docs/DisputesApi.md
 docs/EnterControlAgreement200Response.md
+docs/EnterDacaData.md
+docs/EnterDacaRequest.md
 docs/ErrorDocument.md
 docs/ErrorDocumentErrorsInner.md
 docs/ErrorDocumentErrorsInnerSource.md
@@ -640,6 +646,8 @@ docs/RealtimeReceivedPaymentRelationships.md
 docs/Receivable.md
 docs/ReceivableAttributes.md
 docs/ReceivableAttributesRepaymentStatus.md
+docs/ReceivableAttributesTotalInterest.md
+docs/ReceivableAttributesTotalPrincipal.md
 docs/ReceivableRelationships.md
 docs/ReceivablesBalance.md
 docs/ReceivablesBalanceAttributes.md
@@ -837,6 +845,7 @@ docs/UpdateTransactionRequest.md
 docs/UpdateWalletData.md
 docs/UpdateWalletDataAttributes.md
 docs/UpdateWalletRequest.md
+docs/UploadPositivePayDocument200Response.md
 docs/VerifyDocumentData.md
 docs/VerifyDocumentDataAttributes.md
 docs/VerifyDocumentRequest.md
@@ -913,6 +922,8 @@ lib/unit_openapi_ruby_sdk/models/ach_repayment_attributes.rb
 lib/unit_openapi_ruby_sdk/models/ach_repayment_relationships.rb
 lib/unit_openapi_ruby_sdk/models/ach_stop_payment.rb
 lib/unit_openapi_ruby_sdk/models/ach_stop_payment_attributes.rb
+lib/unit_openapi_ruby_sdk/models/activate_daca_data.rb
+lib/unit_openapi_ruby_sdk/models/activate_daca_request.rb
 lib/unit_openapi_ruby_sdk/models/add_account_owners200_response.rb
 lib/unit_openapi_ruby_sdk/models/add_account_owners_request.rb
 lib/unit_openapi_ruby_sdk/models/add_authorized_users_data.rb
@@ -992,8 +1003,8 @@ lib/unit_openapi_ruby_sdk/models/cancel_application_data_attributes.rb
 lib/unit_openapi_ruby_sdk/models/cancel_application_request.rb
 lib/unit_openapi_ruby_sdk/models/cancel_payment200_response.rb
 lib/unit_openapi_ruby_sdk/models/cancel_payment200_response_data.rb
-lib/unit_openapi_ruby_sdk/models/cancel_positive_pay200_response.rb
-lib/unit_openapi_ruby_sdk/models/cancel_positive_pay200_response_data.rb
+lib/unit_openapi_ruby_sdk/models/cancel_positive_pay201_response.rb
+lib/unit_openapi_ruby_sdk/models/cancel_positive_pay201_response_data.rb
 lib/unit_openapi_ruby_sdk/models/capital_partner_ach_repayment.rb
 lib/unit_openapi_ruby_sdk/models/capital_partner_ach_repayment_relationships.rb
 lib/unit_openapi_ruby_sdk/models/capital_partner_book_repayment.rb
@@ -1284,6 +1295,8 @@ lib/unit_openapi_ruby_sdk/models/credit_account.rb
 lib/unit_openapi_ruby_sdk/models/credit_account_attributes.rb
 lib/unit_openapi_ruby_sdk/models/credit_account_relationships.rb
 lib/unit_openapi_ruby_sdk/models/currency_conversion_type.rb
+lib/unit_openapi_ruby_sdk/models/deactivate_daca_data.rb
+lib/unit_openapi_ruby_sdk/models/deactivate_daca_request.rb
 lib/unit_openapi_ruby_sdk/models/denied_credit_application_decision.rb
 lib/unit_openapi_ruby_sdk/models/denied_credit_application_decision_attributes.rb
 lib/unit_openapi_ruby_sdk/models/denied_credit_application_decision_relationships.rb
@@ -1303,6 +1316,8 @@ lib/unit_openapi_ruby_sdk/models/dispute_transaction.rb
 lib/unit_openapi_ruby_sdk/models/dispute_transaction_attributes.rb
 lib/unit_openapi_ruby_sdk/models/dispute_transaction_relationships.rb
 lib/unit_openapi_ruby_sdk/models/enter_control_agreement200_response.rb
+lib/unit_openapi_ruby_sdk/models/enter_daca_data.rb
+lib/unit_openapi_ruby_sdk/models/enter_daca_request.rb
 lib/unit_openapi_ruby_sdk/models/error_document.rb
 lib/unit_openapi_ruby_sdk/models/error_document_errors_inner.rb
 lib/unit_openapi_ruby_sdk/models/error_document_errors_inner_source.rb
@@ -1503,6 +1518,8 @@ lib/unit_openapi_ruby_sdk/models/realtime_received_payment_relationships.rb
 lib/unit_openapi_ruby_sdk/models/receivable.rb
 lib/unit_openapi_ruby_sdk/models/receivable_attributes.rb
 lib/unit_openapi_ruby_sdk/models/receivable_attributes_repayment_status.rb
+lib/unit_openapi_ruby_sdk/models/receivable_attributes_total_interest.rb
+lib/unit_openapi_ruby_sdk/models/receivable_attributes_total_principal.rb
 lib/unit_openapi_ruby_sdk/models/receivable_relationships.rb
 lib/unit_openapi_ruby_sdk/models/receivables_balance.rb
 lib/unit_openapi_ruby_sdk/models/receivables_balance_attributes.rb
@@ -1692,6 +1709,7 @@ lib/unit_openapi_ruby_sdk/models/update_transaction_request.rb
 lib/unit_openapi_ruby_sdk/models/update_wallet_data.rb
 lib/unit_openapi_ruby_sdk/models/update_wallet_data_attributes.rb
 lib/unit_openapi_ruby_sdk/models/update_wallet_request.rb
+lib/unit_openapi_ruby_sdk/models/upload_positive_pay_document200_response.rb
 lib/unit_openapi_ruby_sdk/models/verify_document_data.rb
 lib/unit_openapi_ruby_sdk/models/verify_document_data_attributes.rb
 lib/unit_openapi_ruby_sdk/models/verify_document_request.rb

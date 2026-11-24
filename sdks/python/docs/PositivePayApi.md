@@ -5,7 +5,7 @@ All URIs are relative to *https://api.s.unit.sh*
 Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**cancel_positive_pay**](PositivePayApi.md#cancel_positive_pay) | **POST** /positive-pay/{positivePayId}/cancel | Cancel a positive pay rule
-[**configure_positive_pay_policy**](PositivePayApi.md#configure_positive_pay_policy) | **POST** /positive-pay-policy | Configure a positive pay policy
+[**configure_positive_pay_policy**](PositivePayApi.md#configure_positive_pay_policy) | **POST** /positive-pay-policies | Configure a positive pay policy
 [**create_positive_pay**](PositivePayApi.md#create_positive_pay) | **POST** /positive-pay | Create a positive pay rule
 [**get_positive_pay_by_id**](PositivePayApi.md#get_positive_pay_by_id) | **GET** /positive-pay/{positivePayId} | Get a positive pay rule by id
 [**list_positive_pay**](PositivePayApi.md#list_positive_pay) | **GET** /positive-pay | List positive pay rules
@@ -13,7 +13,7 @@ Method | HTTP request | Description
 
 
 # **cancel_positive_pay**
-> CancelPositivePay200Response cancel_positive_pay(positive_pay_id, body=body)
+> CancelPositivePay201Response cancel_positive_pay(positive_pay_id, body=body)
 
 Cancel a positive pay rule
 
@@ -25,7 +25,7 @@ Cancel a Positive Pay rule by ID. Cancelled rules stop authorizing payments.
 
 ```python
 import unit_finance_sdk
-from unit_finance_sdk.models.cancel_positive_pay200_response import CancelPositivePay200Response
+from unit_finance_sdk.models.cancel_positive_pay201_response import CancelPositivePay201Response
 from unit_finance_sdk.rest import ApiException
 from pprint import pprint
 
@@ -73,7 +73,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**CancelPositivePay200Response**](CancelPositivePay200Response.md)
+[**CancelPositivePay201Response**](CancelPositivePay201Response.md)
 
 ### Authorization
 
@@ -88,7 +88,7 @@ Name | Type | Description  | Notes
 
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-**200** | The cancelled Positive Pay rule. |  -  |
+**201** | The cancelled Positive Pay rule. |  -  |
 **400** | Bad request. The request body or query parameters failed validation; &#x60;errors[].source.pointer&#x60; identifies the offending field. |  -  |
 **401** | Unauthorized. The bearer token is missing, invalid or expired. |  -  |
 **404** | Not found. No resource matches the supplied identifier. |  -  |
@@ -438,7 +438,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **upload_positive_pay_document**
-> upload_positive_pay_document(positive_pay_id, body)
+> UploadPositivePayDocument200Response upload_positive_pay_document(positive_pay_id, body)
 
 Upload a positive pay document
 
@@ -450,6 +450,7 @@ Upload the authorization document required to activate a drawdown rule (Wire Dra
 
 ```python
 import unit_finance_sdk
+from unit_finance_sdk.models.upload_positive_pay_document200_response import UploadPositivePayDocument200Response
 from unit_finance_sdk.rest import ApiException
 from pprint import pprint
 
@@ -478,7 +479,9 @@ with unit_finance_sdk.ApiClient(configuration) as api_client:
 
     try:
         # Upload a positive pay document
-        api_instance.upload_positive_pay_document(positive_pay_id, body)
+        api_response = api_instance.upload_positive_pay_document(positive_pay_id, body)
+        print("The response of PositivePayApi->upload_positive_pay_document:\n")
+        pprint(api_response)
     except Exception as e:
         print("Exception when calling PositivePayApi->upload_positive_pay_document: %s\n" % e)
 ```
@@ -495,7 +498,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-void (empty response body)
+[**UploadPositivePayDocument200Response**](UploadPositivePayDocument200Response.md)
 
 ### Authorization
 
@@ -510,7 +513,7 @@ void (empty response body)
 
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-**200** | The authorization document was uploaded. |  -  |
+**200** | The Positive Pay rule after activation. |  -  |
 **400** | Bad request. The request body or query parameters failed validation; &#x60;errors[].source.pointer&#x60; identifies the offending field. |  -  |
 **401** | Unauthorized. The bearer token is missing, invalid or expired. |  -  |
 **404** | Not found. No resource matches the supplied identifier. |  -  |

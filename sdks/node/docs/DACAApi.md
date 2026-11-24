@@ -9,7 +9,7 @@ All URIs are relative to *https://api.s.unit.sh*
 |[**enterControlAgreement**](#entercontrolagreement) | **POST** /accounts/{accountId}/enter-daca | Enter control agreement|
 
 # **activateControlAgreement**
-> EnterControlAgreement200Response activateControlAgreement()
+> EnterControlAgreement200Response activateControlAgreement(activateDacaRequest)
 
 Set an account with DACA `Activated` status. This action will:
 
@@ -18,18 +18,19 @@ Set an account with DACA `Activated` status. This action will:
 ```typescript
 import {
     DACAApi,
-    Configuration
+    Configuration,
+    ActivateDacaRequest
 } from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new DACAApi(configuration);
 
 let accountId: string; // (default to undefined)
-let body: object; // (optional)
+let activateDacaRequest: ActivateDacaRequest; //
 
 const { status, data } = await apiInstance.activateControlAgreement(
     accountId,
-    body
+    activateDacaRequest
 );
 ```
 
@@ -37,7 +38,7 @@ const { status, data } = await apiInstance.activateControlAgreement(
 
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
-| **body** | **object**|  | |
+| **activateDacaRequest** | **ActivateDacaRequest**|  | |
 | **accountId** | [**string**] |  | defaults to undefined|
 
 
@@ -67,7 +68,7 @@ const { status, data } = await apiInstance.activateControlAgreement(
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **deactivateControlAgreement**
-> EnterControlAgreement200Response deactivateControlAgreement()
+> EnterControlAgreement200Response deactivateControlAgreement(deactivateDacaRequest)
 
 Deactivate an account with DACA `Activated` status. This action will:
 
@@ -76,18 +77,19 @@ Deactivate an account with DACA `Activated` status. This action will:
 ```typescript
 import {
     DACAApi,
-    Configuration
+    Configuration,
+    DeactivateDacaRequest
 } from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new DACAApi(configuration);
 
 let accountId: string; // (default to undefined)
-let body: object; // (optional)
+let deactivateDacaRequest: DeactivateDacaRequest; //
 
 const { status, data } = await apiInstance.deactivateControlAgreement(
     accountId,
-    body
+    deactivateDacaRequest
 );
 ```
 
@@ -95,7 +97,7 @@ const { status, data } = await apiInstance.deactivateControlAgreement(
 
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
-| **body** | **object**|  | |
+| **deactivateDacaRequest** | **DeactivateDacaRequest**|  | |
 | **accountId** | [**string**] |  | defaults to undefined|
 
 
@@ -125,7 +127,7 @@ const { status, data } = await apiInstance.deactivateControlAgreement(
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **enterControlAgreement**
-> EnterControlAgreement200Response enterControlAgreement()
+> EnterControlAgreement200Response enterControlAgreement(enterDacaRequest)
 
 Set an account with DACA `Entered` status.
 
@@ -134,18 +136,19 @@ Set an account with DACA `Entered` status.
 ```typescript
 import {
     DACAApi,
-    Configuration
+    Configuration,
+    EnterDacaRequest
 } from '@unit-finance/unit-openapi-node-sdk';
 
 const configuration = new Configuration();
 const apiInstance = new DACAApi(configuration);
 
 let accountId: string; // (default to undefined)
-let body: object; // (optional)
+let enterDacaRequest: EnterDacaRequest; //
 
 const { status, data } = await apiInstance.enterControlAgreement(
     accountId,
-    body
+    enterDacaRequest
 );
 ```
 
@@ -153,7 +156,7 @@ const { status, data } = await apiInstance.enterControlAgreement(
 
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
-| **body** | **object**|  | |
+| **enterDacaRequest** | **EnterDacaRequest**|  | |
 | **accountId** | [**string**] |  | defaults to undefined|
 
 

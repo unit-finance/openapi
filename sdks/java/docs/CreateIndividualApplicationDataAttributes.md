@@ -17,8 +17,8 @@
 |**email** | **String** | Email address of the individual. |  |
 |**evaluationParams** | **String** | Optional. Evaluation Params for this entity. |  [optional] |
 |**occupation** | **OccupationType** | Occupation of the individual. |  |
-|**annualIncome** | **AnnualIncomeType** | Required if nationality is not US. Annual income of the individual. |  |
-|**sourceOfIncome** | **SourceOfIncomeType** | Required if nationality is not US. Source of income of the individual. |  |
+|**annualIncome** | **AnnualIncomeType** | Required if nationality is not US. Annual income of the individual. |  [optional] |
+|**sourceOfIncome** | **SourceOfIncomeType** | Required if nationality is not US. Source of income of the individual. |  [optional] |
 |**ip** | **String** | Optional. IP address of the end-customer creating the application. Both IPv4 and IPv6 formats are supported. Highly recommended as a fraud prevention measure, if the information is available when submitting the application. |  [optional] |
 |**tags** | **Map&lt;String, Object&gt;** | Optional. See Tags. Tags that will be copied to the customer that this application creates (see Tag Inheritance). |  [optional] |
 |**idempotencyKey** | **String** | Optional. See Idempotency. |  [optional] |

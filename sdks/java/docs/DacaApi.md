@@ -11,7 +11,7 @@ All URIs are relative to *https://api.s.unit.sh*
 
 <a id="activateControlAgreement"></a>
 # **activateControlAgreement**
-> EnterControlAgreement200Response activateControlAgreement(accountId, body)
+> EnterControlAgreement200Response activateControlAgreement(accountId, activateDacaRequest)
 
 Activate control agreement
 
@@ -38,9 +38,9 @@ public class Example {
 
     DacaApi apiInstance = new DacaApi(defaultClient);
     String accountId = "accountId_example"; // String | 
-    Object body = null; // Object | 
+    ActivateDacaRequest activateDacaRequest = new ActivateDacaRequest(); // ActivateDacaRequest | 
     try {
-      EnterControlAgreement200Response result = apiInstance.activateControlAgreement(accountId, body);
+      EnterControlAgreement200Response result = apiInstance.activateControlAgreement(accountId, activateDacaRequest);
       System.out.println(result);
     } catch (ApiException e) {
       System.err.println("Exception when calling DacaApi#activateControlAgreement");
@@ -58,7 +58,7 @@ public class Example {
 | Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
 | **accountId** | **String**|  | |
-| **body** | **Object**|  | [optional] |
+| **activateDacaRequest** | [**ActivateDacaRequest**](ActivateDacaRequest.md)|  | |
 
 ### Return type
 
@@ -84,7 +84,7 @@ public class Example {
 
 <a id="deactivateControlAgreement"></a>
 # **deactivateControlAgreement**
-> EnterControlAgreement200Response deactivateControlAgreement(accountId, body)
+> EnterControlAgreement200Response deactivateControlAgreement(accountId, deactivateDacaRequest)
 
 Deactivate control agreement
 
@@ -111,9 +111,9 @@ public class Example {
 
     DacaApi apiInstance = new DacaApi(defaultClient);
     String accountId = "accountId_example"; // String | 
-    Object body = null; // Object | 
+    DeactivateDacaRequest deactivateDacaRequest = new DeactivateDacaRequest(); // DeactivateDacaRequest | 
     try {
-      EnterControlAgreement200Response result = apiInstance.deactivateControlAgreement(accountId, body);
+      EnterControlAgreement200Response result = apiInstance.deactivateControlAgreement(accountId, deactivateDacaRequest);
       System.out.println(result);
     } catch (ApiException e) {
       System.err.println("Exception when calling DacaApi#deactivateControlAgreement");
@@ -131,7 +131,7 @@ public class Example {
 | Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
 | **accountId** | **String**|  | |
-| **body** | **Object**|  | [optional] |
+| **deactivateDacaRequest** | [**DeactivateDacaRequest**](DeactivateDacaRequest.md)|  | |
 
 ### Return type
 
@@ -157,7 +157,7 @@ public class Example {
 
 <a id="enterControlAgreement"></a>
 # **enterControlAgreement**
-> EnterControlAgreement200Response enterControlAgreement(accountId, body)
+> EnterControlAgreement200Response enterControlAgreement(accountId, enterDacaRequest)
 
 Enter control agreement
 
@@ -184,9 +184,9 @@ public class Example {
 
     DacaApi apiInstance = new DacaApi(defaultClient);
     String accountId = "accountId_example"; // String | 
-    Object body = null; // Object | 
+    EnterDacaRequest enterDacaRequest = new EnterDacaRequest(); // EnterDacaRequest | 
     try {
-      EnterControlAgreement200Response result = apiInstance.enterControlAgreement(accountId, body);
+      EnterControlAgreement200Response result = apiInstance.enterControlAgreement(accountId, enterDacaRequest);
       System.out.println(result);
     } catch (ApiException e) {
       System.err.println("Exception when calling DacaApi#enterControlAgreement");
@@ -204,7 +204,7 @@ public class Example {
 | Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
 | **accountId** | **String**|  | |
-| **body** | **Object**|  | [optional] |
+| **enterDacaRequest** | [**EnterDacaRequest**](EnterDacaRequest.md)|  | |
 
 ### Return type
 

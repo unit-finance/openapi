@@ -5,7 +5,7 @@ All URIs are relative to *https://api.s.unit.sh*
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
 | [**cancelPositivePay**](PositivePayApi.md#cancelPositivePay) | **POST** /positive-pay/{positivePayId}/cancel | Cancel a positive pay rule |
-| [**configurePositivePayPolicy**](PositivePayApi.md#configurePositivePayPolicy) | **POST** /positive-pay-policy | Configure a positive pay policy |
+| [**configurePositivePayPolicy**](PositivePayApi.md#configurePositivePayPolicy) | **POST** /positive-pay-policies | Configure a positive pay policy |
 | [**createPositivePay**](PositivePayApi.md#createPositivePay) | **POST** /positive-pay | Create a positive pay rule |
 | [**getPositivePayById**](PositivePayApi.md#getPositivePayById) | **GET** /positive-pay/{positivePayId} | Get a positive pay rule by id |
 | [**listPositivePay**](PositivePayApi.md#listPositivePay) | **GET** /positive-pay | List positive pay rules |
@@ -14,7 +14,7 @@ All URIs are relative to *https://api.s.unit.sh*
 
 <a id="cancelPositivePay"></a>
 # **cancelPositivePay**
-> CancelPositivePay200Response cancelPositivePay(positivePayId, body)
+> CancelPositivePay201Response cancelPositivePay(positivePayId, body)
 
 Cancel a positive pay rule
 
@@ -43,7 +43,7 @@ public class Example {
     String positivePayId = "positivePayId_example"; // String | 
     Object body = null; // Object | 
     try {
-      CancelPositivePay200Response result = apiInstance.cancelPositivePay(positivePayId, body);
+      CancelPositivePay201Response result = apiInstance.cancelPositivePay(positivePayId, body);
       System.out.println(result);
     } catch (ApiException e) {
       System.err.println("Exception when calling PositivePayApi#cancelPositivePay");
@@ -65,7 +65,7 @@ public class Example {
 
 ### Return type
 
-[**CancelPositivePay200Response**](CancelPositivePay200Response.md)
+[**CancelPositivePay201Response**](CancelPositivePay201Response.md)
 
 ### Authorization
 
@@ -79,7 +79,7 @@ public class Example {
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-| **200** | The cancelled Positive Pay rule. |  -  |
+| **201** | The cancelled Positive Pay rule. |  -  |
 | **400** | Bad request. The request body or query parameters failed validation; &#x60;errors[].source.pointer&#x60; identifies the offending field. |  -  |
 | **401** | Unauthorized. The bearer token is missing, invalid or expired. |  -  |
 | **404** | Not found. No resource matches the supplied identifier. |  -  |
@@ -381,7 +381,7 @@ public class Example {
 
 <a id="uploadPositivePayDocument"></a>
 # **uploadPositivePayDocument**
-> uploadPositivePayDocument(positivePayId, body)
+> UploadPositivePayDocument200Response uploadPositivePayDocument(positivePayId, body)
 
 Upload a positive pay document
 
@@ -410,7 +410,8 @@ public class Example {
     String positivePayId = "positivePayId_example"; // String | 
     File body = new File("/path/to/file"); // File | 
     try {
-      apiInstance.uploadPositivePayDocument(positivePayId, body);
+      UploadPositivePayDocument200Response result = apiInstance.uploadPositivePayDocument(positivePayId, body);
+      System.out.println(result);
     } catch (ApiException e) {
       System.err.println("Exception when calling PositivePayApi#uploadPositivePayDocument");
       System.err.println("Status code: " + e.getCode());
@@ -431,7 +432,7 @@ public class Example {
 
 ### Return type
 
-null (empty response body)
+[**UploadPositivePayDocument200Response**](UploadPositivePayDocument200Response.md)
 
 ### Authorization
 
@@ -445,7 +446,7 @@ null (empty response body)
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-| **200** | The authorization document was uploaded. |  -  |
+| **200** | The Positive Pay rule after activation. |  -  |
 | **400** | Bad request. The request body or query parameters failed validation; &#x60;errors[].source.pointer&#x60; identifies the offending field. |  -  |
 | **401** | Unauthorized. The bearer token is missing, invalid or expired. |  -  |
 | **404** | Not found. No resource matches the supplied identifier. |  -  |

@@ -17,8 +17,8 @@ Name | Type | Description | Notes
 **ein** | **str** | Optional. If the individual is a sole proprietor who has an Employer Identification Number, specify it here. Not all sole proprietors have an EIN, so this attribute is optional, even when soleProprietorship is set to true. | [optional] 
 **dba** | **str** | Optional. If the individual is a sole proprietor who is doing business under a different name, specify it here. This attribute is optional, even when soleProprietorship is set to true. | [optional] 
 **evaluation_params** | **str** | Optional. Evaluation Params for this entity. | [optional] 
-**annual_revenue** | [**SoleProprietorAnnualRevenueType**](SoleProprietorAnnualRevenueType.md) | Required if nationality is not US. For sole proprietors, specify the annual revenue here. | 
-**number_of_employees** | [**SoleProprietorNumberOfEmployeesType**](SoleProprietorNumberOfEmployeesType.md) | Required if nationality is not US. For sole proprietors, specify the number of employees here. | 
+**annual_revenue** | [**SoleProprietorAnnualRevenueType**](SoleProprietorAnnualRevenueType.md) | Required if nationality is not US. For sole proprietors, specify the annual revenue here. | [optional] 
+**number_of_employees** | [**SoleProprietorNumberOfEmployeesType**](SoleProprietorNumberOfEmployeesType.md) | Required if nationality is not US. For sole proprietors, specify the number of employees here. | [optional] 
 **business_vertical** | [**BusinessVerticalType**](BusinessVerticalType.md) | For sole proprietors, specify the business vertical here. | 
 **website** | **str** | A Valid website Url. Providing a null value is indicative of the business customer attesting that they do not have a website. | 
 **ip** | **str** | Optional. IP address of the end-customer creating the application. Both IPv4 and IPv6 formats are supported. Highly recommended as a fraud prevention measure, if the information is available when submitting the application. | [optional] 

@@ -33,6 +33,8 @@ docs/AccountLowBalanceClosureTransaction.md
 docs/AccountLowBalanceClosureTransactionAttributes.md
 docs/AccountLowBalanceClosureTransactionRelationships.md
 docs/AccountsApi.md
+docs/ActivateDacaData.md
+docs/ActivateDacaRequest.md
 docs/AddAccountOwners200Response.md
 docs/AddAccountOwnersRequest.md
 docs/AddAuthorizedUsersData.md
@@ -110,8 +112,8 @@ docs/CancelApplicationDataAttributes.md
 docs/CancelApplicationRequest.md
 docs/CancelPayment200Response.md
 docs/CancelPayment200ResponseData.md
-docs/CancelPositivePay200Response.md
-docs/CancelPositivePay200ResponseData.md
+docs/CancelPositivePay201Response.md
+docs/CancelPositivePay201ResponseData.md
 docs/CapitalPartnerACHRepayment.md
 docs/CapitalPartnerACHRepaymentRelationships.md
 docs/CapitalPartnerBookRepayment.md
@@ -416,6 +418,8 @@ docs/CreditDecisionsApi.md
 docs/CurrencyConversionType.md
 docs/CustomersApi.md
 docs/DACAApi.md
+docs/DeactivateDacaData.md
+docs/DeactivateDacaRequest.md
 docs/DeniedCreditApplicationDecision.md
 docs/DeniedCreditApplicationDecisionAttributes.md
 docs/DeniedCreditApplicationDecisionRelationships.md
@@ -436,6 +440,8 @@ docs/DisputeTransactionAttributes.md
 docs/DisputeTransactionRelationships.md
 docs/DisputesApi.md
 docs/EnterControlAgreement200Response.md
+docs/EnterDacaData.md
+docs/EnterDacaRequest.md
 docs/ErrorDocument.md
 docs/ErrorDocumentErrorsInner.md
 docs/ErrorDocumentErrorsInnerSource.md
@@ -642,6 +648,8 @@ docs/RealtimeReceivedPaymentRelationships.md
 docs/Receivable.md
 docs/ReceivableAttributes.md
 docs/ReceivableAttributesRepaymentStatus.md
+docs/ReceivableAttributesTotalInterest.md
+docs/ReceivableAttributesTotalPrincipal.md
 docs/ReceivableRelationships.md
 docs/ReceivablesBalance.md
 docs/ReceivablesBalanceAttributes.md
@@ -839,6 +847,7 @@ docs/UpdateTransactionRequest.md
 docs/UpdateWalletData.md
 docs/UpdateWalletDataAttributes.md
 docs/UpdateWalletRequest.md
+docs/UploadPositivePayDocument200Response.md
 docs/VerifyDocumentData.md
 docs/VerifyDocumentDataAttributes.md
 docs/VerifyDocumentRequest.md
